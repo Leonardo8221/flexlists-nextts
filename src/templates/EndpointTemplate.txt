@@ -1,0 +1,8 @@
+import { NextApiRequest, NextApiResponse } from "next"
+import { ApiResponse, BaseApiResponse } from "src/models/ApiResponse";
+const {{&endpointName}} = async (req: NextApiRequest, res: NextApiResponse) => {
+  res.json(new BaseApiResponse(0, 'Success'))
+  res.statusCode = 200;
+  return res;
+}
+export default {{&endpointName}}

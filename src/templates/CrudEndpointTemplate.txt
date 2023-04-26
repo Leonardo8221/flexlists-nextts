@@ -1,0 +1,62 @@
+import { NextApiRequest, NextApiResponse } from "next"
+import { ApiResponse, BaseApiResponse } from "src/models/ApiResponse";
+import {{#curlyBracket}} {{&repositoryFunction}} {{/curlyBracket}} from "src/repositories/{{&repositoryName}}";
+{{#isPasswordHash}}
+import { hashPassword } from "src/utils/bcryptUtils";
+{{/isPasswordHash}}
+const {{&endpointName}}Endpoint = async (req: NextApiRequest, res: NextApiResponse) => {
+  {{#isCreate}}
+    const {{#curlyBracket}} {{&requestParams}} {{/curlyBracket}} = req.body;
+    {{#isPasswordHash}}
+    var hashResult = await hashPassword(password as string);
+    var passwordHash = hashResult.hashedPassword;
+    var passwordSalt = hashResult.salt;
+    {{/isPasswordHash}}
+    var {{&repositoryFunction}}Response = await {{&repositoryFunction}}({{&repositoryInputs}});
+
+    res.json(new ApiResponse<any>({{&repositoryFunction}}Response.id))
+  {{/isCreate}}
+  {{#isUpdate}}
+    const {{#curlyBracket}} {{&requestParams}} {{/curlyBracket}} = req.body;
+     {{#isPasswordHash}}
+    var hashResult = await hashPassword(password as string);
+    var passwordHash = hashResult.hashedPassword;
+    var passwordSalt = hashResult.salt;
+    {{/isPasswordHash}}
+    var {{&repositoryFunction}}Response = await {{&repositoryFunction}}({{&repositoryInputs}});
+    res.json(new ApiResponse<any>({{&repositoryFunction}}Response))
+  {{/isUpdate}}
+  {{#isGetSingleRecord}}
+    const {{#curlyBracket}} {{&requestParams}} {{/curlyBracket}} = req.query;
+    {{#isIdNumber}}
+     if(!id || isNaN(Number(id)))
+     {
+        res.json(new BaseApiResponse(1000,'id invalid'));
+        res.statusCode = 200;
+        return res;
+     }
+    {{/isIdNumber}}
+    var {{&repositoryFunction}}Response = await {{&repositoryFunction}}({{&repositoryInputs}});
+    res.json(new ApiResponse<any>({{&repositoryFunction}}Response))
+  {{/isGetSingleRecord}}
+  {{#isGetRecords}}
+    var {{&repositoryFunction}}Response = await {{&repositoryFunction}}();
+    res.json(new ApiResponse<any>({{&repositoryFunction}}Response))
+  {{/isGetRecords}}
+  {{#isDelete}}
+    const {{#curlyBracket}} {{&requestParams}} {{/curlyBracket}} = req.query;
+    {{#isIdNumber}}
+     if(!id || isNaN(Number(id)))
+     {
+        res.json(new BaseApiResponse(1000,'id invalid'));
+        res.statusCode = 200;
+        return res;
+     }
+    {{/isIdNumber}}
+    var {{&repositoryFunction}}Response = await {{&repositoryFunction}}({{&repositoryInputs}});
+    res.json(new ApiResponse<any>({{&repositoryFunction}}Response))
+  {{/isDelete}}
+  res.statusCode = 200;
+  return res;
+}
+export default {{&endpointName}}Endpoint

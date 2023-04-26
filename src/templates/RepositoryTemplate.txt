@@ -1,0 +1,66 @@
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient();
+{{#functions}}
+async function {{&functionName}}({{&functionInput}}) {
+  {{#isCreate}}
+  const {{&modelName}} = await prisma.{{&modelName}}.create({
+    data: {
+      {{#fieldDatas}}
+          {{&fieldData}}
+      {{/fieldDatas}}
+    },
+  });
+  return {{&modelName}};
+  {{/isCreate}}
+   {{#isUpdate}}
+  const {{&modelName}} = await prisma.{{&modelName}}.update({
+    where: {
+      {{#queryConditions}}
+          {{&queryCondition}}
+      {{/queryConditions}}
+    },
+    data: {
+      {{#fieldDatas}}
+          {{&fieldData}}
+      {{/fieldDatas}}
+    },
+  });
+  return {{&modelName}};
+  {{/isUpdate}}
+  {{#isGetSingleRecord}}
+  const {{&modelName}} = await prisma.{{&modelName}}.findUnique({
+    where: {
+      {{#queryConditions}}
+          {{&queryCondition}}
+      {{/queryConditions}}
+    }
+  });
+  return {{&modelName}};
+  {{/isGetSingleRecord}}
+
+  {{#isGetRecords}}
+  const {{&modelName}}s = await prisma.{{&modelName}}.findMany{{#hasConditions}}({
+    where: {
+      {{#queryConditions}}
+          {{&queryCondition}}
+      {{/queryConditions}}
+    }
+  }){{/hasConditions}}{{^hasConditions}}(){{/hasConditions}};
+  return {{&modelName}}s;
+  {{/isGetRecords}}
+
+  {{#isDelete}}
+  const {{&modelName}} = await prisma.{{&modelName}}.delete({
+    where: {
+      {{#queryConditions}}
+          {{&queryCondition}}
+      {{/queryConditions}}
+    }
+  });
+  return {{&modelName}};
+  {{/isDelete}}
+}
+{{/functions}}
+
+export {{#curlyBracket}} {{&exportFunctions}} {{/curlyBracket}};

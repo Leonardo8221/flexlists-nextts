@@ -1,0 +1,47 @@
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient();
+{{#tableDatas}}
+const {{&tableName}}Datas : any[] = [
+  {{#rowDatas}}
+  {{#curlyBracket}}
+    {{#fieldDatas}}
+    {{&fieldData}}
+    {{/fieldDatas}}
+{{/curlyBracket}} {{#isNotLastRow}},{{/isNotLastRow}}
+  {{/rowDatas}}
+]
+{{/tableDatas}}
+const main = async ()=> {
+    console.log(`Start seeding ...`)
+    {{#tableDatas}}
+    for (let index = 0; index < {{&tableName}}Datas.length; index++) {
+        var {{&tableName}}Data = {{&tableName}}Datas[index];
+        const {{&tableName}} = await prisma.{{&tableName}}.findUnique({
+            where: {
+              id: {{&tableName}}Data.id,
+            },
+          })
+        if({{&tableName}} == null)
+        {
+            await prisma.{{&tableName}}.create({
+                data: {{&tableName}}Data,
+              })
+        }
+        else
+        {
+            delete {{&tableName}}Data["createdAt"];
+            await prisma.{{&tableName}}.update({
+                where: {
+                  id: {{&tableName}}Data.id,
+                },
+                data: {{&tableName}}Data
+            })
+        }
+    }
+    {{/tableDatas}}
+    console.log(`Finish seeding ...`)
+  }
+  
+main();
+export {}

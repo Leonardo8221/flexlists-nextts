@@ -1,0 +1,233 @@
+import { useState } from 'react';
+import {
+  Container,
+  Typography,
+  Link,
+  Grid,
+  TextField,
+  Button,
+  InputAdornment,
+  IconButton,
+  Alert,
+} from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+import useResponsive from '../../hooks/useResponsive';
+import SocialLogin from '../../sections/auth/SocialLoginButtons';
+import LoginIcon from "@mui/icons-material/Login";
+import { MuiTelInput } from "mui-tel-input";
+import { authService } from '../../services/auth.service';
+import { useRouter } from 'next/router';
+import Iconify from '../../components/iconify';
+
+const Register = () => {
+  const theme = useTheme();
+  const isDesktop = useResponsive('up', 'md');
+  const [error, setError] = useState<string>();
+  const router = useRouter();
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [userName,setUserName] = useState<string>('');
+  const [password,setPassword] = useState<string>('');
+  const [firstName,setFirstName] = useState<string>('');
+  const [lastName,setLastName] = useState<string>('');
+
+  const handlePhoneChange = (newPhoneNumber:string) => {
+    setPhoneNumber(newPhoneNumber);
+  };
+  const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFirstName(event.target.value);
+  };
+  const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLastName(event.target.value);
+  };
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) =>
+  {
+     setUserName(event.target.value);
+  }
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
+  {
+     setPassword(event.target.value);
+  }
+
+  const handleSubmit = async() => {
+    try {
+      if(!firstName)
+      {
+        setError("First Name required")
+        return;
+      }
+      if(!lastName)
+      {
+        setError("Last Name required")
+        return;
+      }
+      if(!userName)
+      {
+        setError("User Name required")
+        return;
+      }
+      if(!password)
+      {
+        setError("Password required")
+        return;
+      }
+     
+      var response = await authService.register(firstName,lastName,userName,phoneNumber,password);
+      if(response && response.code == 0)
+      {
+        router.push({pathname:'/auth/login'});
+      }
+   } catch (error) {
+     console.log(error);
+   }
+  };
+  return (
+    <Container
+      maxWidth="sm"
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Grid
+        container
+        rowSpacing={4}
+        sx={{
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "32px",
+          borderRadius: "4px",
+          boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
+        }}
+      >
+        <Grid item xs={12}>
+          <Typography variant="h4" textAlign="center">
+            Sign Up
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          container
+        >
+        {error && <Alert severity="error">{error}</Alert>}
+        </Grid>
+        <Grid
+          item
+          container
+        >
+          <Grid item xs={6} sx={{ paddingRight: 1 }}>
+            <TextField
+              fullWidth
+              placeholder="First Name"
+              type="text"
+              required
+              value={firstName}
+              onChange = {handleFirstNameChange}
+            ></TextField>
+          </Grid>
+
+          <Grid item xs={6} sx={{ paddingLeft: 1 }}>
+            <TextField
+              fullWidth
+              placeholder="Last Name"
+              type="text"
+              required
+              value={lastName}
+              onChange = {handleLastNameChange}
+            ></TextField>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            placeholder="Email"
+            type="email"
+            required
+            value={userName}
+            onChange = {handleChangeEmail}
+          ></TextField>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            placeholder="Password"
+            required
+            value={password}
+            onChange={handleChangePassword}
+            type={showPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12}>
+          <MuiTelInput
+            value={phoneNumber}
+            onChange={handlePhoneChange}
+            defaultCountry="BA"
+            sx={{
+              width: "100%",
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button
+            href="#"
+            size="large"
+            variant="contained"
+            endIcon={<LoginIcon />}
+            sx={{
+              width: "100%",
+            }}
+            onClick={handleSubmit}
+          >
+            Sign Up
+          </Button>
+        </Grid>
+        <SocialLogin />
+        <Grid
+          item
+          xs={12}
+          columnSpacing={1}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "4rem",
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              display: "inline",
+            }}
+          >
+            Already have an account?
+          </Typography>
+          <Link
+            href="/auth/login"
+            variant="body1"
+            sx={{
+              paddingLeft: "4px",
+            }}
+          >
+            Sign In
+          </Link>
+        </Grid>
+      </Grid>
+    </Container>
+  );
+};
+
+export default Register;

@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model User {
+    id Int @id @default(autoincrement())
+    userName String
+    firstName String
+    lastName String
+    phoneNumber String
+    password String
+    passwordSalt String
+    ownerId Int
+    owner User @relation("UserOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    users        User[] @relation("UserOwner")
+    createdAt DateTime
+    updatedAt DateTime
+    roles Role[]
+    userRoles UserRole[]
+    permissions Permission[]
+    applications Application[]
+    tableDefinitions TableDefinition[]
+    tableMigrations TableMigration[]
+    fieldDefinitions FieldDefinition[]
+    accessKeys AccessKey[]
+    products Product[]
+}
+
+model Role {
+    id Int @id @default(autoincrement())
+    name String
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+    userRoles UserRole[]
+    rolePermissions RolePermission[]
+    accessKeys AccessKey[]
+}
+
+model UserRole {
+    id Int @id @default(autoincrement())
+    createdAt DateTime
+    updatedAt DateTime
+    roleId Int
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId Int
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model RolePermission {
+    id Int @id @default(autoincrement())
+    entityID String
+    createdAt DateTime
+    updatedAt DateTime
+    permissionId Int
+    permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    roleId Int
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Permission {
+    id Int @id @default(autoincrement())
+    name String
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+    rolePermissions RolePermission[]
+}
+
+model Application {
+    id Int @id @default(autoincrement())
+    name String
+    description String
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+    tableDefinitionsApplication RelTableDefinitionApplication[]
+}
+
+model TableDefinition {
+    id Int @id @default(autoincrement())
+    name String
+    description String
+    database String
+    server String
+    icon Bytes
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+    tableDefinitionsApplication RelTableDefinitionApplication[]
+    tableMigrations TableMigration[]
+    fieldDefinitions FieldDefinition[]
+    accessKeys AccessKey[]
+}
+
+model RelTableDefinitionApplication {
+    id Int @id @default(autoincrement())
+    tableDefinitionId Int
+    tableDefinition   TableDefinition @relation(fields: [tableDefinitionId], references: [id])
+    applicationId Int
+    application   Application @relation(fields: [applicationId], references: [id])
+
+}
+
+model TableMigration {
+    id Int @id @default(autoincrement())
+    before String
+    after String
+    action String
+    status String
+    tableDefinitionId Int
+    tableDefinition TableDefinition @relation(fields: [tableDefinitionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model FieldDefinition {
+    id Int @id @default(autoincrement())
+    name String
+    type String
+    description String
+    tableDefinitionId Int
+    tableDefinition TableDefinition @relation(fields: [tableDefinitionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+}
+
+model AccessKey {
+    id Int @id @default(autoincrement())
+    key String
+    description String
+    tableDefinitionId Int
+    tableDefinition TableDefinition @relation(fields: [tableDefinitionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    roleId Int
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+}
+
+model Product {
+    id Int @id @default(autoincrement())
+    name String
+    description String
+    price Decimal
+    expiredDate DateTime
+    ownerId Int
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime
+    updatedAt DateTime
+}
