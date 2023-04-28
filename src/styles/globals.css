@@ -105,3 +105,118 @@ a {
     color-scheme: dark;
   }
 } */
+
+html {
+  height  : 100%;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+body {
+  height  : 100%;
+  overflow: auto;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+* {
+  overscroll-behavior: none !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+.list_action .dropdown-toggle {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  padding-top: 10px;
+}
+.list_action .dropdown-toggle:hover {
+  background-color: transparent;
+}
+.list_action .dropdown-toggle::after {
+  display: none;
+}
+#kanban_action .dropdown-toggle{
+  padding: 0;
+}
+.MuiBox-root.css-180500e hr{
+  /* background-color: #54A6FB; */
+  opacity: 0.7;
+}
+#views_search input {
+  padding: 4px;
+}
+#new_row_form .css-1xhypcz-MuiStack-root {
+  padding-top: 0;
+}
+.toolbar_item:last-child {
+  /* margin-right: 6px; */
+}
+.Mui-error fieldset {
+  border-color: #d32f2f !important;
+}
+#font_choice svg {
+  display: none;
+}
+#font_choice button {
+  background-color: transparent;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+#font_choice button::after {
+  display: none;
+}
+.choice_text .MuiInputBase-formControl {
+  font-family: inherit;
+}
+form {
+  width: 100%;
+}
+.MuiTableHead-root {
+  z-index: 1;
+}
+.sort_column .MuiSelect-select {
+  display: flex;
+  text-transform: capitalize;
+}
+.sort_column .MuiSelect-select span {
+  margin-top: 4px;
+}
+#search_column_list fieldset {
+  border: none;
+}
+@media only screen and (min-width: 900px) {
+  .MuiBox-root.css-180500e {
+    display: none;
+  }
+  .Mui-TableHeadCell-ResizeHandle-Wrapper:hover {
+    display: block;
+  }
+}
+@media only screen and (max-width: 500px) {
+  #social_btns .MuiButton-startIcon {
+    margin: 0;
+  }
+}

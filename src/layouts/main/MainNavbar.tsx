@@ -105,7 +105,7 @@ export default function MainNavbar() {
               Sign up, it is free
             </Button>
 
-            <Typography sx={{ ml: 1, color: 'text.secondary' }} onClick={()=>gotoSignin()}>
+            <Typography sx={{ ml: 1, color: 'text.secondary', cursor: 'pointer' }} onClick={()=>gotoSignin()}>
               Sign in
             </Typography>
           </MHidden>

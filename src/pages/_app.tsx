@@ -4,6 +4,9 @@ import type { AppProps } from 'next/app'
 import ThemeProvider from 'src/theme';
 import { StyledChart } from 'src/components/chart';
 import AuthGuard from 'src/guards/AuthGuard';
+import { Provider } from 'react-redux';
+import store from '../redux/store';
+import '../styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -12,7 +15,9 @@ export default function App({ Component, pageProps }: AppProps) {
         {/* <ScrollToTop /> */}
         <StyledChart />
         <AuthGuard>
-        <Component {...pageProps} />
+          <Provider store={store}>
+            <Component {...pageProps} />
+          </Provider>
         </AuthGuard>
       </LanguagesProvider>
     </ThemeProvider>

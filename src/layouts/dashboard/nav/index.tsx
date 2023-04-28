@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
@@ -77,7 +76,7 @@ export default function Nav({ openNav, onCloseNav }:NavProps) {
         </Link>
       </Box>
 
-      <NavSection data={navConfig} />
+      <NavSection data={navConfig} open={true} />
 
       <Box sx={{ flexGrow: 1 }} />
 

@@ -70,7 +70,7 @@ const ERROR = {
   contrastText: '#fff',
 };
 
-const palette = {
+export const palette_dark = {
   common: { black: '#000', white: '#fff' },
   primary: PRIMARY,
   secondary: SECONDARY,
@@ -81,14 +81,22 @@ const palette = {
   grey: GREY,
   divider: alpha(GREY[500], 0.24),
   text: {
-    primary: GREY[800],
+    primary: '#eee',
     secondary: GREY[600],
     disabled: GREY[500],
+    selected: '#54A6FB'
   },
   background: {
     paper: '#fff',
-    default: GREY[100],
+    default: '#333',
     neutral: GREY[200],
+    gap: '#f5f5f5',
+    table_header_footer: '#666',
+    table_body: '#999',
+    selected: '#EEF7FF'
+  },
+  border: {
+    default: 'rgba(255, 255, 255, 0.05)'
   },
   action: {
     active: GREY[600],
@@ -102,4 +110,42 @@ const palette = {
   },
 };
 
-export default palette;
+export const palette_light = {
+  common: { black: '#000', white: '#fff' },
+  primary: PRIMARY,
+  secondary: SECONDARY,
+  info: INFO,
+  success: SUCCESS,
+  warning: WARNING,
+  error: ERROR,
+  grey: GREY,
+  divider: alpha(GREY[500], 0.24),
+  text: {
+    primary: '#666',
+    secondary: GREY[600],
+    disabled: GREY[500],
+    selected: '#54A6FB'
+  },
+  background: {
+    paper: '#fff',
+    default: '#fff',
+    neutral: GREY[200],
+    gap: '#f5f5f5',
+    table_header_footer: '#EDF2F5',
+    table_body: '#fff',
+    selected: '#EEF7FF'
+  },
+  border: {
+    default: 'rgba(0, 0, 0, 0.05)'
+  },
+  action: {
+    active: GREY[600],
+    hover: alpha(GREY[500], 0.08),
+    selected: alpha(GREY[500], 0.16),
+    disabled: alpha(GREY[500], 0.8),
+    disabledBackground: alpha(GREY[500], 0.24),
+    focus: alpha(GREY[500], 0.24),
+    hoverOpacity: 0.08,
+    disabledOpacity: 0.48,
+  },
+};

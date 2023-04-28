@@ -18,6 +18,12 @@ import MainLayout from 'src/layouts/main/MainLayout';
 //   height: '100%'
 // });
 
+declare module '@mui/material/styles/createPalette' {
+  interface Palette {
+    palette_style?: any;
+  }
+}
+
 const ContentStyle = styled('div')(({ theme }) => ({
   overflow: 'hidden',
   position: 'relative',

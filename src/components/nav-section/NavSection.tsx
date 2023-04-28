@@ -1,52 +1,65 @@
-import PropTypes from 'prop-types';
-// @mui
+import { NavLink as RouterLink } from 'react-router-dom';
 import { Box, List, ListItemText } from '@mui/material';
-//
+import { useRouter } from 'next/router';
 import { StyledNavItem, StyledNavItemIcon } from './styles';
-
-// ----------------------------------------------------------------------
 
 type NavSectionProps = {
   data: any[],
+  open: boolean
 };
 
-export default function NavSection({ data = [], ...other }: NavSectionProps) {
+export default function NavSection({ data = [], open = false, ...other }: NavSectionProps) {
+  const router = useRouter();
+
   return (
     <Box {...other}>
-      <List disablePadding sx={{ p: 1 }}>
+      <List disablePadding sx={{ p: 1, paddingLeft: 2, position: 'relative', minHeight: '510px', height: 'calc(100vh - 110px)', overflow: 'auto' }}>
         {data.map((item) => (
-          <NavItem key={item.title} item={item} />
+          <NavItem key={item.title} item={item} open={open} pathname={router.pathname} />
         ))}
       </List>
     </Box>
   );
 }
 
-// ----------------------------------------------------------------------
-
 type NavItemProps = {
   item: any,
+  open: boolean,
+  pathname: string
 };
 
-function NavItem({ item }:NavItemProps) {
-  const { title, path, icon, info } = item;
+function NavItem({ item, open, pathname }:NavItemProps) {
+  const { title, path, icon } = item;
 
   return (
     <StyledNavItem
+      // component={RouterLink}
       to={path}
       sx={{
-        '&.active': {
-          color: 'text.primary',
-          bgcolor: 'action.selected',
-          fontWeight: 'fontWeightBold',
-        },
+        position: icon === 'Info' ? 'absolute' : 'relative',
+        bottom: icon === 'Info' ? '20px' : 'inherit',
+        marginBottom: icon === 'Info' ? 0 : 3,
+        width: !open ? 56 : 'inherit'
       }}
     >
-      <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
+      {pathname === '/dashboard' ? 
+      <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon> :
+      <Box
+        component="span"
+        className="svg-color"
+        sx={{
+          width: 54,
+          height: 50,
+          display: 'inline-block',
+          backgroundImage: `url(/assets/icons/navbar/${pathname === path ? icon + 'Active' : icon}.svg)`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          borderRadius: '10px'
+        }}
+      />
+      }
 
-      <ListItemText disableTypography primary={title} />
-
-      {info && info}
+      {open && <ListItemText disableTypography primary={title} sx={{ marginLeft: 2 }} />}
     </StyledNavItem>
   );
 }

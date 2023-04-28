@@ -9,6 +9,7 @@ import {
   InputAdornment,
   IconButton,
   Alert,
+  Box
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
@@ -34,16 +35,20 @@ const Register = () => {
   const handlePhoneChange = (newPhoneNumber:string) => {
     setPhoneNumber(newPhoneNumber);
   };
+
   const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFirstName(event.target.value);
   };
+
   const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLastName(event.target.value);
   };
+
   const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) =>
   {
      setUserName(event.target.value);
   }
+
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
   {
      setPassword(event.target.value);
@@ -81,152 +86,190 @@ const Register = () => {
      console.log(error);
    }
   };
+
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Grid
-        container
-        rowSpacing={4}
+    <>
+      <Box
+        component="img"
         sx={{
+          height: '100%',
+          width: '100%',
+          position: 'absolute',
+          zIndex: -1
+        }}
+        alt="The house from the offer."
+        src="/assets/images/background.png"
+      />
+      <Container
+        maxWidth="sm"
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "32px",
-          borderRadius: "4px",
-          boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
         }}
       >
-        <Grid item xs={12}>
-          <Typography variant="h4" textAlign="center">
-            Sign Up
-          </Typography>
-        </Grid>
         <Grid
-          item
           container
-        >
-        {error && <Alert severity="error">{error}</Alert>}
-        </Grid>
-        <Grid
-          item
-          container
-        >
-          <Grid item xs={6} sx={{ paddingRight: 1 }}>
-            <TextField
-              fullWidth
-              placeholder="First Name"
-              type="text"
-              required
-              value={firstName}
-              onChange = {handleFirstNameChange}
-            ></TextField>
-          </Grid>
-
-          <Grid item xs={6} sx={{ paddingLeft: 1 }}>
-            <TextField
-              fullWidth
-              placeholder="Last Name"
-              type="text"
-              required
-              value={lastName}
-              onChange = {handleLastNameChange}
-            ></TextField>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            placeholder="Email"
-            type="email"
-            required
-            value={userName}
-            onChange = {handleChangeEmail}
-          ></TextField>
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            placeholder="Password"
-            required
-            value={password}
-            onChange={handleChangePassword}
-            type={showPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          ></TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <MuiTelInput
-            value={phoneNumber}
-            onChange={handlePhoneChange}
-            defaultCountry="BA"
-            sx={{
-              width: "100%",
-            }}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <Button
-            href="#"
-            size="large"
-            variant="contained"
-            endIcon={<LoginIcon />}
-            sx={{
-              width: "100%",
-            }}
-            onClick={handleSubmit}
-          >
-            Sign Up
-          </Button>
-        </Grid>
-        <SocialLogin />
-        <Grid
-          item
-          xs={12}
-          columnSpacing={1}
+          rowSpacing={4}
           sx={{
-            display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            marginTop: "4rem",
+            justifyContent: "center",
+            py: 4,
+            px: {xs: 1, md: 4},
+            borderRadius: "4px",
+            boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
+            backgroundColor: 'white',
+            marginTop: 0,
+            maxHeight: '93vh',
+            overflow: 'auto'
           }}
         >
-          <Typography
-            variant="body1"
+          <Grid item xs={12} sx={{ paddingTop: '0 !important' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
+              <Link href="/">
+                <Box
+                  component="img"
+                  sx={{
+                    width: 60,
+                    height: 45,
+                    objectFit: 'contain',
+                    marginTop: '2px'
+                  }}
+                  alt="Logo"
+                  src="/assets/logo_auth.png"
+                />
+              </Link>
+            </Box>
+            <Typography variant="h4" textAlign="center">
+              Sign Up
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            container
+          >
+            {error && <Alert severity="error">{error}</Alert>}
+          </Grid>
+
+          <Grid
+            item
+            container
+          >
+            <Grid item xs={6} sx={{ paddingRight: 1 }}>
+              <TextField
+                fullWidth
+                placeholder="First Name"
+                type="text"
+                required
+                value={firstName}
+                onChange = {handleFirstNameChange}
+              ></TextField>
+            </Grid>
+
+            <Grid item xs={6} sx={{ paddingLeft: 1 }}>
+              <TextField
+                fullWidth
+                placeholder="Last Name"
+                type="text"
+                required
+                value={lastName}
+                onChange = {handleLastNameChange}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Email"
+              type="email"
+              required
+              value={userName}
+              onChange = {handleChangeEmail}
+            ></TextField>
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Password"
+              required
+              value={password}
+              onChange={handleChangePassword}
+              type={showPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <MuiTelInput
+              value={phoneNumber}
+              onChange={handlePhoneChange}
+              defaultCountry="BA"
+              sx={{
+                width: "100%",
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              href="#"
+              size="large"
+              variant="contained"
+              endIcon={<LoginIcon />}
+              sx={{
+                width: "100%",
+                backgroundColor: '#FFD232',
+                color: '#0D0934'
+              }}
+              onClick={handleSubmit}
+            >
+              Sign Up
+            </Button>
+          </Grid>
+          <SocialLogin />
+          <Grid
+            item
+            xs={12}
+            columnSpacing={1}
             sx={{
-              display: "inline",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
             }}
           >
-            Already have an account?
-          </Typography>
-          <Link
-            href="/auth/login"
-            variant="body1"
-            sx={{
-              paddingLeft: "4px",
-            }}
-          >
-            Sign In
-          </Link>
+            <Typography
+              variant="body1"
+              sx={{
+                display: "inline",
+              }}
+            >
+              Already have an account?
+            </Typography>
+            <Link
+              href="/auth/login"
+              variant="body1"
+              sx={{
+                paddingLeft: "4px",
+                color: '#0D0934'
+              }}
+            >
+              Sign In
+            </Link>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </>
   );
 };
 
