@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const nextConfig = {
-  reactStrictMode: true,
+  // reactStrictMode: true,
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = { fs: false, module: false }

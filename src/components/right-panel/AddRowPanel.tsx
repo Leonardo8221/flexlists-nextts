@@ -12,7 +12,6 @@ import {
 import { useTheme } from '@mui/material/styles';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -269,7 +268,7 @@ const AddRowPanel = (props: Props) => {
                   {column.choices.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
                 </Select>
               </FormControl>
-              : <></>
+              : <div key={column.name}></div>
             )}
           </Stack>
         </form> :
