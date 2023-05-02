@@ -52,7 +52,7 @@ export default function TourView() {
        }
      };
 
-     document.body.addEventListener('click', closePopup);
+    //  document.body.addEventListener('click', closePopup);
    }, []);
 
   const maskProperties = [
