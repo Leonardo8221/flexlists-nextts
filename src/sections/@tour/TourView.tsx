@@ -41,18 +41,19 @@ export default function TourView() {
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
 
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    setWindowHeight(window.innerHeight);
+   useEffect(() => {
+     setWindowWidth(window.innerWidth);
+     setWindowHeight(window.innerHeight);
 
-    const closePopup = (e: any) => {
-      if (e.target.classList.contains('tour_modal')) {
-        handleClose();
-      }
-    };
+     const closePopup = (e: any) => {
+       if (e.target.classList.contains('tour_modal')) {
+         handleClose();
+         console.log(e)
+       }
+     };
 
-    document.body.addEventListener('click', closePopup);
-  }, []);
+     document.body.addEventListener('click', closePopup);
+   }, []);
 
   const maskProperties = [
     {
@@ -94,12 +95,12 @@ export default function TourView() {
     setVisibleMask(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-    setSteps(0);
-    setMaskProperty(maskProperties[0]);
-    setVisibleMask(false);
-  };
+   const handleClose = () => {
+     setOpen(false);
+     setSteps(0);
+     setMaskProperty(maskProperties[0]);
+     setVisibleMask(false);
+   };
 
   const goPrevious = () => {
     setSteps(steps - 1);
@@ -110,6 +111,30 @@ export default function TourView() {
     setSteps(steps + 1);
     setMaskProperty(maskProperties[steps + 1]);
   };
+// --------------------AUTO OPEN TOUR VIEW START----------------------------------------------------
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsOpen(true); // set the state to true after 1 second
+    }, 1);
+
+    return () => clearTimeout(timer); // clear the timeout on component unmount
+  }, []);
+
+  useEffect(() => {
+    const button = document.getElementById('tour-button');
+    if (isOpen && button) {
+      const clickTimer = setTimeout(() => {
+        button.click(); // simulate a button click after 1 second
+      }, 1);
+
+      return () => clearTimeout(clickTimer); // clear the timeout on component unmount
+    }
+  }, [isOpen]);
+
+
+// --------------------AUTO OPEN TOUR VIEW END----------------------------------------------------
 
   const MaskedBackground = styled('div')(({ theme }) => ({
     position: "absolute",
@@ -131,7 +156,8 @@ export default function TourView() {
       <Container sx={{ py: 3, maxWidth: 'inherit !important', overflow: 'auto', height: `${windowHeight - 96}px` }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           You don’t have any lists created yet.
-          <Button onClick={handleClickOpen}>Tour</Button>
+          {/* <Button onClick={handleClickOpen}>Tour</Button> */}
+          <Button id="tour-button" onClick={handleClickOpen} disabled={!isOpen}>Tour</Button>
         </Typography>
         <Link href="/coming-soon">
           <Button
@@ -177,13 +203,13 @@ export default function TourView() {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', paddingTop: '16px' }}>
               <Box>
                 {steps === 0 ?
-                  <Button variant="outlined" size="small" onClick={handleClose}>Skip</Button> :
+                  <Button variant="outlined" size="small" sx={{display: "none"}} >Skip</Button> :
                   <Button variant="contained" size="small" onClick={goPrevious}>Previous</Button>
                 }
               </Box>
               <Box>
                 {steps === 5 ?
-                  <Button variant="outlined" size="small" onClick={handleClose}>Skip</Button> :
+                  <Button variant="outlined" size="small" onClick={handleClose} >Finish</Button> :
                   <Button variant="contained" size="small" onClick={goNext}>Next</Button>
                 }
               </Box>
