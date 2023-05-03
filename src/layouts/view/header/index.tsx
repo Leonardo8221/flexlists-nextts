@@ -24,7 +24,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   },
   [theme.breakpoints.up('lg')]: {
     height: HEADER_DESKTOP,
-    padding: theme.spacing(1, 3),
+    padding: theme.spacing(1, 2),
   },
   minHeight: 'inherit !important'
 }));
@@ -51,8 +51,8 @@ export default function Header({ onOpenNav }:HeaderProps) {
             component="span"
             className="svg-color"
             sx={{
-              width: 32,
-              height: 32,
+              width: 24,
+              height: 24,
               display: 'inline-block',
               bgcolor: '#54A6FB',
               mask: `url(/assets/icons/navbar/menu.svg) no-repeat center / contain`,
@@ -61,8 +61,8 @@ export default function Header({ onOpenNav }:HeaderProps) {
           />
         </IconButton>
 
-        <Link href="/">
-          <Box sx={{ px: {xs: 1, md: 2.5}, display: 'inline-flex', marginLeft: { lg: 2 } }}>
+        <Link style={{display: 'flex'}} href="/">
+          <Box sx={{ px: {xs: 1, md: 2.5}, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
             <Logo />
           </Box>
         </Link>
