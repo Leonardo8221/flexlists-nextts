@@ -18,7 +18,7 @@ const BlankPage = (props: Props) => {
   const isDesktop = useResponsive('up', 'md');
 
   return (
-    <Box sx={{  }}>
+    <Box sx={{}}>
       
     </Box>
   );

@@ -13,7 +13,8 @@ const HEADER_DESKTOP = 48;
 
 const StyledRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.palette_style.background.default,
-  boxShadow: 'none'
+  boxShadow: 'none',
+  borderBottom: '1px solid #eee'
 }));
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({  

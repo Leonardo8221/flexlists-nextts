@@ -59,7 +59,7 @@ const Header = (props: Props) => {
         borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
         px: {xs: 0.5, lg: 2},
         py: {xs: 1, lg: 0},
-        width: {md: 'calc(100vw - 100px)'}
+        width: {md: 'calc(100vw - 100px)'},
       }}
     >
       <Box

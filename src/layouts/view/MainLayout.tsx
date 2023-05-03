@@ -33,12 +33,12 @@ const Main = styled('div')(({ theme }) => ({
 const Content = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.palette_style.background.gap,
   width: '100%',
-  [theme.breakpoints.up('lg')]: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  },
-  paddingTop: theme.spacing(1)
+  // [theme.breakpoints.up('lg')]: {
+  //   paddingLeft: theme.spacing(1),
+  //   paddingRight: theme.spacing(1),
+  //   paddingBottom: theme.spacing(1)
+  // },
+  // paddingTop: theme.spacing(1)
 }));
 
 type MainLayoutProps = {

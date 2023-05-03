@@ -19,7 +19,7 @@ export default function List() {
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,
-          boxShadow: '0 0 10px 10px rgba(0, 0, 0, 0.05)',
+          boxShadow: 'none',
           width: '100%',
           height: {xs: 'calc(100% - 8px)', md: '100%'},
           overflow: 'hidden'

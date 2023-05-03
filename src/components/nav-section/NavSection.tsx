@@ -13,7 +13,7 @@ export default function NavSection({ data = [], open = false, ...other }: NavSec
 
   return (
     <Box {...other}>
-      <List disablePadding sx={{ p: 1, paddingLeft: 2, position: 'relative', minHeight: '510px', height: 'calc(100vh - 110px)', overflow: 'auto' }}>
+      <List disablePadding sx={{ p: 1,  position: 'relative', minHeight: '510px', height: 'calc(100vh - 110px)', overflow: 'auto' }}>
         {data.map((item) => (
           <NavItem key={item.title} item={item} open={open} pathname={router.pathname} />
         ))}
@@ -39,7 +39,7 @@ function NavItem({ item, open, pathname }:NavItemProps) {
         position: icon === 'Info' ? 'absolute' : 'relative',
         bottom: icon === 'Info' ? '20px' : 'inherit',
         marginBottom: icon === 'Info' ? 0 : 3,
-        width: !open ? 56 : 'inherit'
+        width: !open ? 42 : 'inherit'
       }}
     >
       {pathname === '/dashboard' ? 
@@ -48,9 +48,11 @@ function NavItem({ item, open, pathname }:NavItemProps) {
         component="span"
         className="svg-color"
         sx={{
-          width: 54,
-          height: 50,
-          display: 'inline-block',
+          width: 42,
+          height: 42,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
           backgroundImage: `url(/assets/icons/navbar/${pathname === path ? icon + 'Active' : icon}.svg)`,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',

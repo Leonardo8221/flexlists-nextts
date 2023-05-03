@@ -9,7 +9,7 @@ import Logo from '../../../components/logo';
 import { useTheme } from '@mui/material/styles';
 import Link from 'next/link';
 
-const NAV_WIDTH = 84;
+const NAV_WIDTH = 64;
 const APP_BAR_DESKTOP = 80;
 
 type NavProps = {
@@ -34,7 +34,7 @@ export default function Nav({ openNav, onCloseNav }:NavProps) {
     <Scrollbar
       sx={{
         height: 1,
-        '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
+        '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
       }}
     >
       <NavSection data={navConfig} open={openNav} />
