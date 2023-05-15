@@ -12,7 +12,7 @@ import AddColumnButton from "../../components/add-button/AddColumnButton";
 import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from '../../hooks/useResponsive';
 import { connect } from 'react-redux';
-import { setColumns, setRows } from '../../redux/store';
+import { fetchColumns, setColumns, setRows } from '../../redux/actions/fieldDefinitionActions';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -22,10 +22,11 @@ type Props = {
   rows: any;
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
+  fetchColumns:()=>void;
 };
 
 const DataTable = (props: Props) => {
-  const { tab, columns, rows, setColumns, setRows } = props;
+  const { tab, columns, rows, setColumns, setRows,fetchColumns } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -51,15 +52,17 @@ const DataTable = (props: Props) => {
       setSelectedRowData(rows[parseInt(Object.keys(rowSelection).pop() || '0')]);
     }
   }, [rows, rowSelection]);
-
+  useEffect(() => {
+    fetchColumns();
+  }, [fetchColumns]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
       return {
-        accessorKey: dataColumn.name,
-        header: dataColumn.label,
+        accessorKey: dataColumn.id,
+        header: dataColumn.name,
         Header: ({ column }: any) => (
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex' }} key={column.id}>
             <Box
               component="span"
               className="svg-color"
@@ -84,7 +87,7 @@ const DataTable = (props: Props) => {
           dataColumns.forEach((item: any) => {
             if (item.type === 'choice') {
               item.choices.forEach((choice: any) => {
-                if (choice.label === renderedCellValue) {
+                if (choice.name === renderedCellValue) {
                   value_color = choice.color;
                   font = choice.font;
                 }
@@ -94,6 +97,7 @@ const DataTable = (props: Props) => {
 
           return (
             dataColumn.type === "id" || dataColumn.type === "other_text_field" || dataColumn.type === "textarea" || dataColumn.type === "date" || dataColumn.type === "integers" || dataColumn.type === "floating" ? <Box
+              key={row.id}
               sx={{
                 minWidth: '100px',
                 overflow: 'hidden',
@@ -104,6 +108,7 @@ const DataTable = (props: Props) => {
               {renderedCellValue}
             </Box> :
             dataColumn.type === "avatar" ? <Box
+             key={row.id}
               sx={{
                 display: 'flex',
                 alignItems: 'center'
@@ -119,6 +124,7 @@ const DataTable = (props: Props) => {
               <div style={{ marginLeft: '5px' }}>{renderedCellValue}</div>
             </Box> :
             dataColumn.type === "choice" ? <Box
+              key={row.id}
               sx={{
                 textAlign: 'center',
                 bgcolor: value_color.bg,
@@ -352,13 +358,18 @@ const DataTable = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
-  rows: state.rows
+  columns: state.fieldDefinition.columns,
+  rows: state.fieldDefinition.rows
 });
 
 const mapDispatchToProps = {
   setColumns,
-  setRows
+  setRows,
+  fetchColumns
 };
-
+// const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+//     setColumns:(columns: any) => dispatch(setColumns(columns)),
+//     setRows:(rows: any) => dispatch(setRows(rows)),
+//     fetchColumns: () => dispatch(fetchColumns()),
+// });
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

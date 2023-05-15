@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, TextField } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setFilters } from '../../redux/store';
+import { setFilters } from '../../redux/actions/fieldDefinitionActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -95,93 +95,98 @@ const Filter = (props: Props) => {
           />
         </Box>
         <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 108}px`, overflow: 'auto' }}>
-          {filters.map((filter: any, index: number) => (
-            <Box key={filter.column} sx={{ marginBottom: 1 }}>
-              {index ? <Select
-                value={filter.condition}
-                onChange={(e) => { handleFilters(index, 'condition', e.target.value); }}
-                size="small"
-                sx={{ width: {md: '168px'}, marginBottom: 1 }}
-              >
-                <MenuItem value='and'>and</MenuItem>
-                <MenuItem value='or'>or</MenuItem>
-              </Select> : <></>}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Select
-                  value={filter.column}
-                  onChange={(e) => { handleFilters(index, 'column', e.target.value); }}
+          {filters.map((filter: any, index: number) =>{
+             var column = getColumn(filter.column)
+             return (
+              <Box key={filter.column} sx={{ marginBottom: 1 }}>
+                {index ? <Select
+                  value={filter.condition}
+                  onChange={(e) => { handleFilters(index, 'condition', e.target.value); }}
                   size="small"
-                  sx={{ width: {md: '168px'}, textTransform: 'capitalize' }}
-                  className="sort_column"
+                  sx={{ width: {md: '168px'}, marginBottom: 1 }}
                 >
-                  {columns.map((column: any) => (
-                    <MenuItem key={column.name} value={column.name} sx={{ display: 'flex' }}>
-                      <Box
-                        component="span"
-                        className="svg-color"
-                        sx={{
-                          width: 14,
-                          height: 14,
-                          display: 'inline-block',
-                          bgcolor: theme.palette.palette_style.text.primary,
-                          mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                          WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                          marginRight: {xs: 0.2, md: 1}
-                        }}
-                      />
-                      <Box>{column.label}</Box>
-                    </MenuItem>
-                  ))}
-                </Select>
-                <Select
-                  value={filter.operator}
-                  onChange={(e) => { handleFilters(index, 'operator', e.target.value); }}
-                  size="small"
-                  sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
-                >
-                  <MenuItem value='is'>is</MenuItem>
-                  <MenuItem value='is bigger than'>is bigger than</MenuItem>
-                </Select>
-                {getColumn(filter.column).type === 'choice' ?
-                <Select
-                  value={filter.operand}
-                  onChange={(e) => { handleFilters(index, 'operand', e.target.value); }}
-                  size="small"
-                  sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
-                >
-                  {getColumn(filter.column).choices.map((choice: any) => (
-                    <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>
-                  ))}
-                </Select> :
-                getColumn(filter.column).type === 'other_text_field' || getColumn(filter.column).type === 'textarea' || getColumn(filter.column).type === 'integers' || getColumn(filter.column).type === 'floating' || getColumn(filter.column).type === 'avatar' ?
-                <TextField
-                  size="small"
-                  type={getColumn(filter.column).type === "integers" || getColumn(filter.column).type === "floating" ? 'number' : ''}
-                  onChange={(e) => { handleFilters(index, 'operand', e.target.value); }}
-                  value={filter.operand}
-                  sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
-                /> :
-                <></>}
-                <Box
-                  component="span"
-                  className="svg-color add_choice"
-                  sx={{
-                    width: {xs: 50, md: 18},
-                    height: 18,
-                    display: 'inline-block',
-                    bgcolor: theme.palette.palette_style.text.primary,
-                    mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-                    WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-                    maskPosition: {xs: 'right', md: 'inherit'},
-                    cursor: 'pointer',
-                    marginTop: 1.5,
-                    marginLeft: {xs: '8px', md: '30px'}
-                  }}
-                  onClick={() => { removeFilter(index); }}
-                />
+                  <MenuItem value='and'>and</MenuItem>
+                  <MenuItem value='or'>or</MenuItem>
+                </Select> : <></>}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Select
+                    value={filter.column}
+                    onChange={(e) => { handleFilters(index, 'column', e.target.value); }}
+                    size="small"
+                    sx={{ width: {md: '168px'}, textTransform: 'capitalize' }}
+                    className="sort_column"
+                  >
+                    {columns.map((column: any) => (
+                      <MenuItem key={column.name} value={column.name} sx={{ display: 'flex' }}>
+                        <Box
+                          component="span"
+                          className="svg-color"
+                          sx={{
+                            width: 14,
+                            height: 14,
+                            display: 'inline-block',
+                            bgcolor: theme.palette.palette_style.text.primary,
+                            mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                            WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                            marginRight: {xs: 0.2, md: 1}
+                          }}
+                        />
+                        <Box>{column.label}</Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <Select
+                    value={filter.operator}
+                    onChange={(e) => { handleFilters(index, 'operator', e.target.value); }}
+                    size="small"
+                    sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
+                  >
+                    <MenuItem value='is'>is</MenuItem>
+                    <MenuItem value='is bigger than'>is bigger than</MenuItem>
+                  </Select>
+                  {column?.type === 'choice' ?
+                  <Select
+                    value={filter.operand}
+                    onChange={(e) => { handleFilters(index, 'operand', e.target.value); }}
+                    size="small"
+                    sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
+                  >
+                    {column?.choices.map((choice: any) => (
+                      <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>
+                    ))}
+                  </Select> :
+                  column?.type === 'other_text_field' || column?.type === 'textarea' || column?.type === 'integers' || column?.type === 'floating' || column?.type === 'avatar' ?
+                  <TextField
+                    size="small"
+                    type={column?.type === "integers" || column?.type === "floating" ? 'number' : ''}
+                    onChange={(e) => { handleFilters(index, 'operand', e.target.value); }}
+                    value={filter.operand}
+                    sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
+                  /> :
+                  <></>}
+                  <Box
+                    component="span"
+                    className="svg-color add_choice"
+                    sx={{
+                      width: {xs: 50, md: 18},
+                      height: 18,
+                      display: 'inline-block',
+                      bgcolor: theme.palette.palette_style.text.primary,
+                      mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                      WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                      maskPosition: {xs: 'right', md: 'inherit'},
+                      cursor: 'pointer',
+                      marginTop: 1.5,
+                      marginLeft: {xs: '8px', md: '30px'}
+                    }}
+                    onClick={() => { removeFilter(index); }}
+                  />
+                </Box>
               </Box>
-            </Box>
-          ))}
+              )
+          }
+          )
+         }
         </Box>
         <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} onClick={addFilter}>
           <Box
@@ -207,8 +212,8 @@ const Filter = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
-  filters: state.filters
+  columns: state.fieldDefinition.columns,
+  filters: state.fieldDefinition.filters
 });
 
 const mapDispatchToProps = {

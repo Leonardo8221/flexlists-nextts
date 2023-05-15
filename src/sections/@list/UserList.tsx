@@ -49,7 +49,7 @@ const UserList = (props: Props) => {
 }
 
 const mapStateToProps = (state: any) => ({
-  users: state.users
+  users: state.user.users
 });
 
 export default connect(mapStateToProps)(UserList);

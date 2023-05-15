@@ -19,7 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import { FormControl } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { connect } from 'react-redux';
-import { setMessages } from '../../redux/store';
+import { setMessages } from '../../redux/actions/messageActions';
 
 interface Props {
   rowData: any;
@@ -227,9 +227,9 @@ const AddRowPanel = (props: Props) => {
             {columns.map((column: any) =>
               column.type === "other_text_field" || column.type === "textarea" || column.type === "integers" || column.type === "floating" || column.type === "avatar" ?
               <TextField
-                key={column.name}
-                label={column.label}
-                name={column.name}
+                key={column.id}
+                label={column.name}
+                name={column.id}
                 size="small"
                 type={column.type === "integers" || column.type === "floating" ? 'number' : ''}
                 onChange={(e) =>
@@ -265,7 +265,7 @@ const AddRowPanel = (props: Props) => {
                   size="small"
                   error={submit && !values[column.name]}
                 >
-                  {column.choices.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
+                  {column.choices.map((choice: any) => <MenuItem key={choice.name} value={choice.name} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
                 </Select>
               </FormControl>
               : <div key={column.name}></div>
@@ -397,7 +397,7 @@ const AddRowPanel = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  messages: state.messages
+  messages: state.message.messages
 });
 
 const mapDispatchToProps = {
