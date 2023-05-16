@@ -66,6 +66,7 @@ const DataTable = (props: Props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
+      var dataColumnType = (dataColumn.type as string).toLowerCase()
       return {
         accessorKey: dataColumn.id,
         header: dataColumn.name,
@@ -104,7 +105,7 @@ const DataTable = (props: Props) => {
           });
 
           return (
-            dataColumn.type === "id" || dataColumn.type === "text" || dataColumn.type === "textarea" || dataColumn.type === "date" || dataColumn.type === "integers" || dataColumn.type === "floating" ? <Box
+            dataColumnType === "id" || dataColumnType === "text" || dataColumnType === "textarea" || dataColumnType === "date" || dataColumnType === "integers" || dataColumnType === "floating" ? <Box
               key={row.id}
               sx={{
                 minWidth: '100px',
@@ -131,7 +132,7 @@ const DataTable = (props: Props) => {
               />
               <div style={{ marginLeft: '5px' }}>{renderedCellValue}</div>
             </Box> :
-            dataColumn.type === "choice" ? <Box
+            dataColumnType === "choice" ? <Box
               key={row.id}
               sx={{
                 textAlign: 'center',
@@ -212,6 +213,7 @@ const DataTable = (props: Props) => {
   };
 
   const editRow = (row: any) => {
+    console.log(rows[row.index]);
     setSelectedRowData(rows[row.index]);
     setVisibleAddRowPanel(true);
   };

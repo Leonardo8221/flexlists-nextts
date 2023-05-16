@@ -14,7 +14,6 @@ any
       const response = await listContentService.getListContents(1);
       if(response && response.code == 0)
       {
-        console.log(response.result);
         dispatch(setRows(response.result));
       } 
     } catch (error) {

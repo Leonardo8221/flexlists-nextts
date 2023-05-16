@@ -97,7 +97,9 @@ const AddRowPanel = (props: Props) => {
       }
     }
   };
-
+  const getDate = (date:any)=>{
+    return dayjs(date, "MM/DD/YYYY HH:mm:ss")
+  }
   const handleAction = (action: string) => {
     onSubmit(values, action);
     onClose();
@@ -225,7 +227,7 @@ const AddRowPanel = (props: Props) => {
             }}
           >
             {columns.map((column: any) =>
-              column.type === "other_text_field" || column.type === "textarea" || column.type === "integers" || column.type === "floating" || column.type === "avatar" ?
+              column.type === "text" || column.type === "textarea" || column.type === "integers" || column.type === "floating" || column.type === "avatar" ?
               <TextField
                 key={column.id}
                 label={column.name}
@@ -233,42 +235,42 @@ const AddRowPanel = (props: Props) => {
                 size="small"
                 type={column.type === "integers" || column.type === "floating" ? 'number' : ''}
                 onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
+                  setValues({ ...values, [e.target.id]: e.target.value })
                 }
-                defaultValue={rowData ? rowData[column.name] : ''}
+                defaultValue={rowData ? rowData[column.id] : ''}
                 rows={4}
                 multiline={column.type === "textarea"}
                 required
                 error={submit && !values[column.name]}
               /> : column.type === "date" ?
-              <LocalizationProvider dateAdapter={AdapterDayjs} key={column.name}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
                 <DateTimePicker
-                    value={date}
-                    label={column.label}
+                    value={rowData?getDate(rowData[column.id]):''}
+                    label={column.name}
                     onChange={(x: any) => {
                       setDate(x);
-                      setValues({ ...values, [column.name]: x && x.format('MM/DD/YYYY HH:mm:ss') })
+                      setValues({ ...values, [column.id]: x && x.format('MM/DD/YYYY HH:mm:ss') })
                     }
                     }
-                    className={submit && !values[column.name] ? 'Mui-error' : ''}
+                    className={submit && !values[column.id] ? 'Mui-error' : ''}
                   />
               </LocalizationProvider> : column.type === "choice" ?
-              <FormControl key={column.name} required>
-                <InputLabel id={column.name} sx={{ top: '-5px' }}>{column.label}</InputLabel>
+              <FormControl key={column.id} required>
+                <InputLabel id={column.id} sx={{ top: '-5px' }}>{column.name}</InputLabel>
                 <Select
-                  label={column.label}
-                  id={column.name}
-                  defaultValue={rowData ? rowData[column.name] : ''}
+                  label={column.name}
+                  id={column.id}
+                  defaultValue={rowData ? rowData[column.id] : ''}
                   onChange={(e) =>
-                      setValues({ ...values, [column.name]: e.target.value })
+                      setValues({ ...values, [column.id]: e.target.value })
                   }
                   size="small"
-                  error={submit && !values[column.name]}
+                  error={submit && !values[column.id]}
                 >
-                  {column.choices.map((choice: any) => <MenuItem key={choice.name} value={choice.name} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
+                  {column.choices.map((choice: any) => <MenuItem key={choice.name} value={choice.name} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.name}</MenuItem>)}
                 </Select>
               </FormControl>
-              : <div key={column.name}></div>
+              : <div key={column.id}></div>
             )}
           </Stack>
         </form> :
