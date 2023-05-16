@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setSorts } from '../../redux/actions/fieldDefinitionActions';
+import { setSorts } from '../../redux/actions/listFieldActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';

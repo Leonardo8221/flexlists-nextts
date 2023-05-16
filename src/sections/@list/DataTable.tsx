@@ -12,9 +12,10 @@ import AddColumnButton from "../../components/add-button/AddColumnButton";
 import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from '../../hooks/useResponsive';
 import { connect } from 'react-redux';
-import { fetchColumns, setColumns, setRows } from '../../redux/actions/fieldDefinitionActions';
+import { fetchColumns, setColumns } from '../../redux/actions/listFieldActions';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { setRows,fetchRows } from 'src/redux/actions/listContentActions';
 
 type Props = {
   tab: boolean;
@@ -23,10 +24,11 @@ type Props = {
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   fetchColumns:()=>void;
+  fetchRows:()=>void;
 };
 
 const DataTable = (props: Props) => {
-  const { tab, columns, rows, setColumns, setRows,fetchColumns } = props;
+  const { tab, columns, rows, setColumns, setRows,fetchColumns,fetchRows } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -52,9 +54,15 @@ const DataTable = (props: Props) => {
       setSelectedRowData(rows[parseInt(Object.keys(rowSelection).pop() || '0')]);
     }
   }, [rows, rowSelection]);
+
   useEffect(() => {
     fetchColumns();
   }, [fetchColumns]);
+
+  useEffect(() => {
+    fetchRows();
+  }, [fetchRows]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
@@ -96,7 +104,7 @@ const DataTable = (props: Props) => {
           });
 
           return (
-            dataColumn.type === "id" || dataColumn.type === "other_text_field" || dataColumn.type === "textarea" || dataColumn.type === "date" || dataColumn.type === "integers" || dataColumn.type === "floating" ? <Box
+            dataColumn.type === "id" || dataColumn.type === "text" || dataColumn.type === "textarea" || dataColumn.type === "date" || dataColumn.type === "integers" || dataColumn.type === "floating" ? <Box
               key={row.id}
               sx={{
                 minWidth: '100px',
@@ -359,13 +367,14 @@ const DataTable = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   columns: state.fieldDefinition.columns,
-  rows: state.fieldDefinition.rows
+  rows: state.listContent.rows
 });
 
 const mapDispatchToProps = {
   setColumns,
   setRows,
-  fetchColumns
+  fetchColumns,
+  fetchRows
 };
 // const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 //     setColumns:(columns: any) => dispatch(setColumns(columns)),

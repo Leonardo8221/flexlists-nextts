@@ -1,12 +1,15 @@
 import { combineReducers } from 'redux';
-import fieldDefinitionReducer from './fieldDefinitionReducer';
+import listFieldReducer from './listFieldReducer';
 import messageReducer from './messageReducer';
 import userReducer from './userReducer';
+import listContentReducer from './listContentReducer';
 
 const rootReducer = combineReducers({
-  fieldDefinition: fieldDefinitionReducer,
+  fieldDefinition: listFieldReducer,
+  listContent:listContentReducer,
   message:messageReducer,
-  user:userReducer
+  user:userReducer,
+
 });
 
 export default rootReducer;

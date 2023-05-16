@@ -3,7 +3,7 @@ import { Box, TextField } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
 import { connect } from 'react-redux';
-import { setColumns } from '../../redux/actions/fieldDefinitionActions';
+import { setColumns } from '../../redux/actions/listFieldActions';
 import Checkbox from '@mui/material/Checkbox';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Modal from '@mui/material/Modal';

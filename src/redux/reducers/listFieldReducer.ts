@@ -2,9 +2,6 @@
 const initialState = {
     columns: [
     ],
-    rows: [
-     
-    ],
     filters: [
     ],
     sorts: [
@@ -18,14 +15,11 @@ const initialState = {
       }
     ]
   };
-const fieldDefinitionReducer = (state = initialState, action: any) => {
+const listFieldReducer = (state = initialState, action: any) => {
     switch (action.type) {
       case 'SET_COLUMNS':
         return { ...state, columns: action.payload };
   
-      case 'SET_ROWS':
-        return { ...state, rows: action.payload };
-
       case 'SET_FILTERS':
         return { ...state, filters: action.payload };
   
@@ -36,4 +30,4 @@ const fieldDefinitionReducer = (state = initialState, action: any) => {
         return state;
     }
   };
-  export default fieldDefinitionReducer
+  export default listFieldReducer
