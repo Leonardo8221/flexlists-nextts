@@ -104,7 +104,8 @@ const Filter = (props: Props) => {
             onClick={handleClose}
           />
         </Box>
-        <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
+        { sorts.length >0 &&
+          <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
           {sorts.length && sorts.map((sort: any, index: number) => (
             <Box key={sort.column} sx={{ marginBottom: 1, display: 'flex' }}>
               <Select
@@ -115,7 +116,7 @@ const Filter = (props: Props) => {
                 className="sort_column"
               >
                 {columns.map((column: any) => (
-                  <MenuItem key={column.name} value={column.name} sx={{ display: 'flex' }}>
+                  <MenuItem key={column.id} value={column.id} sx={{ display: 'flex' }}>
                     <Box
                       component="span"
                       className="svg-color"
@@ -129,7 +130,7 @@ const Filter = (props: Props) => {
                         marginRight: 1
                       }}
                     />
-                    <Box>{column.label}</Box>
+                    <Box>{column.name}</Box>
                   </MenuItem>
                 ))}
               </Select>
@@ -162,6 +163,8 @@ const Filter = (props: Props) => {
             </Box>
           ))}
         </Box>
+        }
+        
         <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} onClick={addSort}>
           <Box
             component="span"

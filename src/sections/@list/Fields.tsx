@@ -178,7 +178,7 @@ const Fields = (props: Props) => {
                             marginTop: 0.5
                           }}
                         />
-                        <Box>{task.column.label}</Box>
+                        <Box>{task.column.name}</Box>
                       </Box>
                       <Box
                         component="span"

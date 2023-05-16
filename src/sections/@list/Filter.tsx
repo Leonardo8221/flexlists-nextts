@@ -26,8 +26,8 @@ const Filter = (props: Props) => {
     setWindowHeight(window.innerHeight);
   }, []);
 
-  const getColumn = (column_name: string) => {
-    const column = columns.filter((item: any) => item.name === column_name);
+  const getColumn = (column_id: string) => {
+    const column = columns.filter((item: any) => item.id === column_id);
 
     return column[0];
   };
@@ -47,7 +47,7 @@ const Filter = (props: Props) => {
     setFilters([
       ...filters,
       {
-        column: columns[1].name,
+        column: columns[1].id,
         operator: 'is',
         operand: '',
         condition: 'and'
@@ -94,9 +94,11 @@ const Filter = (props: Props) => {
             onClick={handleClose}
           />
         </Box>
-        <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 108}px`, overflow: 'auto' }}>
+        { filters.length>0 &&
+          <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 108}px`, overflow: 'auto' }}>
           {filters.map((filter: any, index: number) =>{
              var column = getColumn(filter.column)
+             console.log(column);
              return (
               <Box key={filter.column} sx={{ marginBottom: 1 }}>
                 {index ? <Select
@@ -117,7 +119,7 @@ const Filter = (props: Props) => {
                     className="sort_column"
                   >
                     {columns.map((column: any) => (
-                      <MenuItem key={column.name} value={column.name} sx={{ display: 'flex' }}>
+                      <MenuItem key={column.id} value={column.id} sx={{ display: 'flex' }}>
                         <Box
                           component="span"
                           className="svg-color"
@@ -131,7 +133,7 @@ const Filter = (props: Props) => {
                             marginRight: {xs: 0.2, md: 1}
                           }}
                         />
-                        <Box>{column.label}</Box>
+                        <Box>{column.name}</Box>
                       </MenuItem>
                     ))}
                   </Select>
@@ -152,10 +154,10 @@ const Filter = (props: Props) => {
                     sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
                   >
                     {column?.choices.map((choice: any) => (
-                      <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>
+                      <MenuItem key={choice.name} value={choice.name} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.name}</MenuItem>
                     ))}
                   </Select> :
-                  column?.type === 'other_text_field' || column?.type === 'textarea' || column?.type === 'integers' || column?.type === 'floating' || column?.type === 'avatar' ?
+                  column?.type === 'text' || column?.type === 'textarea' || column?.type === 'integers' || column?.type === 'floating' || column?.type === 'avatar' ?
                   <TextField
                     size="small"
                     type={column?.type === "integers" || column?.type === "floating" ? 'number' : ''}
@@ -188,6 +190,8 @@ const Filter = (props: Props) => {
           )
          }
         </Box>
+        }
+        
         <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} onClick={addFilter}>
           <Box
             component="span"

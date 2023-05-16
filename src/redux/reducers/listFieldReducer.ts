@@ -5,14 +5,6 @@ const initialState = {
     filters: [
     ],
     sorts: [
-      {
-        column: 'phase',
-        content: 'Last - First'
-      },
-      {
-        column: 'task_name',
-        content: 'A - Z'
-      }
     ]
   };
 const listFieldReducer = (state = initialState, action: any) => {
