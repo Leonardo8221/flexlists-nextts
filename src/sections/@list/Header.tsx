@@ -10,9 +10,8 @@ import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreu
 import '@coreui/coreui/dist/css/coreui.min.css';
 import useResponsive from '../../hooks/useResponsive';
 import UserList from "./UserList";
-// import AddRowPanel from "../../components/right-panel/AddRowPanel";
 import { connect } from 'react-redux';
-import { setRows } from '../../redux/store';
+import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
 
 type Props = {
   columns: any;
@@ -46,10 +45,10 @@ const Header = (props: Props) => {
   const isDesktop = useResponsive('up', 'lg');
   const [visiblePanel, setVisiblePanel] = useState(false);
 
-  const handleNewRow = (values: any, action: string) => {
-    rows.push(values);
-    setRows([...rows]);
-  };
+  // const handleNewRow = (values: any, action: string) => {
+  //   rows.push(values);
+  //   setRows([...rows]);
+  // };
 
   return (
     <Box
@@ -172,14 +171,10 @@ const Header = (props: Props) => {
           </Button>
         </Box>
       </Box>
-      {/* <AddRowPanel
-        rowData={null}
-        columns={columns}
-        onSubmit={handleNewRow}
+      <AddCommentPanel
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
-        comment={true}
-      /> */}
+      />
     </Box>
   );
 }
@@ -190,7 +185,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setRows
+  // setRows
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

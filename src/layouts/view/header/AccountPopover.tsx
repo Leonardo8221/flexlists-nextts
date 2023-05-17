@@ -25,7 +25,6 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
-    router.push('/');
   };
 
   const logout = async() =>{

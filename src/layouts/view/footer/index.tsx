@@ -1,11 +1,10 @@
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import AddRowPanel from "../../../components/right-panel/AddRowPanel";
 import { connect } from 'react-redux';
-import { setRows } from '../../../redux/store';
 import useResponsive from '../../../hooks/useResponsive';
-
+import AddCommentPanel from 'src/components/right-panel/AddCommentPanel';
+import { setRows } from 'src/redux/actions/listContentActions';
 type Props = {
   columns: any;
   rows: any;
@@ -92,13 +91,9 @@ const Footer = (props: Props) => {
           </Box>
         </Box>
       ))}
-      <AddRowPanel
-        rowData={null}
-        columns={columns}
-        onSubmit={handleNewRow}
+      <AddCommentPanel
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
-        comment={true}
       />
     </Box>
   );
