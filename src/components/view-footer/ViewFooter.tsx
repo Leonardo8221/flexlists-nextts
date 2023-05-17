@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { Stack, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns, setRows } from '../../redux/store';
+import { setColumns } from '../../redux/actions/listFieldActions';
+import {  setRows } from '../../redux/actions/listContentActions';
 import AddRowButton from "../../components/add-button/AddRowButton";
 import AddRowPanel from "../../components/right-panel/AddRowPanel";
 
@@ -71,8 +72,8 @@ const ViewFooter = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
-  rows: state.rows
+  columns: state.fieldDefinition.columns,
+  rows: state.listContent.rows
 });
 
 const mapDispatchToProps = {

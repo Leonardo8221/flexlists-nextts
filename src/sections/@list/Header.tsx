@@ -180,8 +180,8 @@ const Header = (props: Props) => {
 }
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
-  rows: state.rows
+  columns: state.fieldDefinition.columns,
+  rows: state.listContent.columns
 });
 
 const mapDispatchToProps = {

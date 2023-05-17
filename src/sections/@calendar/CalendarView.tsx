@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, addWeeks, compareAsc, addHours } from 'date-fns';
 import AddRowPanel from "../../components/right-panel/AddRowPanel";
 import { connect } from 'react-redux';
-import { setColumns, setRows } from '../../redux/store';
+import { setColumns } from '../../redux/actions/listFieldActions';
+import { setRows } from '../../redux/actions/listContentActions';
 import useResponsive from '../../hooks/useResponsive';
 import CalendarTitle from "./CalendarTitle";
 import WeekBar from './WeekBar';
@@ -152,8 +153,8 @@ const CalendarView = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
-  rows: state.rows
+  columns: state.fieldDefinition.columns,
+  rows: state.listContent.rows
 });
 
 const mapDispatchToProps = {

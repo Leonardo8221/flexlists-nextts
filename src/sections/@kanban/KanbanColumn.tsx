@@ -150,7 +150,7 @@ const KanbanColumn = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  rows: state.rows
+  rows: state.listContent.columns
 });
 
 export default connect(mapStateToProps)(KanbanColumn);

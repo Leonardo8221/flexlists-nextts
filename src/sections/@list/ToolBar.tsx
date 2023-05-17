@@ -173,7 +173,7 @@ const ToolbBar = (props: ToolbBarProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
+  columns: state.fieldDefinition.columns,
   filters: state.filters
 });
 

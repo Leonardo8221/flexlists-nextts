@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns, setRows } from '../../redux/store';
+import { setColumns } from '../../redux/actions/listFieldActions';
+import {  setRows } from '../../redux/actions/listContentActions';
 import useResponsive from '../../hooks/useResponsive';
 import DetailBoard from './DetailBoard';
 
@@ -74,8 +75,8 @@ const LocationPin = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.columns,
-  rows: state.rows
+  columns: state.fieldDefinition.columns,
+  rows: state.listContent.columns
 });
 
 const mapDispatchToProps = {
