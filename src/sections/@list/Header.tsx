@@ -1,18 +1,20 @@
 import { useState } from "react";
+import { Button, Box } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import Iconify from "../../components/iconify";
+import ToolBar from "./ToolBar";
 import {
-  Button,
-  Box
-} from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import Iconify from '../../components/iconify';
-import ToolBar from './ToolBar';
-import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react';
-import '@coreui/coreui/dist/css/coreui.min.css';
-import useResponsive from '../../hooks/useResponsive';
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
+} from "@coreui/react";
+import "@coreui/coreui/dist/css/coreui.min.css";
+import useResponsive from "../../hooks/useResponsive";
 import UserList from "./UserList";
 // import AddRowPanel from "../../components/right-panel/AddRowPanel";
-import { connect } from 'react-redux';
-import { setRows } from '../../redux/store';
+import { connect } from "react-redux";
+import { setRows } from "../../redux/store";
 
 type Props = {
   columns: any;
@@ -21,21 +23,21 @@ type Props = {
 
 const lists = [
   {
-    label: 'Rename list',
-    value: 'rename_list'
+    label: "Rename list",
+    value: "rename_list",
   },
   {
-    label: 'Delete list',
-    value: 'delete_list'
+    label: "Delete list",
+    value: "delete_list",
   },
   {
-    label: 'Duplicate',
-    value: 'duplicate'
+    label: "Duplicate",
+    value: "duplicate",
   },
   {
-    label: 'Archive',
-    value: 'archive'
-  }
+    label: "Archive",
+    value: "archive",
+  },
 ];
 
 const Header = (props: Props) => {
@@ -43,7 +45,7 @@ const Header = (props: Props) => {
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
-  const isDesktop = useResponsive('up', 'lg');
+  const isDesktop = useResponsive("up", "lg");
   const [visiblePanel, setVisiblePanel] = useState(false);
 
   const handleNewRow = (values: any, action: string) => {
@@ -51,44 +53,52 @@ const Header = (props: Props) => {
     setRows([...rows]);
   };
 
+  const [showIcons, setShowIcons] = useState(false);
+
+  const handleBoxClick = () => {
+    setShowIcons(!showIcons);
+  };
+
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
+        display: "flex",
+        justifyContent: "space-between",
         borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-        px: {xs: 0.5, lg: 2},
-        py: {xs: 1, lg: 0},
-        width: {md: 'calc(100vw - 100px)'},
+        px: { xs: 0.5, lg: 2 },
+        py: { xs: 1, lg: 0 },
+        width: "100%",
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center'
+          display: "flex",
+          alignItems: "center",
         }}
       >
         <Box
           component="span"
           className="svg-color"
           sx={{
-            width: {xs: 20, md: 23},
-            height: {xs: 20, md: 23},
-            display: 'inline-block',
-            bgcolor: isFavorite ? '#FFD789' : '#666',
+            width: { xs: 20, md: 23 },
+            height: { xs: 20, md: 23 },
+            display: "inline-block",
+            bgcolor: isFavorite ? "#FFD789" : "#666",
             mask: `url(/assets/icons/star.svg) no-repeat center / contain`,
             WebkitMask: `url(/assets/icons/star.svg) no-repeat center / contain`,
-            cursor: 'pointer'
+            cursor: "pointer",
           }}
-          onClick={() => { setIsFavorite(!isFavorite); }}
+          onClick={() => {
+            setIsFavorite(!isFavorite);
+          }}
         />
         <Box
           sx={{
-            fontSize: {xs: '16px', lg: '22px'},
-            fontWeight: '600',
-            lineHeight: '1.2',
-            marginLeft: {xs: 0.3, md: 1},
-            marginTop: 0.3
+            fontSize: { xs: "16px", lg: "22px" },
+            fontWeight: "600",
+            lineHeight: "1.2",
+            marginLeft: { xs: 0.3, md: 1 },
+            marginTop: 0.3,
           }}
         >
           Flexlists SaaS
@@ -99,75 +109,138 @@ const Header = (props: Props) => {
               component="span"
               className="svg-color"
               sx={{
-                width: {xs: 12, lg: 24},
-                height: {xs: 12, lg: 24},
-                display: 'inline-block',
-                bgcolor: '#16385C',
+                width: { xs: 12, lg: 24 },
+                height: { xs: 12, lg: 24 },
+                display: "inline-block",
+                bgcolor: "#16385C",
                 mask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
                 WebkitMask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
-                marginLeft: {xs: 0.5, lg: 1},
-                marginTop: {xs: 0.5, lg: 0.3},
-                cursor: 'pointer'
+                marginLeft: { xs: 0.5, lg: 1 },
+                marginTop: { xs: 0.5, lg: 0.3 },
+                cursor: "pointer",
               }}
             />
           </CDropdownToggle>
           <CDropdownMenu>
             {lists.map((list) => (
-              <CDropdownItem href="#" key={list.label}>{list.label}</CDropdownItem>  
+              <CDropdownItem href="#" key={list.label}>
+                {list.label}
+              </CDropdownItem>
             ))}
           </CDropdownMenu>
         </CDropdown>
       </Box>
-      <Box
-        sx={{ display: { xs: 'none', lg: 'block' } }}
-      >
+      <Box sx={{ display: { xs: "none", lg: "block" } }}>
         <ToolBar open={open} onOpen={setOpen} />
       </Box>
       {isDesktop && <UserList />}
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center'
+          display: "flex",
+          alignItems: "center",
         }}
       >
         <Box
           component="span"
           className="svg-color"
           sx={{
-            width: {xs: 18, md: 22},
-            height: {xs: 18, md: 22},
-            display: 'inline-block',
+            width: { xs: 18, md: 22 },
+            height: { xs: 18, md: 22 },
+            display: "inline-block",
             bgcolor: theme.palette.palette_style.text.primary,
             mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
             WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-            cursor: 'pointer',
-            marginRight: {xs: 1, md: 4}
+            cursor: "pointer",
+            marginRight: { xs: 1, md: 4 },
           }}
-          onClick={() => { setVisiblePanel(true); }}
+          onClick={() => {
+            setVisiblePanel(true);
+          }}
         />
         <Box
           component="span"
           className="svg-color"
           sx={{
-            width: {xs: 18, md: 22},
-            height: {xs: 18, md: 22},
-            display: 'inline-block',
+            width: { xs: 18, md: 22 },
+            height: { xs: 18, md: 22 },
+            display: "inline-block",
             bgcolor: theme.palette.palette_style.text.primary,
             mask: `url(/assets/icons/header/history.svg) no-repeat center / contain`,
             WebkitMask: `url(/assets/icons/header/history.svg) no-repeat center / contain`,
-            cursor: 'pointer',
-            marginRight: {xs: 1, md: 4}
+            cursor: "pointer",
+            marginRight: { xs: 1, md: 4 },
           }}
         />
-        <Box>
-          <Button size="small" color="primary" variant="contained" startIcon={<Iconify icon={'eva:paper-plane-fill'} />}>
+
+        {/* ---PUBLISH & SHARE delete if needed--- */}
+
+        <Box zIndex={10} sx={{position: "relative", cursor: "pointer"}} onClick={handleBoxClick}>
+          <Box
+            sx={{
+              display: showIcons ? "flex" : "none",
+              position: "absolute",
+              top: "100%",
+              right: "0",
+              width: "min-content",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              p: 1,
+              bg: "background.default",
+              boxShadow: "0 0 24px 0 rgba(24,24,24,.2)",
+              backgroundColor: "#fff"
+            }}
+          >
+            <Button
+              sx={{mt: 1}}
+              size="small"
+              color="primary"
+              variant="contained"
+              startIcon={<Iconify icon={"eva:paper-plane-fill"} />}
+            >
+              Publish
+            </Button>
+             <Button
+                sx={{mt: 1}}
+                size="small"
+                color="primary"
+                variant="text"
+                startIcon={<Iconify icon={"eva:share-outline"} />}
+              >
+                Share
+              </Button>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              p: 1,
+              bg: "primary.main",
+            }}
+          >
+            <Iconify icon={"material-symbols:share-outline"} color="#666" />
+          </Box>
+        </Box>
+
+        {/* ---PUBLISH & SHARE delete if needed--- */}
+
+        <Box sx={{ display: "none" }}>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            startIcon={<Iconify icon={"eva:paper-plane-fill"} />}
+          >
             Publish
           </Button>
         </Box>
-        <Box
-          sx={{ marginLeft: {xs: 0.5, lg: 2} }}
-        >
-          <Button size="small" color="primary" variant="text" startIcon={<Iconify icon={'eva:share-outline'} />}>
+        <Box sx={{display: "none" ,marginLeft: { xs: 0.5, lg: 2 } }}>
+          <Button
+            size="small"
+            color="primary"
+            variant="text"
+            startIcon={<Iconify icon={"eva:share-outline"} />}
+          >
             Share
           </Button>
         </Box>
@@ -182,15 +255,15 @@ const Header = (props: Props) => {
       /> */}
     </Box>
   );
-}
+};
 
 const mapStateToProps = (state: any) => ({
   columns: state.columns,
-  rows: state.rows
+  rows: state.rows,
 });
 
 const mapDispatchToProps = {
-  setRows
+  setRows,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

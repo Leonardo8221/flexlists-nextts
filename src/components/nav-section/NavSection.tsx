@@ -56,7 +56,7 @@ function NavItem({ item, open, pathname }:NavItemProps) {
           backgroundImage: `url(/assets/icons/navbar/${pathname === path ? icon + 'Active' : icon}.svg)`,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
-          borderRadius: '10px'
+          borderRadius: '8px'
         }}
       />
       }

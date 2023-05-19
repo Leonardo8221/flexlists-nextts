@@ -1,7 +1,7 @@
 const navConfig = [
   {
     title: 'Favorites Plus',
-    path: '/',
+    path: '/main/addList',
     icon: 'Favourites_plus',
   },
   {
