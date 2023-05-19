@@ -1,10 +1,12 @@
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import { Box, Grid, Container, Typography, Button, Select, MenuItem, Divider } from '@mui/material';
+import { Box, Grid, Container, Typography, Button, Divider } from '@mui/material';
 import HomeCard from '../@tour/HomeCard';
 import { useState, useEffect } from 'react';
-import CardMedia from '@mui/material/CardMedia';
 import Link from 'next/link';
+import PlainSearchBar from 'src/components/search-bar/PlainSearchBar';
+import CategoriesSelect from 'src/components/categories/categories';
+
 
 const HomeCards = [
   {
@@ -130,74 +132,39 @@ export default function AddList() {
   return (
     <>
       <Container sx={{ py: 3, maxWidth: 'inherit !important', overflow: 'auto', height: `${windowHeight - 96}px` }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          You don’t have any lists created yet.
-          {/* <Button onClick={handleClickOpen}>Tour</Button> */}
-        </Typography>
-        <Link href="/coming-soon">
-          <Button
-            size="medium"
-            variant="contained"
-          >
-            Create list from scratch
-          </Button>
-        </Link>
-        {open &&
-        <Box className="tour_modal" sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10001 }}>
-          <Box sx={{ width: '600px', backgroundColor: 'white', borderRadius: '10px', p: 3 }}>
-            <Box>
-              <Typography variant="h6" sx={{ mb: 2 }}>{steps === 1 ? "What industry are you in?" : "How many employees to you have?"}</Typography>
-            </Box>            
-            <Box>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Age"
-                value="Choose.."
-                fullWidth
-                sx={{ height: 37 }}
-              >
-                <MenuItem disabled value="Choose..">Choose..</MenuItem>
-              </Select>
-              <Divider sx={{ borderStyle: 'solid', my: 2 }} />
-              {steps == 1 ?
-                <Typography variant="h6" sx={{ mb: 1 }}>Create your list from scratch</Typography>
-                : 
-                <Typography variant="h6" sx={{ mb: 1 }}>Use one of our many templates</Typography>
-              }
-              <Typography variant="caption">
-                Lorem ipsum dolor sit amet consectetur. Sit platea quis varius in. Morbi ipsum odio eu id eu amet elementum. Adipiscing diam amet quis consequat tellus semper pretium. Condimentum dui pellentesque eget praesent nam dignissim fermentum.
-              </Typography>
-              <CardMedia
-                component='video'
-                sx={{ marginTop: '16px' }}
-                image={"/assets/video/tour.mp4"}
-                controls
-              />
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', paddingTop: '16px' }}>
-              <Box>
-                {steps === 0 ?
-                  <Button variant="outlined" size="small" sx={{display: "none"}} >Skip</Button> :
-                  <Button variant="contained" size="small" onClick={goPrevious}>Previous</Button>
-                }
-              </Box>
-              <Box>
-                {steps === 5 ?
-                  <Button variant="outlined" size="small" onClick={handleClose} >Finish</Button> :
-                  <Button variant="contained" size="small" onClick={goNext}>Next</Button>
-                }
-              </Box>
-            </Box>
-          </Box>  
-        </Box>}
-        <Typography variant="h6" sx={{ mt: 5, mb: 3 }}>
-          Use one of templates
-        </Typography>
+        <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+          <Typography variant="h6">
+            Your core files.
+          </Typography>
+          <Link href="/main/addList">
+            <Button
+              size="medium"
+              variant="contained"
+            >
+              Create new
+            </Button>
+          </Link>
+        </Box>
+        <Box sx={{py:6}}>
+          <Typography variant='body1'>You have 0 files created.</Typography>
+        </Box>
+        <Divider light sx={{py: 1}} />
+        
+        <Box sx={{display:"flex", justifyContent:"space-between", alignItems:"center", my:2, flexDirection: {xs: "column", md: "row"}}}>
+          <Typography variant="h6" gutterBottom>
+            Most popular templates
+          </Typography>
+          <Box sx={{display:"flex", alignItems:{xs: "center", md: "flex-end"}, flexDirection: {xs: "column-reverse", md:"row"}}}>
+            <CategoriesSelect />
+            <PlainSearchBar />
+          </Box>
+          
+
+        </Box>
         <Grid container spacing={3}>
           {HomeCards.map((card: any) => {
             return (
-              <Grid item xs={12} sm={6} md={3} key={card.icon}>
+              <Grid item xs={12} sm={6} md={2} key={card.icon}>
                 <HomeCard icon={card.icon} title={card.title} description={card.description} button={card.button}></HomeCard>
               </Grid>
             )

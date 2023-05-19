@@ -2,7 +2,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { useState } from 'react';
 import MainLayout from 'src/layouts/view/MainLayout';
-import AddList from 'src/sections/@addList/AddList';
+import AddList from 'src/sections/@addList/addList';
 
 export default function TourPage() {
   const theme = useTheme();
