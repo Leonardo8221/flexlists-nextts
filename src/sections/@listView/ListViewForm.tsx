@@ -51,7 +51,7 @@ const style = {
   ];
 
 type Props = {
-open: boolean;
+  open: boolean;
   handleClose: () => void;
 };
 
@@ -69,10 +69,14 @@ const ListViewForm = (props: Props) => {
   {
     handleClose();
   }
+  const closeModal = () =>{
+    setSteps(0);
+    handleClose();
+  }
   return (
     <Modal
     open={open}
-    onClose={handleClose}
+    onClose={closeModal}
     aria-labelledby="modal-modal-title"
     aria-describedby="modal-modal-description"
     sx={{overflow: "scroll"}}
