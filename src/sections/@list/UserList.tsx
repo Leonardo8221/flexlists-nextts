@@ -18,7 +18,7 @@ const UserList = (props: Props) => {
       sx={{ display: 'flex', paddingTop: {xs: 0.5, md: 1}, marginRight: {xs: '45px', md: 'inherit'} }}
     >
       {users.map((user: any, index: number) => (
-        index < 5 && <Box
+        index < 2 && <Box
           key={user.name}
           component="img"
           src={user.avatar}
@@ -42,7 +42,7 @@ const UserList = (props: Props) => {
             cursor: 'pointer'
           }}
         />
-        <Box sx={{ fontSize: '12px', position: 'absolute', right: 6, bottom: 0 }}>+{users.length - 5}</Box>
+        <Box sx={{ fontSize: '12px', position: 'absolute', right: 6, bottom: 0 }}>+{users.length - 2}</Box>
       </Box>
     </Box>
   );
