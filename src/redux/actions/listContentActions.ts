@@ -11,12 +11,20 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      // const response = await listContentService.getListContents(1);
-      // if(response && response.code == 0)
-      // {
-      //   dispatch(setRows(response.result));
-      // } 
-      dispatch(setRows(getListContents()))
+      if(process.env.NEXT_PUBLIC_USE_DUMMY_DATA == "true")
+      {
+        dispatch(setRows(getListContents()))
+      }
+      else
+      {
+        const response = await listContentService.getListContents(1);
+        if(response && response.code == 0)
+        {
+          dispatch(setRows(response.result));
+        } 
+      }
+     
+      
     } catch (error) {
      console.log('errr')
     }
@@ -28,6 +36,7 @@ export const setRows = (rows: any) => ({
   type: 'SET_ROWS',
   payload: rows
 });
+//TODO: USE this for dummy data, will remove when connect to real api
 const getListContents = () : any[] =>{
    return [
     {

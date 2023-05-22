@@ -12,12 +12,20 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      // const response = await fieldDefinitionService.getAllFieldDefinition(1);
-      // if(response && response.code == 0)
-      // {
-      //   dispatch(setColumns(response.result));
-      // } 
-      dispatch(setColumns(getListFields()));
+      if(process.env.NEXT_PUBLIC_USE_DUMMY_DATA == "true")
+      {
+        dispatch(setColumns(getListFields()));
+      }
+      else
+      {
+        const response = await fieldDefinitionService.getAllFieldDefinition(1);
+        if(response && response.code == 0)
+        {
+          dispatch(setColumns(response.result));
+        } 
+      }
+      
+      
     } catch (error) {
      console.log('errr')
     }
@@ -37,7 +45,7 @@ export const setSorts = (sorts: any) => ({
   type: 'SET_SORTS',
   payload: sorts
 });
-
+//TODO: USE this for dummy data, will remove when connect to real api
 const getListFields = () : any[] =>{
    return [
     {
