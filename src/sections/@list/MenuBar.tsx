@@ -45,7 +45,6 @@ const initialMenus = [
   },
 ];
 
-
 export default function MenuBar({ search }: MenuBarProps) {
   const [selectedMenu, setSelectedMenu] = useState("");
   const [viewsSearchBar, setViewsSearchBar] = useState(false);
@@ -79,7 +78,7 @@ export default function MenuBar({ search }: MenuBarProps) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    console.log('aaaa')
+    console.log("aaaa");
   };
 
   return (
@@ -196,7 +195,12 @@ export default function MenuBar({ search }: MenuBarProps) {
         </Box>
       </Box>
       <>
-      <ListViewForm open={open} handleClose={() => { handleClose(); }} />
+        <ListViewForm
+          open={open}
+          handleClose={() => {
+            handleClose();
+          }}
+        />
       </>
     </>
   );
