@@ -12,8 +12,9 @@ import {
 import "@coreui/coreui/dist/css/coreui.min.css";
 import useResponsive from "../../hooks/useResponsive";
 import UserList from "./UserList";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
+import { styled } from "@mui/material/styles";
 
 type Props = {
   columns: any;
@@ -173,24 +174,31 @@ const Header = (props: Props) => {
 
         {/* ---PUBLISH & SHARE delete if needed--- */}
 
-        <Box zIndex={10} sx={{position: "relative", cursor: "pointer"}} onClick={handleBoxClick}>
+        <Box
+          zIndex={10}
+          sx={{
+            position: "relative",
+            cursor: "pointer",
+          }}
+          onClick={handleBoxClick}
+        >
           <Box
             sx={{
-              display: showIcons ? "flex" : "none",
-              position: "absolute",
+              display: { xs: showIcons ? "none" : "block", md: "flex" },
+              position: { xs: "absolute", md: "relative" },
               top: "100%",
               right: "0",
               width: "min-content",
-              flexDirection: "column",
-              alignItems: "flex-end",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "flex-start", md: "center" },
               p: 1,
               bg: "background.default",
-              boxShadow: "0 0 24px 0 rgba(24,24,24,.2)",
-              backgroundColor: "#fff"
+              boxShadow: { xs: "0 0 24px 0 rgba(24,24,24,.2)", md: "none" },
+              backgroundColor: "#fff",
             }}
           >
             <Button
-              sx={{mt: 1}}
+              sx={{ mt: { xs: 1, md: 0 }, mr: { xs: 0, md: 2 } }}
               size="small"
               color="primary"
               variant="contained"
@@ -198,19 +206,19 @@ const Header = (props: Props) => {
             >
               Publish
             </Button>
-             <Button
-                sx={{mt: 1}}
-                size="small"
-                color="primary"
-                variant="text"
-                startIcon={<Iconify icon={"eva:share-outline"} />}
-              >
-                Share
-              </Button>
+            <Button
+              sx={{ mt: { xs: 1, md: 0 } }}
+              size="small"
+              color="primary"
+              variant="text"
+              startIcon={<Iconify icon={"eva:share-outline"} />}
+            >
+              Share
+            </Button>
           </Box>
           <Box
             sx={{
-              display: "flex",
+              display: { xs: "flex", md: "none" },
               alignItems: "center",
               justifyContent: "center",
               p: 1,
@@ -223,7 +231,7 @@ const Header = (props: Props) => {
 
         {/* ---PUBLISH & SHARE delete if needed--- */}
 
-        <Box sx={{ display: "none" }}>
+        {/* <Box sx={{ display: { xs: "none", md: "none" } }}>
           <Button
             size="small"
             color="primary"
@@ -233,7 +241,12 @@ const Header = (props: Props) => {
             Publish
           </Button>
         </Box>
-        <Box sx={{display: "none" ,marginLeft: { xs: 0.5, lg: 2 } }}>
+        <Box
+          sx={{
+            display: { xs: "none", md: "none" },
+            marginLeft: { xs: 0.5, lg: 2 },
+          }}
+        >
           <Button
             size="small"
             color="primary"
@@ -242,7 +255,7 @@ const Header = (props: Props) => {
           >
             Share
           </Button>
-        </Box>
+        </Box> */}
       </Box>
       <AddCommentPanel
         open={visiblePanel}
@@ -254,7 +267,7 @@ const Header = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   columns: state.fieldDefinition.columns,
-  rows: state.listContent.columns
+  rows: state.listContent.columns,
 });
 
 const mapDispatchToProps = {
