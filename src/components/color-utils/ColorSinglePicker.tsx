@@ -8,6 +8,7 @@ import React from 'react';
 
 // ----------------------------------------------------------------------
 
+// eslint-disable-next-line react/display-name
 const ColorSinglePicker = React.forwardRef<any, ColorSinglePickerProps>(({ colors, ...other }, ref) => (
   <RadioGroup row ref={ref} {...other}>
     {colors.map((color) => {

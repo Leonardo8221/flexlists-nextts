@@ -14,6 +14,7 @@ type IconProps = {
   whiteColor?: Boolean,
 };
 
+// eslint-disable-next-line react/display-name
 export const Icon = React.forwardRef<any, IconProps>(({ checked, whiteColor, sx, ...other })=> {
   const shadow = (
     <Box

@@ -65,8 +65,8 @@ export default function CarouselControlsArrowsBasic2({ arrowLine, onNext, onPrev
 
   return (
     <RootStyle {...other}>
-      <LeftStyle size="small" onClick={onPrevious}></LeftStyle>
-      <RightStyle size="small" onClick={onNext}></RightStyle>
+      {/* <LeftStyle size="small" onClick={onPrevious}></LeftStyle>
+      <RightStyle size="small" onClick={onNext}></RightStyle> */}
     </RootStyle>
   );
 }

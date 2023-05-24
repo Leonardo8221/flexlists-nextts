@@ -14,6 +14,7 @@ type ColorMultiPickerProps = {
   selected: string[],
 };
 
+ // eslint-disable-next-line react/display-name
  const ColorMultiPicker = React.forwardRef<any, ColorMultiPickerProps>(({ colors, selected, onChangeColor, sx, ...other }) => {
   return (
     <Box sx={sx}>
