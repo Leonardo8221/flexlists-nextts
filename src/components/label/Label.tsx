@@ -9,6 +9,7 @@ import React from 'react';
 
 // ----------------------------------------------------------------------
 
+// eslint-disable-next-line react/display-name
 const Label = React.forwardRef<any, LabelProps>(({ children, color = 'default', variant = 'soft', startIcon, endIcon, sx, ...other }, ref) => {
   const theme = useTheme();
 

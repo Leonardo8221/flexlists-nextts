@@ -74,8 +74,9 @@ export default function CommonMoreMenu({ onDelete,onEdit,editPermissionEnable,de
     {
        (onOtherFunctions && onOtherFunctions.length > 0) &&
        (
-        onOtherFunctions.map((otherFunction)=>{
+        onOtherFunctions.map((otherFunction,index)=>{
            return (<MenuItem
+           key={index}
             onClick={()=>{setIsOpen(false);otherFunction.function()}}
             sx={{ color: 'text.secondary' }}
           >

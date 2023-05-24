@@ -9,7 +9,7 @@ import Collapse from '@mui/material/Collapse';
 import UserList from './UserList';
 import ActionItem from '../../components/toolbar/ActionItem';
 import { connect } from 'react-redux';
-import { setFilters } from '../../redux/store';
+import { setFilters } from '../../redux/actions/listFieldActions';
 import Filter from "./Filter";
 import Sort from "./Sort";
 import Import from "./Import";

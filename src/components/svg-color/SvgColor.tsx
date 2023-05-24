@@ -6,6 +6,7 @@ import React from 'react';
 
 // ----------------------------------------------------------------------
 
+// eslint-disable-next-line react/display-name
 const SvgColor = React.forwardRef<any, SvgColorProps>(({ src, sx, ...other }, ref) => {
  return (<Box
     component="span"

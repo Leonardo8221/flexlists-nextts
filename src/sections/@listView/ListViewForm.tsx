@@ -67,7 +67,7 @@ const ListViewForm = (props: Props) => {
   };
   const handleSubmit = () =>
   {
-    handleClose();
+    closeModal();
   }
   const closeModal = () =>{
     setSteps(0);

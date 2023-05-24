@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns, setRows } from '../redux/store';
+import { setColumns } from '../redux/actions/listFieldActions';
+import { setRows } from '../redux/actions/listContentActions';
 import useResponsive from '../hooks/useResponsive';
 
 type Props = {
