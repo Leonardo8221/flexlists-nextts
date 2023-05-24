@@ -18,11 +18,11 @@ export default function RegisterForm() {
 
   const handleSubmit = async() => {
     try {
-      var response = await authService.register(userName,password);
-      if(response && response.code == 0)
-      {
-        router.push({pathname:'/auth/login'});
-      }
+      // var response = await authService.register(userName,password);
+      // if(response && response.code == 0)
+      // {
+      //   router.push({pathname:'/auth/login'});
+      // }
    } catch (error) {
      console.log(error);
    }
