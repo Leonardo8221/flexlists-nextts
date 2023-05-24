@@ -14,7 +14,6 @@ import useResponsive from "../../hooks/useResponsive";
 import UserList from "./UserList";
 import { connect } from "react-redux";
 import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
-import { styled } from "@mui/material/styles";
 
 type Props = {
   columns: any;
@@ -45,7 +44,7 @@ const Header = (props: Props) => {
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
-  const isDesktop = useResponsive("up", "lg");
+  const isDesktop = useResponsive("up", "xl");
   const [visiblePanel, setVisiblePanel] = useState(false);
 
   // const handleNewRow = (values: any, action: string) => {
@@ -82,7 +81,8 @@ const Header = (props: Props) => {
           sx={{
             width: { xs: 20, md: 23 },
             height: { xs: 20, md: 23 },
-            display: "inline-block",
+            display: "flex",
+            alignItems: "center",
             bgcolor: isFavorite ? "#FFD789" : "#666",
             mask: `url(/assets/icons/star.svg) no-repeat center / contain`,
             WebkitMask: `url(/assets/icons/star.svg) no-repeat center / contain`,
@@ -94,30 +94,36 @@ const Header = (props: Props) => {
         />
         <Box
           sx={{
-            fontSize: { xs: "16px", lg: "22px" },
+            fontSize: { xs: "16px", lg: "18px" },
             fontWeight: "600",
             lineHeight: "1.2",
             marginLeft: { xs: 0.3, md: 1 },
-            marginTop: 0.3,
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            maxWidth: { xs: 160, lg: 88, xl: 256 },
           }}
         >
           Flexlists SaaS
         </Box>
         <CDropdown id="list_action" className="list_action">
-          <CDropdownToggle color="secondary">
+          <CDropdownToggle
+            color="secondary"
+            style={{ paddingTop: 0, display: "flex" }}
+          >
             <Box
               component="span"
               className="svg-color"
               sx={{
-                width: { xs: 12, lg: 24 },
-                height: { xs: 12, lg: 24 },
+                width: { xs: 12, lg: 16 },
+                height: { xs: 12, lg: 16 },
                 display: "inline-block",
                 bgcolor: "#16385C",
                 mask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
                 WebkitMask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
                 marginLeft: { xs: 0.5, lg: 1 },
-                marginTop: { xs: 0.5, lg: 0.3 },
                 cursor: "pointer",
+                transform: "rotate(90deg)",
               }}
             />
           </CDropdownToggle>
@@ -133,13 +139,15 @@ const Header = (props: Props) => {
       <Box sx={{ display: { xs: "none", lg: "block" } }}>
         <ToolBar open={open} onOpen={setOpen} />
       </Box>
-      {isDesktop && <UserList />}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
         }}
       >
+        <Box sx={{ width: "fit-content", mr: { xs: 2 } }}>
+          {isDesktop && <UserList />}
+        </Box>
         <Box
           component="span"
           className="svg-color"
@@ -151,7 +159,7 @@ const Header = (props: Props) => {
             mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
             WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
             cursor: "pointer",
-            marginRight: { xs: 1, md: 4 },
+            marginRight: { xs: 2, md: 4 },
           }}
           onClick={() => {
             setVisiblePanel(true);
@@ -168,7 +176,7 @@ const Header = (props: Props) => {
             mask: `url(/assets/icons/header/history.svg) no-repeat center / contain`,
             WebkitMask: `url(/assets/icons/header/history.svg) no-repeat center / contain`,
             cursor: "pointer",
-            marginRight: { xs: 1, md: 4 },
+            marginRight: { xs: 2, md: 4 },
           }}
         />
 
@@ -179,6 +187,8 @@ const Header = (props: Props) => {
           sx={{
             position: "relative",
             cursor: "pointer",
+            m: 0,
+            p: 0,
           }}
           onClick={handleBoxClick}
         >
@@ -191,7 +201,7 @@ const Header = (props: Props) => {
               width: "min-content",
               flexDirection: { xs: "column", md: "row" },
               alignItems: { xs: "flex-start", md: "center" },
-              p: 1,
+              p: { xs: 1 },
               bg: "background.default",
               boxShadow: { xs: "0 0 24px 0 rgba(24,24,24,.2)", md: "none" },
               backgroundColor: "#fff",
@@ -221,11 +231,15 @@ const Header = (props: Props) => {
               display: { xs: "flex", md: "none" },
               alignItems: "center",
               justifyContent: "center",
-              p: 1,
+              mr: 1,
               bg: "primary.main",
             }}
           >
-            <Iconify icon={"material-symbols:share-outline"} color="#666" />
+            <Iconify
+              sx={{ width: 18, height: 18 }}
+              icon={"material-symbols:share-outline"}
+              color="#666"
+            />
           </Box>
         </Box>
 
