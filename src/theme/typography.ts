@@ -4,23 +4,23 @@ export function remToPx(value: any) {
   return Math.round(parseFloat(value) * 16);
 }
 
-export function pxToRem(value:any) {
+export function pxToRem(value: any) {
   return `${value / 16}rem`;
 }
 type ResponsiveFontSizeProps = {
-  sm : any,
-  md:any,
-  lg:any
-}
-export function responsiveFontSizes({ sm, md, lg }:ResponsiveFontSizeProps) {
+  sm: any;
+  md: any;
+  lg: any;
+};
+export function responsiveFontSizes({ sm, md, lg }: ResponsiveFontSizeProps) {
   return {
-    '@media (min-width:600px)': {
+    "@media (min-width:600px)": {
       fontSize: pxToRem(sm),
     },
-    '@media (min-width:900px)': {
+    "@media (min-width:900px)": {
       fontSize: pxToRem(md),
     },
-    '@media (min-width:1200px)': {
+    "@media (min-width:1200px)": {
       fontSize: pxToRem(lg),
     },
   };
@@ -28,7 +28,7 @@ export function responsiveFontSizes({ sm, md, lg }:ResponsiveFontSizeProps) {
 
 // ----------------------------------------------------------------------
 
-const FONT_PRIMARY = 'Public Sans, sans-serif'; // Google Font
+const FONT_PRIMARY = "Poppins, sans-serif"; // Google Font
 // const FONT_SECONDARY = 'CircularStd, sans-serif'; // Local Font
 
 const typography = {
@@ -55,19 +55,19 @@ const typography = {
     ...responsiveFontSizes({ sm: 26, md: 30, lg: 32 }),
   },
   h4: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 1.5,
     fontSize: pxToRem(20),
     ...responsiveFontSizes({ sm: 20, md: 24, lg: 24 }),
   },
   h5: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 1.5,
     fontSize: pxToRem(18),
     ...responsiveFontSizes({ sm: 19, md: 20, lg: 20 }),
   },
   h6: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 28 / 18,
     fontSize: pxToRem(17),
     ...responsiveFontSizes({ sm: 18, md: 18, lg: 18 }),
@@ -98,13 +98,13 @@ const typography = {
     fontWeight: 700,
     lineHeight: 1.5,
     fontSize: pxToRem(12),
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   button: {
-    fontWeight: 700,
+    fontWeight: 600,
     lineHeight: 24 / 14,
     fontSize: pxToRem(14),
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
 };
 

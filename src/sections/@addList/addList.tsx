@@ -153,7 +153,7 @@ export default function AddList() {
           }}
         >
           <Typography variant="h6">Your core files.</Typography>
-          <Link href="/main/addList">
+          <Link href="/main/newList">
             <Button size="medium" variant="contained">
               Create new
             </Button>

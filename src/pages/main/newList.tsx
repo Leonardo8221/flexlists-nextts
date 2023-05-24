@@ -9,7 +9,9 @@ import {
   MenuItem,
   Button,
   Divider,
+  Link,
 } from "@mui/material";
+import { size } from "lodash";
 export default function newList() {
   return (
     <MainLayout removeFooter={true}>
@@ -26,7 +28,7 @@ export default function newList() {
             <Typography variant="subtitle2" gutterBottom>
               Name
             </Typography>
-            <TextField fullWidth id="fullWidth" />
+            <TextField required fullWidth id="fullWidth" />
           </Box>
           <Box>
             <Typography variant="subtitle2" gutterBottom>
@@ -47,7 +49,15 @@ export default function newList() {
               <MenuItem>Category 3</MenuItem>
             </Select>
           </Box>
-          <Button variant="contained">Create list</Button>
+          <Link href="/main/list">
+            <Button
+              variant="contained"
+              sx={{ width: { xs: "100%", md: "auto" } }}
+              type="submit"
+            >
+              Create list
+            </Button>
+          </Link>
         </Box>
         {/* <Box sx={{ borderLeft: "solid 1px #ccc", p: 2 }}>
           <Typography variant="h4">List details</Typography>
