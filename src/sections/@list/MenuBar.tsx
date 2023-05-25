@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { Box, TextField, Modal, Typography, Grid, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import AddViewCard from "src/components/add-view/AddViewCard";
-import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
 import ListViewForm from "../@listView/ListViewForm";
 
 type MenuBarProps = {

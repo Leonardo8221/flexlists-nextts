@@ -14,6 +14,7 @@ import useResponsive from "../../hooks/useResponsive";
 import UserList from "./UserList";
 import { connect } from "react-redux";
 import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
+import PublishList from "./Publish";
 
 type Props = {
   columns: any;
@@ -56,6 +57,13 @@ const Header = (props: Props) => {
 
   const handleBoxClick = () => {
     setShowIcons(!showIcons);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    console.log("aaaa");
   };
 
   return (
@@ -208,6 +216,7 @@ const Header = (props: Props) => {
             }}
           >
             <Button
+              onClick={handleOpen}
               sx={{ mt: { xs: 1, md: 0 }, mr: { xs: 0, md: 2 } }}
               size="small"
               color="primary"
@@ -275,6 +284,14 @@ const Header = (props: Props) => {
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
       />
+      <>
+        <PublishList
+          open={open}
+          handleClose={() => {
+            handleClose();
+          }}
+        />
+      </>
     </Box>
   );
 };

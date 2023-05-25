@@ -11,7 +11,6 @@ import {
   Divider,
   Link,
 } from "@mui/material";
-import { size } from "lodash";
 export default function newList() {
   return (
     <MainLayout removeFooter={true}>

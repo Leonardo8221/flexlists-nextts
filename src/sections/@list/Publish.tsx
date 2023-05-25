@@ -1,0 +1,123 @@
+import {
+  Modal,
+  Typography,
+  Box,
+  Radio,
+  FormControl,
+  FormControlLabel,
+  RadioGroup,
+  FormLabel,
+  TextField,
+  InputAdornment,
+  Divider,
+  Button,
+} from "@mui/material";
+import React from "react";
+import { useState } from "react";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+
+type Props = {
+  open: boolean;
+  handleClose: () => void;
+};
+
+const style = {
+  position: "absolute" as "absolute",
+  padding: 2,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: { xs: "80%", md: "50%" },
+  maxHeight: "80vh",
+  backgroundColor: "white",
+  border: "none",
+  borderRadius: "8px",
+  boxShadow: 24,
+  overflow: "hidden",
+  display: "flex",
+  flexDirection: "column",
+};
+const PublishList = (props: Props) => {
+  const { open, handleClose } = props;
+  const [steps, setSteps] = useState(0);
+  const goPrevious = () => {
+    setSteps(steps - 1);
+  };
+
+  const handleSubmit = () => {
+    closeModal();
+  };
+  const closeModal = () => {
+    setSteps(0);
+    handleClose();
+  };
+
+  const [selectedValue, setSelectedValue] = React.useState("a");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedValue(event.target.value);
+  };
+  return (
+    <Modal
+      open={open}
+      onClose={closeModal}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography gutterBottom variant="h5" sx={{ my: 1 }}>
+          Publish
+        </Typography>
+
+        <Typography gutterBottom variant="body1" sx={{ my: 1 }}>
+          With Web export you can add the list to your website by simply adding
+          a bit of javascript. Simply copy the code below into your site.
+        </Typography>
+        <Divider sx={{ my: 1 }}></Divider>
+        <FormControl sx={{ my: 1 }}>
+          <FormLabel id="demo-radio-buttons-group-label">Publish as</FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue="iframe"
+            name="radio-buttons-group"
+          >
+            <FormControlLabel
+              value="iframe"
+              control={<Radio />}
+              label={<Typography variant="body2">iframe</Typography>}
+            />
+            <FormControlLabel
+              value="javascript"
+              control={<Radio />}
+              label={<Typography variant="body2">JavaScript</Typography>}
+            />
+            <FormControlLabel
+              value="other"
+              control={<Radio />}
+              label={<Typography variant="body2">Other</Typography>}
+            />
+          </RadioGroup>
+        </FormControl>
+        <TextField
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <ContentCopyIcon sx={{ cursor: "pointer" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ my: 1 }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleClose}
+          sx={{ my: 2, width: "25%" }}
+        >
+          Close
+        </Button>
+      </Box>
+    </Modal>
+  );
+};
+
+export default PublishList;
