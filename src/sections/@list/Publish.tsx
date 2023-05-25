@@ -15,6 +15,7 @@ import {
 import React from "react";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { motion } from "framer-motion";
 
 type Props = {
   open: boolean;
@@ -37,26 +38,37 @@ const style = {
   display: "flex",
   flexDirection: "column",
 };
+
+const scaleUp = {
+  hidden: {
+    x: "-50%",
+    y: "-50%",
+    scale: 0.5,
+    opacity: 0,
+  },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+      type: "spring",
+      damping: 30,
+      stiffness: 700,
+    },
+  },
+  close: {
+    opacity: 0,
+  },
+};
+
 const PublishList = (props: Props) => {
   const { open, handleClose } = props;
   const [steps, setSteps] = useState(0);
-  const goPrevious = () => {
-    setSteps(steps - 1);
-  };
-
-  const handleSubmit = () => {
-    closeModal();
-  };
   const closeModal = () => {
     setSteps(0);
     handleClose();
   };
 
-  const [selectedValue, setSelectedValue] = React.useState("a");
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(event.target.value);
-  };
   return (
     <Modal
       open={open}
@@ -64,7 +76,14 @@ const PublishList = (props: Props) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
+      <Box
+        sx={style}
+        component={motion.div}
+        variants={scaleUp}
+        initial="hidden"
+        animate="visible"
+        exit="close"
+      >
         <Typography gutterBottom variant="h5" sx={{ my: 1 }}>
           Publish
         </Typography>

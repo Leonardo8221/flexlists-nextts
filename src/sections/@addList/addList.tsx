@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
 import CategoriesSelect from "src/components/categories/categories";
+import { motion } from "framer-motion";
 
 const HomeCards = [
   {

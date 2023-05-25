@@ -50,7 +50,7 @@
     "env-cmd": "^10.1.0",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
-    "framer-motion": "^10.3.2",
+    "framer-motion": "^10.12.16",
     "google-map-react": "^2.2.0",
     "graphql-fields": "^2.0.3",
     "graphql-scalars": "^1.21.3",

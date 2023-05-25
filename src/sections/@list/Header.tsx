@@ -45,6 +45,7 @@ const Header = (props: Props) => {
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
+  const [openPublish, setOpenPublish] = useState(true);
   const isDesktop = useResponsive("up", "xl");
   const [visiblePanel, setVisiblePanel] = useState(false);
 
@@ -59,10 +60,10 @@ const Header = (props: Props) => {
     setShowIcons(!showIcons);
   };
   const handleOpen = () => {
-    setOpen(true);
+    setOpenPublish(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+  const handleClosePublish = () => {
+    setOpenPublish(false);
     console.log("aaaa");
   };
 
@@ -286,9 +287,9 @@ const Header = (props: Props) => {
       />
       <>
         <PublishList
-          open={open}
+          open={openPublish}
           handleClose={() => {
-            handleClose();
+            handleClosePublish();
           }}
         />
       </>
