@@ -1,7 +1,21 @@
 import React from "react";
-import { Box, Typography, Avatar } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Avatar,
+  FormControl,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { useState } from "react";
 
 function ListAccess() {
+  const [age, setAge] = useState("");
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value);
+  };
   return (
     <>
       <Box sx={{ my: 2, display: "flex" }}>
@@ -18,7 +32,31 @@ function ListAccess() {
             <Typography variant="body1">Sead Šijerkić</Typography>
             <Typography variant="body2">email@example.com</Typography>
           </Box>
-          <Typography variant="body2">Owner</Typography>
+          <FormControl
+            variant="standard"
+            sx={{
+              m: 1,
+              minWidth: "auto",
+            }}
+          >
+            <Select
+              labelId="demo-simple-select-standard-label"
+              id="demo-simple-select-standard"
+              value={age}
+              onChange={handleChange}
+              sx={{ fontSize: 14, "&::before": { borderBottom: "none" } }}
+            >
+              <MenuItem value={10} sx={{ fontSize: 14 }}>
+                Owner
+              </MenuItem>
+              <MenuItem value={20} sx={{ fontSize: 14 }}>
+                Admin
+              </MenuItem>
+              <MenuItem value={30} sx={{ fontSize: 14 }}>
+                Editor
+              </MenuItem>
+            </Select>
+          </FormControl>
         </Box>
       </Box>
       <Box sx={{ my: 2, display: "flex" }}>

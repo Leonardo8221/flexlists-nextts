@@ -11,11 +11,14 @@ import {
   Divider,
   Button,
   Avatar,
+  Grid,
 } from "@mui/material";
 import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import ListAccess from "src/components/list-access/ListAccess";
+import KeyIcon from "@mui/icons-material/Key";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 type Props = {
   open: boolean;
@@ -34,9 +37,13 @@ const style = {
   border: "none",
   borderRadius: "8px",
   boxShadow: 24,
-  overflow: "hidden",
+  overflowY: "scroll",
   display: "flex",
   flexDirection: "column",
+};
+
+const consoleLog = () => {
+  console.log("Test");
 };
 
 const scaleUp = {
@@ -138,6 +145,82 @@ const ShareList = (props: Props) => {
         <FormLabel sx={{ fontSize: 14 }} id="multiple-email-address">
           (separate multiple addresses with a comma)
         </FormLabel>
+        <Typography variant="subtitle1" sx={{ my: 2 }}>
+          Additional options
+        </Typography>
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={3} sx={{ m: 0, width: "100%" }}>
+            <Grid
+              onClick={consoleLog}
+              className="grid-item"
+              item
+              xs={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+                border: "solid 1px #ccc",
+                borderRadius: "8px",
+                py: "16px",
+                cursor: "pointer",
+                "&:hover": { borderColor: "primary.main" },
+              }}
+            >
+              <Box component={"span"}>
+                <KeyIcon
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    color: "currentColor",
+                    ".grid-item:hover &": { color: "primary.main" },
+                  }}
+                />
+              </Box>
+              <Typography
+                variant="body1"
+                sx={{ ".grid-item:hover &": { color: "primary.main" } }}
+              >
+                Create / Manage Share Keys
+              </Typography>
+            </Grid>
+            <Grid
+              onClick={consoleLog}
+              className="grid-item"
+              item
+              xs={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+                border: "solid 1px #ccc",
+                borderRadius: "8px",
+                py: "16px",
+                cursor: "pointer",
+                "&:hover": { borderColor: "primary.main" },
+              }}
+            >
+              <Box component={"span"}>
+                <GroupsIcon
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    color: "currentColor",
+                    ".grid-item:hover &": { color: "primary.main" },
+                  }}
+                />
+              </Box>
+              <Typography
+                variant="body1"
+                sx={{ ".grid-item:hover &": { color: "primary.main" } }}
+              >
+                Invite Group
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+
         <Button variant="contained" sx={{ my: 2, width: "25%" }}>
           Send
         </Button>
