@@ -59,7 +59,7 @@ const Header = (props: Props) => {
   const handleBoxClick = () => {
     setShowIcons(!showIcons);
   };
-  const handleOpen = () => {
+  const handleOpenPublish = () => {
     setOpenPublish(true);
   };
   const handleClosePublish = () => {
@@ -217,7 +217,7 @@ const Header = (props: Props) => {
             }}
           >
             <Button
-              onClick={handleOpen}
+              onClick={handleOpenPublish}
               sx={{ mt: { xs: 1, md: 0 }, mr: { xs: 0, md: 2 } }}
               size="small"
               color="primary"
