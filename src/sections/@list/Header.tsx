@@ -15,6 +15,7 @@ import UserList from "./UserList";
 import { connect } from "react-redux";
 import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
 import PublishList from "./Publish";
+import ShareList from "./Share";
 
 type Props = {
   columns: any;
@@ -46,6 +47,7 @@ const Header = (props: Props) => {
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
   const [openPublish, setOpenPublish] = useState(false);
+  const [openShare, setOpenShare] = useState(false);
   const isDesktop = useResponsive("up", "xl");
   const [visiblePanel, setVisiblePanel] = useState(false);
 
@@ -64,6 +66,13 @@ const Header = (props: Props) => {
   };
   const handleClosePublish = () => {
     setOpenPublish(false);
+  };
+
+  const handleOpenShare = () => {
+    setOpenShare(true);
+  };
+  const handleCloseShare = () => {
+    setOpenShare(false);
   };
 
   return (
@@ -226,6 +235,7 @@ const Header = (props: Props) => {
               Publish
             </Button>
             <Button
+              onClick={handleOpenShare}
               sx={{ mt: { xs: 1, md: 0 } }}
               size="small"
               color="primary"
@@ -289,6 +299,14 @@ const Header = (props: Props) => {
           open={openPublish}
           handleClose={() => {
             handleClosePublish();
+          }}
+        />
+      </>
+      <>
+        <ShareList
+          open={openShare}
+          handleClose={() => {
+            handleCloseShare();
           }}
         />
       </>
