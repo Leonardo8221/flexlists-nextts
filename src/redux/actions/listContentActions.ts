@@ -1,7 +1,8 @@
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../store';
-import {listContentService} from 'src/frontendServices/listContent.service'
+import {listContentService} from 'src/services/listContent.service'
+import { isSucc } from 'src/models/ApiResponse';
 // Define the actions
 export const fetchRows = (): ThunkAction<
 void,
@@ -17,10 +18,10 @@ any
       }
       else
       {
-        const response = await listContentService.getListContents(1);
-        if(response && response.code == 0)
+        const response = await listContentService.getContents(1,1,1,[]);
+        if(isSucc(response))
         {
-          dispatch(setRows(response.result));
+          dispatch(setRows(response.data));
         } 
       }
      

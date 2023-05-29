@@ -6,6 +6,7 @@ import { LoadingButton } from '@mui/lab';
 import Iconify from '../../components/iconify';
 import { authService } from '../../services/auth.service';
 import { useRouter } from 'next/router';
+import { isSucc } from 'src/models/ApiResponse';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -17,7 +18,7 @@ export default function LoginForm() {
   const handleSubmit = async() => {
       try {
          var response = await authService.login(userName,password);
-         if(response && response.code == 0 && response.result)
+         if(isSucc(response))
          {
            router.push({pathname:'/dashboard'});
          }

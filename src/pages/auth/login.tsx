@@ -21,6 +21,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { authService } from '../../services/auth.service';
 import Iconify from '../../components/iconify';
+import { isSucc } from "src/models/ApiResponse";
 
 const Login = () => {
   const theme = useTheme();
@@ -44,7 +45,7 @@ const Login = () => {
           return;
          }
          var response = await authService.login(userName,password);
-         if(response && response.code == 0 && response.result)
+         if(isSucc(response))
          {
            router.push({pathname:'/dashboard'});
          }

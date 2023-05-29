@@ -1,6 +1,7 @@
 import { useState, ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
+import { isSucc } from 'src/models/ApiResponse';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +19,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       try
       {
        var verifyTokenResponse = await authService.verifyToken();
-       isValidated = verifyTokenResponse && verifyTokenResponse.code === 0;
+       isValidated = isSucc(verifyTokenResponse);
       }
       catch(error)
       {

@@ -19,6 +19,7 @@ import { MuiTelInput } from "mui-tel-input";
 import { authService } from '../../services/auth.service';
 import { useRouter } from 'next/router';
 import Iconify from '../../components/iconify';
+import { isSucc } from 'src/models/ApiResponse';
 
 const Register = () => {
   const theme = useTheme();
@@ -78,7 +79,7 @@ const Register = () => {
       }
      
       var response = await authService.register(firstName,lastName,userName,phoneNumber,password);
-      if(response && response.code == 0)
+      if(isSucc(response))
       {
         router.push({pathname:'/auth/login'});
       }
