@@ -1,7 +1,8 @@
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { fieldDefinitionService } from 'src/frontendServices/fieldDefinition.service';
+import { fieldService } from 'src/services/field.service';
 import { RootState } from '../store';
+import { isSucc } from 'src/models/ApiResponse';
 
 // Define the actions
 export const fetchColumns = (): ThunkAction<
@@ -18,10 +19,10 @@ any
       }
       else
       {
-        const response = await fieldDefinitionService.getAllFieldDefinition(1);
-        if(response && response.code == 0)
+        const response = await fieldService.getFields(1)
+        if(isSucc(response))
         {
-          dispatch(setColumns(response.result));
+          dispatch(setColumns(response.data));
         } 
       }
       
