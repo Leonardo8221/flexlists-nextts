@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
 import CategoriesSelect from "src/components/categories/categories";
-import { motion } from "framer-motion";
+import ViewCard from "./ViewCard";
 
 const HomeCards = [
   {
@@ -39,6 +39,12 @@ const HomeCards = [
     title: "Bug fixing",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
+  },
+];
+
+const ViewCards = [
+  {
+    bgImage: "/assets/home/heroimg.png",
   },
 ];
 
@@ -153,16 +159,22 @@ export default function AddList() {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6">Your core files.</Typography>
+          <Typography variant="h6">Your files.</Typography>
           <Link href="/main/newList">
             <Button size="medium" variant="contained">
               Create new
             </Button>
           </Link>
         </Box>
-        <Box sx={{ py: 6 }}>
-          <Typography variant="body1">You have 0 files created.</Typography>
-        </Box>
+        <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
+          {ViewCards.map((card: any) => {
+            return (
+              <Grid item xs={12} sm={6} md={2} key={card.bgImage}>
+                <ViewCard bgImage={card.bgImage}></ViewCard>
+              </Grid>
+            );
+          })}
+        </Grid>
         <Divider light sx={{ py: 1 }} />
 
         <Box

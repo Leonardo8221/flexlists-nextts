@@ -277,6 +277,7 @@ const ShareList = (props: Props) => {
           form.
         </Typography>
         <Divider sx={{ my: 1 }}></Divider>
+        <ShareTabs />
 
         <Typography variant="subtitle1" sx={{ mt: 1 }}>
           Invite user
@@ -358,9 +359,6 @@ const ShareList = (props: Props) => {
         >
           (separate multiple addresses with a comma)
         </FormLabel>
-        <Typography variant="subtitle1" sx={{ my: 2 }}>
-          Additional options
-        </Typography>
         {/* <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <Box
@@ -435,7 +433,6 @@ const ShareList = (props: Props) => {
             </Box>
           </Grid>
         </Grid> */}
-        <ShareTabs />
 
         {/* <ManageKeys /> */}
         <Button variant="contained" sx={{ my: 2, mt: 3, width: "25%" }}>
