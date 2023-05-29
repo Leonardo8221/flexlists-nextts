@@ -63,9 +63,7 @@ const scaleUp = {
 
 const PublishList = (props: Props) => {
   const { open, handleClose } = props;
-  const [steps, setSteps] = useState(0);
   const closeModal = () => {
-    setSteps(0);
     handleClose();
   };
 
@@ -88,7 +86,7 @@ const PublishList = (props: Props) => {
           Publish
         </Typography>
 
-        <Typography gutterBottom variant="body1" sx={{ my: 1 }}>
+        <Typography gutterBottom variant="body2" sx={{ my: 1 }}>
           With Web export you can add the list to your website by simply adding
           a bit of javascript. Simply copy the code below into your site.
         </Typography>
