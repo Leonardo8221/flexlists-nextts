@@ -18,7 +18,7 @@ function ListAccess() {
   };
   return (
     <>
-      <Box sx={{ my: 2, display: "flex" }}>
+      <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
         <Avatar sx={{ mr: 1, backgroundColor: "black" }}>SŠ</Avatar>
         <Box
           sx={{
@@ -44,7 +44,11 @@ function ListAccess() {
               id="demo-simple-select-standard"
               value={age}
               onChange={handleChange}
-              sx={{ fontSize: 14, "&::before": { borderBottom: "none" } }}
+              sx={{
+                fontSize: 14,
+                "&::before": { borderBottom: "none" },
+                "&:focused": { backgroundColor: "transparent !important" },
+              }}
             >
               <MenuItem value={10} sx={{ fontSize: 14 }}>
                 Owner
@@ -59,7 +63,7 @@ function ListAccess() {
           </FormControl>
         </Box>
       </Box>
-      <Box sx={{ my: 2, display: "flex" }}>
+      <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
         <Avatar sx={{ mr: 1, backgroundColor: "darkblue" }}>JD</Avatar>
         <Box
           sx={{
@@ -73,7 +77,35 @@ function ListAccess() {
             <Typography variant="body1">John Doe</Typography>
             <Typography variant="body2">mail@example.com</Typography>
           </Box>
-          <Typography variant="body2">Read/Edit</Typography>
+          <FormControl
+            variant="standard"
+            sx={{
+              m: 1,
+              minWidth: "auto",
+            }}
+          >
+            <Select
+              labelId="demo-simple-select-standard-label"
+              id="demo-simple-select-standard"
+              value={age}
+              onChange={handleChange}
+              sx={{
+                fontSize: 14,
+                "&::before": { borderBottom: "none" },
+                "&:focused": { backgroundColor: "transparent !important" },
+              }}
+            >
+              <MenuItem value={10} sx={{ fontSize: 14 }}>
+                Owner
+              </MenuItem>
+              <MenuItem value={20} sx={{ fontSize: 14 }}>
+                Admin
+              </MenuItem>
+              <MenuItem value={30} sx={{ fontSize: 14 }}>
+                Editor
+              </MenuItem>
+            </Select>
+          </FormControl>
         </Box>
       </Box>
     </>
