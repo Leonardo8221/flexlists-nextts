@@ -16,19 +16,34 @@ const CardImage = styled("img")(({ theme }) => ({
 
 type ViewCard = {
   bgImage: string;
+  viewName?: string;
+  viewDesc?: string;
 };
 
-export default function ViewCard({ bgImage, ...other }: ViewCard) {
+export default function ViewCard({
+  bgImage,
+  viewName,
+  viewDesc,
+  ...other
+}: ViewCard) {
   return (
     <Card>
       <CardImage sx={{ mt: 2 }} src={bgImage} />
       <CardContent sx={{ py: 2 }}>
         <Typography gutterBottom variant="h5" component="div">
-          View Name
+          {viewName}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          View description - Lorem ipsum dolor sit amet consectetur, adipisicing
-          elit. Officiis, fugiat!
+        <Typography
+          sx={{
+            maxHeight: 64,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          variant="body2"
+          color="text.secondary"
+          component={"div"}
+        >
+          {viewDesc}
         </Typography>
       </CardContent>
       <CardActions sx={{ px: 3, py: 2 }}>

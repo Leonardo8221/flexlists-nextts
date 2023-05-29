@@ -45,6 +45,15 @@ const HomeCards = [
 const ViewCards = [
   {
     bgImage: "/assets/home/heroimg.png",
+    viewName: "View Name",
+    viewDesc:
+      "View description - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis, fugiat!",
+  },
+  {
+    bgImage: "/assets/home/heroimg.png",
+    viewName: "View Name 2",
+    viewDesc:
+      "View description 2 - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis, fugiat!",
   },
 ];
 
@@ -170,7 +179,11 @@ export default function AddList() {
           {ViewCards.map((card: any) => {
             return (
               <Grid item xs={12} sm={6} md={2} key={card.bgImage}>
-                <ViewCard bgImage={card.bgImage}></ViewCard>
+                <ViewCard
+                  bgImage={card.bgImage}
+                  viewName={card.viewName}
+                  viewDesc={card.viewDesc}
+                ></ViewCard>
               </Grid>
             );
           })}
