@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
 import {
@@ -10,8 +10,37 @@ import {
   Button,
   Divider,
   Link,
+  SelectChangeEvent,
 } from "@mui/material";
-export default function newList() {
+import { ListCategory } from "src/enums/SharedEnums";
+import { ListCategoryLabel } from "src/enums/ShareEnumLabels";
+export default function NewList() {
+  var categories : {key:string,name : string}[] = []
+  Object.keys(ListCategory).forEach((x)=>{
+      categories.push({key : x,name:ListCategoryLabel.get(x)??""})
+  })
+  const [currentList,setCurrentList] = useState<{name:string,description:string,category:string}>({name:"",description:"",category:categories[0].key})
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+  {
+     var newList = Object.assign({},currentList);
+     newList.name = event.target.value
+     setCurrentList(newList)
+  }
+  const onDescriptionChange = (newValue:string) =>
+  {
+     var newList = Object.assign({},currentList);
+     newList.description = newValue
+     setCurrentList(newList)
+  }
+  const onCategoryChange = (event: SelectChangeEvent) =>
+  {
+     var newList = Object.assign({},currentList);
+     newList.category = event.target.value
+     setCurrentList(newList)
+  }
+  const handleSubmit = () =>{
+    console.log(currentList);
+  }
   return (
     <MainLayout removeFooter={true}>
       <Box
@@ -27,36 +56,35 @@ export default function newList() {
             <Typography variant="subtitle2" gutterBottom>
               Name
             </Typography>
-            <TextField required fullWidth id="fullWidth" />
+            <TextField required fullWidth id="fullWidth" value={currentList.name} onChange={onNameChange} />
           </Box>
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               Description
             </Typography>
-            <WysiwygEditor />
+            <WysiwygEditor value = {currentList.description} setValue={(newValue)=>onDescriptionChange(newValue)} />
           </Box>
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
               Category
             </Typography>
-            <Select fullWidth displayEmpty>
-              <MenuItem value="">
-                <Typography variant="body1">Choose...</Typography>
-              </MenuItem>
-              <MenuItem>Category 1</MenuItem>
-              <MenuItem>Category 2</MenuItem>
-              <MenuItem>Category 3</MenuItem>
+            <Select fullWidth displayEmpty value={currentList.category} onChange={onCategoryChange}>
+            {categories.map((option) => (
+            <MenuItem key={option.key} value={option.key}>
+              {option.name}
+            </MenuItem>
+          ))}
             </Select>
           </Box>
-          <Link href="/main/list">
-            <Button
-              variant="contained"
-              sx={{ width: { xs: "100%", md: "auto" } }}
-              type="submit"
-            >
-              Create list
-            </Button>
-          </Link>
+          <Button
+            variant="contained"
+            sx={{ width: { xs: "100%", md: "auto" } }}
+            type="submit"
+            onClick={()=>handleSubmit()}
+          >
+            Create list
+          </Button>
+
         </Box>
         {/* <Box sx={{ borderLeft: "solid 1px #ccc", p: 2 }}>
           <Typography variant="h4">List details</Typography>

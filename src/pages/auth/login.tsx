@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { authService } from '../../services/auth.service';
 import Iconify from '../../components/iconify';
 import { isSucc } from "src/models/ApiResponse";
+import { PATH_MAIN } from "src/routes/paths";
 
 const Login = () => {
   const theme = useTheme();
@@ -47,7 +48,7 @@ const Login = () => {
          var response = await authService.login(userName,password);
          if(isSucc(response))
          {
-           router.push({pathname:'/dashboard'});
+           router.push({pathname:PATH_MAIN.addList});
          }
       } catch (error) {
         

@@ -7,17 +7,19 @@ import { Box } from '@mui/material';
 const styles = {
   height: "300px"
 }
-
-const WysiwygEditor: React.FC = () => {
-  const [editorValue, setEditorValue] = useState<string>('');
-
-  const handleEditorChange = (value: string) => {
-    setEditorValue(value);
+type WysiwygEditorProps = 
+{
+   value : string,
+   setValue : (editValue:string) =>void
+}
+const WysiwygEditor = ({value,setValue}:WysiwygEditorProps) => {
+  const handleEditorChange = (newValue: string) => {
+    setValue(newValue)
   };
 
   return (
     <Box sx={{minHeight: "400px"}}>
-      <ReactQuill style={styles} value={editorValue} onChange={handleEditorChange} />
+      <ReactQuill style={styles} value={value} onChange={handleEditorChange} />
     </Box>
   );
 };
