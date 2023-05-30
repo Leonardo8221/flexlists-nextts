@@ -53,7 +53,7 @@ const ViewCards = [
     bgImage: "/assets/home/heroimg.png",
     viewName: "View Name 2",
     viewDesc:
-      "View description 2 - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis, fugiat!",
+      "View description 2 - Lorem ipsum dolor sit amet consectetur, adipisicing elitasas. Officiis, fugiat!",
   },
 ];
 

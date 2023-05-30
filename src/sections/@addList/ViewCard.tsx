@@ -38,6 +38,7 @@ export default function ViewCard({
             maxHeight: 64,
             overflow: "hidden",
             textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
           variant="body2"
           color="text.secondary"
