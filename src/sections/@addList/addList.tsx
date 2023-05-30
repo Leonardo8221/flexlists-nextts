@@ -169,7 +169,7 @@ export default function AddList() {
           }}
         >
           <Typography variant="h6">Your files.</Typography>
-          <Link href="/main/newList">
+          <Link href="/main/list/newList">
             <Button size="medium" variant="contained">
               Create new
             </Button>

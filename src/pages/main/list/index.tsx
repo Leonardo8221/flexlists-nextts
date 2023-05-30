@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import MainLayout from "src/layouts/view/MainLayout";
 import AddList from "src/sections/@addList/addList";
 
-export default function TourPage() {
+export default function ListPage() {
   const theme = useTheme();
 
   return (

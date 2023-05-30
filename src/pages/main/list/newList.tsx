@@ -12,9 +12,14 @@ import {
   Link,
   SelectChangeEvent,
 } from "@mui/material";
-import { ListCategory } from "src/enums/SharedEnums";
+import { ListCategory, ViewType } from "src/enums/SharedEnums";
 import { ListCategoryLabel } from "src/enums/ShareEnumLabels";
+import { useRouter } from "next/router";
+import { listService } from "src/services/list.service";
+import { isSucc } from "src/models/ApiResponse";
+import { PATH_MAIN } from "src/routes/paths";
 export default function NewList() {
+  const router = useRouter();
   var categories : {key:string,name : string}[] = []
   Object.keys(ListCategory).forEach((x)=>{
       categories.push({key : x,name:ListCategoryLabel.get(x)??""})
@@ -38,8 +43,12 @@ export default function NewList() {
      newList.category = event.target.value
      setCurrentList(newList)
   }
-  const handleSubmit = () =>{
-    console.log(currentList);
+  const handleSubmit = async() =>{
+    var createListResponse = await listService.createList(currentList.name,currentList.category as ListCategory,ViewType.List);
+    if(isSucc(createListResponse) && createListResponse.data && createListResponse.data.listId)
+    {
+       router.push({pathname: `${PATH_MAIN.list}/${createListResponse.data.listId}`})
+    }
   }
   return (
     <MainLayout removeFooter={true}>

@@ -1,13 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '@mui/material/styles';
-import useResponsive from '../../hooks/useResponsive';
+import useResponsive from 'src/hooks/useResponsive';
 import { useState } from 'react';
 import { Box } from '@mui/material';
 import MainLayout from 'src/layouts/view/MainLayout';
-import Header from '../../sections/@list/Header';
-import MenuBar from '../../sections/@list/MenuBar';
-import ToolBar from '../../sections/@list/ToolBar';
-import DataTable from '../../sections/@list/DataTable';
+import Header from 'src/sections/@list/Header';
+import MenuBar from 'src/sections/@list/MenuBar';
+import ToolBar from 'src/sections/@list/ToolBar';
+import DataTable from 'src/sections/@list/DataTable';
 
 export default function List() {
   const theme = useTheme();
