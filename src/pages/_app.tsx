@@ -14,11 +14,11 @@ export default function App({ Component, pageProps }: AppProps) {
       <LanguagesProvider>
         {/* <ScrollToTop /> */}
         <StyledChart />
-        {/* <AuthGuard> */}
+        <AuthGuard>
           <Provider store={store}>
             <Component {...pageProps} />
           </Provider>
-        {/* </AuthGuard> */}
+        </AuthGuard>
       </LanguagesProvider>
     </ThemeProvider>
   );

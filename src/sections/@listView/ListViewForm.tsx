@@ -110,7 +110,7 @@ const ListViewForm = (props: Props) => {
         </Box>
         <Box>
           <Typography variant="subtitle2" gutterBottom>View Description</Typography>
-          <WysiwygEditor />
+          {/* <WysiwygEditor /> */}
         </Box>
       </Box>
       }

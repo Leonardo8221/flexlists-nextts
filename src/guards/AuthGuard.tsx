@@ -2,6 +2,7 @@ import { useState, ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
 import { isSucc } from 'src/models/ApiResponse';
+import { PATH_MAIN } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -14,6 +15,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const url = router.asPath;
   useEffect(() => {
     async function initialize() {
+      if(process.env.NEXT_PUBLIC_USE_DUMMY_DATA == 'true')
+      {
+        return;
+      }
       const path = url.split('/')[1];
       var isValidated:Boolean = false;
       try
@@ -31,7 +36,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
          if(isValidated)
          {
           router.push({
-            pathname: '/dashboard'
+            pathname: PATH_MAIN.list
           });
          }
       }

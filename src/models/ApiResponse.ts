@@ -1,13 +1,13 @@
 export function isErr(x: any): x is FlexlistsError {
-    return typeof x === 'object' && x != null && x.message !== 'Success'
+    return typeof x === 'object' && x != null && !(x as any).isSuccess
 }
 
 export function isSucc(x: any): x is FlexlistsSuccess {
-    return typeof x === 'object' && x != null && x.message === 'Success'
+    return typeof x === 'object' && x != null && (x as any).isSuccess
 }
 
 export type FlexlistsError = {
-     ERR : boolean
+     isSuccess : boolean
      message: string
      code: number
      data: any
@@ -15,7 +15,7 @@ export type FlexlistsError = {
 }
 
 export type FlexlistsSuccess<T = any> =  {
-    SUCC : boolean,
+    isSuccess : boolean
     message: string 
     data: T | undefined
 }
