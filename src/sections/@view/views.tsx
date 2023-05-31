@@ -63,7 +63,7 @@ const ViewCards = [
   },
 ];
 
-export default function AddList() {
+export default function Views() {
   const router = useRouter()
   const theme = useTheme();
   const [open, setOpen] = useState(false);

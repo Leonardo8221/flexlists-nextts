@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import MainLayout from "src/layouts/view/MainLayout";
-import AddList from "src/sections/@addList/addList";
+import Views from "src/sections/@view/views";
 
 export default function ListPage() {
   const theme = useTheme();
@@ -16,7 +16,7 @@ export default function ListPage() {
           overflow: "hidden",
         }}
       >
-        <AddList />
+        <Views />
       </Box>
     </MainLayout>
   );

@@ -48,7 +48,7 @@ const Login = () => {
          var response = await authService.login(userName,password);
          if(isSucc(response))
          {
-           router.push({pathname:PATH_MAIN.addList});
+           router.push({pathname:PATH_MAIN.lists});
          }
       } catch (error) {
         
