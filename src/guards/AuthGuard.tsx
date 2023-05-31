@@ -15,7 +15,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const url = router.asPath;
   useEffect(() => {
     async function initialize() {
-      if(process.env.NEXT_PUBLIC_USE_DUMMY_DATA == 'true')
+      if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA||process.env.NEXT_PUBLIC_USE_DUMMY_DATA == 'true')
       {
         return;
       }
@@ -24,7 +24,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       try
       {
        var verifyTokenResponse = await authService.verifyToken();
-       isValidated = isSucc(verifyTokenResponse);
+       isValidated = isSucc(verifyTokenResponse) && verifyTokenResponse.data && verifyTokenResponse.data.isValidated;
       }
       catch(error)
       {
@@ -36,7 +36,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
          if(isValidated)
          {
           router.push({
-            pathname: PATH_MAIN.list
+            pathname: PATH_MAIN.lists
           });
          }
       }

@@ -1,7 +1,9 @@
+import {  PATH_MAIN } from "src/routes/paths";
+
 const navConfig = [
   {
     title: 'Favorites Plus',
-    path: '/main/list',
+    path: PATH_MAIN.lists,
     icon: 'Favourites_plus',
   },
   {
@@ -11,7 +13,7 @@ const navConfig = [
   },
   {
     title: 'My List',
-    path: '/main/list',
+    path: PATH_MAIN.lists,
     icon: 'List',
   },
   {

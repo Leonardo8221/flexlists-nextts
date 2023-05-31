@@ -14,6 +14,12 @@ import Link from "next/link";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
 import CategoriesSelect from "src/components/categories/categories";
 import ViewCard from "./ViewCard";
+import { List } from "src/models/SharedModels";
+import { listService } from "src/services/list.service";
+import { isSucc } from "src/models/ApiResponse";
+import { Role } from "src/enums/SharedEnums";
+import { useRouter } from "next/router";
+import { PATH_MAIN } from "src/routes/paths";
 
 const HomeCards = [
   {
@@ -58,13 +64,14 @@ const ViewCards = [
 ];
 
 export default function AddList() {
+  const router = useRouter()
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
   const [visibleMask, setVisibleMask] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
-
+  const [lists,setLists] = useState<List[]>([])
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
@@ -78,7 +85,17 @@ export default function AddList() {
 
     //  document.body.addEventListener('click', closePopup);
   }, []);
-
+  useEffect(()=>{
+    async function fetchData()
+    {
+       var response = await listService.getLists();
+       if(isSucc(response) && response.data && response.data.length>0)
+       {
+          setLists(response.data)
+       }
+    }
+    fetchData();
+  },[router.isReady])
   const maskProperties = [
     {
       left: { xs: "115px", md: "215px" },
@@ -135,6 +152,10 @@ export default function AddList() {
     setSteps(steps + 1);
     setMaskProperty(maskProperties[steps + 1]);
   };
+  const createNewList = () =>
+  {
+     router.push(PATH_MAIN.newList)
+  }
 
   const MaskedBackground = styled("div")(({ theme }) => ({
     position: "absolute",
@@ -169,20 +190,19 @@ export default function AddList() {
           }}
         >
           <Typography variant="h6">Your files.</Typography>
-          <Link href="/main/list/newList">
-            <Button size="medium" variant="contained">
+           <Button size="medium" variant="contained" onClick={()=>createNewList()}>
               Create new
             </Button>
-          </Link>
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
-          {ViewCards.map((card: any) => {
+          {lists.length>0 &&lists.map((list) => {
             return (
-              <Grid item xs={12} sm={6} md={2} key={card.bgImage}>
+              <Grid item xs={12} sm={6} md={2} key={"/assets/home/heroimg.png"}>
                 <ViewCard
-                  bgImage={card.bgImage}
-                  viewName={card.viewName}
-                  viewDesc={card.viewDesc}
+                  id = {list.id}
+                  bgImage={"/assets/home/heroimg.png"}
+                  viewName={list.name}
+                  viewDesc={list.description}
                 ></ViewCard>
               </Grid>
             );

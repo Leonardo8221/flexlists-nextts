@@ -11,6 +11,6 @@ export const PATH_AUTH = {
   };
 const ROOTS_MAIN = '/main'
 export const PATH_MAIN = {
-  list: path(ROOTS_MAIN, '/list'),
-  newList : path(ROOTS_MAIN, '/list/newList')
+  lists: path(ROOTS_MAIN, '/lists'),
+  newList: path(ROOTS_MAIN, '/lists/newList')
 }

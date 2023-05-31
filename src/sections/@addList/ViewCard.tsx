@@ -8,24 +8,32 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useRouter } from "next/router";
+import { PATH_MAIN } from "src/routes/paths";
 
 const CardImage = styled("img")(({ theme }) => ({
   height: 140,
   margin: "0 auto",
 }));
 
-type ViewCard = {
+type ViewCardProps = {
+  id:number;
   bgImage: string;
   viewName?: string;
   viewDesc?: string;
 };
 
 export default function ViewCard({
+  id,
   bgImage,
   viewName,
   viewDesc,
   ...other
-}: ViewCard) {
+}: ViewCardProps) {
+  const router = useRouter();
+  const openViewDetail = (id:number)=>{
+      router.push(`${PATH_MAIN.lists}/${id}`)
+  }
   return (
     <Card>
       <CardImage sx={{ mt: 2 }} src={bgImage} />
@@ -48,8 +56,8 @@ export default function ViewCard({
         </Typography>
       </CardContent>
       <CardActions sx={{ px: 3, py: 2 }}>
-        <Button variant="contained" size="small">
-          Open View
+        <Button variant="contained" size="small" onClick={()=>openViewDetail(id)}>
+          Open
         </Button>
       </CardActions>
     </Card>

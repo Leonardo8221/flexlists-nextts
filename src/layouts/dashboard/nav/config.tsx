@@ -1,3 +1,4 @@
+import { PATH_MAIN } from 'src/routes/paths';
 import SvgColor from '../../../components/svg-color';
 
 const icon = (name:string) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
@@ -10,7 +11,7 @@ const navConfig = [
   },
   {
     title: 'main',
-    path: '/main/list',
+    path: PATH_MAIN.lists,
     icon: icon('ic_analytics'),
   },
   {
