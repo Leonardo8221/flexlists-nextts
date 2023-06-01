@@ -17,7 +17,7 @@ import { convertToNumber } from 'src/utils/convertUtils';
 
 type ListProps = {
    currentView: View,
-   getCurrentView : (listId:number,viewId:number)=>void
+   getCurrentView : (viewId:number)=>void
 }
 export  function ListDetail({currentView,getCurrentView}:ListProps) {
   const router = useRouter();
@@ -28,7 +28,7 @@ export  function ListDetail({currentView,getCurrentView}:ListProps) {
   useEffect(() => {
      if(router.isReady && router.query.id && isInteger(router.query.id))
      {
-       getCurrentView(1,convertToNumber(router.query.id));
+       getCurrentView(convertToNumber(router.query.id));
      }
      
   }, [router.isReady]);

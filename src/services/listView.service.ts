@@ -33,7 +33,7 @@ async function deleteView(listId:number,listViewId:number): Promise<FlexlistsErr
 
   return response.data;
 };
-async function getView(listId:number,viewId:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getView'+`?listId=${listId}&viewId=${viewId}`)
+async function getView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getView'+`?viewId=${viewId}`)
   return response.data;
 };

@@ -6,7 +6,7 @@ import { listService } from 'src/services/list.service';
 import { listViewService } from 'src/services/listView.service';
 
 // Define the actions
-export const getCurrentView = (listId:number,viewId:number): ThunkAction<
+export const getCurrentView = (viewId:number): ThunkAction<
 void,
 RootState,
 null,
@@ -15,7 +15,7 @@ any
   return async (dispatch: Dispatch<any>) => {
     try {
       console.log('aaa')
-      const response = await listViewService.getView(listId,viewId)
+      const response = await listViewService.getView(viewId)
       console.log(response.data)
         if(isSucc(response))
         {
