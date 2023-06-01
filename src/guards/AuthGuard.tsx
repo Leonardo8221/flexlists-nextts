@@ -36,7 +36,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
          if(isValidated)
          {
           router.push({
-            pathname: PATH_MAIN.lists
+            pathname: PATH_MAIN.views
           });
          }
       }

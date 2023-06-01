@@ -150,9 +150,9 @@ export default function Views() {
     setSteps(steps + 1);
     setMaskProperty(maskProperties[steps + 1]);
   };
-  const createNewList = () =>
+  const createNewView = () =>
   {
-     router.push(PATH_MAIN.newList)
+     router.push(PATH_MAIN.newView)
   }
 
   const MaskedBackground = styled("div")(({ theme }) => ({
@@ -188,7 +188,7 @@ export default function Views() {
           }}
         >
           <Typography variant="h6">Your files.</Typography>
-           <Button size="medium" variant="contained" onClick={()=>createNewList()}>
+           <Button size="medium" variant="contained" onClick={()=>createNewView()}>
               Create new
             </Button>
         </Box>

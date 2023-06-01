@@ -11,7 +11,7 @@ const navConfig = [
   },
   {
     title: 'main',
-    path: PATH_MAIN.lists,
+    path: PATH_MAIN.views,
     icon: icon('ic_analytics'),
   },
   {

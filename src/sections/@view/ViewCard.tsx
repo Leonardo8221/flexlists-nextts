@@ -32,7 +32,7 @@ export default function ViewCard({
 }: ViewCardProps) {
   const router = useRouter();
   const openViewDetail = (id:number)=>{
-      router.push(`${PATH_MAIN.lists}/${id}`)
+      router.push(`${PATH_MAIN.views}/${id}`)
   }
   return (
     <Card>
