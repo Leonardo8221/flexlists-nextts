@@ -14,7 +14,6 @@ any
   return async (dispatch: Dispatch<any>) => {
     try {
       const response = await fieldService.getFields(1)
-      console.log('aaa'+response)
       if(isSucc(response))
       {
         dispatch(setColumns(response.data));

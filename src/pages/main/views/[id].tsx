@@ -9,21 +9,29 @@ import MenuBar from 'src/sections/@list/MenuBar';
 import ToolBar from 'src/sections/@list/ToolBar';
 import DataTable from 'src/sections/@list/DataTable';
 import { useRouter } from 'next/router';
-import { List } from "src/models/SharedModels";
+import { View } from "src/models/SharedModels";
 import { connect } from 'react-redux';
+import { getCurrentView } from 'src/redux/actions/viewActions';
+import { isInteger } from 'src/utils/validateUtils';
+import { convertToNumber } from 'src/utils/convertUtils';
 
 type ListProps = {
-   currentList: List,
-   getCurrentList : (listId:number)=>void
+   currentView: View,
+   getCurrentView : (listId:number,viewId:number)=>void
 }
-export  function ListDetail({currentList,getCurrentList}:ListProps) {
+export  function ListDetail({currentView,getCurrentView}:ListProps) {
   const router = useRouter();
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
   const [open, setOpen] = useState(false);
-  useEffect(()=>{
-
-  })
+  
+  useEffect(() => {
+     if(router.isReady && router.query.id && isInteger(router.query.id))
+     {
+       getCurrentView(1,convertToNumber(router.query.id));
+     }
+     
+  }, [router.isReady]);
   return (
     <MainLayout>
       <Box
@@ -44,16 +52,11 @@ export  function ListDetail({currentList,getCurrentList}:ListProps) {
   );
 }
 const mapStateToProps = (state: any) => ({
-
+  currentView: state.view.currentView,
 });
 
 const mapDispatchToProps = {
-
+  getCurrentView
 };
-// const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-//     setColumns:(columns: any) => dispatch(setColumns(columns)),
-//     setRows:(rows: any) => dispatch(setRows(rows)),
-//     fetchColumns: () => dispatch(fetchColumns()),
-// });
 export default connect(mapStateToProps, mapDispatchToProps)(ListDetail);
 

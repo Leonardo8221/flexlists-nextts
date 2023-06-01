@@ -3,9 +3,10 @@ import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../store';
 import { isSucc } from 'src/models/ApiResponse';
 import { listService } from 'src/services/list.service';
+import { listViewService } from 'src/services/listView.service';
 
 // Define the actions
-export const getCurrentList = (listId:number): ThunkAction<
+export const getCurrentView = (listId:number,viewId:number): ThunkAction<
 void,
 RootState,
 null,
@@ -13,17 +14,19 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await listService.getList(listId)
+      console.log('aaa')
+      const response = await listViewService.getView(listId,viewId)
+      console.log(response.data)
         if(isSucc(response))
         {
-          dispatch(setList(response.data));
+          dispatch(setView(response.data));
       } 
     } catch (error) {
      console.log('errr')
     }
   };
 };
-export const setList = (list: any) => ({
-    type: 'SET_CURRENT_LIST',
-    payload: list
+export const setView = (view: any) => ({
+    type: 'SET_CURRENT_VIEW',
+    payload: view
   });

@@ -16,10 +16,10 @@ import { connect } from "react-redux";
 import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
 import PublishList from "./Publish";
 import ShareList from "./Share";
+import { View } from "src/models/SharedModels";
 
-type Props = {
-  columns: any;
-  rows: any;
+type HeaderProps = {
+  currentView : View;
 };
 
 const lists = [
@@ -41,8 +41,7 @@ const lists = [
   },
 ];
 
-const Header = (props: Props) => {
-  const { columns, rows } = props;
+const Header = ({currentView}: HeaderProps) => {
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
@@ -121,7 +120,7 @@ const Header = (props: Props) => {
             maxWidth: { xs: 160, lg: 88, xl: 256 },
           }}
         >
-          Flexlists SaaS
+          {currentView?.name}
         </Box>
         <CDropdown id="list_action" className="list_action">
           <CDropdownToggle
@@ -315,8 +314,7 @@ const Header = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
-  rows: state.listContent.columns,
+  currentView: state.view.currentView
 });
 
 const mapDispatchToProps = {
