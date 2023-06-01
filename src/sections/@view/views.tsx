@@ -10,16 +10,14 @@ import {
 } from "@mui/material";
 import HomeCard from "../@tour/HomeCard";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
 import CategoriesSelect from "src/components/categories/categories";
 import ViewCard from "./ViewCard";
-import { List } from "src/models/SharedModels";
-import { listService } from "src/services/list.service";
+import { View } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
-import { Role } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import { listViewService } from "src/services/listView.service";
 
 const HomeCards = [
   {
@@ -71,27 +69,27 @@ export default function Views() {
   const [visibleMask, setVisibleMask] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
-  const [lists,setLists] = useState<List[]>([])
+  const [views,setViews] = useState<View[]>([])
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
 
-    const closePopup = (e: any) => {
-      if (e.target.classList.contains("tour_modal")) {
-        handleClose();
-        console.log(e);
-      }
-    };
+    // const closePopup = (e: any) => {
+    //   if (e.target.classList.contains("tour_modal")) {
+    //     handleClose();
+    //     console.log(e);
+    //   }
+    // };
 
     //  document.body.addEventListener('click', closePopup);
-  }, []);
+  }, [router.isReady]);
   useEffect(()=>{
     async function fetchData()
     {
-       var response = await listService.getLists();
+       var response = await listViewService.getViews();
        if(isSucc(response) && response.data && response.data.length>0)
        {
-          setLists(response.data)
+          setViews(response.data)
        }
     }
     fetchData();
@@ -195,14 +193,14 @@ export default function Views() {
             </Button>
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
-          {lists.length>0 &&lists.map((list) => {
+          {views.length>0 &&views.map((view) => {
             return (
               <Grid item xs={12} sm={6} md={2} key={"/assets/home/heroimg.png"}>
                 <ViewCard
-                  id = {list.id}
+                  id = {view.id}
                   bgImage={"/assets/home/heroimg.png"}
-                  viewName={list.name}
-                  viewDesc={list.description}
+                  viewName={view.name}
+                  viewDesc={view.description}
                 ></ViewCard>
               </Grid>
             );

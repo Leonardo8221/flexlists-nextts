@@ -32,8 +32,8 @@ export const listService = {
     getKeys,
 };
 
-async function createList(name:string,category:ListCategory,type:ViewType): Promise<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>>(`/api/list/createList`, {name,category,type})
+async function createList(name:string,description:string,category:ListCategory,type:ViewType): Promise<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>>(`/api/list/createList`, {name,description,category,type})
 
   return response.data;
 };

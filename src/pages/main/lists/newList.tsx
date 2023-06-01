@@ -44,7 +44,7 @@ export default function NewList() {
      setCurrentList(newList)
   }
   const handleSubmit = async() =>{
-    var createListResponse = await listService.createList(currentList.name,currentList.category as ListCategory,ViewType.List);
+    var createListResponse = await listService.createList(currentList.name,currentList.description,currentList.category as ListCategory,ViewType.List);
     if(isSucc(createListResponse) && createListResponse.data && createListResponse.data.listId)
     {
        router.push({pathname: `${PATH_MAIN.lists}/${createListResponse.data.listId}`})
