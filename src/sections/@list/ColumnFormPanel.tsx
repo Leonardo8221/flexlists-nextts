@@ -137,7 +137,7 @@ const types = [
   }
 ];
 
-export default function AddColumnPanel ({
+export default function ColumnFormPanel ({
     open,
     onClose,
     onSubmit,

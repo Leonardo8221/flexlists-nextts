@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, addWeeks, compareAsc, addHours } from 'date-fns';
-import AddRowPanel from "../../components/right-panel/AddRowPanel";
+import RowFormPanel from "src/sections/@list/RowFormPanel"
 import { connect } from 'react-redux';
 import { setColumns } from '../../redux/actions/listFieldActions';
 import { setRows } from '../../redux/actions/listContentActions';
@@ -140,7 +140,7 @@ const CalendarView = (props: Props) => {
 
       <CalendarFooter mode={mode} handleNewRowPanel={handleNewRowPanel} handleMode={handleMode} />
 
-      <AddRowPanel
+      <RowFormPanel
         rowData={selectedRowData}
         columns={columns}
         onSubmit={handleNewRow}

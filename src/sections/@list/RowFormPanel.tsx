@@ -56,7 +56,7 @@ const actions = [
   }
 ];
 
-const AddRowPanel = (props: Props) => {
+const RowFormPanel = (props: Props) => {
   const { rowData, open, columns, messages, comment, onClose, onSubmit, setMessages } = props;
   const theme = useTheme();
 
@@ -406,4 +406,4 @@ const mapDispatchToProps = {
   setMessages
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddRowPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(RowFormPanel);

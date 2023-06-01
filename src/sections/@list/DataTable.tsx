@@ -6,8 +6,8 @@ import MaterialReactTable, {
   MRT_TableInstance,
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
-import AddRowPanel from "../../components/right-panel/AddRowPanel";
-import AddColumnPanel from "../../components/right-panel/AddColumnPanel";
+import RowFormPanel from "./RowFormPanel";
+import ColumnFormPanel from "./ColumnFormPanel";
 import AddColumnButton from "../../components/add-button/AddColumnButton";
 import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from "../../hooks/useResponsive";
@@ -402,7 +402,7 @@ const DataTable = (props: Props) => {
           />
         </Box>
       </Stack>
-      <AddRowPanel
+      <RowFormPanel
         rowData={selectedRowData}
         columns={columns}
         onSubmit={handleNewRow}
@@ -410,7 +410,7 @@ const DataTable = (props: Props) => {
         onClose={() => setVisibleAddRowPanel(false)}
         comment={false}
       />
-      <AddColumnPanel
+      <ColumnFormPanel
         onSubmit={handleNewColumn}
         open={visibleAddColumnPanel}
         onClose={() => setVisibleAddColumnPanel(false)}

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { setColumns } from '../../redux/actions/listFieldActions';
 import {  setRows } from '../../redux/actions/listContentActions';
 import AddRowButton from "../../components/add-button/AddRowButton";
-import AddRowPanel from "../../components/right-panel/AddRowPanel";
+import RowFormPanel from "src/sections/@list/RowFormPanel";
 
 type Props = {
   columns: any;
@@ -59,7 +59,7 @@ const ViewFooter = (props: Props) => {
         {children}
       </Stack>
 
-      <AddRowPanel
+      <RowFormPanel
         rowData={rowData}
         columns={columns}
         onSubmit={handleNewRow}

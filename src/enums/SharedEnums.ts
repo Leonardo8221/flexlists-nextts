@@ -35,6 +35,10 @@ export enum FieldType {
     Boolean = 'Boolean',
     File = 'File',
     Image = 'Image',
+    Choice = 'Choice',
+    Float = 'Float',
+    Double = 'Double',
+    Percentage = 'Percentage',
 }
 export enum SearchType {
     List = 'List',
