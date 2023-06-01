@@ -14,7 +14,6 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      console.log('aaa')
       const response = await listViewService.getView(viewId)
       console.log(response.data)
         if(isSucc(response))
