@@ -7,21 +7,29 @@ import {
   Stack,
   TextField,
   Drawer,
-  Box
+  Box,
+  Autocomplete
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Select from '@mui/material/Select';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import { styled, lighten, darken } from '@mui/system';
 import { FormControl } from '@mui/material';
 import { FormLabel } from '@mui/material';
 import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react';
+import { Field } from 'src/models/SharedModels';
+import { FieldTypeGroupLabel } from 'src/enums/ShareEnumLabels';
+import { FieldType } from 'src/enums/SharedEnums';
 
-interface AddColumnPanelProps {
-    onClose: () => void;
-    onSubmit: (values: any) => void;
+interface ColumnFormPanelProps {
+    column: Field;
+    onAdd: (column: Field) => void;
+    onUpdate:(column:Field) =>void;
+    onDelete:(id:number) =>void;
     open: boolean;
+    onClose: () => void;
 }
 
 type Choice = {
@@ -136,14 +144,39 @@ const types = [
     value: 'choice'
   }
 ];
+const GroupHeader = styled('div')(({ theme }) => ({
+  position: 'sticky',
+  top: '-8px',
+  padding: '4px 10px',
+  color: theme.palette.primary.main,
+  backgroundColor:
+    theme.palette.mode === 'light'
+      ? lighten(theme.palette.primary.light, 0.85)
+      : darken(theme.palette.primary.main, 0.8),
+}));
 
+const GroupItems = styled('ul')({
+  padding: 0,
+});
 export default function ColumnFormPanel ({
+    column,
+    onAdd,
+    onUpdate,
+    onDelete,
     open,
     onClose,
-    onSubmit,
-  }: AddColumnPanelProps) {
+    
+  }: ColumnFormPanelProps) {
+   
     const theme = useTheme();
-  
+    const isCreating : boolean = !column.id|| column.id == 0;
+    const [currentColumn,setCurrentColumn] = useState<Field>(column)
+    var  columTypeGroups : {groupName : string, type: string}[] = []
+     FieldTypeGroupLabel.forEach((values,key)=>{
+        for (const value of values) {
+          columTypeGroups.push({groupName:key,type:value})
+        }
+    })
     const [name, setName] = useState("");
     const [type, setType] = useState("");
     const [icon, setIcon] = useState("");
@@ -168,7 +201,7 @@ export default function ColumnFormPanel ({
     const handleSubmit = () => {
       setSubmit(true);
       
-      const column = {
+      const newColumn = {
         name: name.toLowerCase(),
         type: type,
         label: name,
@@ -179,13 +212,20 @@ export default function ColumnFormPanel ({
       if (type === 'choice' && !choices.length) return;
 
       if (name && type && icon) {
-        onSubmit(column);
+        onAdd(currentColumn);
         onClose();
       }
     };
-
-    const handleColumnType = (item: any) => {
-      setType(item.value);
+    const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    {
+      var newColumn = Object.assign({},currentColumn);
+      newColumn.name = event.target.value
+      setCurrentColumn(newColumn)
+    }
+    const handleColumnTypeChange = (newType: string) => {
+      var newColumn = Object.assign({},currentColumn);
+      newColumn.type = newType as FieldType
+      setCurrentColumn(newColumn)
     };
 
     const addChoice = () => {
@@ -294,14 +334,31 @@ export default function ColumnFormPanel ({
                 label="Column name"
                 name="name"
                 size="small"
-                onChange={(e) =>
-                  setName(e.target.value)
-                }
+                value={currentColumn.name}
+                onChange={onNameChange}
                 required
                 error={submit && !name}
               />
               <FormControl sx={{ marginTop: 2 }} required>
-                <InputLabel id="column_type" sx={{ top: '-5px' }}>Column type</InputLabel>
+              <Autocomplete
+                id="grouped-types"
+                options={columTypeGroups}
+                groupBy={(option) => option.groupName}
+                getOptionLabel={(option) => option.type}
+                fullWidth
+                inputValue={currentColumn.type}
+                onInputChange={(event, newInputValue) => {
+                    handleColumnTypeChange(newInputValue);
+                }}
+                renderInput={(params) => <TextField {...params}  label="Column type" />}
+                renderGroup={(params) => (
+                  <li key={params.key}>
+                    <GroupHeader>{params.group}</GroupHeader>
+                    <GroupItems>{params.children}</GroupItems>
+                  </li>
+                )}
+              />
+                {/* <InputLabel id="column_type" sx={{ top: '-5px' }}>Column type</InputLabel>
                 <Select
                   label="Column type"
                   size="small"
@@ -318,7 +375,7 @@ export default function ColumnFormPanel ({
                     </MenuItem> : 
                     <ListSubheader key={item.label} sx={{ fontWeight: '900', fontSize: '17px' }}>{item.label}</ListSubheader>)
                   }
-                </Select>
+                </Select> */}
               </FormControl>
               <FormControl sx={{ marginTop: 2 }} required>
                 <TextField

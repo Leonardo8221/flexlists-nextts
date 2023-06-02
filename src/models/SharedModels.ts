@@ -1,6 +1,7 @@
 import { FieldType } from 'src/enums/SharedEnums'
 import { Role } from 'src/enums/SharedEnums'
 import { ViewType } from 'src/enums/SharedEnums'
+import { ListCategory } from 'src/enums/SharedEnums'
 export type Field = {
     id:number
     listId:number
@@ -8,8 +9,10 @@ export type Field = {
     type:FieldType
     ordering:number
     required:boolean
-    detailsOnly:string
-    description:string
+    detailsOnly?:string
+    description?:string
+    minimum?:number
+    maximum?:number
 }
 export type List = {
     id:number
@@ -17,7 +20,7 @@ export type List = {
     fields:Field []
     subList:List []
     role:Role[]
-    description:string
+    description?:string
 }
 export type Sort = {
     fieldId:number
@@ -31,11 +34,14 @@ export type Query = {
 export type View = {
     id:number
     name:string
-    type:ViewType[]
+    type:ViewType
+    listId:number
+    category:ListCategory
+    template?:boolean
     config:any
-    page:number
-    limit:number
+    page?:number
+    limit?:number
     order:Sort []
     query:Query 
-    description:string
+    description?:string
 }

@@ -16,9 +16,13 @@ import { fetchColumns, setColumns } from "../../redux/actions/listFieldActions";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { setRows, fetchRows } from "src/redux/actions/listContentActions";
+import { Field, View } from "src/models/SharedModels";
+import { FieldType } from "src/enums/SharedEnums";
+import { useRouter } from "next/router";
 
-type Props = {
+type DataTableProps = {
   tab: boolean;
+  currentView : View,
   columns: any;
   rows: any;
   setColumns: (columns: any) => void;
@@ -27,11 +31,11 @@ type Props = {
   fetchRows: () => void;
 };
 
-const DataTable = (props: Props) => {
-  const { tab, columns, rows, setColumns, setRows, fetchColumns, fetchRows } =
-    props;
+const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchColumns, fetchRows }: DataTableProps) => {
   const theme = useTheme();
+  const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
+  const newColumn : Field = {id:0,listId:0,name:'',ordering:0,required:false,type:FieldType.Text,description:'',detailsOnly:undefined,maximum:undefined,minimum:undefined }
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleAddColumnPanel, setVisibleAddColumnPanel] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
@@ -45,6 +49,7 @@ const DataTable = (props: Props) => {
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
+  const [selectedColumn,setSelectedColumn] = useState<Field>(newColumn)
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -65,7 +70,15 @@ const DataTable = (props: Props) => {
   useEffect(() => {
     fetchRows();
   }, [fetchRows]);
-
+  useEffect(() => {
+    if(currentView)
+    {
+      console.log(currentView)
+      var newColumn = Object.assign({},selectedColumn);
+      newColumn.listId =  currentView.listId
+      setSelectedColumn(newColumn)
+    }
+  }, [currentView]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
@@ -411,7 +424,10 @@ const DataTable = (props: Props) => {
         comment={false}
       />
       <ColumnFormPanel
-        onSubmit={handleNewColumn}
+        column={selectedColumn}
+        onAdd={handleNewColumn}
+        onUpdate={(updateColumn)=>{}}
+        onDelete={(id)=>{}}
         open={visibleAddColumnPanel}
         onClose={() => setVisibleAddColumnPanel(false)}
       />
@@ -422,6 +438,7 @@ const DataTable = (props: Props) => {
 const mapStateToProps = (state: any) => ({
   columns: state.fieldDefinition.columns,
   rows: state.listContent.rows,
+  currentView : state.view.currentView
 });
 
 const mapDispatchToProps = {
