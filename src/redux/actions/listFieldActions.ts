@@ -5,7 +5,7 @@ import { RootState } from '../store';
 import { isSucc } from 'src/models/ApiResponse';
 
 // Define the actions
-export const fetchColumns = (): ThunkAction<
+export const fetchColumns = (viewId:number): ThunkAction<
 void,
 RootState,
 null,
@@ -13,7 +13,9 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await fieldService.getFields(1)
+      console.log('aaaaaa')
+      const response = await fieldService.getFields(viewId)
+      console.log(response)
       if(isSucc(response))
       {
         dispatch(setColumns(response.data));

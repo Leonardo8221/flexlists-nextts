@@ -8,7 +8,9 @@ import {
   TextField,
   Drawer,
   Box,
-  Autocomplete
+  Autocomplete,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { styled, lighten, darken } from '@mui/system';
@@ -16,9 +18,15 @@ import { FormControl } from '@mui/material';
 import { Field } from 'src/models/SharedModels';
 import { FieldTypeGroupLabel } from 'src/enums/ShareEnumLabels';
 import { FieldType } from 'src/enums/SharedEnums';
+import ChoiceConfig from './fieldConfig/ChoiceConfig';
+import { ViewField } from 'src/models/ViewField';
+import { fieldService } from 'src/services/field.service';
+import { isSucc } from 'src/models/ApiResponse';
+import { CreateFieldOutputDto } from 'src/models/ApiOutputModels'
 
 interface ColumnFormPanelProps {
-    column: Field;
+    viewId:number,
+    column: ViewField;
     onAdd: (column: Field) => void;
     onUpdate:(column:Field) =>void;
     onDelete:(id:number) =>void;
@@ -42,6 +50,7 @@ const GroupItems = styled('ul')({
   padding: 0,
 });
 export default function ColumnFormPanel ({
+    viewId,
     column,
     onAdd,
     onUpdate,
@@ -53,7 +62,7 @@ export default function ColumnFormPanel ({
    
     const theme = useTheme();
     const isCreating : boolean = !column.id|| column.id == 0;
-    const [currentColumn,setCurrentColumn] = useState<Field>(column)
+    const [currentColumn,setCurrentColumn] = useState<ViewField>(column)
     var  columTypeGroups : {groupName : string, type: string}[] = []
      FieldTypeGroupLabel.forEach((values,key)=>{
         for (const value of values) {
@@ -71,11 +80,27 @@ export default function ColumnFormPanel ({
     useEffect(() => {
       setSubmit(false);
       setVisibleIconList(false);
+      setCurrentColumn(column)
     }, [open]);
   
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
       setSubmit(true);
-      onAdd(currentColumn);
+      console.log(currentColumn)
+      currentColumn.id = 1;
+      if(isCreating)
+      {
+        var createFieldResponse = await fieldService.createField(viewId,currentColumn.name,currentColumn.type,currentColumn.ordering,
+                     currentColumn.required,currentColumn.detailsOnly,currentColumn.description,currentColumn.minimum,
+                     currentColumn.maximum,currentColumn.config,currentColumn.icon)
+        console.log(createFieldResponse)
+        if(isSucc(createFieldResponse) && createFieldResponse.data)
+        {
+          currentColumn.id = (createFieldResponse.data as CreateFieldOutputDto).fieldId;
+          onAdd(currentColumn);
+        }
+        
+      }
+      
       onClose()
     };
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -97,14 +122,35 @@ export default function ColumnFormPanel ({
       setVisibleIconList(false)
     }
 
-   
+    const handleRequiredChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      var newColumn = Object.assign({},currentColumn);
+      newColumn.required = event.target.checked
+      setCurrentColumn(newColumn)
+    };
 
     // const handleModalClick = (e: any) => {
     //   if (!e.target.classList.contains('add_choice')) {
     //     hideColorBar(-1);
     //   }
     // };
-  
+   const updateConfig = (newConfig : any) =>
+   {
+    var newColumn = Object.assign({},currentColumn);
+    newColumn.config = newConfig
+    setCurrentColumn(newColumn)
+   }
+   const renderColumnConfigSwitch = (column : Field) =>
+   {
+      var fieldType = column.type;
+      switch (fieldType) {
+        case FieldType.Choice:
+          return <ChoiceConfig choices={column.config??[]} updateChoices={(newChoices)=>updateConfig(newChoices)} />
+      
+        default:
+          return (<></>)
+          break;
+      }
+   }
     return (
       <Drawer
         anchor="right"
@@ -159,25 +205,13 @@ export default function ColumnFormPanel ({
                   </li>
                 )}
               />
-                {/* <InputLabel id="column_type" sx={{ top: '-5px' }}>Column type</InputLabel>
-                <Select
-                  label="Column type"
-                  size="small"
-                  id="column_type"
-                  error={submit && !type}
-                >
-                  {types.map((item: any) => item.type === 'option' ?
-                    <MenuItem key={item.value} value={item.value} sx={{ paddingLeft: 3, display: 'flex' }} onClick={() => { handleColumnType(item); }}>
-                      <Box sx={{ display: 'flex' }}>
-                        <Box>
-                          {item.label}
-                        </Box>
-                      </Box>
-                    </MenuItem> : 
-                    <ListSubheader key={item.label} sx={{ fontWeight: '900', fontSize: '17px' }}>{item.label}</ListSubheader>)
-                  }
-                </Select> */}
               </FormControl>
+              <FormControlLabel
+                  control={
+                    <Checkbox checked={currentColumn.required} onChange={handleRequiredChange} name="required" />
+                  }
+                  label="Required"
+                />
               <FormControl sx={{ marginTop: 2 }} required>
                 <TextField
                  type = "text"
@@ -186,9 +220,6 @@ export default function ColumnFormPanel ({
                   value={currentColumn.icon}
                   name="icon"
                   size="small"
-                  // onChange={(e) =>
-                  //   onIconChange(e.target.value)
-                  // }
                   onFocus={() => { setVisibleIconList(true); }}
                   required
                   InputLabelProps={{ shrink: (currentColumn.icon !=='') }}  
@@ -219,7 +250,7 @@ export default function ColumnFormPanel ({
                 </Box>}
               </FormControl>
               {
-              
+                renderColumnConfigSwitch(currentColumn)
               }
             </Stack>
           </form>

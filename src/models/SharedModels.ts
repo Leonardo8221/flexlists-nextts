@@ -9,8 +9,9 @@ export type Field = {
     type:FieldType
     ordering:number
     icon:string
+    config:any
     required:boolean
-    detailsOnly?:string
+    detailsOnly:boolean
     description?:string
     minimum?:number
     maximum?:number

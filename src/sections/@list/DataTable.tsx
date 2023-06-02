@@ -19,15 +19,18 @@ import { setRows, fetchRows } from "src/redux/actions/listContentActions";
 import { Field, View } from "src/models/SharedModels";
 import { FieldType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
+import { ViewField } from "src/models/ViewField";
+import { isInteger } from "src/utils/validateUtils";
+import { convertToNumber } from "src/utils/convertUtils";
 
 type DataTableProps = {
   tab: boolean;
   currentView : View,
-  columns: any;
+  columns: ViewField[];
   rows: any;
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
-  fetchColumns: () => void;
+  fetchColumns: (viewId:number) => void;
   fetchRows: () => void;
 };
 
@@ -35,7 +38,8 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
-  const newColumn : Field = {id:0,listId:0,name:'',ordering:0,required:false,type:FieldType.Text,description:'',detailsOnly:undefined,maximum:undefined,minimum:undefined,icon:'' }
+  const newColumn : ViewField = {id:0,listId:0,name:'',ordering:0,required:false,type:FieldType.Text,description:'',
+                detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:undefined,viewFieldVisible: true }
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleAddColumnPanel, setVisibleAddColumnPanel] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
@@ -64,8 +68,12 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   }, [rows, rowSelection]);
 
   useEffect(() => {
-    fetchColumns();
-  }, [fetchColumns]);
+    if(router.isReady && router.query.id && isInteger(router.query.id))
+    {
+      fetchColumns(convertToNumber(router.query.id));
+    }
+    
+  }, [router.isReady]);
 
   useEffect(() => {
     fetchRows();
@@ -73,7 +81,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   useEffect(() => {
     if(currentView)
     {
-      console.log(currentView)
       var newColumn = Object.assign({},selectedColumn);
       newColumn.listId =  currentView.listId
       setSelectedColumn(newColumn)
@@ -82,9 +89,10 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
-      var dataColumnType = (dataColumn.type as string).toLowerCase();
+      var dataColumnType = dataColumn.type;
+      console.log(dataColumnType)
       return {
-        accessorKey: dataColumn.id,
+        accessorKey: `${dataColumn.id}`,
         header: dataColumn.name,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
@@ -110,7 +118,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
           let font = "inherit";
 
           dataColumns.forEach((item: any) => {
-            if (item.type === "choice") {
+            if (item.type === FieldType.Choice) {
               item.choices.forEach((choice: any) => {
                 if (choice.name === renderedCellValue) {
                   value_color = choice.color;
@@ -120,12 +128,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
             }
           });
 
-          return dataColumnType === "id" ||
-            dataColumnType === "text" ||
-            dataColumnType === "textarea" ||
-            dataColumnType === "date" ||
-            dataColumnType === "integers" ||
-            dataColumnType === "floating" ? (
+          return (dataColumnType !== FieldType.Choice && dataColumnType !=='Avatar' ) ? (
             <Box
               key={row.id}
               sx={{
@@ -137,7 +140,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
             >
               {renderedCellValue}
             </Box>
-          ) : dataColumn.type === "avatar" ? (
+          ) : dataColumn.type === "Avatar" ? (
             <Box
               key={row.id}
               sx={{
@@ -154,7 +157,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
               />
               <div style={{ marginLeft: "5px" }}>{renderedCellValue}</div>
             </Box>
-          ) : dataColumnType === "choice" ? (
+          ) : dataColumnType === FieldType.Choice ? (
             <Box
               key={row.id}
               sx={{
@@ -186,7 +189,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
   const columnsTable = useMemo<any>(() => {
     setUpdatingTable(true);
-    return getColumns(columns.filter((column: any) => column.visible));
+    return getColumns(columns.filter((column: any) => column.viewFieldVisible));
   }, [columns]);
 
   useEffect(() => {
@@ -207,8 +210,9 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
   const handleNewColumn = (value: any) => {
     columns.push(value);
+    console.log(columns);
     setColumns([...columns]);
-    setRows(rows.map((task: any) => ({ ...task, [value.name]: "" })));
+    // setRows(rows.map((task: any) => ({ ...task, [value.name]: "" })));
   };
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -232,11 +236,21 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   };
 
   const editRow = (row: any) => {
-    console.log(rows[row.index]);
     setSelectedRowData(rows[row.index]);
     setVisibleAddRowPanel(true);
   };
-
+  const handleAddColumn = (isOpenModal:boolean) =>{
+    var column = Object.assign({},newColumn);
+    column.ordering = 0
+    setSelectedColumn(column)
+    setVisibleAddColumnPanel(isOpenModal)
+    
+  }
+  const handleCloseColumnPanel = () =>
+  {
+     setVisibleAddColumnPanel(false);
+     setSelectedColumn(newColumn);
+  }
   return (
     <Box
       sx={{
@@ -278,7 +292,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
             theme.palette.palette_style.background.table_header_footer,
         }}
       >
-        <AddColumnButton modalHandle={setVisibleAddColumnPanel} />
+        <AddColumnButton modalHandle={handleAddColumn} />
       </Box>
       {!updatingTable && (
         <MaterialReactTable
@@ -423,14 +437,19 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
         onClose={() => setVisibleAddRowPanel(false)}
         comment={false}
       />
-      <ColumnFormPanel
+      {
+        currentView && 
+        <ColumnFormPanel
+        viewId={currentView.id}
         column={selectedColumn}
         onAdd={handleNewColumn}
         onUpdate={(updateColumn)=>{}}
         onDelete={(id)=>{}}
         open={visibleAddColumnPanel}
-        onClose={() => setVisibleAddColumnPanel(false)}
+        onClose={() => handleCloseColumnPanel()}
       />
+      }
+      
     </Box>
   );
 };
