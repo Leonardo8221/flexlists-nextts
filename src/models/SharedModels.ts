@@ -8,6 +8,7 @@ export type Field = {
     name:string
     type:FieldType
     ordering:number
+    icon:string
     required:boolean
     detailsOnly?:string
     description?:string
