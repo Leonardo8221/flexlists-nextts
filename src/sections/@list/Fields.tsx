@@ -80,14 +80,14 @@ const Fields = (props: Props) => {
 
   const handleVisible = (value: boolean) => {
     setColumns(columns.map((column: any) => {
-      column.visible = value;
+      column.viewFieldVisible = value;
       return column;
     }));
   };
 
   const changeVisible = (index: number) => {
     setColumns(columns.map((column: any, i: number) => {
-      if (index === i) column.visible = !column.visible;
+      if (index === i) column.viewFieldVisible = !column.viewFieldVisible;
       return column;
     }));
   };
@@ -153,7 +153,7 @@ const Fields = (props: Props) => {
                     <Box {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} sx={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer', py: 1 }}>
                       <Box sx={{ display: 'flex' }}>
                         <Checkbox
-                          checked={task.column.visible}
+                          checked={task.column.viewFieldVisible}
                           sx={{
                             color: '#CCCCCC',
                             '&.Mui-checked': {

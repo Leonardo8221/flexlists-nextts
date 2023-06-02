@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Box } from "@mui/material";
+import { Button, Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Iconify from "../../components/iconify";
 import ToolBar from "./ToolBar";
@@ -17,6 +17,7 @@ import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
 import PublishList from "./Publish";
 import ShareList from "./Share";
 import { View } from "src/models/SharedModels";
+import RenameView from "./RenameView";
 
 type HeaderProps = {
   currentView : View;
@@ -49,7 +50,7 @@ const Header = ({currentView}: HeaderProps) => {
   const [openShare, setOpenShare] = useState(false);
   const isDesktop = useResponsive("up", "xl");
   const [visiblePanel, setVisiblePanel] = useState(false);
-
+  const [isRenameOpenModal,setIsRenameOpenModal] = useState<boolean>(false)
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
@@ -73,7 +74,10 @@ const Header = ({currentView}: HeaderProps) => {
   const handleCloseShare = () => {
     setOpenShare(false);
   };
-
+  const handleOpenRenameModal = ()=>
+  {
+    setIsRenameOpenModal(true);
+  }
   return (
     <Box
       sx={{
@@ -144,11 +148,18 @@ const Header = ({currentView}: HeaderProps) => {
             />
           </CDropdownToggle>
           <CDropdownMenu>
-            {lists.map((list) => (
-              <CDropdownItem href="#" key={list.label}>
-                {list.label}
+              <CDropdownItem href="#" key={"rename_list"} onClick={()=>handleOpenRenameModal()}>
+                Rename View 
               </CDropdownItem>
-            ))}
+              <CDropdownItem href="#" key={"duplicate_list"}>
+                Duplicate View
+              </CDropdownItem>
+              <CDropdownItem href="#" key={"delete_list"}>
+                Delete View
+              </CDropdownItem>
+              <CDropdownItem href="#" key={"archive_list"}>
+                Archive View
+              </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
       </Box>
@@ -308,6 +319,9 @@ const Header = ({currentView}: HeaderProps) => {
             handleCloseShare();
           }}
         />
+      </>
+      <>
+      <RenameView open = {isRenameOpenModal} handleClose={()=> setIsRenameOpenModal(false)} />
       </>
     </Box>
   );
