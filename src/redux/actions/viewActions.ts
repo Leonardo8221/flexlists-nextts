@@ -16,14 +16,14 @@ any
       const response = await listViewService.getView(viewId)
         if(isSucc(response))
         {
-          dispatch(setView(response.data));
+          dispatch(setCurrentView(response.data));
       } 
     } catch (error) {
      console.log('errr')
     }
   };
 };
-export const setView = (view: any) => ({
+export const setCurrentView = (view: any) => ({
     type: 'SET_CURRENT_VIEW',
     payload: view
   });

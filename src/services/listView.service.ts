@@ -12,6 +12,7 @@ export const listViewService = {
     getViews,
     deleteView,
     getView,
+    renameView
 };
 
 async function createView(listId:number,name:string,type:ViewType,config:any,page:number,limit:number,order:Sort[],query:Query,description:string): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
@@ -35,5 +36,10 @@ async function deleteView(listId:number,listViewId:number): Promise<FlexlistsErr
 };
 async function getView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getView'+`?viewId=${viewId}`)
+  return response.data;
+};
+async function renameView(viewId:number,name:string): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/renameView`, {viewId,name})
+
   return response.data;
 };
