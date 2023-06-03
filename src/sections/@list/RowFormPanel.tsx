@@ -22,8 +22,12 @@ import { connect } from 'react-redux';
 import { setMessages } from '../../redux/actions/messageActions';
 import { ViewField } from 'src/models/ViewField';
 import { FieldType } from 'src/enums/SharedEnums';
+import { listContentService } from 'src/services/listContent.service';
+import { isErr, isSucc } from 'src/models/ApiResponse';
+import { CreateContentOutputDto } from 'src/models/ApiOutputModels';
 
-interface Props {
+interface RowFormProps {
+  currentView: ViewField;
   rowData: any;
   columns: any[];
   open: boolean;
@@ -58,8 +62,7 @@ const actions = [
   }
 ];
 
-const RowFormPanel = (props: Props) => {
-  const { rowData, open, columns, messages, comment, onClose, onSubmit, setMessages } = props;
+const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, onClose, onSubmit, setMessages }: RowFormProps) => {
   const theme = useTheme();
 
   const [date, setDate] = useState<Dayjs | null>();
@@ -79,22 +82,38 @@ const RowFormPanel = (props: Props) => {
     setSubmit(false);
   }, [open, rowData]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     setSubmit(true);
-    console.log(values)
     if (!values) setValues({ submit: true });
     
     let validator = true;
 
     if (values) {
       columns.forEach(column => {
-        if (column.name !== 'id' && !values[column.name]) validator = false;
+        if (column.name !== 'id' && !values[column.id]) validator = false;
       });
 
       if (validator) {
-        if (!values.id) values.id = Math.floor(Math.random() * (99999 - 10000 + 1) ) + 10000;
+        // if (!values.id) values.id = Math.floor(Math.random() * (99999 - 10000 + 1) ) + 10000;
+        //update row data
+        if(rowData && rowData.id)
+        {
+           var updateRowRespone = await listContentService.updateContent(currentView.listId,rowData.id,values)
+           if(isSucc(updateRowRespone))
+           {
+            onSubmit(values,"update")
+           }
+        }
+        else
+        {
+           var createRowResponse = await listContentService.createContent(currentView.listId,values)
+           if(isSucc(createRowResponse) && createRowResponse.data)
+           {
+              values.id = (createRowResponse.data as CreateContentOutputDto).contentId;
+              onSubmit(values,"create")
+           }
+        }
         
-        onSubmit(values, rowData && rowData.id ? "update" : "create");
         onClose();
       }
     }
@@ -102,7 +121,13 @@ const RowFormPanel = (props: Props) => {
   const getDate = (date:any)=>{
     return dayjs(date, "MM/DD/YYYY HH:mm:ss")
   }
-  const handleAction = (action: string) => {
+  const handleAction = async(action: string) => {
+    if(action === 'delete')
+    {
+      var deleteContentResponse = await listContentService.deleteContent(currentView.listId,values.id)
+      if(isErr(deleteContentResponse))
+      return;
+    }
     onSubmit(values, action);
     onClose();
   };
@@ -432,7 +457,8 @@ const RowFormPanel = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  messages: state.message.messages
+  messages: state.message.messages,
+  currentView : state.view.currentView
 });
 
 const mapDispatchToProps = {

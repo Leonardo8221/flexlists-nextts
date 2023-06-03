@@ -27,7 +27,7 @@ type DataTableProps = {
   tab: boolean;
   currentView : View,
   columns: ViewField[];
-  rows: any;
+  rows: any[];
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   fetchColumns: (viewId:number) => void;
@@ -119,7 +119,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
           dataColumns.forEach((item: any) => {
             if (item.type === FieldType.Choice) {
-              item.choices.forEach((choice: any) => {
+              item.config.forEach((choice: any) => {
                 if (choice.name === renderedCellValue) {
                   value_color = choice.color;
                   font = choice.font;
@@ -196,14 +196,19 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
     setUpdatingTable(false);
   }, [columnsTable]);
 
-  const handleNewRow = (values: any, action: string) => {
+  const handleRowAction = (values: any, action: string) => {
     if (action === "create" || action === "clone") {
       rows.push(values);
       setRows([...rows]);
     } else if (action === "update") {
       setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
     } else if (action === "delete")
+    {
+      console.log(rows)
+      console.log(values)
       setRows(rows.filter((row: any) => row.id !== values.id));
+    }
+      
     else {
     }
   };
@@ -432,7 +437,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
       <RowFormPanel
         rowData={selectedRowData}
         columns={columns}
-        onSubmit={handleNewRow}
+        onSubmit={handleRowAction}
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
         comment={false}

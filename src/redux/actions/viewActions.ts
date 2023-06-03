@@ -19,7 +19,7 @@ any
           dispatch(setCurrentView(response.data));
       } 
     } catch (error) {
-     console.log('errr')
+     console.log(error)
     }
   };
 };

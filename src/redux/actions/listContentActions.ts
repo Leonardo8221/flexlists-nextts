@@ -13,12 +13,12 @@ any
   return async (dispatch: Dispatch<any>) => {
     try {
       const response = await listContentService.getContents(1,1,1,[]);
-      if(isSucc(response))
+      if(isSucc(response) && response.data && response.data.content && response.data.content.length>0)
       {
-        dispatch(setRows(response.data));
+        dispatch(setRows(response.data.content));
       }       
     } catch (error) {
-     console.log('errr')
+     console.log(error)
     }
   };
 };
