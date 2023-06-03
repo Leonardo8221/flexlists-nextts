@@ -20,6 +20,8 @@ import { FormControl } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
 import { connect } from 'react-redux';
 import { setMessages } from '../../redux/actions/messageActions';
+import { ViewField } from 'src/models/ViewField';
+import { FieldType } from 'src/enums/SharedEnums';
 
 interface Props {
   rowData: any;
@@ -79,7 +81,7 @@ const RowFormPanel = (props: Props) => {
 
   const handleSubmit = () => {
     setSubmit(true);
-
+    console.log(values)
     if (!values) setValues({ submit: true });
     
     let validator = true;
@@ -138,7 +140,81 @@ const RowFormPanel = (props: Props) => {
 
     return difference < 60 ? 'just now' : date ? `${date} day${date > 1 ? 's' : ''} ago` : hour ? `${hour} hour${hour > 1 ? 's' : ''} ago` : `${min} min${min > 1 ? 's' : ''} ago`;
   };
-
+  const renderField = (column : ViewField) =>
+  {
+     switch (column.type) {
+      case FieldType.Text:
+        return  <TextField
+        key={column.id}
+        label={column.name}
+        name={`${column.id}`}
+        size="small"
+        type={'text'}
+        onChange={(e) =>
+          setValues({ ...values, [column.id]: e.target.value })
+        }
+        defaultValue={rowData ? rowData[column.id] : ''}
+        rows={4}
+        // multiline={column.type === "textarea"}
+        required
+        error={submit && !values[column.name]}
+      />
+     case FieldType.Integer:
+     case FieldType.Double:
+     case FieldType.Decimal:
+     case FieldType.Float:
+     //TODO : will use this for 
+     case FieldType.Percentage:
+     case FieldType.Money:
+        return  <TextField
+        key={column.id}
+        label={column.name}
+        name={`${column.id}`}
+        size="small"
+        type={'number'}
+        onChange={(e) =>
+          setValues({ ...values, [column.id]: e.target.value })
+        }
+        defaultValue={rowData ? rowData[column.id] : ''}
+        rows={4}
+        // multiline={column.type === "textarea"}
+        required
+        error={submit && !values[column.name]}
+      />
+      case FieldType.Date:
+      case FieldType.DateTime:
+        return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+        <DateTimePicker
+            value={rowData?getDate(rowData[column.id]):''}
+            label={column.name}
+            onChange={(x: any) => {
+              setDate(x);
+              setValues({ ...values, [column.id]: x && x.format('MM/DD/YYYY HH:mm:ss') })
+            }
+            }
+            className={submit && !values[column.id] ? 'Mui-error' : ''}
+          />
+      </LocalizationProvider>
+      case FieldType.Choice : 
+       return <FormControl key={column.id} required>
+       <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
+       <Select
+         label={column.name}
+         id={`${column.id}`}
+         defaultValue={rowData ? rowData[column.id] : ''}
+         onChange={(e) =>
+             setValues({ ...values, [column.id]: e.target.value })
+         }
+         size="small"
+         error={submit && !values[column.id]}
+       >
+         {column.config.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
+       </Select>
+     </FormControl>
+      default:
+        return <div key={column.id}></div>
+     }
+  }
   return (
     <Drawer
       anchor="right"
@@ -227,50 +303,7 @@ const RowFormPanel = (props: Props) => {
             }}
           >
             {columns.map((column: any) =>
-              column.type === "text" || column.type === "textarea" || column.type === "integers" || column.type === "floating" || column.type === "avatar" ?
-              <TextField
-                key={column.id}
-                label={column.name}
-                name={column.id}
-                size="small"
-                type={column.type === "integers" || column.type === "floating" ? 'number' : ''}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.id]: e.target.value })
-                }
-                defaultValue={rowData ? rowData[column.id] : ''}
-                rows={4}
-                multiline={column.type === "textarea"}
-                required
-                error={submit && !values[column.name]}
-              /> : column.type === "date" ?
-              <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
-                <DateTimePicker
-                    value={rowData?getDate(rowData[column.id]):''}
-                    label={column.name}
-                    onChange={(x: any) => {
-                      setDate(x);
-                      setValues({ ...values, [column.id]: x && x.format('MM/DD/YYYY HH:mm:ss') })
-                    }
-                    }
-                    className={submit && !values[column.id] ? 'Mui-error' : ''}
-                  />
-              </LocalizationProvider> : column.type === "choice" ?
-              <FormControl key={column.id} required>
-                <InputLabel id={column.id} sx={{ top: '-5px' }}>{column.name}</InputLabel>
-                <Select
-                  label={column.name}
-                  id={column.id}
-                  defaultValue={rowData ? rowData[column.id] : ''}
-                  onChange={(e) =>
-                      setValues({ ...values, [column.id]: e.target.value })
-                  }
-                  size="small"
-                  error={submit && !values[column.id]}
-                >
-                  {column.choices.map((choice: any) => <MenuItem key={choice.name} value={choice.name} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.name}</MenuItem>)}
-                </Select>
-              </FormControl>
-              : <div key={column.id}></div>
+               renderField(column)
             )}
           </Stack>
         </form> :

@@ -37,7 +37,6 @@ const RenameView = ({ open, handleClose,currentView,setCurrentView }: RenameView
   const onSubmit = async() =>
   {
       var response = await listViewService.renameView(view.id,view.name)
-      console.log(response)
       if(isSucc(response))
       {
         setCurrentView(view)
