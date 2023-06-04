@@ -2,15 +2,25 @@ import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import "@coreui/coreui/dist/css/coreui.min.css";
 import { connect } from "react-redux";
+import { getViewUsers } from "src/redux/actions/viewActions";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { convertToInteger } from "src/utils/convertUtils";
 
-type Props = {
-  users: any;
+type ViewUsersProps = {
+  users: any[];
+  getViewUsers:(viewId:number)=>void
 };
 
-const UserList = (props: Props) => {
-  const { users } = props;
+const ViewUsersList = ({ users,getViewUsers }: ViewUsersProps) => {
   const theme = useTheme();
-
+  const router = useRouter()
+  useEffect(()=>{
+     if(router.query.viewId)
+     {
+        getViewUsers(convertToInteger(router.query.viewId))
+     }
+  },[router.query.viewId,getViewUsers])
   return (
     <Box
       sx={{
@@ -18,7 +28,7 @@ const UserList = (props: Props) => {
         paddingTop: { xs: 0.5, md: 1 },
       }}
     >
-      {users.map(
+      {users && users.map(
         (user: any, index: number) =>
           index < 2 && (
             <Box
@@ -67,7 +77,7 @@ const UserList = (props: Props) => {
         <Box
           sx={{ fontSize: "12px", position: "absolute", right: 6, bottom: 0 }}
         >
-          +{users.length - 2}
+          +{users ? users.length - 2 : 0}
         </Box>
       </Box>
     </Box>
@@ -75,7 +85,11 @@ const UserList = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  users: state.user.users,
+  users : state.view.users
 });
 
-export default connect(mapStateToProps)(UserList);
+const mapDispatchToProps = {
+  getViewUsers
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewUsersList);

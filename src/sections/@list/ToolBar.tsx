@@ -6,7 +6,7 @@ import ToolBarItem from '../../components/toolbar';
 import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
 import Collapse from '@mui/material/Collapse';
-import UserList from './UserList';
+import ViewUsersList from './UserList';
 import ActionItem from '../../components/toolbar/ActionItem';
 import { connect } from 'react-redux';
 import { setFilters } from '../../redux/actions/listFieldActions';
@@ -111,7 +111,7 @@ const ToolbBar = (props: ToolbBarProps) => {
             <ToolBarItem key={toolbar.title} toolbar={toolbar} />
           ))}
         </Box>
-        {!isDesktop && <UserList />}
+        {!isDesktop && <ViewUsersList />}
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <Box

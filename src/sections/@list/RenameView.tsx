@@ -21,7 +21,6 @@ const RenameView = ({ open, handleClose,currentView,setCurrentView }: RenameView
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [windowHeight, setWindowHeight] = useState(0);
-  console.log(currentView);
   const [view,setView] = useState<View>(currentView)
   useEffect(() => {
     setWindowHeight(window.innerHeight);

@@ -68,9 +68,9 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   }, [rows, rowSelection]);
 
   useEffect(() => {
-    if(router.isReady && router.query.id && isInteger(router.query.id))
+    if(router.isReady && router.query.viewId && isInteger(router.query.viewId))
     {
-      fetchColumns(convertToNumber(router.query.id));
+      fetchColumns(convertToNumber(router.query.viewId));
     }
     
   }, [router.isReady]);
@@ -90,7 +90,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
-      console.log(dataColumnType)
       return {
         accessorKey: `${dataColumn.id}`,
         header: dataColumn.name,

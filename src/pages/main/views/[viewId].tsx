@@ -26,9 +26,9 @@ export  function ListDetail({currentView,getCurrentView}:ListProps) {
   const [open, setOpen] = useState(false);
   
   useEffect(() => {
-     if(router.isReady && router.query.id && isInteger(router.query.id))
+     if(router.isReady && router.query.viewId && isInteger(router.query.viewId))
      {
-       getCurrentView(convertToNumber(router.query.id));
+       getCurrentView(convertToNumber(router.query.viewId));
      }
      
   }, [router.isReady]);

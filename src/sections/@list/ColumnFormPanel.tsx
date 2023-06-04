@@ -92,7 +92,6 @@ export default function ColumnFormPanel ({
         var createFieldResponse = await fieldService.createField(viewId,currentColumn.name,currentColumn.type,currentColumn.ordering,
                      currentColumn.required,currentColumn.detailsOnly,currentColumn.description,currentColumn.minimum,
                      currentColumn.maximum,currentColumn.config,currentColumn.icon)
-        console.log(createFieldResponse)
         if(isSucc(createFieldResponse) && createFieldResponse.data)
         {
           currentColumn.id = (createFieldResponse.data as CreateFieldOutputDto).fieldId;
@@ -125,6 +124,11 @@ export default function ColumnFormPanel ({
     const handleRequiredChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       var newColumn = Object.assign({},currentColumn);
       newColumn.required = event.target.checked
+      setCurrentColumn(newColumn)
+    };
+    const handleDetailsOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      var newColumn = Object.assign({},currentColumn);
+      newColumn.detailsOnly = event.target.checked
       setCurrentColumn(newColumn)
     };
 
@@ -211,6 +215,12 @@ export default function ColumnFormPanel ({
                     <Checkbox checked={currentColumn.required} onChange={handleRequiredChange} name="required" />
                   }
                   label="Required"
+                />
+              <FormControlLabel
+                  control={
+                    <Checkbox checked={currentColumn.detailsOnly} onChange={handleDetailsOnlyChange} name="required" />
+                  }
+                  label="DetailsOnly"
                 />
               <FormControl sx={{ marginTop: 2 }} required>
                 <TextField

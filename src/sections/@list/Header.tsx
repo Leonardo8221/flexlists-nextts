@@ -11,7 +11,7 @@ import {
 } from "@coreui/react";
 import "@coreui/coreui/dist/css/coreui.min.css";
 import useResponsive from "../../hooks/useResponsive";
-import UserList from "./UserList";
+import ViewUsersList from "./UserList";
 import { connect } from "react-redux";
 import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
 import PublishList from "./Publish";
@@ -173,7 +173,7 @@ const Header = ({currentView}: HeaderProps) => {
         }}
       >
         <Box sx={{ width: "fit-content", mr: { xs: 2 } }}>
-          {isDesktop && <UserList />}
+          {isDesktop && <ViewUsersList />}
         </Box>
         <Box
           component="span"
