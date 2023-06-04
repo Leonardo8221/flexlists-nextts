@@ -2,10 +2,6 @@ import {
   Modal,
   Typography,
   Box,
-  Radio,
-  FormControl,
-  FormControlLabel,
-  RadioGroup,
   FormLabel,
   TextField,
   Divider,
@@ -17,21 +13,23 @@ import {
   Tabs,
 } from "@mui/material";
 import { Icon } from '@iconify/react';
-import { TabContext, TabPanel, TabList } from "@mui/lab";
 import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import ListAccess from "src/components/list-access/ListAccess";
-import PersonIcon from "@mui/icons-material/Person";
-import KeyIcon from "@mui/icons-material/Key";
-import GroupsIcon from "@mui/icons-material/Groups";
+import UserListAccess from "src/components/list-access/UserListAccess";
 import { SelectChangeEvent } from "@mui/material/Select";
 import ManageKeys from "src/components/share-list/ManageKeys";
 import roundAccountBox from '@iconify/icons-ic/round-account-box';
+import { connect } from "react-redux";
+import { RoleLabel } from "src/enums/ShareEnumLabels";
+import { Role } from "src/enums/SharedEnums";
+import UserGroupListAccess from "src/components/list-access/GroupListAccess";
 
-type Props = {
+type ShareListProps = {
   open: boolean;
   handleClose: () => void;
+  users:any[];
+  userGroups:any[];
 };
 
 const style = {
@@ -74,9 +72,12 @@ const scaleUp = {
 };
 
 
-const ShareList = (props: Props) => {
-  const { open, handleClose } = props;
+const ShareList = ({ open, handleClose,users,userGroups }: ShareListProps) => {
   const [currentTab, setCurrentTab] = useState('Users');
+  var  roles : {name : string, label: string}[] = []
+  RoleLabel.forEach((value,key)=>{
+    roles.push({name:key,label:value})
+  })
   const closeModal = () => {
     handleClose();
   };
@@ -84,17 +85,17 @@ const ShareList = (props: Props) => {
     {
       value: 'Users',
       icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <ShareUsers />
+      component: <ShareUsers users = {users} roles = {roles} />
     },
     {
       value: 'Groups',
       icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <ShareGroups />
+      component: <ShareGroups userGroups={userGroups} roles={roles} />
     },
     {
       value: 'Keys',
       icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <ShareKeys />
+      component: <ShareKeys roles={roles} />
     }
   ];
   const changeTab = (value:any) =>
@@ -149,190 +150,100 @@ const ShareList = (props: Props) => {
     </Modal>
   );
 };
-const ShareUsers = ()=>{
+type ShareUsersProps = {
+  users : any[],
+  roles : {name:string,label:string}[]
+}
+const ShareUsers = ({users,roles}:ShareUsersProps)=>{
+   const [role,setRole] = useState<Role>(Role.ReadOnly)
+   const handleSelectRoleChange = (event: SelectChangeEvent) => {
+    setRole(event.target.value as Role);
+  };
   return (
     <>
         <Typography variant="subtitle1" sx={{ mt: 1 }}>
           Invite user
         </Typography>
-        <FormControl sx={{ my: 1 }}>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="read-only"
-            name="radio-buttons-group"
-          >
-            <FormControlLabel
-              value="read-only"
-              control={<Radio />}
-              label={<Typography variant="body2">Read Only</Typography>}
-            />
-            <FormControlLabel
-              value="read-add"
-              control={<Radio />}
-              label={<Typography variant="body2">Read/Add</Typography>}
-            />
-            <FormControlLabel
-              value="read-edit"
-              control={<Radio />}
-              label={
-                <Typography variant="body2">
-                  Read and Edit permissions
-                </Typography>
-              }
-            />
-            <FormControlLabel
-              value="full-access"
-              control={<Radio />}
-              label={
-                <Typography variant="body2">
-                  Full Management permissions
-                </Typography>
-              }
-            />
-          </RadioGroup>
-        </FormControl>
-        <Grid container spacing={1}>
-          <Grid item xs={12} md={10}>
-            <TextField sx={{ my: 1 }} placeholder="Email address" fullWidth />
-            <FormLabel
-              sx={{
-                fontSize: { xs: 12, md: 14 },
-                display: { xs: "block", md: "none" },
-              }}
-              id="multiple-email-address"
-            >
-              (separate multiple addresses with a comma)
-            </FormLabel>
+        <Grid container spacing={2}>
+            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+              <FormLabel>
+                <Typography variant="body2">Access / Role</Typography>
+              </FormLabel>
+              <Select value={role} onChange={handleSelectRoleChange}>
+                {
+                  roles && roles.map((role,index)=>{
+                     return (<MenuItem key= {index} value={role.name}>{role.label}</MenuItem>)
+                  })
+                }
+              </Select>
+            </Grid>
+            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+              <FormLabel>
+                <Typography variant="body2">Users</Typography>
+              </FormLabel>
+              <TextField placeholder="Search user..."></TextField>
+            </Grid>
+            <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
+              <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+                Add User
+              </Button>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={2}
-            sx={{ display: "flex", alignItems: "center", position: "relative" }}
-          >
-            <Button
-              disabled
-              fullWidth
-              variant="outlined"
-              sx={{
-                textTransform: "none",
-                height: "56px",
-              }}
-            >
-              Add user(s)
-            </Button>
-          </Grid>
-        </Grid>
-        <FormLabel
-          sx={{
-            fontSize: { xs: 12, md: 14 },
-            display: { xs: "none", md: "block" },
-          }}
-          id="multiple-email-address"
-        >
-          (separate multiple addresses with a comma)
-        </FormLabel>
-        {/* <Button variant="contained" sx={{ my: 2, mt: 3, width: "25%" }}>
-          Save
-        </Button> */}
-        <ListAccess />
+        <UserListAccess users={users} />
     </>
   )
 }
-const ShareGroups = ()=>{
+type ShareGroupsProps = {
+  userGroups : any[],
+  roles : {name:string,label:string}[]
+}
+const ShareGroups = ({userGroups,roles} : ShareGroupsProps)=>{
+   const [role,setRole] = useState<Role>(Role.ReadOnly)
+   const handleSelectRoleChange = (event: SelectChangeEvent) => {
+    setRole(event.target.value as Role);
+  };
   return (
     <>
         <Typography variant="subtitle1" sx={{ mt: 1 }}>
-          Invite groups
+          Invite group
         </Typography>
-        <FormControl sx={{ my: 1 }}>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="read-only"
-            name="radio-buttons-group"
-          >
-            <FormControlLabel
-              value="read-only"
-              control={<Radio />}
-              label={<Typography variant="body2">Read Only</Typography>}
-            />
-            <FormControlLabel
-              value="read-add"
-              control={<Radio />}
-              label={<Typography variant="body2">Read/Add</Typography>}
-            />
-            <FormControlLabel
-              value="read-edit"
-              control={<Radio />}
-              label={
-                <Typography variant="body2">
-                  Read and Edit permissions
-                </Typography>
-              }
-            />
-            <FormControlLabel
-              value="full-access"
-              control={<Radio />}
-              label={
-                <Typography variant="body2">
-                  Full Management permissions
-                </Typography>
-              }
-            />
-          </RadioGroup>
-        </FormControl>
-        <Grid container spacing={1}>
-          <Grid item xs={12} md={10}>
-            <TextField sx={{ my: 1 }} placeholder="Email address" fullWidth />
-            <FormLabel
-              sx={{
-                fontSize: { xs: 12, md: 14 },
-                display: { xs: "block", md: "none" },
-              }}
-              id="multiple-email-address"
-            >
-              (separate multiple addresses with a comma)
-            </FormLabel>
+        <Grid container spacing={2}>
+            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+              <FormLabel>
+                <Typography variant="body2">Access / Role</Typography>
+              </FormLabel>
+              <Select value={role} onChange={handleSelectRoleChange}>
+                {
+                  roles && roles.map((role,index)=>{
+                     return (<MenuItem key= {index} value={role.name}>{role.label}</MenuItem>)
+                  })
+                }
+              </Select>
+            </Grid>
+            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+              <FormLabel>
+                <Typography variant="body2">Groups</Typography>
+              </FormLabel>
+              <TextField placeholder="Search group..."></TextField>
+            </Grid>
+            <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
+              <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+                Add Group
+              </Button>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={2}
-            sx={{ display: "flex", alignItems: "center", position: "relative" }}
-          >
-            <Button
-              disabled
-              fullWidth
-              variant="outlined"
-              sx={{
-                textTransform: "none",
-                height: "56px",
-              }}
-            >
-              Add group(s)
-            </Button>
-          </Grid>
-        </Grid>
-        <FormLabel
-          sx={{
-            fontSize: { xs: 12, md: 14 },
-            display: { xs: "none", md: "block" },
-          }}
-          id="multiple-email-address"
-        >
-          (separate multiple addresses with a comma)
-        </FormLabel>
-        <Button variant="contained" sx={{ my: 2, mt: 3, width: "25%" }}>
-          Save
-        </Button>
+          <UserGroupListAccess userGroups={userGroups} />
     </>
   )
 }
-const ShareKeys = ()=>{
-  const [role, setRole] = React.useState("");
+type ShareKeysProps = {
+  roles : {name:string,label:string}[]
+}
+const ShareKeys = ({roles}:ShareKeysProps)=>{
+  const [role,setRole] = useState<Role>(Role.ReadOnly)
 
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
-    setRole(event.target.value as string);
+    setRole(event.target.value as Role);
   };
   return (
     <>
@@ -342,9 +253,11 @@ const ShareKeys = ()=>{
                 <Typography variant="body2">Access / Role</Typography>
               </FormLabel>
               <Select value={role} onChange={handleSelectRoleChange}>
-                <MenuItem value="1">Role 1</MenuItem>
-                <MenuItem value="2">Role 2</MenuItem>
-                <MenuItem value="3">Role 3</MenuItem>
+                {
+                  roles && roles.map((role,index)=>{
+                     return (<MenuItem key= {index} value={role.name}>{role.label}</MenuItem>)
+                  })
+                }
               </Select>
             </Grid>
             <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
@@ -367,7 +280,15 @@ const ShareKeys = ()=>{
     </>
   )
 }
+const mapStateToProps = (state: any) => ({
+  users : state.view.users,
+  userGroups: state.view.userGroups
+});
 
+const mapDispatchToProps = {
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShareList);
 // function ShareTabs() {
 //   const [value, setValue] = useState("1");
 
@@ -634,4 +555,3 @@ const ShareKeys = ()=>{
 //   );
 // };
 
-export default ShareList;

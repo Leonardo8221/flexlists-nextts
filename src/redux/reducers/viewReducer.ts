@@ -1,7 +1,8 @@
 // Define the initial state
 const initialState = {
   currentView:undefined,
-  users: []
+  users: [],
+  userGroups:[]
 };
 const viewReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -9,6 +10,8 @@ const viewReducer = (state = initialState, action: any) => {
         return { ...state, currentView: action.payload };
       case 'SET_VIEW_USERS':
           return { ...state, users: action.payload };
+      case 'SET_VIEW_USER_GROUPS':
+        return { ...state, userGroups: action.payload };
       default:
         return state;
     }

@@ -1,5 +1,12 @@
-import { FieldType, ListCategory } from "./SharedEnums";
+import { FieldType, ListCategory, Role } from "./SharedEnums";
 
+export const RoleLabel = new Map<string, string>([
+  [Role.ReadOnly, 'Read Only'],
+  [Role.ReadAdd, 'Read and Add'],
+  [Role.ReadEdit, 'Read and Edit'],
+  [Role.AddOnly, 'Add Only'],
+  [Role.FullAccess, 'Full Access']
+]); 
 export const ListCategoryLabel = new Map<string, string>([
     [ListCategory.Content, 'Content'],
     [ListCategory.Events, 'Events'],

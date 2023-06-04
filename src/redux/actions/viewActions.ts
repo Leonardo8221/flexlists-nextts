@@ -79,11 +79,59 @@ any
     }
   };
 };
+export const getViewUserGroups = (viewId:number): ThunkAction<
+void,
+RootState,
+null,
+any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+          dispatch(setViewUserGroups([
+          {
+            name: 'group1',
+            avatar: '/assets/images/avatars/avatar_1.jpg'
+          },
+          {
+            name: 'group2',
+            avatar: '/assets/images/avatars/avatar_2.jpg'
+          },
+          {
+            name: 'group3',
+            avatar: '/assets/images/avatars/avatar_3.jpg'
+          },
+          {
+            name: 'group4',
+            avatar: '/assets/images/avatars/avatar_4.jpg'
+          },
+          {
+            name: 'group5',
+            avatar: '/assets/images/avatars/avatar_5.jpg'
+          },
+          {
+            name: 'group6',
+            avatar: '/assets/images/avatars/avatar_6.jpg'
+          }
+        ]))
+        // const response = await listViewService.getU(viewId)
+        // if(isSucc(response))
+        // {
+        //   dispatch(setViewUsers(response.data));
+        // } 
+    } catch (error) {
+     console.log(error)
+    }
+  };
+};
 export const setCurrentView = (view: any) => ({
     type: 'SET_CURRENT_VIEW',
     payload: view
   });
 export const setViewUsers = (users: any) => ({
     type: 'SET_VIEW_USERS',
+    payload: users
+  });
+export const setViewUserGroups = (users: any) => ({
+    type: 'SET_VIEW_USER_GROUPS',
     payload: users
   });

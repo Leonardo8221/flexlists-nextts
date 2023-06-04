@@ -2,17 +2,19 @@ import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import "@coreui/coreui/dist/css/coreui.min.css";
 import { connect } from "react-redux";
-import { getViewUsers } from "src/redux/actions/viewActions";
+import { getViewUserGroups, getViewUsers } from "src/redux/actions/viewActions";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { convertToInteger } from "src/utils/convertUtils";
 
 type ViewUsersProps = {
   users: any[];
+  userGroups : any[];
   getViewUsers:(viewId:number)=>void
+  getViewUserGroups:(viewId:number)=>void
 };
 
-const ViewUsersList = ({ users,getViewUsers }: ViewUsersProps) => {
+const ViewUsersList = ({ users,getViewUsers,userGroups,getViewUserGroups }: ViewUsersProps) => {
   const theme = useTheme();
   const router = useRouter()
   useEffect(()=>{
@@ -21,6 +23,12 @@ const ViewUsersList = ({ users,getViewUsers }: ViewUsersProps) => {
         getViewUsers(convertToInteger(router.query.viewId))
      }
   },[router.query.viewId,getViewUsers])
+  useEffect(()=>{
+    if(router.query.viewId)
+    {
+       getViewUserGroups(convertToInteger(router.query.viewId))
+    }
+ },[router.query.viewId,getViewUserGroups])
   return (
     <Box
       sx={{
@@ -85,11 +93,13 @@ const ViewUsersList = ({ users,getViewUsers }: ViewUsersProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  users : state.view.users
+  users : state.view.users,
+  userGroups: state.view.userGroups
 });
 
 const mapDispatchToProps = {
-  getViewUsers
+  getViewUsers,
+  getViewUserGroups
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewUsersList);
