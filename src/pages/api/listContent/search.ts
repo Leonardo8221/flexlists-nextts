@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponseDummy";
-const getContentsEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
+const searchEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
 
-    res.json(new FlexlistsSuccess([
+    res.json(new FlexlistsSuccess({content:[
         {
           "1": 1,
           "2": 'Task1',
@@ -393,8 +393,8 @@ const getContentsEndpoint = async (req: NextApiRequest, res: NextApiResponse) =>
           },
           "10": false
         }
-      ]))
+      ]}))
     res.statusCode = 200;
     return res;
 }
-export default getContentsEndpoint
+export default searchEndpoint
