@@ -1,14 +1,14 @@
-import { alpha } from '@mui/material/styles';
+import { alpha } from "@mui/material/styles";
 
 // ----------------------------------------------------------------------
 
-export default function Button(theme : any) {
+export default function Button(theme: any) {
   return {
     MuiButton: {
       styleOverrides: {
         root: {
-          '&:hover': {
-            boxShadow: 'none',
+          "&:hover": {
+            boxShadow: "none",
           },
         },
         sizeLarge: {
@@ -17,11 +17,12 @@ export default function Button(theme : any) {
         containedInherit: {
           color: theme.palette.grey[800],
           boxShadow: theme.customShadows.z8,
-          '&:hover': {
-            backgroundColor: theme.palette.grey[400],
+          "&:hover": {
+            backgroundColor: theme.palette.grey[900],
           },
         },
         containedPrimary: {
+          backgroundColor: "#54A6FB",
           boxShadow: theme.customShadows.primary,
         },
         containedSecondary: {
@@ -29,14 +30,17 @@ export default function Button(theme : any) {
         },
         outlinedInherit: {
           border: `1px solid ${alpha(theme.palette.grey[500], 0.32)}`,
-          '&:hover': {
+          "&:hover": {
             backgroundColor: theme.palette.action.hover,
           },
         },
         textInherit: {
-          '&:hover': {
+          "&:hover": {
             backgroundColor: theme.palette.action.hover,
           },
+        },
+        textPrimary: {
+          color: "#54a6fb",
         },
       },
     },
