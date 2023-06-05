@@ -16,8 +16,8 @@ import { fetchColumns, setColumns } from "../../redux/actions/listFieldActions";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { setRows, fetchRows } from "src/redux/actions/listContentActions";
-import { Field, View } from "src/models/SharedModels";
-import { FieldType } from "src/enums/SharedEnums";
+import { Field, Query, Sort, View } from "src/models/SharedModels";
+import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { isInteger } from "src/utils/validateUtils";
@@ -31,7 +31,7 @@ type DataTableProps = {
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   fetchColumns: (viewId:number) => void;
-  fetchRows: () => void;
+  fetchRows: (type?:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query) => void;
 };
 
 const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchColumns, fetchRows }: DataTableProps) => {
@@ -76,8 +76,12 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   }, [router.isReady]);
 
   useEffect(() => {
-    fetchRows();
-  }, [fetchRows]);
+    if(router.isReady && router.query.viewId && isInteger(router.query.viewId) )
+    {
+      fetchRows(SearchType.View,convertToNumber(router.query.viewId));
+    }
+   
+  }, [router.isReady]);
   useEffect(() => {
     if(currentView)
     {

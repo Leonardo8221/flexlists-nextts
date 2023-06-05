@@ -43,6 +43,8 @@ export enum FieldType {
 export enum SearchType {
     List = 'List',
     AllLists = 'AllLists',
+    View = 'View',
+    AllViews = 'AllViews',
     Site = 'Site',
     All = 'All',
 }

@@ -181,11 +181,11 @@ const ShareUsers = ({users,roles}:ShareUsersProps)=>{
               <FormLabel>
                 <Typography variant="body2">Users</Typography>
               </FormLabel>
-              <TextField placeholder="Search user..."></TextField>
+              <TextField placeholder="Invite my contacts or invite by email ..."></TextField>
             </Grid>
             <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
               <Button variant="contained" fullWidth sx={{ height: "56px" }}>
-                Add User
+                Invite
               </Button>
             </Grid>
           </Grid>

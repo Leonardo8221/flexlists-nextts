@@ -20,6 +20,7 @@ export type GetKeysOutputDto = {
     role:Role
 }
 export type CreateFieldOutputDto = {
+    viewId:number
     fieldId:number
 }
 export type CreateContentOutputDto = {
@@ -41,6 +42,11 @@ export type SearchContentsOutputDto = {
     count:number
     content:any[]
 }
+export type SearchOutputDto = {
+    listId:number
+    count:number
+    content:any[]
+}
 export type CreateViewOutputDto = {
     listId:number
     viewId:number
@@ -49,6 +55,6 @@ export type GetProfileOutputDto = {
     name:string
     firstName:string
     lastName:string
-    phonenumber:string
-    avatar:string
+    phonenumber?:string
+    avatar?:string
 }

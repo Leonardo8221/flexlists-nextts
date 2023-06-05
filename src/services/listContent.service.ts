@@ -1,9 +1,9 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
-import { CreateContentOutputDto } from 'src/models/ApiOutputModels'
+import { CreateContentOutputDto, SearchOutputDto } from 'src/models/ApiOutputModels'
 import { GetContentsOutputDto } from 'src/models/ApiOutputModels'
 import { Sort } from 'src/models/SharedModels'
-import { ExportTypes } from 'src/enums/SharedEnums'
+import { ExportTypes, SearchType } from 'src/enums/SharedEnums'
 import { Query } from 'src/models/SharedModels'
 import { GetContentOutputDto } from 'src/models/ApiOutputModels'
 import { SearchContentsOutputDto } from 'src/models/ApiOutputModels'
@@ -19,6 +19,7 @@ export const listContentService = {
     archiveContent,
     unarchiveContent,
     searchContents,
+    search
 };
 
 async function createContent(listId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>> {
@@ -64,8 +65,13 @@ async function unarchiveContent(listId:number,contentId:number): Promise<Flexlis
 
   return response.data;
 };
-async function searchContents(listId:number,page:number,limit:number,order:Sort[],query:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>> {
+async function searchContents(listId:number,page?:number,limit?:number,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, {listId,page,limit,order,query})
+
+  return response.data;
+};
+async function search(type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,order,query})
 
   return response.data;
 };
