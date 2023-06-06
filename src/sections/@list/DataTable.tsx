@@ -90,12 +90,20 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
       setSelectedColumn(newColumn)
     }
   }, [currentView]);
+  const getColumnKey = (column:any) : string=>
+  {
+    if(column.system)
+    {
+      return column.name
+    }
+    return column.id;
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
       return {
-        accessorKey: `${dataColumn.id}`,
+        accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.name,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>

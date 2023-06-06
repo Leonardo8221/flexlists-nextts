@@ -72,6 +72,5 @@ async function searchContents(listId:number,page?:number,limit?:number,order?:So
 };
 async function search(type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,order,query})
-
   return response.data;
 };

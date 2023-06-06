@@ -15,10 +15,17 @@ any
   return async (dispatch: Dispatch<any>) => {
     try {
       const response = await listContentService.search(type,viewId,page,limit,order,query);
-      console.log(response)
-      if(isSucc(response) && response.data && response.data.content && response.data.content.length>0)
+      if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA)
       {
-        dispatch(setRows(response.data.content));
+        dispatch(setRows(response.data.contents));
+      }
+      if(isSucc(response) && response.data && response.data.length>0)
+      {
+        var contents : any[] = []
+        for (const row of response.data) {
+           contents.push(Object.fromEntries(row))
+        }
+        dispatch(setRows(contents));
       }       
     } catch (error) {
      console.log(error)

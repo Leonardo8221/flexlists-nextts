@@ -16,6 +16,7 @@ any
       const response = await fieldService.getFields(viewId)
       if(isSucc(response))
       {
+        console.log(response.data);
         dispatch(setColumns(response.data));
       } 
     } catch (error) {

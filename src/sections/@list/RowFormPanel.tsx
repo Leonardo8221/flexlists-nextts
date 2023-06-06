@@ -7,7 +7,9 @@ import {
   Stack,
   TextField,
   Drawer,
-  Box
+  Box,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Select from '@mui/material/Select';
@@ -223,7 +225,8 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
       case FieldType.Choice : 
        return <FormControl key={column.id} required>
        <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
-       <Select
+        <Select
+         key={column.id}
          label={column.name}
          id={`${column.id}`}
          defaultValue={rowData ? rowData[column.id] : ''}
@@ -236,6 +239,12 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
          {column.config.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
        </Select>
      </FormControl>
+     case FieldType.Boolean :
+      return <FormControlLabel 
+         key={column.id}
+         control={<Checkbox checked = {rowData ? rowData[column.id] : false} onChange={(e)=> setValues({ ...values, [column.id]: e.target.checked })}  />} 
+         label={column.name} 
+      />
       default:
         return <div key={column.id}></div>
      }
