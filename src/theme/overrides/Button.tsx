@@ -28,8 +28,13 @@ export default function Button(theme: any) {
         containedSecondary: {
           boxShadow: theme.customShadows.secondary,
         },
+        outlinedPrimary: {
+          color: "#54a6fb",
+        },
         outlinedInherit: {
           border: `1px solid ${alpha(theme.palette.grey[500], 0.32)}`,
+          color: "#54a6fb",
+
           "&:hover": {
             backgroundColor: theme.palette.action.hover,
           },
