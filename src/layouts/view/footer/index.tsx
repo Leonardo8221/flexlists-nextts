@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { connect } from 'react-redux';
 import useResponsive from '../../../hooks/useResponsive';
 import AddCommentPanel from 'src/components/right-panel/AddCommentPanel';
-import { setRows } from 'src/redux/actions/listContentActions';
+import { setRows } from 'src/redux/actions/viewActions';
 type Props = {
   columns: any;
   rows: any;
@@ -100,8 +100,8 @@ const Footer = (props: Props) => {
 }
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
-  rows: state.listContent.columns
+  columns: state.view.columns,
+  rows: state.view.columns
 });
 
 const mapDispatchToProps = {

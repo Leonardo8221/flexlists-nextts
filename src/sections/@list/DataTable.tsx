@@ -12,10 +12,10 @@ import AddColumnButton from "../../components/add-button/AddColumnButton";
 import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
-import { fetchColumns, setColumns } from "../../redux/actions/listFieldActions";
+import { fetchColumns, setColumns } from "../../redux/actions/viewActions";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { setRows, fetchRows } from "src/redux/actions/listContentActions";
+import { setRows, fetchRows } from "src/redux/actions/viewActions";
 import { Field, Query, Sort, View } from "src/models/SharedModels";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
@@ -471,8 +471,8 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
-  rows: state.listContent.rows,
+  columns: state.view.columns,
+  rows: state.view.rows,
   currentView : state.view.currentView
 });
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setSorts } from '../../redux/actions/listFieldActions';
+import { setSorts } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -189,8 +189,8 @@ const Filter = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
-  sorts: state.fieldDefinition.sorts
+  columns: state.view.columns,
+  sorts: state.view.sorts
 });
 
 const mapDispatchToProps = {

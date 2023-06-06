@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns } from '../../redux/actions/listFieldActions';
-import {  setRows } from '../../redux/actions/listContentActions';
+import { setColumns } from '../../redux/actions/viewActions';
+import {  setRows } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import { format, startOfMonth, endOfMonth, subDays, eachDayOfInterval, subMonths, addMonths } from 'date-fns';
@@ -195,8 +195,8 @@ const GanttView = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
-  rows: state.listContent.rows
+  columns: state.view.columns,
+  rows: state.view.rows
 });
 
 const mapDispatchToProps = {

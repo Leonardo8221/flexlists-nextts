@@ -81,7 +81,7 @@ const GalleryView = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  rows: state.listContent.rows
+  rows: state.view.rows
 });
 
 export default connect(mapStateToProps)(GalleryView);
