@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { Box, TextField } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setFilters } from '../../redux/actions/listFieldActions';
+import { setFilters } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 
-type Props = {
+type FilterProps = {
   columns: any;
   filters: any;
   open: boolean;
@@ -16,7 +16,7 @@ type Props = {
   handleClose: () => void;
 };
 
-const Filter = (props: Props) => {
+const Filter = (props: FilterProps) => {
   const { columns, filters, open, setFilters, handleClose } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
@@ -216,8 +216,8 @@ const Filter = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
-  filters: state.fieldDefinition.filters
+  columns: state.view.columns,
+  filters: state.view.filters
 });
 
 const mapDispatchToProps = {

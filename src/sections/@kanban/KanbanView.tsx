@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { connect } from 'react-redux';
-import { setRows } from '../../redux/actions/listContentActions';
+import { setRows } from '../../redux/actions/viewActions';
 import KanbanColumn from './KanbanColumn';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { styled } from '@mui/material/styles';
@@ -189,7 +189,7 @@ const KanbanView = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  rows: state.listContent.rows
+  rows: state.view.rows
 });
 
 const mapDispatchToProps = {

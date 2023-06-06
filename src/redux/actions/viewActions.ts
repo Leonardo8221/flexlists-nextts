@@ -3,7 +3,10 @@ import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../store';
 import { isSucc } from 'src/models/ApiResponse';
 import { listViewService } from 'src/services/listView.service';
-
+import { fieldService } from 'src/services/field.service';
+import {listContentService} from 'src/services/listContent.service'
+import {Sort,Query} from 'src/models/SharedModels'
+import { SearchType } from 'src/enums/SharedEnums';
 // Define the actions
 export const getCurrentView = (viewId:number): ThunkAction<
 void,
@@ -23,6 +26,71 @@ any
     }
   };
 };
+export const fetchColumns = (viewId:number): ThunkAction<
+void,
+RootState,
+null,
+any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      const response = await fieldService.getFields(viewId)
+      if(isSucc(response))
+      {
+        console.log(response.data);
+        dispatch(setColumns(response.data));
+      } 
+    } catch (error) {
+     console.log(error)
+    }
+  };
+};
+export const fetchRows = (type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query): ThunkAction<
+void,
+RootState,
+null,
+any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      const response = await listContentService.search(type,viewId,page,limit,order,query);
+      if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA)
+      {
+        dispatch(setRows(response.data.contents));
+      }
+      if(isSucc(response) && response.data && response.data.length>0)
+      {
+        var contents : any[] = []
+        for (const row of response.data) {
+           contents.push(Object.fromEntries(row))
+        }
+        dispatch(setRows(contents));
+      }       
+    } catch (error) {
+     console.log(error)
+    }
+  };
+};
+
+  
+export const setRows = (rows: any) => ({
+  type: 'SET_ROWS',
+  payload: rows
+});
+export const setColumns = (columns: any) => ({
+    type: 'SET_COLUMNS',
+    payload: columns
+  });
+
+export const setFilters = (filters: any) => ({
+  type: 'SET_FILTERS',
+  payload: filters
+});
+
+export const setSorts = (sorts: any) => ({
+  type: 'SET_SORTS',
+  payload: sorts
+});
 export const getViewUsers = (viewId:number): ThunkAction<
 void,
 RootState,

@@ -9,7 +9,7 @@ import Collapse from '@mui/material/Collapse';
 import ViewUsersList from './UserList';
 import ActionItem from '../../components/toolbar/ActionItem';
 import { connect } from 'react-redux';
-import { setFilters } from '../../redux/actions/listFieldActions';
+import { setFilters } from '../../redux/actions/viewActions';
 import Filter from "./Filter";
 import Sort from "./Sort";
 import Import from "./Import";
@@ -173,7 +173,7 @@ const ToolbBar = (props: ToolbBarProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.fieldDefinition.columns,
+  columns: state.view.columns,
   filters: state.filters
 });
 
