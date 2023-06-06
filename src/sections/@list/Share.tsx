@@ -12,24 +12,25 @@ import {
   MenuItem,
   Tabs,
 } from "@mui/material";
-import { Icon } from '@iconify/react';
 import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import UserListAccess from "src/components/list-access/UserListAccess";
 import { SelectChangeEvent } from "@mui/material/Select";
 import ManageKeys from "src/components/share-list/ManageKeys";
-import roundAccountBox from '@iconify/icons-ic/round-account-box';
 import { connect } from "react-redux";
 import { RoleLabel } from "src/enums/ShareEnumLabels";
 import { Role } from "src/enums/SharedEnums";
 import UserGroupListAccess from "src/components/list-access/GroupListAccess";
+import PersonIcon from "@mui/icons-material/Person";
+import KeyIcon from "@mui/icons-material/Key";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 type ShareListProps = {
   open: boolean;
   handleClose: () => void;
-  users:any[];
-  userGroups:any[];
+  users: any[];
+  userGroups: any[];
 };
 
 const style = {
@@ -71,37 +72,40 @@ const scaleUp = {
   },
 };
 
-
-const ShareList = ({ open, handleClose,users,userGroups }: ShareListProps) => {
-  const [currentTab, setCurrentTab] = useState('Users');
-  var  roles : {name : string, label: string}[] = []
-  RoleLabel.forEach((value,key)=>{
-    roles.push({name:key,label:value})
-  })
+const ShareList = ({
+  open,
+  handleClose,
+  users,
+  userGroups,
+}: ShareListProps) => {
+  const [currentTab, setCurrentTab] = useState("Users");
+  var roles: { name: string; label: string }[] = [];
+  RoleLabel.forEach((value, key) => {
+    roles.push({ name: key, label: value });
+  });
   const closeModal = () => {
     handleClose();
   };
-  const shareTabs : any[] = [
+  const shareTabs: any[] = [
     {
-      value: 'Users',
-      icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <ShareUsers users = {users} roles = {roles} />
+      value: "Users",
+      icon: <PersonIcon />,
+      component: <ShareUsers users={users} roles={roles} />,
     },
     {
-      value: 'Groups',
-      icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <ShareGroups userGroups={userGroups} roles={roles} />
+      value: "Groups",
+      icon: <GroupsIcon />,
+      component: <ShareGroups userGroups={userGroups} roles={roles} />,
     },
     {
-      value: 'Keys',
-      icon: <Icon icon={roundAccountBox} width={20} height={20} />,
-      component: <ShareKeys roles={roles} />
-    }
+      value: "Keys",
+      icon: <KeyIcon />,
+      component: <ShareKeys roles={roles} />,
+    },
   ];
-  const changeTab = (value:any) =>
-  {
+  const changeTab = (value: any) => {
     setCurrentTab(value);
-  }
+  };
 
   return (
     <Modal
@@ -121,172 +125,182 @@ const ShareList = ({ open, handleClose,users,userGroups }: ShareListProps) => {
         <Typography gutterBottom variant="h5" sx={{ my: 1 }}>
           Share
         </Typography>
+        <Box borderBottom={"solid 1px"} borderColor={"divider"}>
+          <Tabs
+            value={currentTab}
+            scrollButtons="auto"
+            variant="scrollable"
+            allowScrollButtonsMobile
+            onChange={(e, value) => changeTab(value)}
+          >
+            {shareTabs.map((tab) => (
+              <Tab
+                disableRipple
+                key={tab.value}
+                label={tab.value}
+                icon={tab.icon}
+                value={tab.value}
+                sx={{ minWidth: "fit-content", flex: 1 }}
+              />
+            ))}
+          </Tabs>
+        </Box>
 
-            <Tabs
-                value={currentTab}
-                scrollButtons="auto"
-                variant="scrollable"
-                allowScrollButtonsMobile
-                onChange={(e, value) => changeTab(value)}
-              >
-                {shareTabs.map((tab) => (
-                  <Tab
-                    disableRipple
-                    key={tab.value}
-                    label={tab.value}
-                    icon={tab.icon}
-                    value={tab.value}
-                  />
-                ))}
-              </Tabs>
-    
-              <Box sx={{ mb: 5 }} />
-    
-              {shareTabs.map((tab) => {
-                const isMatched = tab.value === currentTab;
-                return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-              })}
+        <Box sx={{ mb: 5 }} />
+
+        {shareTabs.map((tab) => {
+          const isMatched = tab.value === currentTab;
+          return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+        })}
       </Box>
     </Modal>
   );
 };
 type ShareUsersProps = {
-  users : any[],
-  roles : {name:string,label:string}[]
-}
-const ShareUsers = ({users,roles}:ShareUsersProps)=>{
-   const [role,setRole] = useState<Role>(Role.ReadOnly)
-   const handleSelectRoleChange = (event: SelectChangeEvent) => {
+  users: any[];
+  roles: { name: string; label: string }[];
+};
+const ShareUsers = ({ users, roles }: ShareUsersProps) => {
+  const [role, setRole] = useState<Role>(Role.ReadOnly);
+  const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
   return (
     <>
-        <Typography variant="subtitle1" sx={{ mt: 1 }}>
-          Invite user
-        </Typography>
-        <Grid container spacing={2}>
-            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-              <FormLabel>
-                <Typography variant="body2">Access / Role</Typography>
-              </FormLabel>
-              <Select value={role} onChange={handleSelectRoleChange}>
-                {
-                  roles && roles.map((role,index)=>{
-                     return (<MenuItem key= {index} value={role.name}>{role.label}</MenuItem>)
-                  })
-                }
-              </Select>
-            </Grid>
-            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-              <FormLabel>
-                <Typography variant="body2">Users</Typography>
-              </FormLabel>
-              <TextField placeholder="Invite my contacts or invite by email ..."></TextField>
-            </Grid>
-            <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-              <Button variant="contained" fullWidth sx={{ height: "56px" }}>
-                Invite
-              </Button>
-            </Grid>
-          </Grid>
-        <UserListAccess users={users} />
+      <Typography variant="subtitle1" sx={{ mt: 1 }}>
+        Invite user
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+          <FormLabel>
+            <Typography variant="body2">Access / Role</Typography>
+          </FormLabel>
+          <Select value={role} onChange={handleSelectRoleChange}>
+            {roles &&
+              roles.map((role, index) => {
+                return (
+                  <MenuItem key={index} value={role.name}>
+                    {role.label}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </Grid>
+        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+          <FormLabel>
+            <Typography variant="body2">Users</Typography>
+          </FormLabel>
+          <TextField placeholder="Invite my contacts or invite by email ..."></TextField>
+        </Grid>
+        <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
+          <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+            Invite
+          </Button>
+        </Grid>
+      </Grid>
+      <UserListAccess users={users} />
     </>
-  )
-}
+  );
+};
 type ShareGroupsProps = {
-  userGroups : any[],
-  roles : {name:string,label:string}[]
-}
-const ShareGroups = ({userGroups,roles} : ShareGroupsProps)=>{
-   const [role,setRole] = useState<Role>(Role.ReadOnly)
-   const handleSelectRoleChange = (event: SelectChangeEvent) => {
+  userGroups: any[];
+  roles: { name: string; label: string }[];
+};
+const ShareGroups = ({ userGroups, roles }: ShareGroupsProps) => {
+  const [role, setRole] = useState<Role>(Role.ReadOnly);
+  const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
   return (
     <>
-        <Typography variant="subtitle1" sx={{ mt: 1 }}>
-          Invite group
-        </Typography>
-        <Grid container spacing={2}>
-            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-              <FormLabel>
-                <Typography variant="body2">Access / Role</Typography>
-              </FormLabel>
-              <Select value={role} onChange={handleSelectRoleChange}>
-                {
-                  roles && roles.map((role,index)=>{
-                     return (<MenuItem key= {index} value={role.name}>{role.label}</MenuItem>)
-                  })
-                }
-              </Select>
-            </Grid>
-            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-              <FormLabel>
-                <Typography variant="body2">Groups</Typography>
-              </FormLabel>
-              <TextField placeholder="Search group..."></TextField>
-            </Grid>
-            <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-              <Button variant="contained" fullWidth sx={{ height: "56px" }}>
-                Add Group
-              </Button>
-            </Grid>
-          </Grid>
-          <UserGroupListAccess userGroups={userGroups} />
+      <Typography variant="subtitle1" sx={{ mt: 1 }}>
+        Invite group
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+          <FormLabel>
+            <Typography variant="body2">Access / Role</Typography>
+          </FormLabel>
+          <Select value={role} onChange={handleSelectRoleChange}>
+            {roles &&
+              roles.map((role, index) => {
+                return (
+                  <MenuItem key={index} value={role.name}>
+                    {role.label}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </Grid>
+        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+          <FormLabel>
+            <Typography variant="body2">Groups</Typography>
+          </FormLabel>
+          <TextField placeholder="Search group..."></TextField>
+        </Grid>
+        <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
+          <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+            Add Group
+          </Button>
+        </Grid>
+      </Grid>
+      <UserGroupListAccess userGroups={userGroups} />
     </>
-  )
-}
+  );
+};
 type ShareKeysProps = {
-  roles : {name:string,label:string}[]
-}
-const ShareKeys = ({roles}:ShareKeysProps)=>{
-  const [role,setRole] = useState<Role>(Role.ReadOnly)
+  roles: { name: string; label: string }[];
+};
+const ShareKeys = ({ roles }: ShareKeysProps) => {
+  const [role, setRole] = useState<Role>(Role.ReadOnly);
 
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
   return (
     <>
-        <Grid container spacing={2}>
-            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-              <FormLabel>
-                <Typography variant="body2">Access / Role</Typography>
-              </FormLabel>
-              <Select value={role} onChange={handleSelectRoleChange}>
-                {
-                  roles && roles.map((role,index)=>{
-                     return (<MenuItem key= {index} value={role.name}>{role.label}</MenuItem>)
-                  })
-                }
-              </Select>
-            </Grid>
-            <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-              <FormLabel>
-                <Typography variant="body2">Info</Typography>
-              </FormLabel>
-              <TextField placeholder="Name of reciever for example..."></TextField>
-            </Grid>
-            <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-              <Button variant="contained" fullWidth sx={{ height: "56px" }}>
-                Create Key
-              </Button>
-            </Grid>
-          </Grid>
-          <Divider sx={{ my: 3, mb: 2 }}></Divider>
-          <Typography gutterBottom variant="h5">
-            All keys
-          </Typography>
-          <ManageKeys />
+      <Grid container spacing={2}>
+        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+          <FormLabel>
+            <Typography variant="body2">Access / Role</Typography>
+          </FormLabel>
+          <Select value={role} onChange={handleSelectRoleChange}>
+            {roles &&
+              roles.map((role, index) => {
+                return (
+                  <MenuItem key={index} value={role.name}>
+                    {role.label}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </Grid>
+        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+          <FormLabel>
+            <Typography variant="body2">Info</Typography>
+          </FormLabel>
+          <TextField placeholder="Name of reciever for example..."></TextField>
+        </Grid>
+        <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
+          <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+            Create Key
+          </Button>
+        </Grid>
+      </Grid>
+      <Divider sx={{ my: 3, mb: 2 }}></Divider>
+      <Typography gutterBottom variant="h5">
+        All keys
+      </Typography>
+      <ManageKeys />
     </>
-  )
-}
+  );
+};
 const mapStateToProps = (state: any) => ({
-  users : state.view.users,
-  userGroups: state.view.userGroups
+  users: state.view.users,
+  userGroups: state.view.userGroups,
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareList);
 // function ShareTabs() {
@@ -554,4 +568,3 @@ export default connect(mapStateToProps, mapDispatchToProps)(ShareList);
 //     </Modal>
 //   );
 // };
-
