@@ -169,7 +169,7 @@ export default function VerticalTabs() {
                 width: 128,
                 height: 128,
                 border: "solid 4px #fff",
-                boxShadow: "0 0 24px 0 rgba(0,0,0,0.05)",
+                boxShadow: "0 16px 24px 0 rgba(0,0,0,0.05)",
                 fontSize: 40,
                 position: "relative",
                 "&:hover .overlay": {
@@ -184,7 +184,7 @@ export default function VerticalTabs() {
                 },
               }}
             >
-              {/* CHANGE AVATAR v2 */}
+              {/* check out and CHANGE AVATAR v2 option */}
               {/* <Box
                 className="overlay"
                 sx={{ display: "none", backgroundColor: "rgba(0,0,0,0.5)" }}
@@ -232,6 +232,7 @@ export default function VerticalTabs() {
               />
             </Grid>
           </Grid>
+          {/* remove disabled if user update profile info */}
           <Button sx={{ mt: 2 }} disabled variant="contained">
             Update Settings
           </Button>
