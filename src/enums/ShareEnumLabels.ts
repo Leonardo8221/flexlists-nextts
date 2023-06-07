@@ -1,4 +1,4 @@
-import { FieldType, ListCategory, Role } from "./SharedEnums";
+import { FieldType, FilterOperator, ListCategory, Role } from "./SharedEnums";
 
 export const RoleLabel = new Map<string, string>([
   [Role.ReadOnly, 'Read Only'],
@@ -49,3 +49,36 @@ export const FieldTypeGroupLabel = new Map<string,string[]>([
       ]
     ]
 ])
+
+export const StringFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, 'is'],
+  [FilterOperator.neq, 'is not'],
+  [FilterOperator.like, 'contain'],
+  [FilterOperator.nlike, 'not contain']
+]);
+export const NumberFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, '='],
+  [FilterOperator.neq, '!='],
+  [FilterOperator.lt, '<'],
+  [FilterOperator.lte, '<='],
+  [FilterOperator.gt, '>'],
+  [FilterOperator.gte, '>='],
+]);
+export const DateFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, 'is'],
+  [FilterOperator.neq, 'is not'],
+  [FilterOperator.lt, 'is before'],
+  [FilterOperator.lte, 'is on or before'],
+  [FilterOperator.gt, 'is after'],
+  [FilterOperator.gte, 'is on or after'],
+]);
+export const ChoiceFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, 'is'],
+  [FilterOperator.neq, 'is not'],
+  [FilterOperator.in, 'is any of'],
+  [FilterOperator.nin, 'is none of']
+]);
+export const BooleanFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, 'is'],
+  [FilterOperator.neq, 'is not']
+]);

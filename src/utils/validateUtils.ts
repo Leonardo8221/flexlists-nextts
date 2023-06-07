@@ -60,7 +60,7 @@ export function isDateTime(value: any): boolean {
 export function isArray(value: any): value is any[] {
     return Array.isArray(value);
 }
-export function isObject(value: any): value is object {
+export function isObject(value: any) {
     return typeof value === 'object' && value !== null;
 }
 export function isEnum<T extends Record<string, string>>(enumObj: T, value: string): value is T[keyof T] {

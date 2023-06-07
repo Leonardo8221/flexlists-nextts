@@ -77,3 +77,17 @@ export enum PublishType {
     JSON = 'JSON',
     JSIframe = 'JSIframe',
 }
+export enum FilterOperator
+{
+  eq = 'eq',
+  neq = 'neq',
+  ne = "ne",
+  gt = 'gt',
+  gte = 'gte',
+  lt = 'lt',
+  lte = 'lte',
+  like = 'like',
+  nlike = 'nlike',
+  in = 'in',
+  nin = 'nin'
+}

@@ -5,7 +5,7 @@ import { isSucc } from 'src/models/ApiResponse';
 import { listViewService } from 'src/services/listView.service';
 import { fieldService } from 'src/services/field.service';
 import {listContentService} from 'src/services/listContent.service'
-import {Sort,Query} from 'src/models/SharedModels'
+import {Sort,Query, FlatWhere} from 'src/models/SharedModels'
 import { SearchType } from 'src/enums/SharedEnums';
 // Define the actions
 export const getCurrentView = (viewId:number): ThunkAction<
@@ -45,7 +45,7 @@ any
     }
   };
 };
-export const fetchRows = (type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query): ThunkAction<
+export const fetchRows = (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?: FlatWhere[],order?:Sort[],query?:Query): ThunkAction<
 void,
 RootState,
 null,
@@ -53,12 +53,14 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await listContentService.search(type,viewId,page,limit,order,query);
+      const response = await listContentService.search(type,viewId,page,limit,conditions,order,query);
       if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA)
       {
         dispatch(setRows(response.data.contents));
+        return;
       }
-      if(isSucc(response) && response.data && response.data.length>0)
+      console.log(response)
+      if(isSucc(response) && response.data)
       {
         var contents : any[] = []
         for (const row of response.data) {

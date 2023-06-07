@@ -16,7 +16,7 @@ import { fetchColumns, setColumns } from "../../redux/actions/viewActions";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { setRows, fetchRows } from "src/redux/actions/viewActions";
-import { Field, Query, Sort, View } from "src/models/SharedModels";
+import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
@@ -31,7 +31,7 @@ type DataTableProps = {
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   fetchColumns: (viewId:number) => void;
-  fetchRows: (type?:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query) => void;
+  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
 };
 
 const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchColumns, fetchRows }: DataTableProps) => {
@@ -127,7 +127,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
         Cell: ({ renderedCellValue, row }: any) => {
           let value_color = { bg: "#333", fill: "white" };
           let font = "inherit";
-
+          console.log(row)
           dataColumns.forEach((item: any) => {
             if (item.type === FieldType.Choice) {
               item.config.forEach((choice: any) => {
@@ -138,56 +138,87 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
               });
             }
           });
-
-          return (dataColumnType !== FieldType.Choice && dataColumnType !=='Avatar' ) ? (
-            <Box
-              key={row.id}
-              sx={{
-                minWidth: "100px",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {renderedCellValue}
-            </Box>
-          ) : dataColumn.type === "Avatar" ? (
-            <Box
-              key={row.id}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <img
-                alt="avatar"
-                height={24}
-                src="/assets/images/avatars/avatar_1.jpg"
-                loading="lazy"
-                style={{ borderRadius: "50%" }}
-              />
-              <div style={{ marginLeft: "5px" }}>{renderedCellValue}</div>
-            </Box>
-          ) : dataColumnType === FieldType.Choice ? (
-            <Box
-              key={row.id}
-              sx={{
-                textAlign: "center",
-                bgcolor: value_color.bg,
-                borderRadius: "20px",
-                color: value_color.fill,
-                fontFamily: font,
-                px: 1.5,
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {renderedCellValue}
-            </Box>
-          ) : (
-            <></>
-          );
+          function renderFieldData (columnType : FieldType,cellValue:any) 
+          {
+              switch (columnType) {
+                case FieldType.Integer:
+                case FieldType.Float:
+                case FieldType.Decimal:
+                case FieldType.Double:
+                case FieldType.Money:
+                case FieldType.Percentage:
+                 return <Box
+                  key={row.id}
+                  sx={{
+                    minWidth: "100px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {cellValue}
+                </Box>
+                case FieldType.Date:
+                case FieldType.DateTime:
+                case FieldType.Time:
+                  return <Box
+                  key={row.id}
+                  sx={{
+                    minWidth: "100px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                  >
+                    {cellValue}
+                  </Box>
+                case FieldType.Text:
+                  return <Box
+                  key={row.id}
+                  sx={{
+                    minWidth: "100px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                  >
+                    {cellValue}
+                  </Box>
+                case FieldType.Choice :  
+                  return <Box
+                  key={row.id}
+                  sx={{
+                    textAlign: "center",
+                    bgcolor: value_color.bg,
+                    borderRadius: "20px",
+                    color: value_color.fill,
+                    fontFamily: font,
+                    px: 1.5,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {cellValue}
+                </Box>
+                case FieldType.Boolean:
+                  return <Box
+                  key={row.id}
+                  sx={{
+                    minWidth: "100px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                  >
+                    {cellValue?.toString()}
+                  </Box>
+                default:
+                  console.log(columnType);
+                  return (<></>);
+              }
+          }
+          return renderFieldData(dataColumnType,renderedCellValue)
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,

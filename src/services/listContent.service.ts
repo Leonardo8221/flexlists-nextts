@@ -2,7 +2,7 @@ import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
 import { CreateContentOutputDto, SearchOutputDto } from 'src/models/ApiOutputModels'
 import { GetContentsOutputDto } from 'src/models/ApiOutputModels'
-import { Sort } from 'src/models/SharedModels'
+import { FlatWhere, Sort } from 'src/models/SharedModels'
 import { ExportTypes, SearchType } from 'src/enums/SharedEnums'
 import { Query } from 'src/models/SharedModels'
 import { GetContentOutputDto } from 'src/models/ApiOutputModels'
@@ -70,7 +70,7 @@ async function searchContents(listId:number,page?:number,limit?:number,order?:So
 
   return response.data;
 };
-async function search(type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,order,query})
+async function search(type:SearchType,viewId?:number,page?:number,limit?:number,conditions?: FlatWhere[],order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,conditions,order,query})
   return response.data;
 };
