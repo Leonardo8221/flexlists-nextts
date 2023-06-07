@@ -27,6 +27,7 @@ import { FieldType } from 'src/enums/SharedEnums';
 import { listContentService } from 'src/services/listContent.service';
 import { isErr, isSucc } from 'src/models/ApiResponse';
 import { CreateContentOutputDto } from 'src/models/ApiOutputModels';
+import { filter } from 'lodash';
 
 interface RowFormProps {
   currentView: ViewField;
@@ -67,7 +68,7 @@ const actions = [
 const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, onClose, onSubmit, setMessages }: RowFormProps) => {
   const theme = useTheme();
 
-  const [date, setDate] = useState<Dayjs | null>();
+  // const [date, setDate] = useState<Dayjs | null>();
   const [values, setValues] = useState(rowData);
   const [submit, setSubmit] = useState(false);;
   const [commentMode, setCommentMode] = useState(comment);
@@ -79,7 +80,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
   }, []);
 
   useEffect(() => {
-    setDate(dayjs(rowData && rowData.date, "MM/DD/YYYY HH:mm:ss"));
+    // setDate(dayjs(rowData && rowData.date, "MM/DD/YYYY HH:mm:ss"));
     setValues(rowData);
     setSubmit(false);
   }, [open, rowData]);
@@ -89,14 +90,12 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
     if (!values) setValues({ submit: true });
     
     let validator = true;
-
+   
     if (values) {
       columns.forEach(column => {
-        if (column.name !== 'id' && !values[column.id]) validator = false;
+        if (!column.system && !values[column.id]) validator = false;
       });
-
       if (validator) {
-        // if (!values.id) values.id = Math.floor(Math.random() * (99999 - 10000 + 1) ) + 10000;
         //update row data
         if(rowData && rowData.id)
         {
@@ -111,7 +110,11 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
            var createRowResponse = await listContentService.createContent(currentView.listId,values)
            if(isSucc(createRowResponse) && createRowResponse.data)
            {
+              console.log(createRowResponse.data)
               values.id = (createRowResponse.data as CreateContentOutputDto).contentId;
+              values.createdAt = new Date().toISOString();
+              values.updatedAt = new Date().toISOString()
+              values.__archive = false;
               onSubmit(values,"create")
            }
         }
@@ -167,6 +170,19 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
 
     return difference < 60 ? 'just now' : date ? `${date} day${date > 1 ? 's' : ''} ago` : hour ? `${hour} hour${hour > 1 ? 's' : ''} ago` : `${min} min${min > 1 ? 's' : ''} ago`;
   };
+  const setDateValue = (columnId:number,date : Dayjs|Date|null) =>
+  {
+     if(date == null)
+    {
+      return;
+    }
+    if(typeof date === 'string')
+    {
+      setValues({ ...values, [columnId]: date })
+      return
+    }
+    setValues({ ...values, [columnId]: date.toISOString() })
+  }
   const renderField = (column : ViewField) =>
   {
      switch (column.type) {
@@ -180,11 +196,11 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         onChange={(e) =>
           setValues({ ...values, [column.id]: e.target.value })
         }
-        defaultValue={rowData ? rowData[column.id] : ''}
+        defaultValue={rowData && rowData[column.id] ? rowData[column.id] : ''}
         rows={4}
         // multiline={column.type === "textarea"}
-        required
-        error={submit && !values[column.name]}
+        required = {column.required}
+        error={submit && !values[column.id]}
       />
      case FieldType.Integer:
      case FieldType.Double:
@@ -202,28 +218,27 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         onChange={(e) =>
           setValues({ ...values, [column.id]: e.target.value })
         }
-        defaultValue={rowData ? rowData[column.id] : ''}
+        defaultValue={rowData &&rowData[column.id] ? rowData[column.id] : ''}
         rows={4}
         // multiline={column.type === "textarea"}
-        required
-        error={submit && !values[column.name]}
+        required={column.required}
+        error={submit && !values[column.id]}
       />
       case FieldType.Date:
       case FieldType.DateTime:
         return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
         <DateTimePicker
-            value={rowData?getDate(rowData[column.id]):''}
+            value={rowData && rowData[column.id]?getDate(rowData[column.id]): dayjs(new Date())}
             label={column.name}
-            onChange={(x: any) => {
-              setDate(x);
-              setValues({ ...values, [column.id]: x && x.format('MM/DD/YYYY HH:mm:ss') })
+            onChange={(x) => {
+              setDateValue(column.id,x)
             }
             }
             className={submit && !values[column.id] ? 'Mui-error' : ''}
           />
       </LocalizationProvider>
       case FieldType.Choice : 
-       return <FormControl key={column.id} required>
+       return <FormControl key={column.id} required = {column.required}>
        <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
         <Select
          key={column.id}
@@ -236,13 +251,13 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
          size="small"
          error={submit && !values[column.id]}
        >
-         {column.config.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
+         {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
        </Select>
      </FormControl>
      case FieldType.Boolean :
       return <FormControlLabel 
          key={column.id}
-         control={<Checkbox checked = {rowData ? rowData[column.id] : false} onChange={(e)=> setValues({ ...values, [column.id]: e.target.checked })}  />} 
+         control={<Checkbox checked = {rowData && rowData[column.id] ? rowData[column.id] : false} onChange={(e)=> setValues({ ...values, [column.id]: e.target.checked })}  />} 
          label={column.name} 
       />
       default:
@@ -336,7 +351,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
               paddingTop: 2
             }}
           >
-            {columns.map((column: any) =>
+            {filter(columns,(x)=>!x.system).map((column: any) =>
                renderField(column)
             )}
           </Stack>

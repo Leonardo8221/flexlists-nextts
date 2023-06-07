@@ -140,7 +140,11 @@ export default function ColumnFormPanel ({
    const updateConfig = (newConfig : any) =>
    {
     var newColumn = Object.assign({},currentColumn);
-    newColumn.config = newConfig
+    if(!newColumn.config)
+    {
+      newColumn.config = {values:[]}
+    }
+    newColumn.config.values = newConfig
     setCurrentColumn(newColumn)
    }
    const renderColumnConfigSwitch = (column : Field) =>
@@ -148,7 +152,7 @@ export default function ColumnFormPanel ({
       var fieldType = column.type;
       switch (fieldType) {
         case FieldType.Choice:
-          return <ChoiceConfig choices={column.config??[]} updateChoices={(newChoices)=>updateConfig(newChoices)} />
+          return <ChoiceConfig choices={column.config?.values??[]} updateChoices={(newChoices)=>updateConfig(newChoices)} />
       
         default:
           return (<></>)

@@ -20,7 +20,7 @@ import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
-import { isInteger } from "src/utils/validateUtils";
+import { isDateTime, isInteger } from "src/utils/validateUtils";
 import { convertToNumber } from "src/utils/convertUtils";
 
 type DataTableProps = {
@@ -39,7 +39,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
   const newColumn : ViewField = {id:0,listId:0,name:'',ordering:0,required:false,type:FieldType.Text,description:'',
-                detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:undefined,viewFieldVisible: true }
+                detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:{},viewFieldVisible: true }
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleAddColumnPanel, setVisibleAddColumnPanel] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
@@ -54,7 +54,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
   const [selectedColumn,setSelectedColumn] = useState<Field>(newColumn)
-
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -128,8 +127,8 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
           let value_color = { bg: "#333", fill: "white" };
           let font = "inherit";
           dataColumns.forEach((item: any) => {
-            if (item.type === FieldType.Choice) {
-              item.config.forEach((choice: any) => {
+            if (item.type === FieldType.Choice && item.config && item.config.values) {
+              item.config.values.forEach((choice: any) => {
                 if (choice.name === renderedCellValue) {
                   value_color = choice.color;
                   font = choice.font;
@@ -160,6 +159,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
                 case FieldType.Date:
                 case FieldType.DateTime:
                 case FieldType.Time:
+                  // console.log(cellValue)
                   return <Box
                   key={row.id}
                   sx={{
@@ -239,8 +239,10 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
   const handleRowAction = (values: any, action: string) => {
     if (action === "create" || action === "clone") {
-      rows.push(values);
-      setRows([...rows]);
+      var newRows = Object.assign([],rows)
+      newRows.push(values);
+      console.log(newRows)
+      setRows(newRows);
     } else if (action === "update") {
       setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
     } else if (action === "delete")
