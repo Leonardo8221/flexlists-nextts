@@ -29,6 +29,7 @@ export type Field = {
     description?:string
     minimum?:number
     maximum?:number
+    system: boolean
 }
 export type List = {
     id:number

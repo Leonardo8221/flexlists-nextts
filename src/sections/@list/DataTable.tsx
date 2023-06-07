@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { isDateTime, isInteger } from "src/utils/validateUtils";
 import { convertToNumber } from "src/utils/convertUtils";
+import { filter } from "lodash";
 
 type DataTableProps = {
   tab: boolean;
@@ -39,7 +40,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
   const newColumn : ViewField = {id:0,listId:0,name:'',ordering:0,required:false,type:FieldType.Text,description:'',
-                detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:{},viewFieldVisible: true }
+                detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:{},viewFieldVisible: true,system:false }
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleAddColumnPanel, setVisibleAddColumnPanel] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
@@ -159,7 +160,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
                 case FieldType.Date:
                 case FieldType.DateTime:
                 case FieldType.Time:
-                  // console.log(cellValue)
                   return <Box
                   key={row.id}
                   sx={{
@@ -169,7 +169,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
                     textOverflow: "ellipsis",
                   }}
                   >
-                    {cellValue}
+                    {new Date(cellValue).toLocaleString()}
                   </Box>
                 case FieldType.Text:
                   return <Box
@@ -213,7 +213,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
                     {cellValue?.toString()}
                   </Box>
                 default:
-                  console.log(columnType);
                   return (<></>);
               }
           }
@@ -241,14 +240,11 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
     if (action === "create" || action === "clone") {
       var newRows = Object.assign([],rows)
       newRows.push(values);
-      console.log(newRows)
       setRows(newRows);
     } else if (action === "update") {
       setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
     } else if (action === "delete")
     {
-      console.log(rows)
-      console.log(values)
       setRows(rows.filter((row: any) => row.id !== values.id));
     }
       
@@ -258,7 +254,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
   const handleNewColumn = (value: any) => {
     columns.push(value);
-    console.log(columns);
     setColumns([...columns]);
     // setRows(rows.map((task: any) => ({ ...task, [value.name]: "" })));
   };
@@ -278,8 +273,28 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   };
 
   const handleNewRowPanel = () => {
+    var newValues : any = {}
+    for (const column of filter(columns,(x)=>!x.system)) {
+       var defaultValue : any = ''
+      switch (column.type) {
+        case FieldType.Date:
+        case FieldType.DateTime:
+        case FieldType.Time:
+          defaultValue = new Date().toISOString()
+          break;
+        case FieldType.Choice:
+          defaultValue = column.config?.values[0]?.label
+          break;
+        case FieldType.Boolean:
+          defaultValue = false
+          break;
+        default:
+          break;
+      }
+      newValues[column.id] = defaultValue
+    }
     setVisibleAddRowPanel(true);
-    setSelectedRowData(null);
+    setSelectedRowData(newValues);
     setRowSelection({});
   };
 
