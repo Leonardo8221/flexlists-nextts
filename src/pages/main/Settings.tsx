@@ -13,6 +13,7 @@ function Settings() {
           mt: 4,
           p: 0,
           pl: { md: 0 },
+          overflow: "hidden",
           minHeight: "calc(100vh - 153px)",
           maxHeight: "calc(100vh - 153px)",
         }}
