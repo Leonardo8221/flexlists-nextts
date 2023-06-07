@@ -33,7 +33,7 @@ function TabPanel(props: TabPanelProps) {
       id={`vertical-tabpanel-${index}`}
       aria-labelledby={`vertical-tab-${index}`}
       {...other}
-      style={{ width: "100%" }}
+      style={{ width: "100%", overflowY: "scroll" }}
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
@@ -65,7 +65,7 @@ export default function VerticalTabs() {
         flexGrow: 1,
         bgcolor: "background.paper",
         display: "flex",
-        minHeight: "100%",
+        height: "100%",
         width: "100%",
       }}
     >
@@ -239,7 +239,7 @@ export default function VerticalTabs() {
         </Box>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        General Settings goes here
+        <Typography variant="h4">Profile Settings</Typography>
       </TabPanel>
       <TabPanel value={value} index={2}>
         Item Three
