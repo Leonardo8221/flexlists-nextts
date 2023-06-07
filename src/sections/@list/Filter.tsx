@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import { fetchRows, setFilters } from '../../redux/actions/viewActions';
@@ -20,13 +20,14 @@ type FilterProps = {
   currentView:View;
   columns: any;
   filters: FlatWhere[];
+  sorts : Sort[];
   open: boolean;
   setFilters: (filters: FlatWhere[]) => void;
-  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
+  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
   handleClose: () => void;
 };
 
-const Filter = ({ currentView,columns, filters, open, setFilters,fetchRows, handleClose }: FilterProps) => {
+const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows, handleClose }: FilterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [windowHeight, setWindowHeight] = useState(0);
@@ -58,7 +59,6 @@ const Filter = ({ currentView,columns, filters, open, setFilters,fetchRows, hand
   };
 
   const handleFilters = (index: number, key: string, value: any) => {
-    console.log(index)
     setFilters(filters.map((filter: any, i: number) => {
       if (index === i) filter[key] = value;
       return filter;
@@ -190,8 +190,7 @@ const Filter = ({ currentView,columns, filters, open, setFilters,fetchRows, hand
     
   };
   const onsubmit = async() =>{
-    console.log(filters);
-    fetchRows(SearchType.View,currentView.id,undefined,undefined,filters)
+    fetchRows(SearchType.View,currentView.id,undefined,undefined,filters,sorts)
     handleClose()
   }
   const style = {
@@ -321,7 +320,7 @@ const Filter = ({ currentView,columns, filters, open, setFilters,fetchRows, hand
         </Box>
         }
         
-        <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} onClick={addFilter}>
+        <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} >
           <Box
             component="span"
             className="svg-color"
@@ -337,12 +336,10 @@ const Filter = ({ currentView,columns, filters, open, setFilters,fetchRows, hand
               marginRight: 0.5
             }}
           />
-          <Box>Add condition</Box>
+          <Box onClick={addFilter}>Add condition</Box>
+          <Button sx={{ml:10}} variant='contained' onClick={()=>onsubmit()}>Submit</Button>
         </Box>
-        <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} onClick={()=>onsubmit()}>
-          
-          <Box>Submit</Box>
-        </Box>
+        
       </Box>
       
     </Modal>
@@ -352,7 +349,8 @@ const Filter = ({ currentView,columns, filters, open, setFilters,fetchRows, hand
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   filters: state.view.filters,
-  currentView: state.view.currentView
+  currentView: state.view.currentView,
+  sorts: state.view.sorts
 });
 
 const mapDispatchToProps = {

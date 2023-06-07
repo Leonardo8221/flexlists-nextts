@@ -1,42 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setSorts } from '../../redux/actions/viewActions';
+import { fetchRows, setSorts } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
+import { FieldType, SearchType } from 'src/enums/SharedEnums';
+import { FlatWhere, Query, Sort, View } from 'src/models/SharedModels';
 
-type Props = {
+type SortProps = {
+  currentView:View;
   columns: any;
-  sorts: any;
+  filters: FlatWhere[];
+  sorts: Sort[];
   open: boolean;
   setSorts: (sorts: any) => void;
   handleClose: () => void;
+  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
 };
 
-const sortContents = [
-  {
-    content: 'Last - First',
-    type: 'number'
-  },
-  {
-    content: 'First - Last',
-    type: 'number'
-  },
-  {
-    content: 'A - Z',
-    type: 'string'
-  },
-  {
-    content: 'Z- A',
-    type: 'string'
-  }
-];
 
-const Filter = (props: Props) => {
-  const { columns, sorts, open, setSorts, handleClose } = props;
+const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleClose,fetchRows }: SortProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');const [windowHeight, setWindowHeight] = useState(0);
 
@@ -54,17 +40,61 @@ const Filter = (props: Props) => {
   const removeSort = (index: number) => {
     setSorts(sorts.filter((sort: any, i: number) => i !== index));
   };
+  const getColumn = (column_id: number) => {
+    const column = columns.filter((item: any) => item.id === column_id);
 
+    return column[0];
+  };
+  const getSorDirections = (sort:any) : {key:string,value:string}[] =>
+  {
+     var column = getColumn(sort.fieldId);
+     var directions : {key:string,value:string}[] = [
+      {
+        key: 'asc',
+        value:'First-Last'
+      },
+      {
+        key: 'desc',
+        value:'Last-First'
+      }
+     ]
+     switch (column.type) {
+      case FieldType.Text:
+        directions = [
+          {
+            key: 'asc',
+            value:'A-Z'
+          },
+          {
+            key: 'desc',
+            value:'Z-A'
+          }
+         ]
+           break;
+      default:
+        break;
+     }
+     return directions
+     
+  }
   const addSort = () => {
+    if(columns.length == 0)
+    {
+      return;
+    }
+    console.log('aaa')
     setSorts([
       ...sorts,
       {
-        column: columns[1].name,
-        content: sortContents[0].content
+        fieldId: columns[0].id,
+        direction: 'asc'
       }
     ]);
   };
-
+  const onsubmit = async()=>{
+     fetchRows(SearchType.View,currentView.id,undefined,undefined,filters,sorts)
+     handleClose()
+  }
   const style = {
     position: 'absolute',
     top: '50%',
@@ -109,8 +139,8 @@ const Filter = (props: Props) => {
           {sorts.length && sorts.map((sort: any, index: number) => (
             <Box key={sort.column} sx={{ marginBottom: 1, display: 'flex' }}>
               <Select
-                value={sort.column}
-                onChange={(e) => { handleSorts(index, 'column', e.target.value); }}
+                value={sort.fieldId}
+                onChange={(e) => { handleSorts(index, 'fieldId', e.target.value); }}
                 size="small"
                 sx={{ width: {md: '168px'}, textTransform: 'capitalize' }}
                 className="sort_column"
@@ -135,13 +165,13 @@ const Filter = (props: Props) => {
                 ))}
               </Select>
               <Select
-                value={sort.content}
-                onChange={(e) => { handleSorts(index, 'content', e.target.value); }}
+                value={sort.direction}
+                onChange={(e) => { handleSorts(index, 'direction', e.target.value); }}
                 size="small"
                 sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
               >
-                {sortContents.map((sortContent: any) => (
-                  <MenuItem key={sortContent.content} value={sortContent.content}>{sortContent.content}</MenuItem>
+                {getSorDirections(sort).map((direction: any) => (
+                  <MenuItem key={direction.key} value={direction.key}>{direction.value}</MenuItem>
                 ))}
               </Select>
               <Box
@@ -165,7 +195,7 @@ const Filter = (props: Props) => {
         </Box>
         }
         
-        <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} onClick={addSort}>
+        <Box sx={{ paddingTop: 2, display: 'flex', cursor: 'pointer' }} >
           <Box
             component="span"
             className="svg-color"
@@ -181,8 +211,10 @@ const Filter = (props: Props) => {
               marginRight: 0.5
             }}
           />
-          <Box>Add another sort</Box>
+          <Box onClick={addSort}>Add another sort</Box>
+          <Button sx={{ml:10}} variant='contained' onClick={()=>onsubmit()}>Submit</Button>
         </Box>
+        
       </Box>
     </Modal>
   );
@@ -190,11 +222,14 @@ const Filter = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
+  filters: state.view.filters,
+  currentView: state.view.currentView,
   sorts: state.view.sorts
 });
 
 const mapDispatchToProps = {
-  setSorts
+  setSorts,
+  fetchRows
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
+export default connect(mapStateToProps, mapDispatchToProps)(SortPage);
