@@ -59,7 +59,6 @@ any
         dispatch(setRows(response.data.contents));
         return;
       }
-      console.log(response)
       if(isSucc(response) && response.data)
       {
         var contents : any[] = []

@@ -127,7 +127,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
         Cell: ({ renderedCellValue, row }: any) => {
           let value_color = { bg: "#333", fill: "white" };
           let font = "inherit";
-          console.log(row)
           dataColumns.forEach((item: any) => {
             if (item.type === FieldType.Choice) {
               item.config.forEach((choice: any) => {
