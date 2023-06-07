@@ -7,6 +7,7 @@ export default function Button(theme: any) {
     MuiButton: {
       styleOverrides: {
         root: {
+          boxShadow: "none",
           "&:hover": {
             boxShadow: "none",
           },
@@ -16,14 +17,14 @@ export default function Button(theme: any) {
         },
         containedInherit: {
           color: theme.palette.grey[800],
-          boxShadow: theme.customShadows.z8,
+          boxShadow: "none",
           "&:hover": {
             backgroundColor: theme.palette.grey[900],
           },
         },
         containedPrimary: {
           backgroundColor: "#54A6FB",
-          boxShadow: theme.customShadows.primary,
+          boxShadow: "none",
         },
         containedSecondary: {
           boxShadow: theme.customShadows.secondary,
