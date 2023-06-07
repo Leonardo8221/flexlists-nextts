@@ -9,13 +9,32 @@ import {
   Button,
   TextField,
   Grid,
+  MenuItem,
+  FormControl,
+  Select,
+  Divider,
+  Switch,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { SelectChangeEvent } from "@mui/material/Select";
 // ICONS----------------------------------------------
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import GppGoodIcon from "@mui/icons-material/GppGood";
 import UploadIcon from "@mui/icons-material/Upload";
+
+const ThemeChoiceImage = styled("img")(({ theme }) => ({
+  width: 180,
+  height: 180,
+  border: "solid 2px #eee",
+  borderRadius: "16px",
+  transition: "all .2s ease",
+  "&:hover": {
+    cursor: "pointer",
+    borderColor: "#54A6FB",
+  },
+}));
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -53,6 +72,11 @@ function a11yProps(index: number) {
 
 export default function VerticalTabs() {
   const [value, setValue] = React.useState(0);
+  const [age, setAge] = React.useState("");
+
+  const handleDateChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value as string);
+  };
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -71,14 +95,15 @@ export default function VerticalTabs() {
     >
       <Tabs
         orientation="vertical"
-        variant="fullWidth"
+        variant="scrollable"
+        scrollButtons={false}
         value={value}
         onChange={handleChange}
         aria-label="Vertical tabs example"
         sx={{
           borderRight: 1,
           borderColor: "divider",
-          minHeight: "100%",
+          maxHeight: "100%",
           width: "25%",
         }}
       >
@@ -239,10 +264,171 @@ export default function VerticalTabs() {
         </Box>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Typography variant="h4">Profile Settings</Typography>
+        <Typography variant="h4">General Settings</Typography>
+        <Divider light sx={{ my: 4 }}></Divider>
+
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body1">Choose preferred theme:</Typography>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+              mt: 2,
+            }}
+          >
+            <ThemeChoiceImage src="/assets/images/settings/DarkTheme.svg" />
+            <ThemeChoiceImage src="/assets/images/settings/LightTheme.svg" />
+            <ThemeChoiceImage src="/assets/images/settings/HighContrastDark.svg" />
+            <ThemeChoiceImage src="/assets/images/settings/HighContrastLight.svg" />
+          </Box>
+          <Divider sx={{ my: 4 }}></Divider>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Grid item md={6}>
+              <Typography variant="body1">
+                Set your time and date format.
+              </Typography>
+            </Grid>
+            <Grid item md={6}>
+              <FormControl
+                fullWidth
+                sx={{ display: "flex", flexDirection: "row" }}
+              >
+                <Select sx={{ width: "100%", mr: 2 }} value={0}>
+                  <MenuItem>MM/DD/YYYY (e.g., 06/15/2023)</MenuItem>
+                  <MenuItem>DD/MM/YYYY (e.g., 15/06/2023)</MenuItem>
+                  <MenuItem>YYYY-MM-DD (e.g., 2023-06-15)</MenuItem>
+                  <MenuItem>Month DD, YYYY (e.g., June 15, 2023)</MenuItem>
+                </Select>
+                <Select sx={{ width: "100%" }}>
+                  <MenuItem>HH:mm (e.g., 18:30)</MenuItem>
+                  <MenuItem>h:mm A (e.g., 6:30 PM)</MenuItem>
+                  <MenuItem>HH:mm:ss (e.g., 18:30:15)</MenuItem>
+                  <MenuItem>h:mm:ss A (e.g., 6:30:15 PM)</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <Grid item md={6}>
+              <Typography variant="body1">Set your currency.</Typography>
+            </Grid>
+            <Grid item md={6}>
+              <FormControl
+                fullWidth
+                sx={{ display: "flex", flexDirection: "row" }}
+              >
+                <Select sx={{ width: "100%" }} value={0}>
+                  <MenuItem>Euro (EUR) - €</MenuItem>
+                  <MenuItem>United States Dollar (USD) - $</MenuItem>
+                  <MenuItem>British Pound (GBP) - £</MenuItem>
+                  <MenuItem>Japanese Yen (JPY) - ¥</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <Typography variant="h4">Security Settings</Typography>
+        <Box mt={4}>
+          <Typography variant="subtitle1" sx={{ mt: 2 }}>
+            Password
+          </Typography>
+          <Divider light sx={{ my: 2 }} />
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <Typography variant="body1">
+              Enhance your account security by setting a new password.
+            </Typography>
+            <Button variant="outlined">Change password</Button>
+          </Box>
+          <Typography variant="subtitle1" sx={{ mt: 4 }}>
+            Two-step security options
+          </Typography>
+          <Divider light sx={{ my: 2 }}></Divider>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <Box>
+              <Typography variant="body1" gutterBottom>
+                Authenticator app
+              </Typography>
+              <Typography component="span" variant="body2" color="#aaa">
+                Google Authenticator{" "}
+              </Typography>
+            </Box>
+            <Switch defaultChecked />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <Box>
+              <Typography variant="body1" gutterBottom>
+                SMS
+              </Typography>
+              <Typography component="span" variant="body2" color="#aaa">
+                Receive message on: +123 456 789
+              </Typography>
+            </Box>
+            <Switch defaultChecked />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 2,
+            }}
+          >
+            <Box>
+              <Typography variant="body1" gutterBottom>
+                Email notify
+              </Typography>
+              <Typography component="span" variant="body2" color="#aaa">
+                email@email.com
+              </Typography>
+            </Box>
+            <Switch />
+          </Box>
+        </Box>
       </TabPanel>
       <TabPanel value={value} index={3}>
         Item Four
