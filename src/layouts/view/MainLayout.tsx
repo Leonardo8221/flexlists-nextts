@@ -30,25 +30,31 @@ const Main = styled("div")(({ theme }) => ({
   },
 }));
 
-const Content = styled("div")(({ theme }) => ({
-  backgroundColor: "#fafafa",
-  width: "100%",
-  // [theme.breakpoints.up('lg')]: {
-  //   paddingLeft: theme.spacing(1),
-  //   paddingRight: theme.spacing(1),
-  //   paddingBottom: theme.spacing(1)
-  // },
-  // paddingTop: theme.spacing(1)
-}));
+const Content = styled("div")(
+  ({ theme, disableOverflow }: { theme: any; disableOverflow: boolean }) => ({
+    backgroundColor: "#fafafa",
+    width: "100%",
+    overflow: disableOverflow ? "hidden" : "scroll",
+
+    // [theme.breakpoints.up('lg')]: {
+    //   paddingLeft: theme.spacing(1),
+    //   paddingRight: theme.spacing(1),
+    //   paddingBottom: theme.spacing(1)
+    // },
+    // paddingTop: theme.spacing(1)
+  })
+);
 
 type MainLayoutProps = {
   children: ReactNode;
   removeFooter?: boolean;
+  disableOverflow?: boolean;
 };
 
 export default function MainLayout({
   children,
   removeFooter = false,
+  disableOverflow = false,
 }: MainLayoutProps) {
   const [open, setOpen] = useState(false);
 
@@ -58,7 +64,7 @@ export default function MainLayout({
 
       <Main>
         <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-        <Content>{children}</Content>
+        <Content disableOverflow={disableOverflow}>{children}</Content>
       </Main>
       {removeFooter == false && <Footer />}
     </StyledRoot>
