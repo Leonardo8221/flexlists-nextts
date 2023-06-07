@@ -52,8 +52,9 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
     setWindowHeight(window.innerHeight);
   }, []);
 
-  const getColumn = (column_id: number) => {
-    const column = columns.filter((item: any) => item.id === column_id);
+  const getColumn = (column_id: any) => {
+    const column = columns.filter((item: any) => (item.id === column_id ||
+      (item.system && (item.name === 'createdAt'|| item.name === 'updatedAt') && item.name===column_id)));
 
     return column[0];
   };
@@ -71,7 +72,7 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
     }));
   };
   const removeFilter = (index: number) => {
-    setFilters(filters.filter((filter: any, i: number) => i !== index));
+    setFilters(filters.filter((filter: any, i: number) => (i !== index && (i !== index-1))));
   };
   const getDate = (date:any)=>{
     return dayjs(date, "MM/DD/YYYY HH:mm:ss")
@@ -246,8 +247,10 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
                     sx={{ width: {md: '168px'}, textTransform: 'capitalize' }}
                     className="sort_column"
                   >
-                    {columns.map((column: any) => (
-                      <MenuItem key={column.id} value={column.id} sx={{ display: 'flex' }}>
+                    {columns.map((column: any) => { 
+                      var columnValue = (column.system && (column.name === 'createdAt'|| column.name === 'updatedAt'))? column.name:column.id
+                      return (
+                      <MenuItem key={column.id} value={columnValue} sx={{ display: 'flex' }}>
                         <Box
                           component="span"
                           className="svg-color"
@@ -263,7 +266,8 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
                         />
                         <Box>{column.name}</Box>
                       </MenuItem>
-                    ))}
+                    )}
+                    )}
                   </Select>
                   <Select
                     value={filter.cmp}

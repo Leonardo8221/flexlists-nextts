@@ -92,7 +92,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   }, [currentView]);
   const getColumnKey = (column:any) : string=>
   {
-    if(column.system)
+    if(column.system && (column.name === 'id' || column.name === 'createdAt' || column.name === 'updatedAt'))
     {
       return column.name
     }
