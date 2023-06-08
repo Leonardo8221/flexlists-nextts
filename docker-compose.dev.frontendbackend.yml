@@ -4,6 +4,7 @@ services:
 
   web:
     image: nginx
+    restart: always 
     volumes:
       - ./templates-frontendbackend:/etc/nginx/templates
     ports:
