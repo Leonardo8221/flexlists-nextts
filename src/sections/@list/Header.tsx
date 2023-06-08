@@ -18,9 +18,12 @@ import PublishList from "./Publish";
 import ShareList from "./Share";
 import { View } from "src/models/SharedModels";
 import RenameView from "./RenameView";
+import DuplicateView from "./DuplicateView";
+import DeleteView from "./DeleteView";
+import ArchiveView from "./ArchiveView";
 
 type HeaderProps = {
-  currentView : View;
+  currentView: View;
 };
 
 const lists = [
@@ -42,7 +45,7 @@ const lists = [
   },
 ];
 
-const Header = ({currentView}: HeaderProps) => {
+const Header = ({ currentView }: HeaderProps) => {
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
@@ -50,7 +53,11 @@ const Header = ({currentView}: HeaderProps) => {
   const [openShare, setOpenShare] = useState(false);
   const isDesktop = useResponsive("up", "xl");
   const [visiblePanel, setVisiblePanel] = useState(false);
-  const [isRenameOpenModal,setIsRenameOpenModal] = useState<boolean>(false)
+  const [isRenameOpenModal, setIsRenameOpenModal] = useState<boolean>(false);
+  const [isDuplicateOpenModal, setIsDuplicateOpenModal] =
+    useState<boolean>(false);
+  const [isDeleteOpenModal, setIsDeleteOpenModal] = useState<boolean>(false);
+  const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
@@ -74,10 +81,19 @@ const Header = ({currentView}: HeaderProps) => {
   const handleCloseShare = () => {
     setOpenShare(false);
   };
-  const handleOpenRenameModal = ()=>
-  {
+  const handleOpenRenameModal = () => {
     setIsRenameOpenModal(true);
-  }
+  };
+  const handleOpenDuplicateModal = () => {
+    setIsDuplicateOpenModal(true);
+  };
+
+  const handleOpenDeleteModal = () => {
+    setIsDeleteOpenModal(true);
+  };
+  const handleOpenArchiveModal = () => {
+    setIsArchiveOpenModal(true);
+  };
   return (
     <Box
       sx={{
@@ -148,18 +164,34 @@ const Header = ({currentView}: HeaderProps) => {
             />
           </CDropdownToggle>
           <CDropdownMenu>
-              <CDropdownItem href="#" key={"rename_list"} onClick={()=>handleOpenRenameModal()}>
-                Rename View 
-              </CDropdownItem>
-              <CDropdownItem href="#" key={"duplicate_list"}>
-                Duplicate View
-              </CDropdownItem>
-              <CDropdownItem href="#" key={"delete_list"}>
-                Delete View
-              </CDropdownItem>
-              <CDropdownItem href="#" key={"archive_list"}>
-                Archive View
-              </CDropdownItem>
+            <CDropdownItem
+              href="#"
+              key={"rename_list"}
+              onClick={() => handleOpenRenameModal()}
+            >
+              Rename View
+            </CDropdownItem>
+            <CDropdownItem
+              href="#"
+              key={"duplicate_list"}
+              onClick={() => handleOpenDuplicateModal()}
+            >
+              Duplicate View
+            </CDropdownItem>
+            <CDropdownItem
+              href="#"
+              key={"delete_list"}
+              onClick={() => handleOpenDeleteModal()}
+            >
+              Delete View
+            </CDropdownItem>
+            <CDropdownItem
+              href="#"
+              key={"archive_list"}
+              onClick={() => handleOpenArchiveModal()}
+            >
+              Archive View
+            </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
       </Box>
@@ -321,14 +353,29 @@ const Header = ({currentView}: HeaderProps) => {
         />
       </>
       <>
-      <RenameView open = {isRenameOpenModal} handleClose={()=> setIsRenameOpenModal(false)} />
+        <RenameView
+          open={isRenameOpenModal}
+          handleClose={() => setIsRenameOpenModal(false)}
+        />
+        <DuplicateView
+          open={isDuplicateOpenModal}
+          handleClose={() => setIsDuplicateOpenModal(false)}
+        />
+        <DeleteView
+          open={isDeleteOpenModal}
+          handleClose={() => setIsDeleteOpenModal(false)}
+        />
+        <ArchiveView
+          open={isArchiveOpenModal}
+          handleClose={() => setIsArchiveOpenModal(false)}
+        />
       </>
     </Box>
   );
 };
 
 const mapStateToProps = (state: any) => ({
-  currentView: state.view.currentView
+  currentView: state.view.currentView,
 });
 
 const mapDispatchToProps = {

@@ -1,78 +1,95 @@
-import { useEffect, useState } from 'react';
-import { Box, TextField } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import useResponsive from '../../hooks/useResponsive';
-import CentralModal from 'src/components/modal/CentralModal';
-import { connect } from 'react-redux';
-import { setCurrentView } from 'src/redux/actions/viewActions';
-import { View } from 'src/models/SharedModels';
-import { listViewService } from 'src/services/listView.service';
-import { isSucc } from 'src/models/ApiResponse';
-
+import { useEffect, useState } from "react";
+import { Box, TextField, Typography, Divider, Button } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useResponsive from "../../hooks/useResponsive";
+import CentralModal from "src/components/modal/CentralModal";
+import { connect } from "react-redux";
+import { setCurrentView } from "src/redux/actions/viewActions";
+import { View } from "src/models/SharedModels";
+import { listViewService } from "src/services/listView.service";
+import { isSucc } from "src/models/ApiResponse";
 
 type RenameViewProps = {
   open: boolean;
   handleClose: () => void;
-  currentView:View;
-  setCurrentView : (newView:View) =>void
+  currentView: View;
+  setCurrentView: (newView: View) => void;
 };
 
-const RenameView = ({ open, handleClose,currentView,setCurrentView }: RenameViewProps) => {
+const RenameView = ({
+  open,
+  handleClose,
+  currentView,
+  setCurrentView,
+}: RenameViewProps) => {
   const theme = useTheme();
-  const isDesktop = useResponsive('up', 'md');
+  const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
-  const [view,setView] = useState<View>(currentView)
+  const [view, setView] = useState<View>(currentView);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
-  useEffect(()=>{
-     setView(currentView)
-  },[currentView])
-  const handleViewNameChange = (event : React.ChangeEvent<HTMLInputElement>) =>{
-       var newView = Object.assign({},view)
-       newView.name = event.target.value
-       setView(newView)
-  }
-  const onSubmit = async() =>
-  {
-      var response = await listViewService.renameView(view.id,view.name)
-      if(isSucc(response))
-      {
-        setCurrentView(view)
-        handleClose()
-      }
-  }
+  useEffect(() => {
+    setView(currentView);
+  }, [currentView]);
+  const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    var newView = Object.assign({}, view);
+    newView.name = event.target.value;
+    setView(newView);
+  };
+  const onSubmit = async () => {
+    var response = await listViewService.renameView(view.id, view.name);
+    if (isSucc(response)) {
+      setCurrentView(view);
+      handleClose();
+    }
+  };
   return (
-     <CentralModal open={open} handleClose={handleClose}>
-        <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, paddingBottom: 1, display: 'flex', justifyContent: 'space-between' }}>
-          <Box>Rename View</Box>
-        </Box>
-        <Box >
-          {
-            view && 
-            <TextField
-                label="Name"
-                size="small"
-                type="text"
-                onChange={handleViewNameChange}
-                value={view.name}
-                sx={{ border: 'none' }}
-              />
-         }
-        </Box>
-        <Box sx={{ paddingTop: 2, textAlign: 'center', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-          <Box sx={{ py: 1, border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', cursor: 'pointer' }} onClick={() => { onSubmit() }}>Save</Box>
-        </Box>
-     </CentralModal>
-     );
+    <CentralModal open={open} handleClose={handleClose}>
+      <Typography variant="h6">Rename View</Typography>
+      <Divider sx={{ my: 2 }}></Divider>
+      <Box>
+        <Typography variant="subtitle2">Name</Typography>
+        <TextField
+          fullWidth
+          defaultValue="Untitled Base :)"
+          placeholder="List Name"
+        />
+      </Box>
+      <Box>
+        <Typography variant="subtitle2" sx={{ mt: 2 }}>
+          Description
+        </Typography>
+        <TextField
+          multiline
+          rows={4}
+          fullWidth
+          defaultValue="Base description"
+        />
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        {/* DISABLED BUTTON UNTIL CHANGE IS MADE */}
+        <Button disabled sx={{ mt: 2 }} variant="contained">
+          Rename
+        </Button>
+        <Button
+          onClick={handleClose}
+          sx={{ mt: 2, ml: 2, color: "#666" }}
+          variant="text"
+        >
+          Cancel
+        </Button>
+      </Box>
+    </CentralModal>
+  );
 };
 
 const mapStateToProps = (state: any) => ({
-  currentView : state.view.currentView
+  currentView: state.view.currentView,
 });
 
 const mapDispatchToProps = {
-  setCurrentView
+  setCurrentView,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RenameView);

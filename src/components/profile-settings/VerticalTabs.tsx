@@ -188,6 +188,8 @@ export default function VerticalTabs() {
       </Tabs>
       <TabPanel value={value} index={0}>
         <Typography variant="h4">Profile Settings</Typography>
+        <Divider light sx={{ my: 4 }}></Divider>
+
         <Box mt={4}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Avatar
@@ -349,6 +351,8 @@ export default function VerticalTabs() {
       </TabPanel>
       <TabPanel value={value} index={2}>
         <Typography variant="h4">Security Settings</Typography>
+        <Divider light sx={{ my: 4 }}></Divider>
+
         <Box mt={4}>
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             Password
