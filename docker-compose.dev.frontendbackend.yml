@@ -12,3 +12,5 @@ services:
     environment:
       - NGINX_HOST=noco1.com
       - NGINX_PORT=80
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
