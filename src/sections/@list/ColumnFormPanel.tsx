@@ -87,21 +87,20 @@ export default function ColumnFormPanel ({
     const handleSubmit = async() => {
       setSubmit(true);
       currentColumn.id = 1;
-      // if(isCreating)
-      // {
-      //   var createFieldResponse = await fieldService.createField(viewId,currentColumn.name,currentColumn.type,currentColumn.ordering,
-      //                currentColumn.required,currentColumn.detailsOnly,currentColumn.description,currentColumn.minimum,
-      //                currentColumn.maximum,currentColumn.config,currentColumn.icon)
-      //   if(isSucc(createFieldResponse) && createFieldResponse.data)
-      //   {
-      //     currentColumn.id = (createFieldResponse.data as CreateFieldOutputDto).fieldId;
-      //     onAdd(currentColumn);
-      //   }
+      if(isCreating)
+      {
+        var createFieldResponse = await fieldService.createField(viewId,currentColumn.name,currentColumn.type,currentColumn.ordering,
+                     currentColumn.required,currentColumn.detailsOnly,currentColumn.description,currentColumn.minimum,
+                     currentColumn.maximum,currentColumn.config,currentColumn.icon)
+        if(isSucc(createFieldResponse) && createFieldResponse.data)
+        {
+          currentColumn.id = (createFieldResponse.data as CreateFieldOutputDto).fieldId;
+          onAdd(currentColumn);
+        }
         
-      // }
-      onAdd(currentColumn)
-      console.log(currentColumn)
-      // onClose()
+      }
+      
+      onClose()
     };
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
