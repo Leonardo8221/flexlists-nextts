@@ -40,6 +40,21 @@ export enum FieldType {
     Double = 'Double',
     Percentage = 'Percentage',
 }
+export enum FieldUiType {
+    OneLineText = 'OneLineText',
+    TextArea = 'TextArea',
+    Integer = 'Integer',
+    Float = 'Float',
+    Date = 'Date',
+    Time = 'Time',
+    DateTime = 'DateTime',
+    Money = 'Money',
+    Boolean = 'Boolean',
+    File = 'File',
+    Image = 'Image',
+    Choice = 'Choice',
+    Percentage = 'Percentage',
+}
 export enum SearchType {
     List = 'List',
     AllLists = 'AllLists',

@@ -1,4 +1,4 @@
-import { FieldType, FilterOperator, ListCategory, Role } from "./SharedEnums";
+import { FieldType, FieldUiType, FilterOperator, ListCategory, Role } from "./SharedEnums";
 
 export const RoleLabel = new Map<string, string>([
   [Role.ReadOnly, 'Read Only'],
@@ -19,36 +19,67 @@ export const ListCategoryLabel = new Map<string, string>([
     [ListCategory.SalesCustomers, 'Sales Customers'],
     [ListCategory.SoftwareDevelopment, 'Software Development'],
   ]); 
-export const FieldTypeGroupLabel = new Map<string,string[]>([
+  export const FieldTypeGroupLabel = new Map<string,{fieldType:string,displayName:string,config?:any}[]>([
     ["Text",[
-          FieldType.Text,
+         {fieldType:FieldType.Text,displayName:"One Line Text",config:{fieldUiType:FieldUiType.OneLineText}},
+         {fieldType:FieldType.Text,displayName:"Large Text",config:{fieldUiType:FieldUiType.TextArea}}
       ]
     ],
     ["Number",[
-      FieldType.Integer,
-      FieldType.Float,
-      FieldType.Double,
-      FieldType.Decimal,
-      FieldType.Percentage,
-      FieldType.Money,
+      {fieldType:FieldType.Integer,displayName:"Integer",config:{fieldUiType:FieldUiType.Integer}},
+      {fieldType:FieldType.Float,displayName:"Float",config:{fieldUiType:FieldUiType.Float}},
+      {fieldType:FieldType.Percentage,displayName:"Percentage",config:{fieldUiType:FieldUiType.Percentage}},
+      {fieldType:FieldType.Money,displayName:"Money",config:{fieldUiType:FieldUiType.Money}},
      ]
    ],
    ["Time",[
-        FieldType.Date,
-        FieldType.DateTime
-      ]
-    ],
+      {fieldType:FieldType.Date,displayName:"Date",config:{fieldUiType:FieldUiType.Date}},
+      {fieldType:FieldType.DateTime,displayName:"DateTime",config:{fieldUiType:FieldUiType.DateTime}},
+      {fieldType:FieldType.Time,displayName:"Time",config:{fieldUiType:FieldUiType.Time}},
+    ]
+  ],
    ["Switch",[
-        FieldType.Choice,
-        FieldType.Boolean
+       {fieldType:FieldType.Choice,displayName:"Choice",config:{fieldUiType:FieldUiType.Choice}},
+       {fieldType: FieldType.Boolean,displayName:"Boolean",config:{fieldUiType:FieldUiType.Boolean}},
+       
       ]
     ],
    ["File",[
-        FieldType.File,
-        FieldType.Image
+        {fieldType:FieldType.File,displayName:"File",config:{fieldUiType:FieldUiType.File}},
+        {fieldType:FieldType.Image,displayName:"Image",config:{fieldUiType:FieldUiType.Image}},
       ]
     ]
 ])
+// export const FieldTypeGroupLabel = new Map<string,string[]>([
+//     ["Text",[
+//           FieldType.Text,
+//       ]
+//     ],
+//     ["Number",[
+//       FieldType.Integer,
+//       FieldType.Float,
+//       FieldType.Double,
+//       FieldType.Decimal,
+//       FieldType.Percentage,
+//       FieldType.Money,
+//      ]
+//    ],
+//    ["Time",[
+//         FieldType.Date,
+//         FieldType.DateTime
+//       ]
+//     ],
+//    ["Switch",[
+//         FieldType.Choice,
+//         FieldType.Boolean
+//       ]
+//     ],
+//    ["File",[
+//         FieldType.File,
+//         FieldType.Image
+//       ]
+//     ]
+// ])
 
 export const StringFilterOperatorLabel = new Map<string, string>([
   [FilterOperator.eq, 'is'],

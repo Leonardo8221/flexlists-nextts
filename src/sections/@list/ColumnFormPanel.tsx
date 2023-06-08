@@ -17,7 +17,7 @@ import { styled, lighten, darken } from '@mui/system';
 import { FormControl } from '@mui/material';
 import { Field } from 'src/models/SharedModels';
 import { FieldTypeGroupLabel } from 'src/enums/ShareEnumLabels';
-import { FieldType } from 'src/enums/SharedEnums';
+import { FieldType, FieldUiType } from 'src/enums/SharedEnums';
 import ChoiceConfig from './fieldConfig/ChoiceConfig';
 import { ViewField } from 'src/models/ViewField';
 import { fieldService } from 'src/services/field.service';
@@ -63,10 +63,11 @@ export default function ColumnFormPanel ({
     const theme = useTheme();
     const isCreating : boolean = !column.id|| column.id == 0;
     const [currentColumn,setCurrentColumn] = useState<ViewField>(column)
-    var  columTypeGroups : {groupName : string, type: string}[] = []
+    const [currentColumnType,setCurrentColumnType] = useState<{groupName : string, type: string,displayName:string,config?:any}>()
+    var  columTypeGroups : {groupName : string, type: string,displayName:string,config?:any}[] = []
      FieldTypeGroupLabel.forEach((values,key)=>{
         for (const value of values) {
-          columTypeGroups.push({groupName:key,type:value})
+          columTypeGroups.push({groupName:key,type:value.fieldType,displayName:value.displayName,config:value.config})
         }
     })
     const [submit, setSubmit] = useState(false);
@@ -86,20 +87,21 @@ export default function ColumnFormPanel ({
     const handleSubmit = async() => {
       setSubmit(true);
       currentColumn.id = 1;
-      if(isCreating)
-      {
-        var createFieldResponse = await fieldService.createField(viewId,currentColumn.name,currentColumn.type,currentColumn.ordering,
-                     currentColumn.required,currentColumn.detailsOnly,currentColumn.description,currentColumn.minimum,
-                     currentColumn.maximum,currentColumn.config,currentColumn.icon)
-        if(isSucc(createFieldResponse) && createFieldResponse.data)
-        {
-          currentColumn.id = (createFieldResponse.data as CreateFieldOutputDto).fieldId;
-          onAdd(currentColumn);
-        }
+      // if(isCreating)
+      // {
+      //   var createFieldResponse = await fieldService.createField(viewId,currentColumn.name,currentColumn.type,currentColumn.ordering,
+      //                currentColumn.required,currentColumn.detailsOnly,currentColumn.description,currentColumn.minimum,
+      //                currentColumn.maximum,currentColumn.config,currentColumn.icon)
+      //   if(isSucc(createFieldResponse) && createFieldResponse.data)
+      //   {
+      //     currentColumn.id = (createFieldResponse.data as CreateFieldOutputDto).fieldId;
+      //     onAdd(currentColumn);
+      //   }
         
-      }
-      
-      onClose()
+      // }
+      onAdd(currentColumn)
+      console.log(currentColumn)
+      // onClose()
     };
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     {
@@ -107,9 +109,22 @@ export default function ColumnFormPanel ({
       newColumn.name = event.target.value
       setCurrentColumn(newColumn)
     }
-    const handleColumnTypeChange = (newType: string) => {
+    const handleColumnTypeChange = (newTypeInput: any) => {
       var newColumn = Object.assign({},currentColumn);
-      newColumn.type = newType as FieldType
+      if(newTypeInput && newTypeInput.type)
+      {
+         var type = newTypeInput.type as FieldType;
+         newColumn.type = type
+         if(newColumn.config)
+         {
+            newColumn.config.fieldUiType = newTypeInput.config.fieldUiType
+         }
+         else
+         {
+            newColumn.config = newTypeInput.config
+         }
+      }
+      setCurrentColumnType(newTypeInput)
       setCurrentColumn(newColumn)
     };
     const onIconChange = (newIcon : string) =>
@@ -143,6 +158,7 @@ export default function ColumnFormPanel ({
     {
       newColumn.config = {values:[]}
     }
+    
     newColumn.config.values = newConfig
     setCurrentColumn(newColumn)
    }
@@ -198,13 +214,14 @@ export default function ColumnFormPanel ({
                 id="grouped-types"
                 options={columTypeGroups}
                 groupBy={(option) => option.groupName}
-                getOptionLabel={(option) => option.type}
+                getOptionLabel={(option) => option.displayName}
                 fullWidth
-                inputValue={currentColumn.type}
-                onInputChange={(event, newInputValue) => {
+                // inputValue={currentColumn.type}
+                value = {currentColumnType}
+                onChange={(event, newInputValue) => {
                     handleColumnTypeChange(newInputValue);
                 }}
-                renderInput={(params) => <TextField {...params}  label="Column type" />}
+                renderInput={(params) => <TextField {...params} label="Column type" />}
                 renderGroup={(params) => (
                   <li key={params.key}>
                     <GroupHeader>{params.group}</GroupHeader>
