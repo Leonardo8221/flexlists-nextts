@@ -53,10 +53,10 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await listContentService.search(type,viewId,page,limit,conditions,order,query);
+      const response = await listContentService.search(type,viewId,page,limit,order,query,conditions);
       if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA)
       {
-        dispatch(setRows(response.data.contents));
+        dispatch(setRows(response.data.content));
         return;
       }
       console.log(response)

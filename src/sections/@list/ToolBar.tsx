@@ -14,7 +14,7 @@ import Filter from "./Filter";
 import Sort from "./Sort";
 import Import from "./Import";
 import Export from "./Export";
-import Fields from "./Fields";
+import ViewFields from "./ViewFields";
 
 type ToolbBarProps = {
   open: boolean,
@@ -134,7 +134,7 @@ const ToolbBar = (props: ToolbBarProps) => {
           </Box>
           <Box sx={{ position: 'relative', marginRight: 2 }}>
             <ActionItem toolbar={actions[2]} onClick={() => { setVisibleFields(!visibleFields); }} />
-            <Fields open={visibleFields} handleClose={() => { setVisibleFields(false); }} />
+            <ViewFields open={visibleFields} handleClose={() => { setVisibleFields(false); }} />
           </Box>
           <Box sx={{ position: 'relative', marginRight: 2 }}>
             <ActionItem toolbar={actions[3]} onClick={() => { setVisibleImport(!visibleImport); }} />

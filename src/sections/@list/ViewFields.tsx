@@ -15,7 +15,7 @@ type Props = {
   handleClose: () => void;
 };
 
-const Fields = (props: Props) => {
+const ViewFields = (props: Props) => {
   const { columns, open, setColumns, handleClose } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
@@ -217,4 +217,4 @@ const mapDispatchToProps = {
   setColumns
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Fields);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewFields);

@@ -62,7 +62,7 @@ const getFieldsEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
           detailsOnly:true,
           description:"",
           tableDefinitionId:1,
-          config: [
+          config:{ values :[
             {
               name: "Very important",
               color: {
@@ -77,7 +77,7 @@ const getFieldsEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
                 fill: '#333'
               }
             }
-          ],
+          ]},
           viewFieldVisible: true
         },
         {
@@ -90,7 +90,7 @@ const getFieldsEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
           detailsOnly:true,
           description:"",
           tableDefinitionId:1,
-          config: [
+          config: { values: [
             {
               name: "Done",
               color: {
@@ -112,7 +112,7 @@ const getFieldsEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
                 fill: '#333'
               }
             }
-          ],
+          ]},
           viewFieldVisible: true
         },
         {
