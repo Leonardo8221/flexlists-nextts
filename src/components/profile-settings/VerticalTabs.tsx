@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { SelectChangeEvent } from "@mui/material/Select";
+import ChangePassword from "./ChangePassword";
 // ICONS----------------------------------------------
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -365,7 +366,7 @@ export default function VerticalTabs() {
             <Typography variant="body1">
               Enhance your account security by setting a new password.
             </Typography>
-            <Button variant="outlined">Change password</Button>
+            <ChangePassword />
           </Box>
           <Typography variant="subtitle1" sx={{ mt: 4 }}>
             Two-step security options
