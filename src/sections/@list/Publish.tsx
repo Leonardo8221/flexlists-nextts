@@ -33,7 +33,6 @@ const style = {
   backgroundColor: "white",
   border: "none",
   borderRadius: "8px",
-  boxShadow: 24,
   overflow: "hidden",
   display: "flex",
   flexDirection: "column",
