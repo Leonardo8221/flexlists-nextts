@@ -15,10 +15,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const url = router.asPath;
   useEffect(() => {
     async function initialize() {
-      if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA||process.env.NEXT_PUBLIC_USE_DUMMY_DATA == 'true')
-      {
-        return;
-      }
+      // if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA||process.env.NEXT_PUBLIC_USE_DUMMY_DATA == 'true')
+      // {
+      //   return;
+      // }
       const path = url.split('/')[1];
       var isValidated:Boolean = false;
       try

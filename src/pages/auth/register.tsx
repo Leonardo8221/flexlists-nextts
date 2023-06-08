@@ -15,7 +15,7 @@ import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
 import SocialLogin from '../../sections/auth/SocialLoginButtons';
 import LoginIcon from "@mui/icons-material/Login";
-import { MuiTelInput } from "mui-tel-input";
+// import {MuiTelInput}  from "mui-tel-input";
 import { authService } from '../../services/auth.service';
 import { useRouter } from 'next/router';
 import Iconify from '../../components/iconify';
@@ -211,7 +211,7 @@ const Register = () => {
               }}
             ></TextField>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <MuiTelInput
               value={phoneNumber}
               onChange={handlePhoneChange}
@@ -220,7 +220,7 @@ const Register = () => {
                 width: "100%",
               }}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12}>
             <Button
