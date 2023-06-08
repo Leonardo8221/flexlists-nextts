@@ -1,12 +1,14 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
-import { CreateContentOutputDto, SearchOutputDto } from 'src/models/ApiOutputModels'
+import { CreateContentOutputDto } from 'src/models/ApiOutputModels'
 import { GetContentsOutputDto } from 'src/models/ApiOutputModels'
-import { FlatWhere, Sort } from 'src/models/SharedModels'
-import { ExportTypes, SearchType } from 'src/enums/SharedEnums'
+import { Sort } from 'src/models/SharedModels'
+import { ExportTypes } from 'src/enums/SharedEnums'
 import { Query } from 'src/models/SharedModels'
 import { GetContentOutputDto } from 'src/models/ApiOutputModels'
 import { SearchContentsOutputDto } from 'src/models/ApiOutputModels'
+import { SearchOutputDto } from 'src/models/ApiOutputModels'
+import { SearchType } from 'src/enums/SharedEnums'
 
 export const listContentService = {
     createContent,
@@ -19,7 +21,7 @@ export const listContentService = {
     archiveContent,
     unarchiveContent,
     searchContents,
-    search
+    search,
 };
 
 async function createContent(listId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>> {
@@ -27,8 +29,8 @@ async function createContent(listId:number,content:any): Promise<FlexlistsError|
 
   return response.data;
 };
-async function updateContent(listId:number,contentId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/updateContent`, {listId,contentId,content})
+async function updateContent(viewId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/updateContent`, {viewId,content})
 
   return response.data;
 };
@@ -36,7 +38,7 @@ async function deleteContent(listId:number,contentId:number): Promise<FlexlistsE
   var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listContent/deleteContent'+`?listId=${listId}&contentId=${contentId}`)
   return response.data;
 };
-async function getContents(listId:number,page:number,limit:number,order:Sort[]): Promise<FlexlistsError|FlexlistsSuccess<GetContentsOutputDto>> {
+async function getContents(listId:number,page?:number,limit?:number,order?:Sort[]): Promise<FlexlistsError|FlexlistsSuccess<GetContentsOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<GetContentsOutputDto>>(`/api/listContent/getContents`, {listId,page,limit,order})
 
   return response.data;
@@ -46,7 +48,7 @@ async function importContent(): Promise<FlexlistsError|FlexlistsSuccess> {
 
   return response.data;
 };
-async function exportContent(listId:number,type:ExportTypes,includeHeader:boolean,delimiter:string,page:number,limit:number,allPages:boolean,includeSubs:boolean,order:Sort[],query:Query): Promise<FlexlistsError|FlexlistsSuccess> {
+async function exportContent(listId:number,type:ExportTypes,includeHeader?:boolean,delimiter?:string,page?:number,limit?:number,allPages?:boolean,includeSubs?:boolean,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/exportContent`, {listId,type,includeHeader,delimiter,page,limit,allPages,includeSubs,order,query})
 
   return response.data;
@@ -70,7 +72,8 @@ async function searchContents(listId:number,page?:number,limit?:number,order?:So
 
   return response.data;
 };
-async function search(type:SearchType,viewId?:number,page?:number,limit?:number,conditions?: FlatWhere[],order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,conditions,order,query})
+async function search(type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query,conditions?:any): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,order,query,conditions})
+
   return response.data;
 };

@@ -9,7 +9,8 @@ import {
   Drawer,
   Box,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Alert
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Select from '@mui/material/Select';
@@ -28,6 +29,7 @@ import { listContentService } from 'src/services/listContent.service';
 import { isErr, isSucc } from 'src/models/ApiResponse';
 import { CreateContentOutputDto } from 'src/models/ApiOutputModels';
 import { filter } from 'lodash';
+import { ErrorConsts } from 'src/constants/errorConstants';
 
 interface RowFormProps {
   currentView: ViewField;
@@ -72,7 +74,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
   const [commentMode, setCommentMode] = useState(comment);
   const [message, setMessage] = useState('');
   const [windowHeight, setWindowHeight] = useState(0);
-
+  const [error,setError] = useState<string>('');
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -80,6 +82,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
   useEffect(() => {
     setValues(rowData);
     setSubmit(false);
+    setError('')
   }, [open, rowData]);
 
   const handleSubmit = async() => {
@@ -96,10 +99,15 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         //update row data
         if(rowData && rowData.id)
         {
-           var updateRowRespone = await listContentService.updateContent(currentView.listId,rowData.id,values)
+           var updateRowRespone = await listContentService.updateContent(currentView.id,values)
            if(isSucc(updateRowRespone))
            {
             onSubmit(values,"update")
+           }
+           else
+           {
+            setError(ErrorConsts.InternalServerError)
+            return;
            }
         }
         else
@@ -113,6 +121,10 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
               values.updatedAt = new Date().toISOString()
               values.__archive = false;
               onSubmit(values,"create")
+           } else
+           {
+            setError(ErrorConsts.InternalServerError)
+            return;
            }
         }
         
@@ -128,7 +140,11 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
     {
       var deleteContentResponse = await listContentService.deleteContent(currentView.listId,values.id)
       if(isErr(deleteContentResponse))
-      return;
+      {
+        setError(ErrorConsts.InternalServerError)
+        return;
+      }
+      
     }
     onSubmit(values, action);
     onClose();
@@ -340,6 +356,11 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
       }
       <DialogContent>
         {!commentMode ? <form onSubmit={(e) => e.preventDefault()} id="new_row_form">
+          <Stack>
+            <Box>
+              {error && <Alert severity="error">{error}</Alert>}
+            </Box>
+          </Stack>
           <Stack
             sx={{
               width: '100%',

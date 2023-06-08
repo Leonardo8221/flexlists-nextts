@@ -85,7 +85,6 @@ export default function ColumnFormPanel ({
   
     const handleSubmit = async() => {
       setSubmit(true);
-      console.log(currentColumn)
       currentColumn.id = 1;
       if(isCreating)
       {
