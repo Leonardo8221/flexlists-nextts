@@ -36,6 +36,10 @@ const ThemeChoiceImage = styled("img")(({ theme }) => ({
     borderColor: "#54A6FB",
   },
 }));
+const AvatarImg = styled("img")(({ theme }) => ({
+  width: "100%",
+  height: "100%",
+}));
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -196,8 +200,8 @@ export default function VerticalTabs() {
               sx={{
                 width: 128,
                 height: 128,
-                border: "solid 4px #fff",
-                boxShadow: "0 16px 24px 0 rgba(0,0,0,0.05)",
+                border: "solid 6px #fff",
+                boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
                 fontSize: 40,
                 position: "relative",
                 "&:hover .overlay": {
@@ -220,7 +224,7 @@ export default function VerticalTabs() {
                 <UploadIcon />
                 <Typography variant="body2">Upload image</Typography>
               </Box> */}
-              FL
+              <AvatarImg src="/assets/images/avatars/avatar_12.jpg" />
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
               <Button variant="contained">Change Avatar</Button>
