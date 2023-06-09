@@ -5,6 +5,8 @@ const initialState = {
   userGroups:[],
   columns: [
   ],
+  page:undefined,
+  limit:undefined,
   filters: [
   ],
   sorts: [
@@ -28,6 +30,10 @@ const viewReducer = (state = initialState, action: any) => {
         return { ...state, sorts: action.payload };
       case 'SET_ROWS':
         return { ...state, rows: action.payload };
+      case 'SET_PAGE':
+        return { ...state, page: action.payload };
+      case 'SET_LIMIT':
+        return { ...state, limit: action.payload };
       default:
         return state;
     }

@@ -3,49 +3,64 @@ import {
   DialogContent,
   Drawer,
   Box,
-  Checkbox} from '@mui/material';
+  Button} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { connect } from 'react-redux';
-import { ViewField } from 'src/models/ViewField';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { setColumns } from 'src/redux/actions/viewActions';
+import { fetchFields, setFields } from 'src/redux/actions/listActions';
+import { Field, FlatWhere, Sort, View } from 'src/models/SharedModels';
+import FieldFormPanel from './FieldFormPanel';
+import { FieldType, SearchType } from 'src/enums/SharedEnums';
+import { fieldService } from 'src/services/field.service';
+import { isErr } from 'src/models/ApiResponse';
+import { ErrorConsts } from 'src/constants/errorConstants';
+import { filter } from 'lodash';
+import { fetchColumns, fetchRows } from 'src/redux/actions/viewActions';
 interface ListFieldsProps {
-  currentView: ViewField;
-  columns: any;
-  setColumns: (columns: any) => void;
+  currentView: View;
+  fields: Field[];
+  filters: FlatWhere[];
+  sorts : Sort[];
+  page?:number;
+  limit?:number;
+  fetchColumns: (viewId:number) =>void;
+  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
+  setFields: (fields: Field[]) => void;
+  fetchFields : (viewId:number) => void;
   open: boolean;
   onClose: () => void;
 }
 
 
-const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsProps) => {
+const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,filters,sorts,page,limit,fetchColumns,fetchRows}: ListFieldsProps) => {
   const theme = useTheme(); 
   const [fieldManagementMode,setFieldManagementMode] = useState<boolean>(true)
   const [windowHeight, setWindowHeight] = useState(0);
-  const [tasks, setTasks] = useState<any[]>([]);
+  const newField : Field = {id:0,listId:currentView.listId,name:'',ordering:0,required:false,type:FieldType.Text,description:'',
+  detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:{},system:false,deleted:false,indexed:false,defaultValue:'' }
+  const [selectedField,setSelectedField] = useState<Field>(newField)
+  const [error,setError] = useState<string>('')
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
 
   useEffect(() => {
+    if(open)
+    {
+      fetchFields(currentView.id)
+    }
+   
   }, [open]);
 
-  const initTasks = (search: string) => {
-    const newTasks: any[] = [];
-
-    columns.map((column: any, index: number) => {
-      const column_id = `item-${index + 1}`;
-      const task = {
-        id: column_id,
-        column: column
-      };
-
-      if (search && column.name.includes(search) || search === '') newTasks.push(task);
-    });
-
-    setTasks(newTasks);
+  const reorder = (list:any[], startIndex:number, endIndex:number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+  
+    return result;
   };
-
   const onDragEnd = (result: any) => {
     const { destination, source, draggableId } = result;
 
@@ -53,26 +68,60 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
       return;
     }
 
-    if (destination.index === source.index) {
+    if (destination.index === result.source.index) {
       return;
     }
-
-    const [removed] = tasks.splice(source.index, 1);
-    tasks.splice(destination.index, 0, removed);
-    setTasks(tasks);
+    var newFields = reorder(fields,source.index,destination.index)
+    setFields(newFields)
+    // const [removed] = fields.splice(source.index, 1);
+    // fields.splice(destination.index, 0, removed);
+    // setFields(fields);
     
-    const [removedColumns] = columns.splice(source.index, 1);
-    columns.splice(destination.index, 0, removedColumns);
-    setColumns([...columns]);
+    // const [removedColumns] = fields.splice(source.index, 1);
+    // fields.splice(destination.index, 0, removedColumns);
+    // setFields([...fields]);
   };
-
-
-  
+  const reloadViewData = () =>
+  {
+     fetchColumns(currentView.id);
+     fetchRows(SearchType.View,currentView.id,page,limit,filters,sorts)
+  }
+  const handleAddField = () =>{
+    setSelectedField({ ...newField, listId: currentView.listId })
+    setFieldManagementMode(false)
+  }
+  const addField = (field: Field) =>{
+     setFields([...fields,field])
+     reloadViewData();
+  }
+  const handleUpdateField = (updatedField : Field) =>{
+    setSelectedField(updatedField)
+    setFieldManagementMode(false)
+  }
+  const updateField = (field : Field) =>{
+    setFields(fields.map((x)=>(x.id === field.id?field:x)))
+    reloadViewData();
+  }
+  const handleDeleteField = async(fieldId : number) =>{
+    var deleteFieldResponse  = await fieldService.deleteField(currentView.id,fieldId);
+    if(isErr(deleteFieldResponse))
+    {
+       setError(ErrorConsts.InternalServerError)
+       return;
+    }
+    setFields(fields.filter((field: any) => field.id !== fieldId));
+    reloadViewData();
+  }
+  const handleCloseModal = () =>
+  {
+     setFieldManagementMode(true);
+     onClose();
+  }
   return (
     <Drawer
       anchor="right"
       open={open}
-      onClose={onClose}
+      onClose={handleCloseModal}
       PaperProps={{
         sx: {
           width: {xs: '100%', lg: '500px'},
@@ -82,7 +131,7 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
         },
       }}
     >
-      {fieldManagementMode ?
+      {!fieldManagementMode ?
       <Box sx={{ display: 'flex', width: '100%', px: {xs: 1, md: 3}, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
         <Box
           component="span"
@@ -97,10 +146,14 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
             cursor: 'pointer',
             marginRight: {xs: 1.5, md: 4}
           }}
-          onClick={() => { setFieldManagementMode(false); }}
+          onClick={() => { setFieldManagementMode(true); }}
         />
       </Box> :
-        <></>
+        <>
+        <Box>
+           <Button onClick= {()=>handleAddField()}>Create New Field</Button>
+        </Box>
+        </>
       }
       <DialogContent>
         {fieldManagementMode ? 
@@ -110,8 +163,8 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
           <Droppable droppableId="field_list">
           {(provided: any) => (
             <Box {...provided.droppableProps} ref={provided.innerRef} sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${window.innerHeight - 140}px`, overflow: 'auto', minHeight: '360px' }}>
-              {tasks.map((task: any, index: number) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
+              {filter(fields,(x)=>!x.system).map((field: any, index: number) => (
+                <Draggable key={field.id} draggableId={`${field.id}`} index={index}>
                   {(provided: any) => (
                     <Box {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} sx={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer', py: 1 }}>
                       <Box sx={{ display: 'flex' }}>
@@ -123,13 +176,17 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
                             height: 15,
                             display: 'inline-block',
                             bgcolor: theme.palette.palette_style.text.primary,
-                            mask: `url(/assets/icons/table/${task.column.icon}.svg) no-repeat center / contain`,
-                            WebkitMask: `url(/assets/icons/table/${task.column.icon}.svg) no-repeat center / contain`,
+                            mask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
+                            WebkitMask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
                             marginRight: 1,
                             marginTop: 0.5
                           }}
                         />
-                        <Box>{task.column.name}</Box>
+                        <Box>{field.name}</Box>
+                        <Box>
+                          <EditIcon onClick={()=>handleUpdateField(field)} />
+                          <DeleteIcon onClick = {()=>handleDeleteField(field.id)} />
+                        </Box>
                       </Box>
                       <Box
                         component="span"
@@ -154,7 +211,16 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
         </>
         )
          :
-        (<></>)}
+        (
+          <FieldFormPanel
+            viewId={currentView.id}
+            field={selectedField}
+            onAdd={(field)=>addField(field)}
+            onUpdate={(field)=>updateField(field)}
+            onDelete={(id)=>handleDeleteField(id)}
+            onClose={() => setFieldManagementMode(true)}
+      /> 
+        )}
       </DialogContent>
       
     </Drawer>
@@ -162,12 +228,19 @@ const ListFields = ({currentView,columns,setColumns, open, onClose}: ListFieldsP
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.view.columns,
-  currentView : state.view.currentView
+  fields: state.list.fields,
+  currentView : state.view.currentView,
+  filters: state.view.filters,
+  sorts:state.view.sorts,
+  page:state.view.page,
+  limit:state.view.limit
 });
 
 const mapDispatchToProps = {
-  setColumns
+  setFields,
+  fetchFields,
+  fetchRows,
+  fetchColumns
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListFields);

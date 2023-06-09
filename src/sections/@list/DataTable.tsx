@@ -7,7 +7,6 @@ import MaterialReactTable, {
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
 import RowFormPanel from "./RowFormPanel";
-import ColumnFormPanel from "./ColumnFormPanel";
 import AddColumnButton from "../../components/add-button/AddColumnButton";
 import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from "../../hooks/useResponsive";
@@ -16,13 +15,14 @@ import { fetchColumns, setColumns } from "../../redux/actions/viewActions";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { setRows, fetchRows } from "src/redux/actions/viewActions";
-import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
-import { isDateTime, isInteger } from "src/utils/validateUtils";
+import { isInteger } from "src/utils/validateUtils";
 import { convertToNumber } from "src/utils/convertUtils";
 import { filter } from "lodash";
+import ListFields from "./ListFields";
 
 type DataTableProps = {
   tab: boolean;
@@ -39,10 +39,9 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
-  const newColumn : ViewField = {id:0,listId:0,name:'',ordering:0,required:false,type:FieldType.Text,description:'',
-                detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:{},viewFieldVisible: true,system:false }
+
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
-  const [visibleAddColumnPanel, setVisibleAddColumnPanel] = useState(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [pagination, setPagination] = useState({
@@ -54,7 +53,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-  const [selectedColumn,setSelectedColumn] = useState<Field>(newColumn)
+  
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -82,14 +81,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
     }
    
   }, [router.isReady]);
-  useEffect(() => {
-    if(currentView)
-    {
-      var newColumn = Object.assign({},selectedColumn);
-      newColumn.listId =  currentView.listId
-      setSelectedColumn(newColumn)
-    }
-  }, [currentView]);
+ 
   const getColumnKey = (column:any) : string=>
   {
     if(column.system && (column.name === 'id' || column.name === 'createdAt' || column.name === 'updatedAt'))
@@ -252,12 +244,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
     }
   };
 
-  const handleNewColumn = (value: any) => {
-    columns.push(value);
-    setColumns([...columns]);
-    // setRows(rows.map((task: any) => ({ ...task, [value.name]: "" })));
-  };
-
+ 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPagination({
       ...pagination,
@@ -302,17 +289,14 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
     setSelectedRowData(rows[row.index]);
     setVisibleAddRowPanel(true);
   };
-  const handleAddColumn = (isOpenModal:boolean) =>{
-    var column = Object.assign({},newColumn);
-    column.ordering = 0
-    setSelectedColumn(column)
-    setVisibleAddColumnPanel(isOpenModal)
+  const handleOpenFieldManagementPanel = () =>{
+    
+    setVisibleFieldManagementPanel(true)
     
   }
-  const handleCloseColumnPanel = () =>
+  const handleCloseFieldManagementPanel = () =>
   {
-     setVisibleAddColumnPanel(false);
-     setSelectedColumn(newColumn);
+     setVisibleFieldManagementPanel(false);
   }
   return (
     <Box
@@ -355,7 +339,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
             theme.palette.palette_style.background.table_header_footer,
         }}
       >
-        <AddColumnButton modalHandle={handleAddColumn} />
+        <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
       </Box>
       {!updatingTable && (
         <MaterialReactTable
@@ -502,14 +486,9 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
       />
       {
         currentView && 
-        <ColumnFormPanel
-        viewId={currentView.id}
-        column={selectedColumn}
-        onAdd={handleNewColumn}
-        onUpdate={(updateColumn)=>{}}
-        onDelete={(id)=>{}}
-        open={visibleAddColumnPanel}
-        onClose={() => handleCloseColumnPanel()}
+        <ListFields
+        open={visibleFieldManagementPanel}
+        onClose={() => handleCloseFieldManagementPanel()}
       />
       }
       

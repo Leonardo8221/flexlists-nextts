@@ -22,14 +22,17 @@ export type Field = {
     name:string
     type:FieldType
     ordering:number
-    icon:string
-    config:any
     required:boolean
     detailsOnly:boolean
+    deleted:boolean
+    config:any
+    icon:any
     description?:string
     minimum?:number
     maximum?:number
-    system: boolean
+    system:boolean
+    defaultValue?:string
+    indexed:boolean
 }
 export type List = {
     id:number

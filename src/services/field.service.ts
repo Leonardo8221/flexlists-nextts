@@ -3,7 +3,6 @@ import axios from "src/utils/axios";
 import { CreateFieldOutputDto } from 'src/models/ApiOutputModels'
 import { FieldType } from 'src/enums/SharedEnums'
 import { Field } from 'src/models/SharedModels'
-import { ViewField } from "src/models/ViewField";
 
 export const fieldService = {
     createField,
@@ -12,21 +11,21 @@ export const fieldService = {
     deleteField,
 };
 
-async function createField(viewId:number,name:string,type:FieldType,ordering:number,required:boolean,detailsOnly:boolean,description?:string,minimum?:number,maximum?:number,config?:any,icon?:string): Promise<FlexlistsError|FlexlistsSuccess<CreateFieldOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateFieldOutputDto>>(`/api/field/createField`, {viewId,name,type,ordering,required,detailsOnly,description,minimum,maximum,config,icon})
+async function createField(viewId:number,name:string,type:FieldType,ordering:number,required:boolean,detailsOnly:boolean,description?:string,minimum?:number,maximum?:number,config?:any,legacyId?:number,icon?:string,defaultValue?:string,indexed?:boolean): Promise<FlexlistsError|FlexlistsSuccess<CreateFieldOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateFieldOutputDto>>(`/api/field/createField`, {viewId,name,type,ordering,required,detailsOnly,description,minimum,maximum,config,legacyId,icon,defaultValue,indexed})
 
   return response.data;
 };
-async function updateField(listId:number,fieldId:number,name:string,type:FieldType,ordering:number,required:boolean,detailsOnly:string,description:string): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/updateField`, {listId,fieldId,name,type,ordering,required,detailsOnly,description})
+async function updateField(viewId:number,fieldId:number,name?:string,type?:FieldType,ordering?:number,required?:boolean,detailsOnly?:boolean,description?:string,minimum?:number,maximum?:number,config?:any,icon?:string,defaultValue?:string,indexed?:boolean): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/updateField`, {viewId,fieldId,name,type,ordering,required,detailsOnly,description,minimum,maximum,config,icon,defaultValue,indexed})
 
   return response.data;
 };
-async function getFields(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<ViewField[]>> {
+async function getFields(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<Field[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<Field[]>>('/api/field/getFields'+`?viewId=${viewId}`)
   return response.data;
 };
-async function deleteField(listId:number,fieldId:number): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/field/deleteField'+`?listId=${listId}&fieldId=${fieldId}`)
+async function deleteField(viewId:number,fieldId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/field/deleteField'+`?viewId=${viewId}&fieldId=${fieldId}`)
   return response.data;
 };
