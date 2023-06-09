@@ -13,9 +13,7 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      console.log('ccc'+viewId)
       const response = await fieldService.getFields(viewId)
-      console.log(response)
       if(isSucc(response))
       {
         dispatch(setFields(response.data));

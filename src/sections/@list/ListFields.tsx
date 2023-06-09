@@ -94,12 +94,12 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
      setFields([...fields,field])
      reloadViewData();
   }
-  const handleUpdateField = (updatedField : Field) =>{
-    setSelectedField(updatedField)
+  const handleUpdateField = (field : Field) =>{
+    setSelectedField(field)
     setFieldManagementMode(false)
   }
   const updateField = (field : Field) =>{
-    setFields(fields.map((x)=>(x.id === field.id?field:x)))
+    setFields(fields.map((x)=>{return(x.id === field.id ? field:x)}))
     reloadViewData();
   }
   const handleDeleteField = async(fieldId : number) =>{

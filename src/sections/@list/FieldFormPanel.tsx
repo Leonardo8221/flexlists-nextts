@@ -10,7 +10,8 @@ import {
   Box,
   Autocomplete,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Alert
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { styled, lighten, darken } from '@mui/system';
@@ -92,7 +93,6 @@ export default function FieldFormPanel ({
   
     const handleSubmit = async() => {
       setSubmit(true);
-      currentField.id = 1;
       if(isCreating)
       {
         var createFieldResponse = await fieldService.createField(viewId,currentField.name,currentField.type,currentField.ordering,
@@ -115,15 +115,14 @@ export default function FieldFormPanel ({
           var updateFieldResponse = await fieldService.updateField(viewId,field.id,currentField.name,currentField.type,currentField.ordering,
           currentField.required,currentField.detailsOnly,currentField.description,currentField.minimum,
           currentField.maximum,currentField.config,currentField.icon,currentField.defaultValue,currentField.indexed)
-          if(isSucc(updateFieldResponse) && updateFieldResponse.data)
+          if(isSucc(updateFieldResponse))
           {
             onUpdate(currentField);
-
           }
           else
           {
-          setError(ErrorConsts.InternalServerError)
-          return;
+            setError(ErrorConsts.InternalServerError)
+            return;
           }
       }
       
@@ -254,6 +253,11 @@ export default function FieldFormPanel ({
       //   <DialogTitle textAlign="center" sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>Create New Field</DialogTitle>
       //   <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
+            <Stack>
+            <Box>
+              {error && <Alert severity="error">{error}</Alert>}
+            </Box>
+          </Stack>
             <Stack
               sx={{
                 width: '100%',
@@ -388,7 +392,7 @@ export default function FieldFormPanel ({
             </Stack>
             <Button onClick={onClose}>Cancel</Button>
           <Button color="secondary" onClick={handleSubmit} variant="contained">
-            Create New Field
+           {isCreating?'Create New Field':'Update Field'} 
           </Button>
           </form>
       //   </DialogContent>
