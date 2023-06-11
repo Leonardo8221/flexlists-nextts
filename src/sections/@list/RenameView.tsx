@@ -52,7 +52,8 @@ const RenameView = ({
         <Typography variant="subtitle2">Name</Typography>
         <TextField
           fullWidth
-          defaultValue="Untitled Base :)"
+          onChange={handleViewNameChange}
+          value={view?.name}
           placeholder="List Name"
         />
       </Box>
@@ -69,8 +70,8 @@ const RenameView = ({
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         {/* DISABLED BUTTON UNTIL CHANGE IS MADE */}
-        <Button disabled sx={{ mt: 2 }} variant="contained">
-          Rename
+        <Button disabled sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
+          Update
         </Button>
         <Button
           onClick={handleClose}

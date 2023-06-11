@@ -7,32 +7,35 @@ import { setColumns } from '../../redux/actions/viewActions';
 import Checkbox from '@mui/material/Checkbox';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Modal from '@mui/material/Modal';
+import ViewFieldForm from "./ViewFieldForm";
+import { ViewField } from "src/models/ViewField";
+import { filter } from "lodash";
 
-type Props = {
-  columns: any;
+type ViewFieldsProps = {
+  currentView : ViewField,
+  columns: ViewField[];
   open: boolean;
   setColumns: (columns: any) => void;
   handleClose: () => void;
 };
 
-const ViewFields = (props: Props) => {
-  const { columns, open, setColumns, handleClose } = props;
+const ViewFields = ({currentView, columns, open, setColumns, handleClose }: ViewFieldsProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   
-  const [tasks, setTasks] = useState<any[]>([]);
   const [searchText, setSearchText] = useState('');
   const [modalHeight, setModalHeight] = useState(0);
-
+  const [fieldListMode,setFieldListMode] = useState<boolean>(true)
+  const [selectedField,setSelectedField] = useState<ViewField>();
+  const [filterColumns,setFilterColumns] = useState<ViewField[]>(columns)
   useEffect(() => {
     setSearchText('');
-    initTasks("");
-    
+    searchField("");
     setTimeout(checkModalHeight, 1);
   }, [open]);
 
   useEffect(() => {
-    initTasks("");
+    // searchField("");
     checkModalHeight();
   }, [columns]);
 
@@ -42,37 +45,19 @@ const ViewFields = (props: Props) => {
     if (modalObj) setModalHeight(modalObj.offsetHeight);
   };
 
-  const initTasks = (search: string) => {
-    const newTasks: any[] = [];
+  const searchField = (search: string) => {
+    var newColumns = filter(columns,(column)=>{return (search && column.name.includes(search) || search === '')})
+    setFilterColumns(newColumns);
 
-    columns.map((column: any, index: number) => {
-      const column_id = `item-${index + 1}`;
-      const task = {
-        id: column_id,
-        column: column
-      };
-
-      if (search && column.name.includes(search) || search === '') newTasks.push(task);
-    });
-
-    setTasks(newTasks);
   };
 
   const onDragEnd = (result: any) => {
     const { destination, source, draggableId } = result;
 
-    if (!destination) {
+    if (!destination || destination.index === source.index) {
       return;
     }
 
-    if (destination.index === source.index) {
-      return;
-    }
-
-    const [removed] = tasks.splice(source.index, 1);
-    tasks.splice(destination.index, 0, removed);
-    setTasks(tasks);
-    
     const [removedColumns] = columns.splice(source.index, 1);
     columns.splice(destination.index, 0, removedColumns);
     setColumns([...columns]);
@@ -94,9 +79,21 @@ const ViewFields = (props: Props) => {
 
   const handleSearchColumns = (e: any) => {
     setSearchText(e.target.value);
-    initTasks(e.target.value);
+    searchField(e.target.value);
   };
-
+  const handleSelectField = (field:ViewField) =>
+  {
+      setFieldListMode(false);
+      setSelectedField(field)
+  }
+  const updateField = (field : ViewField) =>{
+    setColumns(columns.map((x)=>{return(x.id === field.id ? field:x)}))
+  }
+  const handleCloseModal = ()=>
+  {
+    setFieldListMode(true);
+    handleClose()
+  }
   const style = {
     position: 'absolute',
     top: `calc(50% - ${modalHeight / 2}px)`,
@@ -113,104 +110,145 @@ const ViewFields = (props: Props) => {
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={handleCloseModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
+     
       <Box sx={style} id="fields_wrap">
-        <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, paddingBottom: 1, display: 'flex', justifyContent: 'space-between' }} id="search_column_list">
-          <TextField
-            label="Search a field"
-            size="small"
-            type="text"
-            onChange={handleSearchColumns}
-            value={searchText}
-            sx={{ border: 'none' }}
-          />
-          <Box
-            component="span"
-            className="svg-color add_choice"
-            sx={{
-              width: 18,
-              height: 18,
-              display: 'inline-block',
-              bgcolor: theme.palette.palette_style.text.primary,
-              mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-              cursor: 'pointer',
-              marginTop: 1
-            }}
-            onClick={handleClose}
-          />
-        </Box>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="field_list">
-          {(provided: any) => (
-            <Box {...provided.droppableProps} ref={provided.innerRef} sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${window.innerHeight - 140}px`, overflow: 'auto', minHeight: '360px' }}>
-              {tasks.map((task: any, index: number) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided: any) => (
-                    <Box {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} sx={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer', py: 1 }}>
-                      <Box sx={{ display: 'flex' }}>
-                        <Checkbox
-                          checked={task.column.viewFieldVisible}
-                          sx={{
-                            color: '#CCCCCC',
-                            '&.Mui-checked': {
-                              color: '#54A6FB',
-                            },
-                            p: 0,
-                            marginRight: 1
-                          }}
-                          onChange={() => { changeVisible(index) }}
-                        />
-                        <Box
-                          component="span"
-                          className="svg-color"
-                          sx={{
-                            width: 15,
-                            height: 15,
-                            display: 'inline-block',
-                            bgcolor: theme.palette.palette_style.text.primary,
-                            mask: `url(/assets/icons/table/${task.column.icon}.svg) no-repeat center / contain`,
-                            WebkitMask: `url(/assets/icons/table/${task.column.icon}.svg) no-repeat center / contain`,
-                            marginRight: 1,
-                            marginTop: 0.5
-                          }}
-                        />
-                        <Box>{task.column.name}</Box>
-                      </Box>
-                      <Box
-                        component="span"
-                        className="svg-color"
-                        sx={{
-                          width: 14,
-                          height: 14,
-                          display: 'inline-block',
-                          bgcolor: theme.palette.palette_style.text.primary,
-                          mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
-                          WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`
-                        }}
-                      />
-                    </Box>
-                  )}
-                </Draggable>
-              ))}
-            </Box>
-          )}
-          </Droppable>
-        </DragDropContext>
-        <Box sx={{ paddingTop: 2, textAlign: 'center', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-          <Box sx={{ py: 1, border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', cursor: 'pointer' }} onClick={() => { handleVisible(true); }}>Show all</Box>
-          <Box sx={{ py: 1, border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', cursor: 'pointer' }} onClick={() => { handleVisible(false); }}>Hide all</Box>
-        </Box>
+          {!fieldListMode ?
+          <Box sx={{ display: 'flex', width: '100%', px: {xs: 1, md: 3}, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
+            <Box
+              component="span"
+              className="svg-color"
+              sx={{
+                width: 22,
+                height: 22,
+                display: 'inline-block',
+                bgcolor: theme.palette.palette_style.text.primary,
+                mask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
+                WebkitMask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
+                cursor: 'pointer',
+                marginRight: {xs: 1.5, md: 4}
+              }}
+              onClick={() => { setFieldListMode(true); }}
+            />
+          </Box> :
+            <>
+            </>
+          }
+        {
+          fieldListMode?
+          (<>
+             <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, paddingBottom: 1, display: 'flex', justifyContent: 'space-between' }} id="search_column_list">
+                <TextField
+                  label="Search a field"
+                  size="small"
+                  type="text"
+                  onChange={handleSearchColumns}
+                  value={searchText}
+                  sx={{ border: 'none' }}
+                />
+                <Box
+                  component="span"
+                  className="svg-color add_choice"
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    display: 'inline-block',
+                    bgcolor: theme.palette.palette_style.text.primary,
+                    mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                    cursor: 'pointer',
+                    marginTop: 1
+                  }}
+                  onClick={handleClose}
+                />
+              </Box>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="field_list">
+                {(provided: any) => (
+                  <Box {...provided.droppableProps} ref={provided.innerRef} sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${window.innerHeight - 140}px`, overflow: 'auto', minHeight: '360px' }}>
+                    {filterColumns.map((column: any, index: number) => (
+                      <Draggable key={`${column.id}`} draggableId={`${column.id}`} index={index}>
+                        {(provided: any) => (
+                          <Box {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} sx={{ display: 'flex', justifyContent: 'space-between', cursor: 'pointer', py: 1 }}>
+                            <Box flexGrow={2} sx={{ display: 'flex' }}>
+                              <Checkbox
+                                checked={column.viewFieldVisible}
+                                sx={{
+                                  color: '#CCCCCC',
+                                  '&.Mui-checked': {
+                                    color: '#54A6FB',
+                                  },
+                                  p: 0,
+                                  marginRight: 1
+                                }}
+                                onChange={() => { changeVisible(index) }}
+                              />
+                              <Box
+                                component="span"
+                                className="svg-color"
+                                sx={{
+                                  width: 15,
+                                  height: 15,
+                                  display: 'inline-block',
+                                  bgcolor: theme.palette.palette_style.text.primary,
+                                  mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                  WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                  marginRight: 1,
+                                  marginTop: 0.5
+                                }}
+                                
+                              />
+                              <Box flexGrow={2} onClick={()=>handleSelectField(column)}>{column.name}</Box>
+                            </Box>
+                            <Box
+                              component="span"
+                              className="svg-color"
+                              sx={{
+                                width: 14,
+                                height: 14,
+                                display: 'inline-block',
+                                bgcolor: theme.palette.palette_style.text.primary,
+                                mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
+                                WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`
+                              }}
+                            />
+                          </Box>
+                        )}
+                      </Draggable>
+                    ))}
+                  </Box>
+                )}
+                </Droppable>
+              </DragDropContext>
+              <Box sx={{ paddingTop: 2, textAlign: 'center', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                <Box sx={{ py: 1, border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', cursor: 'pointer' }} onClick={() => { handleVisible(true); }}>Show all</Box>
+                <Box sx={{ py: 1, border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', cursor: 'pointer' }} onClick={() => { handleVisible(false); }}>Hide all</Box>
+              </Box>
+          </>):
+          (<>
+            {
+              selectedField && <ViewFieldForm
+              viewId={currentView.id}
+              field={selectedField}
+              onUpdate={(field)=>updateField(field)}
+              onClose={() => setFieldListMode(true)}
+              /> 
+            }
+            
+          </>)
+        }
+        
       </Box>
     </Modal>
   );
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.view.columns
+  columns: state.view.columns,
+  currentView: state.view.currentView
 });
 
 const mapDispatchToProps = {

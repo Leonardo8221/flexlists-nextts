@@ -7,6 +7,7 @@ import { Field } from 'src/models/SharedModels'
 export const fieldService = {
     createField,
     updateField,
+    updateViewField,
     getFields,
     deleteField,
 };
@@ -18,6 +19,11 @@ async function createField(viewId:number,name:string,type:FieldType,ordering:num
 };
 async function updateField(viewId:number,fieldId:number,name?:string,type?:FieldType,ordering?:number,required?:boolean,detailsOnly?:boolean,description?:string,minimum?:number,maximum?:number,config?:any,icon?:string,defaultValue?:string,indexed?:boolean): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/updateField`, {viewId,fieldId,name,type,ordering,required,detailsOnly,description,minimum,maximum,config,icon,defaultValue,indexed})
+
+  return response.data;
+};
+async function updateViewField(viewId:number,fieldId:number,color?:string,name?:string,detailsOnly?:boolean,visible?:boolean,ordering?:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/updateViewField`, {viewId,fieldId,color,name,detailsOnly,visible,ordering})
 
   return response.data;
 };

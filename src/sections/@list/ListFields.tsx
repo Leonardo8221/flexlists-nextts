@@ -36,7 +36,7 @@ interface ListFieldsProps {
 
 const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,filters,sorts,page,limit,fetchColumns,fetchRows}: ListFieldsProps) => {
   const theme = useTheme(); 
-  const [fieldManagementMode,setFieldManagementMode] = useState<boolean>(true)
+  const [fieldListMode,setFieldListMode] = useState<boolean>(true)
   const [windowHeight, setWindowHeight] = useState(0);
   const newField : Field = {id:0,listId:currentView.listId,name:'',ordering:0,required:false,type:FieldType.Text,description:'',
   detailsOnly:false,maximum:undefined,minimum:undefined,icon:'',config:{},system:false,deleted:false,indexed:false,defaultValue:'' }
@@ -88,7 +88,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
   }
   const handleAddField = () =>{
     setSelectedField({ ...newField, listId: currentView.listId })
-    setFieldManagementMode(false)
+    setFieldListMode(false)
   }
   const addField = (field: Field) =>{
      setFields([...fields,field])
@@ -96,7 +96,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
   }
   const handleUpdateField = (field : Field) =>{
     setSelectedField(field)
-    setFieldManagementMode(false)
+    setFieldListMode(false)
   }
   const updateField = (field : Field) =>{
     setFields(fields.map((x)=>{return(x.id === field.id ? field:x)}))
@@ -114,7 +114,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
   }
   const handleCloseModal = () =>
   {
-     setFieldManagementMode(true);
+     setFieldListMode(true);
      onClose();
   }
   return (
@@ -131,7 +131,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
         },
       }}
     >
-      {!fieldManagementMode ?
+      {!fieldListMode ?
       <Box sx={{ display: 'flex', width: '100%', px: {xs: 1, md: 3}, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
         <Box
           component="span"
@@ -146,7 +146,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
             cursor: 'pointer',
             marginRight: {xs: 1.5, md: 4}
           }}
-          onClick={() => { setFieldManagementMode(true); }}
+          onClick={() => { setFieldListMode(true); }}
         />
       </Box> :
         <>
@@ -156,7 +156,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
         </>
       }
       <DialogContent>
-        {fieldManagementMode ? 
+        {fieldListMode ? 
         (
         <>
           <DragDropContext onDragEnd={onDragEnd}>
@@ -218,7 +218,7 @@ const ListFields = ({currentView,fields, setFields,fetchFields, open, onClose,fi
             onAdd={(field)=>addField(field)}
             onUpdate={(field)=>updateField(field)}
             onDelete={(id)=>handleDeleteField(id)}
-            onClose={() => setFieldManagementMode(true)}
+            onClose={() => setFieldListMode(true)}
       /> 
         )}
       </DialogContent>

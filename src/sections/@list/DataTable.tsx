@@ -75,12 +75,17 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   }, [router.isReady]);
 
   useEffect(() => {
-    if(router.isReady && router.query.viewId && isInteger(router.query.viewId) )
+    if(router.isReady && currentView && router.query.viewId  && isInteger(router.query.viewId) )
     {
+      let page = currentView.page??0;
+      let limit = currentView.limit??25;
+      let orders = currentView.order??[]
+      let filters : FlatWhere[] = []
+      // fetchRows(SearchType.View,convertToNumber(router.query.viewId),page,limit,filters,orders);
       fetchRows(SearchType.View,convertToNumber(router.query.viewId));
     }
    
-  }, [router.isReady]);
+  }, [router.isReady,currentView]);
  
   const getColumnKey = (column:any) : string=>
   {
@@ -246,6 +251,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
  
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    console.log(value)
     setPagination({
       ...pagination,
       pageIndex: value - 1,
@@ -253,6 +259,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
+    console.log('aaaa')
     setPagination({
       pageIndex: 0,
       pageSize: parseInt(event.target.value, 10),
