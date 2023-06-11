@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
   Button,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Stack,
   TextField,
-  Drawer,
   Box,
   Autocomplete,
   FormControlLabel,
@@ -18,9 +14,8 @@ import { styled, lighten, darken } from '@mui/system';
 import { FormControl } from '@mui/material';
 import { Field } from 'src/models/SharedModels';
 import { FieldTypeGroupLabel } from 'src/enums/ShareEnumLabels';
-import { FieldType, FieldUiType } from 'src/enums/SharedEnums';
+import { FieldType } from 'src/enums/SharedEnums';
 import ChoiceConfig from './fieldConfig/ChoiceConfig';
-import { ViewField } from 'src/models/ViewField';
 import { fieldService } from 'src/services/field.service';
 import { isSucc } from 'src/models/ApiResponse';
 import { CreateFieldOutputDto } from 'src/models/ApiOutputModels'
@@ -217,24 +212,7 @@ export default function FieldFormPanel ({
           break;
       }
    }
-   const isAllowConfigNumberRange = (fieldType : FieldType) : boolean =>
-   {
-       let allowConfigRange : boolean = false;
-       switch (fieldType) {
-        case FieldType.Decimal:
-        case FieldType.Double:
-        case FieldType.Integer:
-        case FieldType.Float:
-        case FieldType.Money:
-        case FieldType.Percentage:
-          allowConfigRange = true;
-          break;
-       
-        default:
-          break;
-       }
-       return allowConfigRange
-   }
+   
     return (
       // <Drawer
       //   anchor="right"
@@ -316,30 +294,6 @@ export default function FieldFormPanel ({
                   }
                   label="DetailsOnly"
                 />
-                 {
-                  isAllowConfigNumberRange(currentField.type) &&
-                  (
-                    <>
-                    <TextField
-                    label="Minimum"
-                    name="Minimum"
-                    size="small"
-                    type='number'
-                    value={currentField.minimum}
-                    onChange={onMinimumChange}
-                    />
-                    <TextField
-                    label="Maximum"
-                    name="maximum"
-                    size="small"
-                    type='number'
-                    value={currentField.maximum}
-                    onChange={onMaximumChange}
-                    />
-                    </>
-                    
-                  )
-                }
               <FormControl sx={{ marginTop: 2 }} required>
                 <TextField
                  type = "text"
