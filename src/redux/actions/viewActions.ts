@@ -63,7 +63,16 @@ any
            contents.push(Object.fromEntries(row))
         }
         dispatch(setRows(contents));
-      }       
+        console.log(response.data.count)
+        dispatch(setCount(response.data.count));
+
+      } 
+      else
+      {
+        dispatch(setRows([]));
+        dispatch(setCount(0));
+
+      }      
     } catch (error) {
      console.log(error)
     }
@@ -89,6 +98,12 @@ export const setSorts = (sorts: any) => ({
   type: 'SET_SORTS',
   payload: sorts
 });
+
+export const setCount = (count: any) => ({
+  type: 'SET_COUNT',
+  payload: count
+});
+
 export const getViewUsers = (viewId:number): ThunkAction<
 void,
 RootState,

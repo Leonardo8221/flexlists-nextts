@@ -12,7 +12,8 @@ const initialState = {
   sorts: [
   ],
   rows: [
-  ]
+  ],
+  count:0
 };
 const viewReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -34,6 +35,8 @@ const viewReducer = (state = initialState, action: any) => {
         return { ...state, page: action.payload };
       case 'SET_LIMIT':
         return { ...state, limit: action.payload };
+      case 'SET_COUNT':
+        return { ...state, count: action.payload };
       default:
         return state;
     }

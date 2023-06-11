@@ -33,9 +33,10 @@ type DataTableProps = {
   setRows: (columns: any) => void;
   fetchColumns: (viewId:number) => void;
   fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
+  count:number
 };
 
-const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchColumns, fetchRows }: DataTableProps) => {
+const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchColumns, fetchRows,count }: DataTableProps) => {
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
@@ -251,7 +252,6 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 
  
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    console.log(value)
     setPagination({
       ...pagination,
       pageIndex: value - 1,
@@ -477,7 +477,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
             <MenuItem value="100">100</MenuItem>
           </Select>
           <Pagination
-            count={Math.ceil(rows.length / pagination.pageSize)}
+            count={Math.ceil(count / pagination.pageSize)}
             page={pagination.pageIndex + 1}
             onChange={handleChange}
           />
@@ -506,7 +506,8 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   rows: state.view.rows,
-  currentView : state.view.currentView
+  currentView : state.view.currentView,
+  count : state.view.count
 });
 
 const mapDispatchToProps = {
