@@ -172,23 +172,6 @@ export default function FieldFormPanel ({
       newField.detailsOnly = event.target.checked
       setCurrentField(newField)
     };
-    const onMinimumChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    {
-      var newField = Object.assign({},currentField);
-      newField.minimum = convertToInteger(event.target.value)
-      setCurrentField(newField)
-    }
-    const onMaximumChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    {
-      var newField = Object.assign({},currentField);
-      newField.maximum = convertToInteger(event.target.value)
-      setCurrentField(newField)
-    }
-    // const handleModalClick = (e: any) => {
-    //   if (!e.target.classList.contains('add_choice')) {
-    //     hideColorBar(-1);
-    //   }
-    // };
    const updateConfig = (newConfig : any) =>
    {
     var newField = Object.assign({},currentField);

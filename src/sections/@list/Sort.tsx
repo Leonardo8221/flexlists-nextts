@@ -18,7 +18,7 @@ type SortProps = {
   open: boolean;
   setSorts: (sorts: any) => void;
   handleClose: () => void;
-  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
+  fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
 };
 
 
@@ -92,7 +92,7 @@ const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleCl
     ]);
   };
   const onsubmit = async()=>{
-     fetchRows(SearchType.View,currentView.id,undefined,undefined,filters,sorts)
+     fetchRows(currentView.id,undefined,undefined,filters,sorts)
      handleClose()
   }
   const style = {

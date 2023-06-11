@@ -45,7 +45,7 @@ any
     }
   };
 };
-export const fetchRows = (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?: FlatWhere[],order?:Sort[],query?:Query): ThunkAction<
+export const fetchRows = (viewId:number,page?:number,limit?:number,conditions?: FlatWhere[],order?:Sort[],query?:Query): ThunkAction<
 void,
 RootState,
 null,
@@ -53,17 +53,13 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await listContentService.search(type,viewId,page,limit,order,query,conditions);
-      // if(!process.env.NEXT_PUBLIC_USE_DUMMY_DATA)
-      // {
-      //   dispatch(setRows(response.data.content));
-      //   return;
-      // }
-      // console.log(response)
-      if(isSucc(response) && response.data)
+      console.log(viewId);
+      const response = await listContentService.searchContents(viewId,page,limit,order,query,conditions,true);
+      console.log(response)
+      if(isSucc(response) && response.data && response.data.content)
       {
         var contents : any[] = []
-        for (const row of response.data) {
+        for (const row of response.data.content) {
            contents.push(Object.fromEntries(row))
         }
         dispatch(setRows(contents));

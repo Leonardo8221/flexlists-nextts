@@ -32,7 +32,7 @@ type DataTableProps = {
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   fetchColumns: (viewId:number) => void;
-  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
+  fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
 };
 
 const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchColumns, fetchRows }: DataTableProps) => {
@@ -82,7 +82,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
       let orders = currentView.order??[]
       let filters : FlatWhere[] = []
       // fetchRows(SearchType.View,convertToNumber(router.query.viewId),page,limit,filters,orders);
-      fetchRows(SearchType.View,convertToNumber(router.query.viewId));
+      fetchRows(convertToNumber(router.query.viewId));
     }
    
   }, [router.isReady,currentView]);

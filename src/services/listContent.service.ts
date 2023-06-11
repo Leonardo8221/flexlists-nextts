@@ -67,8 +67,8 @@ async function unarchiveContent(listId:number,contentId:number): Promise<Flexlis
 
   return response.data;
 };
-async function searchContents(listId:number,page?:number,limit?:number,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, {listId,page,limit,order,query})
+async function searchContents(viewId:number,page?:number,limit?:number,order?:Sort[],query?:Query,conditions?:any,includeCount?:boolean): Promise<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, {viewId,page,limit,order,query,conditions,includeCount})
 
   return response.data;
 };

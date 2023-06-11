@@ -23,7 +23,7 @@ type FilterProps = {
   sorts : Sort[];
   open: boolean;
   setFilters: (filters: FlatWhere[]) => void;
-  fetchRows: (type:SearchType,viewId?:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
+  fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
   handleClose: () => void;
 };
 
@@ -191,7 +191,7 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
     
   };
   const onsubmit = async() =>{
-    fetchRows(SearchType.View,currentView.id,undefined,undefined,filters,sorts)
+    fetchRows(currentView.id,undefined,undefined,filters,sorts)
     handleClose()
   }
   const style = {
