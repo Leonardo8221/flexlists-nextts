@@ -75,6 +75,10 @@ const Register = () => {
         setError("User Name required");
         return;
       }
+      if (!userEmail) {
+        setError("Email required");
+        return;
+      }
       if (!password) {
         setError("Password required");
         return;
@@ -84,6 +88,7 @@ const Register = () => {
         firstName,
         lastName,
         userName,
+        userEmail,
         phoneNumber,
         password
       );

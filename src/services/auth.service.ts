@@ -11,8 +11,8 @@ async function login(userName: string,password:string): Promise<FlexlistsError|F
     var response = await axios.post<FlexlistsError|FlexlistsSuccess<any>>('/api/auth/login', {userName,password})
     return response.data;
 };
-async function register(firstName:string,lastName:string,userName: string,phoneNumber:string,password:string): Promise<FlexlistsError|FlexlistsSuccess<any>> {
-    var response = await axios.post<FlexlistsError|FlexlistsSuccess<any>>('/api/auth/register', {firstName,lastName,userName,password,phoneNumber})
+async function register(firstName:string,lastName:string,userName: string,email:string,phoneNumber:string,password:string): Promise<FlexlistsError|FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError|FlexlistsSuccess<any>>('/api/auth/register', {firstName,lastName,userName,email,password,phoneNumber})
     return response.data;
 };
 async function verifyToken(): Promise<FlexlistsError|FlexlistsSuccess<any>> {

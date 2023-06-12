@@ -13,7 +13,8 @@ const initialState = {
   ],
   rows: [
   ],
-  count:0
+  count:0,
+  availableFieldUiTypes:[]
 };
 const viewReducer = (state = initialState, action: any) => {
     switch (action.type) {
@@ -37,6 +38,8 @@ const viewReducer = (state = initialState, action: any) => {
         return { ...state, limit: action.payload };
       case 'SET_COUNT':
         return { ...state, count: action.payload };
+      case 'SET_AVAILABLE_FIELD_UI_TYPES':
+        return { ...state, availableFieldUiTypes: action.payload };
       default:
         return state;
     }

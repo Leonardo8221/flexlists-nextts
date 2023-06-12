@@ -1,8 +1,11 @@
-import { useState, ReactNode } from "react";
-import { styled } from "@mui/material/styles";
+import { useState, ReactNode, useEffect } from "react";
+import { styled, useTheme } from "@mui/material/styles";
 import Header from "./header";
 import Nav from "./nav";
 import Footer from "./footer";
+import { getAvailableFieldUiTypes } from "src/redux/actions/viewActions";
+import { connect } from 'react-redux';
+import { useRouter } from "next/router";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -49,24 +52,42 @@ type MainLayoutProps = {
   children: ReactNode;
   removeFooter?: boolean;
   disableOverflow?: boolean;
+  getAvailableFieldUiTypes: ()=>void;
 };
 
-export default function MainLayout({
+ const MainLayout = ({
   children,
   removeFooter = false,
   disableOverflow = false,
-}: MainLayoutProps) {
+  getAvailableFieldUiTypes
+}: MainLayoutProps) => {
+  const theme = useTheme();
+  const router = useRouter()
   const [open, setOpen] = useState(false);
-
+  useEffect(()=>{
+     if(router.isReady)
+     {
+       getAvailableFieldUiTypes();
+     }
+  },[router.isReady])
   return (
     <StyledRoot>
       <Header onOpenNav={() => setOpen(true)} />
 
       <Main>
         <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-        <Content disableOverflow={disableOverflow}>{children}</Content>
+        <Content theme={theme} disableOverflow={disableOverflow}>{children}</Content>
       </Main>
       {removeFooter == false && <Footer />}
     </StyledRoot>
   );
 }
+const mapStateToProps = (state: any) => ({
+ 
+});
+
+const mapDispatchToProps = {
+  getAvailableFieldUiTypes
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

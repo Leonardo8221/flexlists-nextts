@@ -1,13 +1,42 @@
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { RootState } from '../store';
+import store, { RootState } from '../store';
 import { isSucc } from 'src/models/ApiResponse';
 import { listViewService } from 'src/services/listView.service';
 import { fieldService } from 'src/services/field.service';
 import {listContentService} from 'src/services/listContent.service'
 import {Sort,Query, FlatWhere} from 'src/models/SharedModels'
-import { SearchType } from 'src/enums/SharedEnums';
+import { adminService } from 'src/services/admin.service';
 // Define the actions
+export const getAvailableFieldUiTypes = (): ThunkAction<
+void,
+RootState,
+null,
+any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+        var state = store.getState();
+        if(state.view.availableFieldUiTypes.length==0)
+        {
+          const response = await adminService.getAvailableFieldUiTypes()
+          console.log(response)
+          if(isSucc(response) && response.data)
+          {
+            dispatch(setAvailableFieldUiTypes(response.data));
+          } 
+        }
+        else
+        {
+          console.log('bbbb')
+        }
+        
+    } catch (error) {
+     console.log(error)
+    }
+  };
+};
+
 export const getCurrentView = (viewId:number): ThunkAction<
 void,
 RootState,
@@ -37,7 +66,6 @@ any
       const response = await fieldService.getFields(viewId)
       if(isSucc(response))
       {
-        console.log(response.data);
         dispatch(setColumns(response.data));
       } 
     } catch (error) {
@@ -53,9 +81,7 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      console.log(viewId);
       const response = await listContentService.searchContents(viewId,page,limit,order,query,conditions,true);
-      console.log(response)
       if(isSucc(response) && response.data && response.data.content)
       {
         var contents : any[] = []
@@ -79,7 +105,11 @@ any
   };
 };
 
-  
+export const setAvailableFieldUiTypes = (values: any) => ({
+  type: 'SET_AVAILABLE_FIELD_UI_TYPES',
+  payload: values
+})
+
 export const setRows = (rows: any) => ({
   type: 'SET_ROWS',
   payload: rows

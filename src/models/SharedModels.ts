@@ -65,3 +65,12 @@ export type View = {
     query:Query 
     description?:string
 }
+export type FieldUIType = {
+    name:string;
+    description:string;
+    baseType:FieldType;
+    minimum:number;
+    maximum:number;
+    group:string;
+    validator:(value:any)=>boolean;
+}
