@@ -13,7 +13,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { connect } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { fetchFields, setFields } from "src/redux/actions/listActions";
-import { Field, FlatWhere, Sort, View } from "src/models/SharedModels";
+import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { fieldService } from "src/services/field.service";
@@ -30,8 +30,7 @@ interface ListFieldsProps {
   limit?: number;
   fetchColumns: (viewId: number) => void;
   fetchRows: (
-    type: SearchType,
-    viewId?: number,
+    viewId: number,
     page?: number,
     limit?: number,
     conditions?: FlatWhere[],
@@ -120,7 +119,7 @@ const ListFields = ({
   };
   const reloadViewData = () => {
     fetchColumns(currentView.id);
-    fetchRows(SearchType.View, currentView.id, page, limit, filters, sorts);
+    fetchRows(currentView.id, page, limit, filters, sorts);
   };
   const handleAddField = () => {
     setSelectedField({ ...newField, listId: currentView.listId });
