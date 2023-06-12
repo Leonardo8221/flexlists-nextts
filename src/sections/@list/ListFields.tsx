@@ -173,22 +173,36 @@ const ListFields = ({
         },
       }}
     >
-      {
-        !fieldManagementMode ?
-        (
-          <Box
+      {!fieldManagementMode ? (
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            gap: 2,
           }}
         >
+          <Box
+            component="span"
+            className="svg-color"
+            sx={{
+              width: 18,
+              height: 18,
+              display: "inline-block",
+              bgcolor: theme.palette.palette_style.text.primary,
+              mask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setFieldManagementMode(true);
+            }}
+          />
           <Typography variant="h6" component={"div"}>
-            {selectedField.id?'Update Field':'Create Field'}
+            {selectedField.id ? "Update Field" : "Create Field"}
           </Typography>
         </Box>
-        ):
-        (<Box
+      ) : (
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -201,9 +215,9 @@ const ListFields = ({
           <Button variant="contained" onClick={() => handleAddField()}>
             New Field
           </Button>
-        </Box>)
-      }
-      
+        </Box>
+      )}
+
       <Divider sx={{ my: 2 }}></Divider>
       <DialogContent
         sx={{ p: 0, maxHeight: { xs: "calc(100vh - 136px)", md: "auto" } }}
@@ -287,7 +301,6 @@ const ListFields = ({
                                       mask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
                                       WebkitMask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
                                       marginRight: 1,
-                                      marginTop: 0.5,
                                     }}
                                   />
                                   <Box
@@ -393,28 +406,10 @@ const ListFields = ({
             paddingBottom: 2,
             borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
           }}
-        >
-          <Box
-            component="span"
-            className="svg-color"
-            sx={{
-              width: 22,
-              height: 22,
-              display: "inline-block",
-              bgcolor: theme.palette.palette_style.text.primary,
-              mask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
-              cursor: "pointer",
-              marginRight: { xs: 1.5, md: 4 },
-            }}
-            onClick={() => {
-              setFieldManagementMode(true);
-            }}
-          />
-        </Box>
+        ></Box>
       ) : (
         <>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
             <Button variant="outlined" onClick={handleCloseModal}>
               Close
             </Button>
