@@ -174,20 +174,37 @@ const ListFields = ({
         },
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography variant="h6" component={"div"}>
-          Manage fields
-        </Typography>
-        <Button variant="contained" onClick={() => handleAddField()}>
-          New Field
-        </Button>
-      </Box>
+      {
+        !fieldManagementMode ?
+        (
+          <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h6" component={"div"}>
+            {selectedField.id?'Update Field':'Create Field'}
+          </Typography>
+        </Box>
+        ):
+        (<Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h6" component={"div"}>
+            Manage fields
+          </Typography>
+          <Button variant="contained" onClick={() => handleAddField()}>
+            New Field
+          </Button>
+        </Box>)
+      }
+      
       <Divider sx={{ my: 2 }}></Divider>
       <DialogContent
         sx={{ p: 0, maxHeight: { xs: "calc(100vh - 136px)", md: "auto" } }}

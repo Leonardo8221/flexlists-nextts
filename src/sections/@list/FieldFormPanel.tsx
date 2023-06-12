@@ -329,7 +329,7 @@ export default function FieldFormPanel ({
             </Stack>
             <Button onClick={onClose}>Cancel</Button>
           <Button color="secondary" onClick={handleSubmit} variant="contained">
-           {isCreating?'Create New Field':'Update Field'} 
+           {isCreating?'Create Field':'Update Field'} 
           </Button>
           </form>
       //   </DialogContent>
