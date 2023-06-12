@@ -6,6 +6,7 @@ import Footer from "./footer";
 import { getAvailableFieldUiTypes } from "src/redux/actions/viewActions";
 import { connect } from 'react-redux';
 import { useRouter } from "next/router";
+import { getSearchTypes } from "src/redux/actions/adminAction";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -53,13 +54,15 @@ type MainLayoutProps = {
   removeFooter?: boolean;
   disableOverflow?: boolean;
   getAvailableFieldUiTypes: ()=>void;
+  getSearchTypes: ()=>void;
 };
 
  const MainLayout = ({
   children,
   removeFooter = false,
   disableOverflow = false,
-  getAvailableFieldUiTypes
+  getAvailableFieldUiTypes,
+  getSearchTypes
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter()
@@ -68,6 +71,7 @@ type MainLayoutProps = {
      if(router.isReady)
      {
        getAvailableFieldUiTypes();
+       getSearchTypes();
      }
   },[router.isReady])
   return (
@@ -87,7 +91,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  getAvailableFieldUiTypes
+  getAvailableFieldUiTypes,
+  getSearchTypes
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

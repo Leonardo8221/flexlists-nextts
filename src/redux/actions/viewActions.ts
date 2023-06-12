@@ -20,16 +20,12 @@ any
         if(state.view.availableFieldUiTypes.length==0)
         {
           const response = await adminService.getAvailableFieldUiTypes()
-          console.log(response)
           if(isSucc(response) && response.data)
           {
             dispatch(setAvailableFieldUiTypes(response.data));
           } 
         }
-        else
-        {
-          console.log('bbbb')
-        }
+        
         
     } catch (error) {
      console.log(error)
@@ -89,7 +85,6 @@ any
            contents.push(Object.fromEntries(row))
         }
         dispatch(setRows(contents));
-        console.log(response.data.count)
         dispatch(setCount(response.data.count));
 
       } 

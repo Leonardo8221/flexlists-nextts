@@ -74,3 +74,8 @@ export type FieldUIType = {
     group:string;
     validator:(value:any)=>boolean;
 }
+export type SearchTypeModel = {
+    name:string;
+    description:string;
+    text:string;
+}
