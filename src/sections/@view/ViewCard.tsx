@@ -10,6 +10,7 @@ import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import { useTheme } from "@mui/material/styles";
+import { motion } from "framer-motion";
 
 const CardImage = styled("img")(({ theme }) => ({
   height: 140,
@@ -36,10 +37,15 @@ export default function ViewCard({
   };
   const theme = useTheme();
   return (
-    <Card>
+    <Card
+      onClick={() => openViewDetail(id)}
+      sx={{ cursor: "pointer" }}
+      component={motion.div}
+      whileHover={{ scale: 1.1 }}
+    >
       <CardImage sx={{ mt: 2 }} src={bgImage} />
       <CardContent sx={{ py: 2 }}>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant="h6" component="div">
           {viewName}
         </Typography>
         <Typography
@@ -56,15 +62,11 @@ export default function ViewCard({
           {viewDesc}
         </Typography>
       </CardContent>
-      <CardActions sx={{ px: 3, py: 2 }}>
-        <Button
-          variant="contained"
-          size="small"
-          onClick={() => openViewDetail(id)}
-        >
+      {/* <CardActions sx={{ px: 3, py: 2 }}>
+        <Button variant="contained" size="small">
           Open
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 }
