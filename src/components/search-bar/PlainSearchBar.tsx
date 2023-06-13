@@ -41,13 +41,13 @@ export default function RenderGroup() {
       renderInput={(params) => (
         <TextField
           {...params}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
+          // InputProps={{
+          //   startAdornment: (
+          //     <InputAdornment position="start">
+          //       <SearchIcon />
+          //     </InputAdornment>
+          //   ),
+          // }}
           placeholder="Search templates..."
         />
       )}
