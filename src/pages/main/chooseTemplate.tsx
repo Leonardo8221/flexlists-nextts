@@ -9,6 +9,7 @@ import {
   Link,
   CardContent,
   Card,
+  Divider,
 } from "@mui/material";
 import HomeCard from "src/sections/@tour/HomeCard";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
@@ -57,30 +58,29 @@ function chooseTemplate() {
           backgroundColor: "#fff",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            my: 2,
-            flexDirection: { xs: "column", md: "row" },
-          }}
-        >
+        <Box>
           <Typography variant="h6" gutterBottom>
             Most popular templates
           </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: { xs: "center", md: "flex-end" },
-              flexDirection: { xs: "column-reverse", md: "row" },
-            }}
-          >
-            <CategoriesSelect />
-            <PlainSearchBar />
-          </Box>
+          <Typography variant="body2">
+            Elevate your productivity and effortlessly streamline your tasks
+            with the user-friendly templates on FlexLists.com, allowing you to
+            choose pre-made templates or unleash your creativity to create
+            stunning views from scratch.
+          </Typography>
         </Box>
-        <Grid container spacing={3}>
+        <Divider light sx={{ my: 4 }}></Divider>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "center" },
+            flexDirection: { xs: "column-reverse", md: "row" },
+          }}
+        >
+          <CategoriesSelect />
+          <PlainSearchBar />
+        </Box>
+        <Grid container spacing={3} sx={{ my: 0 }}>
           <Grid item xs={12} sm={6} md={2}>
             <Card
               component={motion.div}
