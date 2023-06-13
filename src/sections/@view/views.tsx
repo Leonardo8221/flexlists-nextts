@@ -1,50 +1,13 @@
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
-import {
-  Box,
-  Grid,
-  Container,
-  Typography,
-  Button,
-  Divider,
-} from "@mui/material";
-import HomeCard from "../@tour/HomeCard";
+import { Box, Grid, Container, Typography, Button } from "@mui/material";
 import { useState, useEffect } from "react";
-import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
-import CategoriesSelect from "src/components/categories/categories";
 import ViewCard from "./ViewCard";
 import { View } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import { listViewService } from "src/services/listView.service";
-
-const HomeCards = [
-  {
-    icon: "/assets/icons/tour/ic_tick.svg",
-    title: "Todo list",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-  },
-  {
-    icon: "/assets/icons/tour/ic_music.svg",
-    title: "Music playlist",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-  },
-  {
-    icon: "/assets/icons/tour/ic_project_m.svg",
-    title: "Project management",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-  },
-  {
-    icon: "/assets/icons/tour/ic_bug.svg",
-    title: "Bug fixing",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-  },
-];
 
 const ViewCards = [
   {
@@ -62,14 +25,14 @@ const ViewCards = [
 ];
 
 export default function Views() {
-  const router = useRouter()
+  const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
   const [visibleMask, setVisibleMask] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
-  const [views,setViews] = useState<View[]>([])
+  const [views, setViews] = useState<View[]>([]);
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
@@ -83,17 +46,15 @@ export default function Views() {
 
     //  document.body.addEventListener('click', closePopup);
   }, [router.isReady]);
-  useEffect(()=>{
-    async function fetchData()
-    {
-       var response = await listViewService.getViews();
-       if(isSucc(response) && response.data && response.data.length>0)
-       {
-          setViews(response.data)
-       }
+  useEffect(() => {
+    async function fetchData() {
+      var response = await listViewService.getViews();
+      if (isSucc(response) && response.data && response.data.length > 0) {
+        setViews(response.data);
+      }
     }
     fetchData();
-  },[router.isReady])
+  }, [router.isReady]);
   const maskProperties = [
     {
       left: { xs: "115px", md: "215px" },
@@ -150,10 +111,9 @@ export default function Views() {
     setSteps(steps + 1);
     setMaskProperty(maskProperties[steps + 1]);
   };
-  const createNewView = () =>
-  {
-     router.push(PATH_MAIN.newView)
-  }
+  const createNewView = () => {
+    router.push(PATH_MAIN.newView);
+  };
 
   const MaskedBackground = styled("div")(({ theme }) => ({
     position: "absolute",
@@ -188,62 +148,34 @@ export default function Views() {
           }}
         >
           <Typography variant="h6">Your files.</Typography>
-           <Button size="medium" variant="contained" onClick={()=>createNewView()}>
-              Create new
-            </Button>
+          <Button
+            size="medium"
+            variant="contained"
+            onClick={() => createNewView()}
+          >
+            Create new
+          </Button>
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
-          {views.length>0 &&views.map((view) => {
-            return (
-              <Grid item xs={12} sm={6} md={2} key={"/assets/home/heroimg.png"}>
-                <ViewCard
-                  id = {view.id}
-                  bgImage={"/assets/home/heroimg.png"}
-                  viewName={view.name}
-                  viewDesc={view.description}
-                ></ViewCard>
-              </Grid>
-            );
-          })}
-        </Grid>
-        <Divider light sx={{ py: 1 }} />
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            my: 2,
-            flexDirection: { xs: "column", md: "row" },
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Most popular templates
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: { xs: "center", md: "flex-end" },
-              flexDirection: { xs: "column-reverse", md: "row" },
-            }}
-          >
-            <CategoriesSelect />
-            <PlainSearchBar />
-          </Box>
-        </Box>
-        <Grid container spacing={3}>
-          {HomeCards.map((card: any) => {
-            return (
-              <Grid item xs={12} sm={6} md={2} key={card.icon}>
-                <HomeCard
-                  icon={card.icon}
-                  title={card.title}
-                  description={card.description}
-                  button={card.button}
-                ></HomeCard>
-              </Grid>
-            );
-          })}
+          {views.length > 0 &&
+            views.map((view) => {
+              return (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={2}
+                  key={"/assets/home/heroimg.png"}
+                >
+                  <ViewCard
+                    id={view.id}
+                    bgImage={"/assets/home/heroimg.png"}
+                    viewName={view.name}
+                    viewDesc={view.description}
+                  ></ViewCard>
+                </Grid>
+              );
+            })}
         </Grid>
       </Container>
       {visibleMask && <MaskedBackground />}

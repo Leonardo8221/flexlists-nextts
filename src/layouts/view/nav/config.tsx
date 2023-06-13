@@ -3,7 +3,7 @@ import { PATH_MAIN } from "src/routes/paths";
 const navConfig = [
   {
     title: "Favorites Plus",
-    path: PATH_MAIN.views,
+    path: PATH_MAIN.newView,
     icon: "Favourites_plus",
   },
   {

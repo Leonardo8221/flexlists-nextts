@@ -31,38 +31,38 @@ export default function HomeCard({
   ...other
 }: HomeCard) {
   return (
-    <Card
-      component={motion.div}
-      {...other}
-      sx={{ margin: "auto" }}
-      whileHover={{ scale: 1.1 }}
-    >
-      <CardIconStyle src={icon} alt={title} />
-      <CardHeader title={title} sx={{ textAlign: "center" }} />
-
-      <CardContent sx={{ textAlign: "center" }}>
-        <Typography
-          variant="caption"
+    <Link href="#chosenTemplate" style={{ textDecoration: "none" }}>
+      <Card
+        component={motion.div}
+        {...other}
+        sx={{ margin: "auto", maxHeight: "260px", px: 4 }}
+        whileHover={{ scale: 1.1 }}
+      >
+        <CardIconStyle src={icon} alt={title} />
+        <CardHeader title={title} sx={{ textAlign: "center", px: 0 }} />
+        <CardContent
           sx={{
-            color: (theme) =>
-              theme.palette.mode === "light"
-                ? "text.secondary"
-                : "common.white",
+            textAlign: "center",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            p: 0,
           }}
         >
-          {description}
-        </Typography>
-        <br />
-        <Link href="/main/tour">
-          <Button
-            size="medium"
-            variant="contained"
-            sx={{ mt: 3, textAlign: "center !important" }}
+          <Typography
+            variant="caption"
+            sx={{
+              whiteSpace: "nowrap",
+              lineHeight: 1,
+              color: (theme) =>
+                theme.palette.mode === "light"
+                  ? "text.secondary"
+                  : "common.white",
+            }}
           >
-            <Typography variant="caption">{button}</Typography>
-          </Button>
-        </Link>
-      </CardContent>
-    </Card>
+            {description}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
