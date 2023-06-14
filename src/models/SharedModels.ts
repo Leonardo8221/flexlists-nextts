@@ -20,6 +20,7 @@ export type Field = {
     id:number
     listId:number
     name:string
+    uiField: string
     type:FieldType
     ordering:number
     required:boolean

@@ -13,7 +13,8 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { styled, lighten, darken } from "@mui/system";
 import { FormControl } from "@mui/material";
-import { Field, FieldUIType } from "src/models/SharedModels";
+import { Field } from "src/models/SharedModels";
+import { FieldTypeGroupLabel } from "src/enums/ShareEnumLabels";
 import { FieldType } from "src/enums/SharedEnums";
 import ChoiceConfig from "./fieldConfig/ChoiceConfig";
 import { fieldService } from "src/services/field.service";
@@ -21,12 +22,10 @@ import { isSucc } from "src/models/ApiResponse";
 import { CreateFieldOutputDto } from "src/models/ApiOutputModels";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { convertToInteger } from "src/utils/convertUtils";
-import { connect } from "react-redux";
 
 interface FieldFormPanelProps {
   viewId: number;
   field: Field;
-  availableFieldUiTypes:FieldUIType[];
   onAdd: (field: Field) => void;
   onUpdate: (field: Field) => void;
   onDelete: (id: number) => void;
@@ -85,10 +84,9 @@ const GroupHeader = styled("div")(({ theme }) => ({
 const GroupItems = styled("ul")({
   padding: 0,
 });
-export  function FieldFormPanel({
+export default function FieldFormPanel({
   viewId,
   field,
-  availableFieldUiTypes,
   onAdd,
   onUpdate,
   onDelete,
@@ -97,9 +95,30 @@ export  function FieldFormPanel({
   const theme = useTheme();
   const isCreating: boolean = !field.id || field.id == 0;
   const [currentField, setCurrentField] = useState<Field>(field);
- 
-  const [currentFieldType, setCurrentFieldType] = useState<FieldUIType| undefined>(
-    availableFieldUiTypes.find((x)=>x.name === field.uiField)
+  var columTypeGroups: {
+    groupName: string;
+    type: string;
+    displayName: string;
+    config?: any;
+  }[] = [];
+  FieldTypeGroupLabel.forEach((values, key) => {
+    for (const value of values) {
+      columTypeGroups.push({
+        groupName: key,
+        type: value.fieldType,
+        displayName: value.displayName,
+        config: value.config,
+      });
+    }
+  });
+  const [currentFieldType, setCurrentFieldType] = useState<
+    | { groupName: string; type: string; displayName: string; config?: any }
+    | undefined
+  >(
+    columTypeGroups.find(
+      (x) =>
+        x.type === field.type && x.config?.fieldUiType === x.config?.fieldUiType
+    )
   );
   const [error, setError] = useState<string>("");
 
@@ -116,15 +135,28 @@ export  function FieldFormPanel({
     setVisibleIconList(false);
     if (field) {
       setCurrentField(field);
-      setCurrentFieldType(availableFieldUiTypes.find((x)=>x.name === field.uiField))
     }
   }, [field]);
 
   const handleSubmit = async () => {
     setSubmit(true);
     if (isCreating) {
-      var createFieldResponse = await fieldService.createUIField(viewId,currentField.name,currentField.uiField,currentField.required,currentField.detailsOnly,
-        currentField.description,currentField.config,currentField.icon,currentField.defaultValue);
+      var createFieldResponse = await fieldService.createField(
+        viewId,
+        currentField.name,
+        currentField.type,
+        currentField.ordering,
+        currentField.required,
+        currentField.detailsOnly,
+        currentField.description,
+        currentField.minimum,
+        currentField.maximum,
+        currentField.config,
+        undefined,
+        currentField.icon,
+        currentField.defaultValue,
+        currentField.indexed
+      );
       if (isSucc(createFieldResponse) && createFieldResponse.data) {
         currentField.id = (
           createFieldResponse.data as CreateFieldOutputDto
@@ -135,19 +167,22 @@ export  function FieldFormPanel({
         return;
       }
     } else {
-      var updateFieldResponse = await fieldService.updateListField(
+      var updateFieldResponse = await fieldService.updateField(
         viewId,
         field.id,
         currentField.name,
-        currentField.uiField,
+        currentField.type,
+        currentField.ordering,
         currentField.required,
         currentField.detailsOnly,
         currentField.description,
+        currentField.minimum,
+        currentField.maximum,
         currentField.config,
         currentField.icon,
-        currentField.defaultValue
+        currentField.defaultValue,
+        currentField.indexed
       );
-      console.log(updateFieldResponse);
       if (isSucc(updateFieldResponse)) {
         onUpdate(currentField);
       } else {
@@ -169,21 +204,17 @@ export  function FieldFormPanel({
     setCurrentField(newField);
   };
 
-  const handleFieldTypeChange = (newTypeInput?: FieldUIType|null) => {
-    if(!newTypeInput)
-    {
-      return;
-    }
+  const handleFieldTypeChange = (newTypeInput: any) => {
     var newField = Object.assign({}, currentField);
-    if(newTypeInput.baseType)
-    {
-      newField.type = newTypeInput.baseType;
+    if (newTypeInput && newTypeInput.type) {
+      var type = newTypeInput.type as FieldType;
+      newField.type = type;
+      if (newField.config) {
+        newField.config.fieldUiType = newTypeInput.config.fieldUiType;
+      } else {
+        newField.config = newTypeInput.config;
+      }
     }
-    if(newTypeInput.name)
-    {
-      newField.uiField = newTypeInput.name
-    }
-   
     setCurrentFieldType(newTypeInput);
     setCurrentField(newField);
   };
@@ -214,8 +245,8 @@ export  function FieldFormPanel({
     setCurrentField(newField);
   };
   const renderFieldConfigSwitch = (field: Field) => {
-    var uiType = field.uiField;
-    switch (uiType) {
+    var fieldType = field.type;
+    switch (fieldType) {
       case FieldType.Choice:
         return (
           <ChoiceConfig
@@ -278,9 +309,9 @@ export  function FieldFormPanel({
         <FormControl sx={{ marginTop: 2 }} required>
           <Autocomplete
             id="grouped-types"
-            options={availableFieldUiTypes}
-            groupBy={(option) => option.group}
-            getOptionLabel={(option) => option.name}
+            options={columTypeGroups}
+            groupBy={(option) => option.groupName}
+            getOptionLabel={(option) => option.displayName}
             fullWidth
             // inputValue={currentField.type}
             value={currentFieldType}
@@ -403,12 +434,3 @@ export  function FieldFormPanel({
     // </Drawer>
   );
 }
-const mapStateToProps = (state: any) => ({
-  availableFieldUiTypes : state.view.availableFieldUiTypes
-});
-
-const mapDispatchToProps = {
-
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(FieldFormPanel);

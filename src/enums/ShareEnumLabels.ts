@@ -21,8 +21,8 @@ export const ListCategoryLabel = new Map<string, string>([
   ]); 
   export const FieldTypeGroupLabel = new Map<string,{fieldType:string,displayName:string,config?:any}[]>([
     ["Text",[
-         {fieldType:FieldType.Text,displayName:"One Line Text",config:{fieldUiType:FieldUiType.OneLineText}},
-         {fieldType:FieldType.Text,displayName:"Large Text",config:{fieldUiType:FieldUiType.TextArea}}
+         {fieldType:FieldType.Text,displayName:"One Line Text",config:{fieldUiType:FieldUiType.Text}},
+         {fieldType:FieldType.Text,displayName:"Large Text",config:{fieldUiType:FieldUiType.LongText}}
       ]
     ],
     ["Number",[

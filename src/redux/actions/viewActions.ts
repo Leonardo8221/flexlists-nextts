@@ -5,7 +5,7 @@ import { isSucc } from 'src/models/ApiResponse';
 import { listViewService } from 'src/services/listView.service';
 import { fieldService } from 'src/services/field.service';
 import {listContentService} from 'src/services/listContent.service'
-import {Sort,Query, FlatWhere} from 'src/models/SharedModels'
+import {Sort,Query, FlatWhere, FieldUIType} from 'src/models/SharedModels'
 import { adminService } from 'src/services/admin.service';
 // Define the actions
 export const getAvailableFieldUiTypes = (): ThunkAction<
@@ -22,7 +22,24 @@ any
           const response = await adminService.getAvailableFieldUiTypes()
           if(isSucc(response) && response.data)
           {
-            dispatch(setAvailableFieldUiTypes(response.data));
+            dispatch(setAvailableFieldUiTypes(response.data.sort((a:FieldUIType,b:FieldUIType)=>{
+            
+              if ( a.group < b.group ){
+                return -1;
+              }
+              if ( a.group > b.group ){
+                return 1;
+              }
+              return 0;
+            })
+            .sort((a:FieldUIType,b:FieldUIType)=>{
+              if(a.group == "Text" || b.group == 'Text')
+              { 
+                return -1
+              }
+              return 0;
+            })
+            ));
           } 
         }
         

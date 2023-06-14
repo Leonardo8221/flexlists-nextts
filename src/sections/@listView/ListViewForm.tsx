@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Box, TextField, Modal, Typography, Grid, Button } from "@mui/material";
 import AddViewCard from "src/components/add-view/AddViewCard";
 import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
+import { View } from "src/models/SharedModels";
+import { connect } from "react-redux";
+import { ViewType } from "src/enums/SharedEnums";
 
 
 const style = {
@@ -19,45 +22,53 @@ const style = {
   
   const AddViewCards = [
     {
+      type: ViewType.List,
       icon: "/assets/icons/tour/ic_tick.svg",
       title: "List View",
       description: "Lorem ipsum dolor sit amet consectetur.",
     },
     {
+      type: ViewType.Calendar,
       icon: "/assets/icons/CalendarSVG.svg",
       title: "Calendar View",
       description: "Lorem ipsum dolor sit amet consectetur.",
     },
+    // {
+    //   type: ViewType.,
+    //   icon: "/assets/icons/tour/ic_project_m.svg",
+    //   title: "Chart View",
+    //   description: "Lorem ipsum dolor sit amet consectetur.",
+    // },
     {
-      icon: "/assets/icons/tour/ic_project_m.svg",
-      title: "Chart View",
-      description: "Lorem ipsum dolor sit amet consectetur.",
-    },
-    {
+      type: ViewType.Gallery,
       icon: "/assets/icons/tour/ic_bug.svg",
       title: "Gallery View",
       description: "Lorem ipsum dolor sit amet consectetur.",
     },
+    // {
+    //   icon: "/assets/icons/tour/ic_bug.svg",
+    //   title: "Timeline View",
+    //   description: "Lorem ipsum dolor sit amet consectetur.",
+    // },
     {
-      icon: "/assets/icons/tour/ic_bug.svg",
-      title: "Timeline View",
-      description: "Lorem ipsum dolor sit amet consectetur.",
-    },
-    {
+      type: ViewType.Kanban,
       icon: "/assets/icons/tour/ic_bug.svg",
       title: "Kanban View",
       description: "Lorem ipsum dolor sit amet consectetur.",
     },
   ];
 
-type Props = {
+type ListViewFormProps = {
+  currentView:View;
   open: boolean;
   handleClose: () => void;
 };
 
-const ListViewForm = (props: Props) => {
-  const {open,handleClose } = props;
+const ListViewForm = ({open,handleClose,currentView }: ListViewFormProps) => {
   const [steps, setSteps] = useState(0);
+  const [viewType,setViewType] = useState<ViewType>(ViewType.List)
+  const [viewName,setViewName] = useState<string>('')
+  const [viewDescription,setViewDescription] = useState<string>('')
   const goPrevious = () => {
     setSteps(steps - 1);
   };
@@ -110,19 +121,11 @@ const ListViewForm = (props: Props) => {
         </Box>
         <Box>
           <Typography variant="subtitle2" gutterBottom>View Description</Typography>
-          {/* <WysiwygEditor /> */}
+          <WysiwygEditor />
         </Box>
       </Box>
       }
 
-    {steps === 2 &&
-      <Box sx={{p:4}}>
-      <Box sx={{mb:4}}>
-        <Typography variant="subtitle2" gutterBottom>Share View</Typography>
-        <TextField fullWidth id="fullWidth" placeholder="generated view link" /> 
-      </Box>
-    </Box>
-      }
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: "center", px: 4,py:2 , background: "#fff", position: "sticky", width: "100%", bottom: "0" }}>
         <Box>
           {steps === 0 ?
@@ -131,7 +134,7 @@ const ListViewForm = (props: Props) => {
           }
         </Box>
         <Box>
-          {steps === 2 ?
+          {steps === 1 ?
             <Button variant="outlined" size="small" onClick={handleSubmit} >Finish</Button> :
             <Button variant="contained" size="small" onClick={goNext}>Next</Button>
           }
@@ -141,5 +144,10 @@ const ListViewForm = (props: Props) => {
   </Modal>
   );
 };
+const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
+});
 
-export default ListViewForm;
+const mapDispatchToProps = {
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ListViewForm);

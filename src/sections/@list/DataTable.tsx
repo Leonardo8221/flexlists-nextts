@@ -105,7 +105,9 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
         header: dataColumn.name,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
-            <Box
+            {
+              dataColumn.icon && 
+              <Box
               component="span"
               className="svg-color"
               sx={{
@@ -119,6 +121,8 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
                 marginRight: 1,
               }}
             />
+            }
+            
             <div>{column.columnDef.header}</div>
           </Box>
         ),

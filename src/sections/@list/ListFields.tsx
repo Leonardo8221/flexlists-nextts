@@ -15,7 +15,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { fetchFields, setFields } from "src/redux/actions/listActions";
 import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
-import { FieldType, SearchType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiType, SearchType } from "src/enums/SharedEnums";
 import { fieldService } from "src/services/field.service";
 import { isErr } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
@@ -66,6 +66,7 @@ const ListFields = ({
     name: "",
     ordering: 0,
     required: false,
+    uiField: FieldUiType.Text,
     type: FieldType.Text,
     description: "",
     detailsOnly: false,
@@ -288,7 +289,9 @@ const ListFields = ({
                                     alignItems: "center",
                                   }}
                                 >
-                                  <Box
+                                  {
+                                    field.icon &&
+                                    <Box
                                     component="span"
                                     className="svg-color"
                                     sx={{
@@ -298,11 +301,13 @@ const ListFields = ({
                                       bgcolor:
                                         theme.palette.palette_style.text
                                           .primary,
-                                      mask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
-                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
+                                      mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
+                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
                                       marginRight: 1,
                                     }}
                                   />
+                                  }
+                                  
                                   <Box
                                     component={"span"}
                                     sx={{

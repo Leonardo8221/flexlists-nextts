@@ -41,10 +41,12 @@ export enum FieldType {
     Percentage = 'Percentage',
 }
 export enum FieldUiType {
-    OneLineText = 'OneLineText',
-    TextArea = 'TextArea',
+    Text = 'Text',
+    LongText = 'LongText',
     Integer = 'Integer',
     Float = 'Float',
+    Decimal = 'Decimal',
+    Double = 'Double',
     Date = 'Date',
     Time = 'Time',
     DateTime = 'DateTime',
