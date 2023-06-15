@@ -82,9 +82,10 @@ export enum ExportTypes {
 export enum ViewType {
     List = 'List',
     Calendar = 'Calendar',
-    Kanban = 'Kanban',
-    TimeLine = 'TimeLine',
+    KanBan = 'KanBan',
     Gallery = 'Gallery',
+    TimeLine = 'TimeLine',
+    Gantt = 'Gantt',
     Map = 'Map',
 }
 export enum PublishType {

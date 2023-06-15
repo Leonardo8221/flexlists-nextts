@@ -290,7 +290,7 @@ export  function FieldFormPanel({
               <TextField
                 {...params}
                 label="Field type"
-                error={submit && !currentField.type}
+                error={submit && !currentField.uiField}
               />
             )}
             renderGroup={(params) => (

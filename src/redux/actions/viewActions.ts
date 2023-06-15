@@ -58,7 +58,7 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await listViewService.getView(viewId)
+      const response = await listViewService.getView(viewId);
         if(isSucc(response))
         {
           dispatch(setCurrentView(response.data));

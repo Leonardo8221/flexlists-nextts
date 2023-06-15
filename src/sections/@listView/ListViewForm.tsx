@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 import { Box, TextField, Modal, Typography, Grid, Button, Select, MenuItem, SelectChangeEvent, Alert } from "@mui/material";
 import AddViewCard from "src/components/add-view/AddViewCard";
 import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
-import { View } from "src/models/SharedModels";
+import { FieldUIType, View } from "src/models/SharedModels";
 import { connect } from "react-redux";
 import { FieldUiTypeEnum, ViewType } from "src/enums/SharedEnums";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "src/utils/convertUtils";
-import ViewFieldsConfig from "../@list/ViewFieldsConfig";
+import ViewFieldsConfig from "./CreateFieldModal";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import { CalendarViewConfig } from "./CalendarViewConfig";
 
 
 const style = {
@@ -71,25 +72,19 @@ type ListViewFormProps = {
   columns:ViewField[];
   open: boolean;
   handleClose: () => void;
+  availableFieldUiTypes: FieldUIType[]
 };
 
-const ListViewForm = ({open,handleClose,currentView,columns }: ListViewFormProps) => {
+const ListViewForm = ({open,handleClose,currentView,columns,availableFieldUiTypes }: ListViewFormProps) => {
   const router = useRouter();
   const [steps, setSteps] = useState(0);
   const [viewType,setViewType] = useState<ViewType>(ViewType.List)
   const [viewName,setViewName] = useState<string>('')
   const [viewDescription,setViewDescription] = useState<string>('')
-  const [viewColumns,setViewColumns] = useState<ViewField[]>([])
-  const [titleColumns,setTitleColumns] = useState<ViewField[]>([])
-  const [viewColumnId,setViewColumnId] = useState<number>(0)
-  const [titleColumnId,setTitleColumnId] = useState<number>(0)
-  const [type,setType] = useState<"field"|"title">("field")
-  const [isOpenViewFieldConfigModal,setIsOpenViewFieldConfigModal] = useState<boolean>(false);
+  const [config,setConfig] = useState<any>({});
   const [submit, setSubmit] = useState(false);
   const [error,setError] = useState<string>('')
-  useEffect(()=>{
-    reloadColumns(viewType)
-  },[columns])
+
   const goPrevious = () => {
     setSteps(steps - 1);
   };
@@ -105,25 +100,15 @@ const ListViewForm = ({open,handleClose,currentView,columns }: ListViewFormProps
       setError('Name required')
       return;
     }
-    if(viewColumnId == 0)
+   
+    if(!validateConfig())
     {
-      setError('View field required')
       return;
-    }
-    if(titleColumnId == 0)
-    {
-      setError('Title field required')
-      return;
-    }
-    var config : any = {};
-    if(viewType === ViewType.Calendar)
-    {
-      config = {dateFieldId : viewColumnId,titleId:titleColumnId}
     }
     var createViewResponse = await listViewService.createView(currentView.listId,viewName,viewType,config)
     if(isSucc(createViewResponse)&& createViewResponse.data && createViewResponse.data.viewId)
     {
-      router.push(`${PATH_MAIN.views}/${createViewResponse.data.viewId}/rwerw`);
+      router.push(`${PATH_MAIN.views}/${createViewResponse.data.viewId}`);
       // setSteps(0);
       // setViewType(ViewType.List);
       closeModal();
@@ -133,6 +118,32 @@ const ListViewForm = ({open,handleClose,currentView,columns }: ListViewFormProps
       setError(ErrorConsts.InternalServerError)
     }
     
+  }
+  const validateConfig = () : boolean =>{
+    let isValidConfig : boolean = true;
+    switch (viewType) {
+      case ViewType.Calendar:
+        if(!config)
+        {
+          setError("Config invalid")
+          isValidConfig = false
+        }
+        if(!config.dateFieldId || config.dateFieldId === 0)
+        {
+          setError("Date field required")
+          isValidConfig = false
+        }
+        if(!config.titleId || config.titleId === 0)
+        {
+          setError("Title field required")
+          isValidConfig = false
+        }
+        break;
+    
+      default:
+        break;
+    }
+    return isValidConfig;
   }
   const closeModal = () =>{
     setSteps(0);
@@ -147,52 +158,13 @@ const ListViewForm = ({open,handleClose,currentView,columns }: ListViewFormProps
   const onTypeSelect = (type:ViewType) =>
   {
      setViewType(type)
-     reloadColumns(type)
+    //  reloadColumns(type)
   }
-  const reloadColumns = (type:ViewType)=>
+  const updateConfig = (newConfig:any) =>
   {
-    var newViewColumns : ViewField[] = [];
-    var newTitleColumns : ViewField[] = [];
-    if(type === ViewType.Calendar)
-    {
-       newViewColumns = columns.filter((x)=>x.uiField === FieldUiTypeEnum.Date || x.uiField === FieldUiTypeEnum.DateTime)
-       newTitleColumns = columns.filter((x)=>x.uiField === FieldUiTypeEnum.Text)
-    }
-    if(newViewColumns.length >0)
-    {
-     setViewColumnId(newViewColumns[0].id);
-    }
-    if(newTitleColumns.length>0)
-    {
-     setTitleColumnId(newTitleColumns[0].id)
-    }
-    setViewColumns(newViewColumns)
-    setTitleColumns(newTitleColumns)
+     setConfig(newConfig)
   }
-  const onViewFieldChange = (event: SelectChangeEvent) =>{
-    var value = event.target.value as string;
-    if(value === "-1")
-    {
-      setType('field')
-      setIsOpenViewFieldConfigModal(true)
-      return;
-    }
-    setViewColumnId(convertToInteger(value))
-  }
-  const onTitleFieldChange = (event: SelectChangeEvent) =>{
-    var value = event.target.value as string;
-    if(value === "-1")
-    {
-      setType('title')
-      setIsOpenViewFieldConfigModal(true)
-      return;
-    }
-    setTitleColumnId(convertToInteger(value))
-  }
-  const handleCloseViewFieldConfigModal = () =>
-  {
-     setIsOpenViewFieldConfigModal(false)
-  }
+  
   return (
     <>
     <Modal
@@ -235,42 +207,19 @@ const ListViewForm = ({open,handleClose,currentView,columns }: ListViewFormProps
           <WysiwygEditor value={viewDescription} setValue={(newValue)=> onDescriptionChange(newValue)} />
         </Box>
         <Box>
-        <Box>
-          <Typography variant="subtitle2" gutterBottom>Field</Typography>
-          <Select
-          value={`${viewColumnId}`}
-          onChange={onViewFieldChange}
-          required
-          error={submit && !viewColumnId}
-          fullWidth
-          sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
-          >
-            {viewColumns.map((viewColumn: ViewField) => (
-              <MenuItem key={`${viewColumn.id}`} value={`${viewColumn.id}`} >{viewColumn.name}</MenuItem>
-            ))}
-            <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
-          </Select>
-        </Box>
-        <Box>
-          <Typography variant="subtitle2" gutterBottom>Title</Typography>
-          <Select
-          value={`${titleColumnId}`}
-          required
-          error={submit && !viewColumnId}
-          onChange={onTitleFieldChange}
-          fullWidth
-          sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
-          >
-            {titleColumns.map((titleColumn: ViewField) => (
-              <MenuItem key={`${titleColumn.id}`} value={`${titleColumn.id}`} >{titleColumn.name}</MenuItem>
-            ))}
-            <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
-          </Select>
-        </Box>
-       
+        {
+            currentView && viewType === ViewType.Calendar &&
+            <CalendarViewConfig 
+              submit = {submit}
+              availableFieldUiTypes={availableFieldUiTypes}
+              columns={columns}
+              updateConfig={(newConfig)=>updateConfig(newConfig)}
+            />
+        }
         </Box>
       </Box>
-   }
+     
+    }
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: "center", px: 4,py:2 , background: "#fff", position: "sticky", width: "100%", bottom: "0" }}>
         <Box>
@@ -287,24 +236,14 @@ const ListViewForm = ({open,handleClose,currentView,columns }: ListViewFormProps
         </Box>
       </Box>
     </Box>
-   
-
   </Modal>
-  {
-    currentView && steps === 1 && isOpenViewFieldConfigModal && <ViewFieldsConfig
-    viewType={viewType}
-    type={type}
-    open = {isOpenViewFieldConfigModal}
-    handleClose={()=>handleCloseViewFieldConfigModal()}
-   />
-  }
-  
   </>
   );
 };
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
-  columns :  state.view.columns
+  columns :  state.view.columns,
+  availableFieldUiTypes: state.view.availableFieldUiTypes
 });
 
 const mapDispatchToProps = {
