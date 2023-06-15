@@ -31,8 +31,8 @@ async function updateView(listId:number,viewId:number,name:string,type:ViewType,
 
   return response.data;
 };
-async function getViews(listId?:number,viewId?:number,page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getViews'+`?listId=${listId}&viewId=${viewId}&page=${page}&limit=${limit}`)
+async function getViews(baseViewId?:number,oneViewId?:number,page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getViews'+`?baseViewId=${baseViewId}&oneViewId=${oneViewId}&page=${page}&limit=${limit}`)
   return response.data;
 };
 async function deleteView(listId:number,listViewId:number): Promise<FlexlistsError|FlexlistsSuccess> {

@@ -3,80 +3,59 @@ import { Box, TextField, Modal, Typography, Grid, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import ListViewForm from "../@listView/ListViewForm";
+import { View } from "src/models/SharedModels";
+import { connect } from "react-redux";
+import { listViewService } from "src/services/listView.service";
+import { isSucc } from "src/models/ApiResponse";
+import { ViewType } from "src/enums/SharedEnums";
 
 type MenuBarProps = {
   search?: string;
+  currentView:View;
 };
 
-const initialMenus = [
-  {
-    title: "List",
-    icon: "menu/checklist",
-  },
-  {
-    title: "Calendar",
-    icon: "menu/calendar",
-  },
-  {
-    title: "Gallery",
-    icon: "menu/gallery",
-  },
-  {
-    title: "Kanban",
-    icon: "menu/kanban",
-  },
-  {
-    title: "Gantt",
-    icon: "menu/gantt",
-  },
-  {
-    title: "Map",
-    icon: "menu/map",
-  },
-  {
-    title: "Timeline",
-    icon: "menu/timeline",
-  },
-  {
-    title: "Chart",
-    icon: "menu/chart",
-  },
-];
 
-export default function MenuBar({ search }: MenuBarProps) {
-  const [selectedMenu, setSelectedMenu] = useState("");
+
+export  function MenuBar({ search ,currentView}: MenuBarProps) {
+  const [selectedViewId, setSelectedViewId] = useState(0);
   const [viewsSearchBar, setViewsSearchBar] = useState(false);
   const [viewsSearch, setViewsSearch] = useState("");
-  const [menus, setMenus] = useState(initialMenus);
+  const [views, setViews] = useState<View[]>([]);
+  const [filterViews,setFilerViews] = useState<View[]>([])
   const theme = useTheme();
 
   const router = useRouter();
 
   useEffect(() => {
-    setSelectedMenu(router.pathname.split("/")[1]);
+    // setSelectedViewId(router.pathname.split("/")[1]);
   }, [router.pathname]);
 
   const handleMenu = (value: string) => {
-    setSelectedMenu(value);
+    // setSelectedViewId(value);
     router.push(`/main/${value.toLowerCase()}`);
   };
-
+  useEffect(() => {
+    async function fetchData() {
+      var response = await listViewService.getViews(currentView.id);
+      if (isSucc(response) && response.data && response.data.length > 0) {
+        setViews(response.data);
+        setFilerViews(response.data)
+      }
+    }
+    if(currentView)
+    {
+      fetchData();
+    }
+  }, [currentView]);
   const handleViewsSearch = (e: any) => {
     setViewsSearch(e.target.value);
-    const filtered =
-      e.target.value === ""
-        ? initialMenus
-        : initialMenus.filter((menu) =>
-            menu.title.toLowerCase().includes(e.target.value)
-          );
-    setMenus(filtered);
+    setFilerViews(views.filter((view)=>view.name.toLowerCase().includes(e.target.value)));
   };
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    console.log("aaaa");
   };
 
   return (
@@ -134,12 +113,12 @@ export default function MenuBar({ search }: MenuBarProps) {
             marginRight: { xs: 5, md: "inherit" },
           }}
         >
-          {menus.map((menu) => (
+          {filterViews.map((view) => (
             <MenuItem
-              key={menu.title}
-              menu={menu}
+              key={view.type}
+              menu={view}
               setMenu={handleMenu}
-              selected={selectedMenu === menu.title}
+              selected={selectedViewId === view.id}
             />
           ))}
         </Box>
@@ -203,18 +182,49 @@ export default function MenuBar({ search }: MenuBarProps) {
     </>
   );
 }
+const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
+});
 
+const mapDispatchToProps = {
+};
+export default connect(mapStateToProps, mapDispatchToProps)(MenuBar);
 type MenuItemProps = {
-  menu: any;
+  menu: View;
   selected: boolean;
   setMenu: (value: string) => void;
 };
 
 function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
-  const { title, icon } = menu;
+  const {id, type,name } = menu;
   const theme = useTheme();
   const [isOver, setIsOver] = useState(false);
-
+  
+  const getIcon = (type:string) : string =>
+  {
+     let icon = 'menu/checklist'
+     switch (type) {
+      case ViewType.List:
+        return "menu/checklist"
+      case ViewType.Calendar:
+        return "menu/calendar"
+      case ViewType.Gallery:
+        return "menu/gallery"
+      case ViewType.Kanban:
+        return "menu/kanban"
+      // case ViewType.G:
+      //   return "menu/gantt"
+      case ViewType.Map:
+        return "menu/map"
+      case ViewType.TimeLine:
+        return "menu/timeline"
+      // case ViewType.:
+      //   return "menu/chart"
+      default:
+        break;
+     }
+     return icon
+  }
   return (
     <Box
       sx={{
@@ -224,7 +234,7 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
         px: { xs: 1, lg: 2 },
       }}
       onClick={() => {
-        setMenu(title);
+        setMenu(name);
       }}
       onMouseOver={() => {
         setIsOver(true);
@@ -244,8 +254,8 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
             isOver || selected
               ? theme.palette.palette_style.text.selected
               : theme.palette.palette_style.text.primary,
-          mask: `url(/assets/icons/${icon}.svg) no-repeat center / contain`,
-          WebkitMask: `url(/assets/icons/${icon}.svg) no-repeat center / contain`,
+          mask: `url(/assets/icons/${getIcon(type)}.svg) no-repeat center / contain`,
+          WebkitMask: `url(/assets/icons/${getIcon(type)}.svg) no-repeat center / contain`,
           marginRight: 1,
           marginTop: 0.2,
         }}
@@ -259,7 +269,7 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
               : theme.palette.palette_style.text.primary,
         }}
       >
-        {title}
+        {name}
       </Box>
     </Box>
   );
