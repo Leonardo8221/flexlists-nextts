@@ -67,26 +67,7 @@ const DataTable = ({ tab,currentView, columns, rows, setColumns, setRows, fetchC
     }
   }, [rows, rowSelection]);
 
-  useEffect(() => {
-    if(router.isReady && router.query.viewId && isInteger(router.query.viewId))
-    {
-      fetchColumns(convertToNumber(router.query.viewId));
-    }
-    
-  }, [router.isReady]);
-
-  useEffect(() => {
-    if(router.isReady && currentView && router.query.viewId  && isInteger(router.query.viewId) )
-    {
-      let page = currentView.page??0;
-      let limit = currentView.limit??25;
-      let orders = currentView.order??[]
-      let filters : FlatWhere[] = []
-      // fetchRows(SearchType.View,convertToNumber(router.query.viewId),page,limit,filters,orders);
-      fetchRows(convertToNumber(router.query.viewId));
-    }
-   
-  }, [router.isReady,currentView]);
+ 
  
   const getColumnKey = (column:any) : string=>
   {

@@ -9,17 +9,23 @@ import MenuBar from 'src/sections/@list/MenuBar';
 import ToolBar from 'src/sections/@list/ToolBar';
 import DataTable from 'src/sections/@list/DataTable';
 import { useRouter } from 'next/router';
-import { View } from "src/models/SharedModels";
+import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import { connect } from 'react-redux';
-import { getCurrentView } from 'src/redux/actions/viewActions';
+import { fetchColumns, fetchRows, getCurrentView } from 'src/redux/actions/viewActions';
 import { isInteger } from 'src/utils/validateUtils';
 import { convertToNumber } from 'src/utils/convertUtils';
+import { ViewType } from 'src/enums/SharedEnums';
+import CalendarView from 'src/sections/@calendar/CalendarView';
+import { ViewField } from 'src/models/ViewField';
 
 type ListProps = {
    currentView: View,
-   getCurrentView : (viewId:number)=>void
+   getCurrentView : (viewId:number)=>void;
+   columns:ViewField[];
+   fetchColumns: (viewId:number) => void;
+   fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
 }
-export  function ListDetail({currentView,getCurrentView}:ListProps) {
+export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fetchRows}:ListProps) {
   const router = useRouter();
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
@@ -32,6 +38,26 @@ export  function ListDetail({currentView,getCurrentView}:ListProps) {
      }
      
   }, [router.isReady]);
+  useEffect(() => {
+    if(router.isReady && router.query.viewId && isInteger(router.query.viewId))
+    {
+      fetchColumns(convertToNumber(router.query.viewId));
+    }
+    
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if(router.isReady && currentView && router.query.viewId  && isInteger(router.query.viewId) )
+    {
+      let page = currentView.page??0;
+      let limit = currentView.limit??25;
+      let orders = currentView.order??[]
+      let filters : FlatWhere[] = []
+      // fetchRows(SearchType.View,convertToNumber(router.query.viewId),page,limit,filters,orders);
+      fetchRows(convertToNumber(router.query.viewId));
+    }
+   
+  }, [router.isReady,currentView]);
   return (
     <MainLayout>
       <Box
@@ -46,17 +72,28 @@ export  function ListDetail({currentView,getCurrentView}:ListProps) {
         <Header />      
         <MenuBar search="" />
         {!isDesktop && <ToolBar open={open} onOpen={setOpen} />}
-        <DataTable tab={open} />
+        {
+          currentView && currentView.type === ViewType.List && columns.length>0 &&
+          <DataTable tab={open} />
+        }
+        {
+          currentView && currentView.type === ViewType.Calendar && columns.length>0 &&
+          <CalendarView open={open} />
+        }
+        
       </Box>
     </MainLayout>
   );
 }
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  columns: state.view.columns
 });
 
 const mapDispatchToProps = {
-  getCurrentView
+  getCurrentView,
+  fetchColumns,
+  fetchRows
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ListDetail);
 

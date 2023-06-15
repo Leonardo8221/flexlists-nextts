@@ -20,17 +20,16 @@ import { fieldService } from "src/services/field.service";
 import { isSucc } from "src/models/ApiResponse";
 import { CreateFieldOutputDto } from "src/models/ApiOutputModels";
 import { ErrorConsts } from "src/constants/errorConstants";
-import { convertToInteger } from "src/utils/convertUtils";
 import { connect } from "react-redux";
 
 interface FieldFormPanelProps {
   viewId: number;
   field: Field;
-  availableFieldUiTypes:FieldUIType[];
+  fieldUiTypes:FieldUIType[];
   onAdd: (field: Field) => void;
   onUpdate: (field: Field) => void;
   onDelete: (id: number) => void;
-  onClose: () => void;
+  onClose: () => void
 }
 const icons = [
   "angle_down",
@@ -88,18 +87,17 @@ const GroupItems = styled("ul")({
 export  function FieldFormPanel({
   viewId,
   field,
-  availableFieldUiTypes,
+  fieldUiTypes,
   onAdd,
   onUpdate,
   onDelete,
-  onClose,
+  onClose
 }: FieldFormPanelProps) {
   const theme = useTheme();
   const isCreating: boolean = !field.id || field.id == 0;
   const [currentField, setCurrentField] = useState<Field>(field);
- 
   const [currentFieldType, setCurrentFieldType] = useState<FieldUIType| undefined>(
-    availableFieldUiTypes.find((x)=>x.name === field.uiField)
+    fieldUiTypes.find((x)=>x.name === field.uiField)
   );
   const [error, setError] = useState<string>("");
 
@@ -116,7 +114,7 @@ export  function FieldFormPanel({
     setVisibleIconList(false);
     if (field) {
       setCurrentField(field);
-      setCurrentFieldType(availableFieldUiTypes.find((x)=>x.name === field.uiField))
+      setCurrentFieldType(fieldUiTypes.find((x)=>x.name === field.uiField))
     }
   }, [field]);
 
@@ -278,7 +276,8 @@ export  function FieldFormPanel({
         <FormControl sx={{ marginTop: 2 }} required>
           <Autocomplete
             id="grouped-types"
-            options={availableFieldUiTypes}
+            filterSelectedOptions
+            options={fieldUiTypes}
             groupBy={(option) => option.group}
             getOptionLabel={(option) => option.name}
             fullWidth
@@ -403,12 +402,11 @@ export  function FieldFormPanel({
     // </Drawer>
   );
 }
-const mapStateToProps = (state: any) => ({
-  availableFieldUiTypes : state.view.availableFieldUiTypes
-});
+// const mapStateToProps = (state: any) => ({
+// });
 
-const mapDispatchToProps = {
+// const mapDispatchToProps = {
 
-};
+// };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FieldFormPanel);
+export default FieldFormPanel;

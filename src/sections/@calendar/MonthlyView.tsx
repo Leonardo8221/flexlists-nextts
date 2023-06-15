@@ -9,10 +9,10 @@ type Props = {
   cycleStart: Date;
   getData: (date: Date, flag: string) => any[];
   handleData: (data: any, date: any) => void;
+  getTitle:(data:any) =>string
 };
 
-const MonthlyView = (props: Props) => {
-  const { days, currentDate, getData, handleData, cycleStart } = props;
+const MonthlyView = ({ days, currentDate, getData, handleData, cycleStart ,getTitle}: Props) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
@@ -41,7 +41,7 @@ const MonthlyView = (props: Props) => {
                   className="edit_row"
                 />}
                 {/* {isDesktop && <div style={{ marginLeft: '5px' }} className="edit_row">{data.user}</div>} */}
-                {isDesktop && <Box sx={{ marginLeft: 0.5 }} className="edit_row">{data?.description}</Box>}
+                {isDesktop && <Box sx={{ marginLeft: 0.5 }} className="edit_row">{getTitle(data)}</Box>}
               </Box>
             ))}
           </Box>

@@ -1,4 +1,4 @@
-import { FieldType, FieldUiType, FilterOperator, ListCategory, Role } from "./SharedEnums";
+import { FieldType, FieldUiTypeEnum, FilterOperator, ListCategory, Role } from "./SharedEnums";
 
 export const RoleLabel = new Map<string, string>([
   [Role.ReadOnly, 'Read Only'],
@@ -21,32 +21,32 @@ export const ListCategoryLabel = new Map<string, string>([
   ]); 
   export const FieldTypeGroupLabel = new Map<string,{fieldType:string,displayName:string,config?:any}[]>([
     ["Text",[
-         {fieldType:FieldType.Text,displayName:"One Line Text",config:{fieldUiType:FieldUiType.Text}},
-         {fieldType:FieldType.Text,displayName:"Large Text",config:{fieldUiType:FieldUiType.LongText}}
+         {fieldType:FieldType.Text,displayName:"One Line Text",config:{fieldUiType:FieldUiTypeEnum.Text}},
+         {fieldType:FieldType.Text,displayName:"Large Text",config:{fieldUiType:FieldUiTypeEnum.LongText}}
       ]
     ],
     ["Number",[
-      {fieldType:FieldType.Integer,displayName:"Integer",config:{fieldUiType:FieldUiType.Integer}},
-      {fieldType:FieldType.Float,displayName:"Float",config:{fieldUiType:FieldUiType.Float}},
-      {fieldType:FieldType.Percentage,displayName:"Percentage",config:{fieldUiType:FieldUiType.Percentage}},
-      {fieldType:FieldType.Money,displayName:"Money",config:{fieldUiType:FieldUiType.Money}},
+      {fieldType:FieldType.Integer,displayName:"Integer",config:{fieldUiType:FieldUiTypeEnum.Integer}},
+      {fieldType:FieldType.Float,displayName:"Float",config:{fieldUiType:FieldUiTypeEnum.Float}},
+      {fieldType:FieldType.Percentage,displayName:"Percentage",config:{fieldUiType:FieldUiTypeEnum.Percentage}},
+      {fieldType:FieldType.Money,displayName:"Money",config:{fieldUiType:FieldUiTypeEnum.Money}},
      ]
    ],
    ["Time",[
-      {fieldType:FieldType.Date,displayName:"Date",config:{fieldUiType:FieldUiType.Date}},
-      {fieldType:FieldType.DateTime,displayName:"DateTime",config:{fieldUiType:FieldUiType.DateTime}},
-      {fieldType:FieldType.Time,displayName:"Time",config:{fieldUiType:FieldUiType.Time}},
+      {fieldType:FieldType.Date,displayName:"Date",config:{fieldUiType:FieldUiTypeEnum.Date}},
+      {fieldType:FieldType.DateTime,displayName:"DateTime",config:{fieldUiType:FieldUiTypeEnum.DateTime}},
+      {fieldType:FieldType.Time,displayName:"Time",config:{fieldUiType:FieldUiTypeEnum.Time}},
     ]
   ],
    ["Switch",[
-       {fieldType:FieldType.Choice,displayName:"Choice",config:{fieldUiType:FieldUiType.Choice}},
-       {fieldType: FieldType.Boolean,displayName:"Boolean",config:{fieldUiType:FieldUiType.Boolean}},
+       {fieldType:FieldType.Choice,displayName:"Choice",config:{fieldUiType:FieldUiTypeEnum.Choice}},
+       {fieldType: FieldType.Boolean,displayName:"Boolean",config:{fieldUiType:FieldUiTypeEnum.Boolean}},
        
       ]
     ],
    ["File",[
-        {fieldType:FieldType.File,displayName:"File",config:{fieldUiType:FieldUiType.File}},
-        {fieldType:FieldType.Image,displayName:"Image",config:{fieldUiType:FieldUiType.Image}},
+        {fieldType:FieldType.File,displayName:"File",config:{fieldUiType:FieldUiTypeEnum.File}},
+        {fieldType:FieldType.Image,displayName:"Image",config:{fieldUiType:FieldUiTypeEnum.Image}},
       ]
     ]
 ])

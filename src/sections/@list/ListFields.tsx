@@ -13,9 +13,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import { connect } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { fetchFields, setFields } from "src/redux/actions/listActions";
-import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import { Field, FieldUIType, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
-import { FieldType, FieldUiType, SearchType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
 import { fieldService } from "src/services/field.service";
 import { isErr } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
@@ -39,6 +39,7 @@ interface ListFieldsProps {
   ) => void;
   setFields: (fields: Field[]) => void;
   fetchFields: (viewId: number) => void;
+  availableFieldUiTypes:FieldUIType[];
   open: boolean;
   onClose: () => void;
 }
@@ -56,6 +57,7 @@ const ListFields = ({
   limit,
   fetchColumns,
   fetchRows,
+  availableFieldUiTypes
 }: ListFieldsProps) => {
   const theme = useTheme();
   const [fieldManagementMode, setFieldManagementMode] = useState<boolean>(true);
@@ -66,7 +68,7 @@ const ListFields = ({
     name: "",
     ordering: 0,
     required: false,
-    uiField: FieldUiType.Text,
+    uiField: FieldUiTypeEnum.Text,
     type: FieldType.Text,
     description: "",
     detailsOnly: false,
@@ -392,6 +394,7 @@ const ListFields = ({
           </>
         ) : (
           <FieldFormPanel
+            fieldUiTypes={availableFieldUiTypes}
             viewId={currentView.id}
             field={selectedField}
             onAdd={(field) => addField(field)}
@@ -435,6 +438,7 @@ const mapStateToProps = (state: any) => ({
   sorts: state.view.sorts,
   page: state.view.page,
   limit: state.view.limit,
+  availableFieldUiTypes : state.view.availableFieldUiTypes
 });
 
 const mapDispatchToProps = {

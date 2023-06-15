@@ -116,6 +116,44 @@ any
     }
   };
 };
+export const reloadRows = (): ThunkAction<
+void,
+RootState,
+null,
+any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      var state = store.getState();
+      const response = await listContentService.searchContents(
+        state.view.currentView.id,
+        state.view.page,
+        state.view.limit,
+        state.view.sorts,
+        undefined,
+        state.view.filters,
+        true);
+      if(isSucc(response) && response.data && response.data.content)
+      {
+        var contents : any[] = []
+        for (const row of response.data.content) {
+           contents.push(Object.fromEntries(row))
+        }
+        dispatch(setRows(contents));
+        dispatch(setCount(response.data.count));
+
+      } 
+      else
+      {
+        dispatch(setRows([]));
+        dispatch(setCount(0));
+
+      }      
+    } catch (error) {
+     console.log(error)
+    }
+  };
+};
 
 export const setAvailableFieldUiTypes = (values: any) => ({
   type: 'SET_AVAILABLE_FIELD_UI_TYPES',

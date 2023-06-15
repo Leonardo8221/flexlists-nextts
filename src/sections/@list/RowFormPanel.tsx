@@ -24,7 +24,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { connect } from 'react-redux';
 import { setMessages } from '../../redux/actions/messageActions';
 import { ViewField } from 'src/models/ViewField';
-import { FieldType, FieldUiType } from 'src/enums/SharedEnums';
+import { FieldType, FieldUiTypeEnum } from 'src/enums/SharedEnums';
 import { listContentService } from 'src/services/listContent.service';
 import { isErr, isSucc } from 'src/models/ApiResponse';
 import { CreateContentOutputDto } from 'src/models/ApiOutputModels';
@@ -199,7 +199,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
   const renderField = (column : ViewField) =>
   {
      switch (column.uiField) {
-      case FieldUiType.Text:
+      case FieldUiTypeEnum.Text:
         return  <TextField
         key={column.id}
         label={column.name}
@@ -215,7 +215,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         required = {column.required}
         error={submit && !values[column.id]}
       />
-      case FieldUiType.LongText:
+      case FieldUiTypeEnum.LongText:
         return  <TextField
         key={column.id}
         label={column.name}
@@ -231,13 +231,13 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         required = {column.required}
         error={submit && !values[column.id]}
       />
-     case FieldUiType.Integer:
-     case FieldUiType.Double:
-     case FieldUiType.Decimal:
-     case FieldUiType.Float:
+     case FieldUiTypeEnum.Integer:
+     case FieldUiTypeEnum.Double:
+     case FieldUiTypeEnum.Decimal:
+     case FieldUiTypeEnum.Float:
      //TODO : will use this for 
-     case FieldUiType.Percentage:
-     case FieldUiType.Money:
+     case FieldUiTypeEnum.Percentage:
+     case FieldUiTypeEnum.Money:
         return  <TextField
         key={column.id}
         label={column.name}
@@ -253,8 +253,8 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         required={column.required}
         error={submit && !values[column.id]}
       />
-      case FieldUiType.Date:
-      case FieldUiType.DateTime:
+      case FieldUiTypeEnum.Date:
+      case FieldUiTypeEnum.DateTime:
         return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
         <DateTimePicker
             value={dayjs(values[column.id])}
@@ -266,7 +266,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
             className={submit && !values[column.id] ? 'Mui-error' : ''}
           />
       </LocalizationProvider>
-      case FieldUiType.Choice : 
+      case FieldUiTypeEnum.Choice : 
        return <FormControl key={column.id} required = {column.required}>
        <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
         <Select
@@ -283,7 +283,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
          {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
        </Select>
      </FormControl>
-     case FieldUiType.Boolean :
+     case FieldUiTypeEnum.Boolean :
       return <FormControlLabel 
          key={column.id}
          control={<Checkbox checked = {values[column.id]} onChange={(e)=> setValues({ ...values, [column.id]: e.target.checked })}  />} 

@@ -9,10 +9,10 @@ type Props = {
   currentDate: Date;
   getData: (date: Date, flag: string) => any[];
   handleData: (data: any, date: any) => void;
+  getTitle:(data:any) =>string
 };
 
-const WeeklyView = (props: Props) => {
-  const { hours, days, currentDate, getData, handleData } = props;
+const WeeklyView = ({ hours, days, currentDate, getData, handleData,getTitle }: Props) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
@@ -35,7 +35,7 @@ const WeeklyView = (props: Props) => {
             <Box key={`${hour}-right`} sx={{ height: {xs: '88px', md: '98px'}, border: '1px solid rgba(0, 0, 0, 0.1)', px: {xs: 0.3, md: 1}, py: 0.5, cursor: 'pointer' }} onClick={(e: any) => { if(!e.target.classList.contains('edit_row')) handleData({date: format(day, 'MM/dd/yyyy') + ' ' + hour + ':00'}, day) }}>
               {getData(new Date(format(day, 'MM/dd/yyyy') + ' ' + hour + ':00'), 'hour').map((data: any) => (
                 <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '42px', sm: '75px', md: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: getColorByImportance(data.importance), px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, day)}>
-                  {data?.task_name}
+                  {getTitle(data)}
                 </Box>
               ))}
             </Box>

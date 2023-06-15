@@ -40,7 +40,7 @@ export enum FieldType {
     Double = 'Double',
     Percentage = 'Percentage',
 }
-export enum FieldUiType {
+export enum FieldUiTypeEnum {
     Text = 'Text',
     LongText = 'LongText',
     Integer = 'Integer',

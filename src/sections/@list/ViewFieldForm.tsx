@@ -21,7 +21,7 @@ interface ViewFieldFormProps {
   onUpdate: (field: ViewField) => void;
   onClose: () => void;
 }
-export default function FieldFormPanel({
+export default function ViewFieldForm({
   viewId,
   field,
   onUpdate,
