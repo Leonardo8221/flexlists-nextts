@@ -17,6 +17,7 @@ import { convertToNumber } from 'src/utils/convertUtils';
 import { ViewType } from 'src/enums/SharedEnums';
 import CalendarView from 'src/sections/@calendar/CalendarView';
 import { ViewField } from 'src/models/ViewField';
+import KanbanView from 'src/sections/@kanban/KanbanView';
 
 type ListProps = {
    currentView: View,
@@ -90,6 +91,10 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
         {
           currentView && currentView.type === ViewType.Calendar && columns.length>0 &&
           <CalendarView open={open} />
+        }
+        {
+          currentView && currentView.type === ViewType.KanBan && columns.length>0 &&
+          <KanbanView open={open} />
         }
         
       </Box>

@@ -4,7 +4,7 @@ import AddViewCard from "src/components/add-view/AddViewCard";
 import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
 import { FieldUIType, View } from "src/models/SharedModels";
 import { connect } from "react-redux";
-import { FieldUiTypeEnum, ViewType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum, ViewType } from "src/enums/SharedEnums";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "src/utils/convertUtils";
 import ViewFieldsConfig from "./CreateFieldModal";
@@ -60,7 +60,7 @@ const style = {
     //   description: "Lorem ipsum dolor sit amet consectetur.",
     // },
     {
-      type: ViewType.Kanban,
+      type: ViewType.KanBan,
       icon: "/assets/icons/tour/ic_bug.svg",
       title: "Kanban View",
       description: "Lorem ipsum dolor sit amet consectetur.",
@@ -139,7 +139,22 @@ const ListViewForm = ({open,handleClose,currentView,columns,availableFieldUiType
           isValidConfig = false
         }
         break;
-    
+      case ViewType.KanBan:
+        if(!config)
+        {
+          setError("Config invalid")
+          isValidConfig = false
+        }
+        if(!config.boardColumnId || config.boardColumnId === 0)
+        {
+          setError("Board field required")
+          isValidConfig = false
+        }
+        if(!config.titleId || config.titleId === 0)
+        {
+          setError("Title field required")
+          isValidConfig = false
+        }
       default:
         break;
     }

@@ -8,34 +8,34 @@ import ViewFieldsConfig from "./CreateFieldModal";
 import { Field, FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
 
-type CalendarViewConfigProps = {
+type KanbanViewConfigProps = {
   submit : boolean,
   updateConfig :(config : any) => void
   columns:ViewField[];
   availableFieldUiTypes: FieldUIType[]
 }
-export function CalendarViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:CalendarViewConfigProps)
+export function KanbanViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:KanbanViewConfigProps)
 {
-    const [dateFieldId,setDateFieldId] = useState<number>(0)
+    const [boardColumnId,setBoardColumnId] = useState<number>(0)
     const [titleFieldId,setTitleFieldId] = useState<number>(0)
-    const [isOpenDateFieldModal,setIsOpenDateFieldModal] = useState<boolean>(false)
+    const [isOpenBoardFieldModal,setIsOpenBoardFieldModal] = useState<boolean>(false)
     const [isOpenTitleFieldModal,setIsOpenTitleFieldModal] = useState<boolean>(false)
-    const dateFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType)=> uiType.name === FieldUiTypeEnum.Date || uiType.name === FieldUiTypeEnum.DateTime)
+    const boardFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType)=> uiType.name === FieldUiTypeEnum.Choice)
     const titleFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType)=> uiType.name === FieldUiTypeEnum.Text)
-    const getDateFields = () :ViewField[]=>
+    const getBoardFields = () :ViewField[]=>
     {
-       return columns.filter((x)=>x.uiField === FieldUiTypeEnum.Date || x.uiField === FieldUiTypeEnum.DateTime)
+       return columns.filter((x)=>x.uiField === FieldUiTypeEnum.Choice)
     }
     const getTitleFields = () :ViewField[]=>
     {
        return columns.filter((x)=>x.uiField === FieldUiTypeEnum.Text)
     }
-    const [dateFields,setDateFields] = useState<ViewField[]>(getDateFields())
+    const [boardFields,setBoardFields] = useState<ViewField[]>(getBoardFields())
     const [titleFields,setTitleFields] = useState<ViewField[]>(getTitleFields())
-    const newDateField : any  = {
+    const newBoardField : any  = {
       name: "",
       required: true,
-      uiField: FieldUiTypeEnum.Date,
+      uiField: FieldUiTypeEnum.Choice,
       description: "",
       detailsOnly: false,
       icon: "",
@@ -54,34 +54,34 @@ export function CalendarViewConfig({submit,updateConfig,columns,availableFieldUi
     }
     const reloadColumns = ()=>
     {
-      var newDateFields : ViewField[] = getDateFields();
+      var newBoardFields : ViewField[] = getBoardFields();
       var newTitleFields : ViewField[] = getTitleFields();
 
-      if(newDateFields.length >0)
+      if(newBoardFields.length >0)
       {
-      setDateFieldId(newDateFields[0].id);
+      setBoardColumnId(newBoardFields[0].id);
       }
       if(newTitleFields.length>0)
       {
       setTitleFieldId(newTitleFields[0].id)
       }
-      setDateFields(newDateFields)
+      setBoardFields(newBoardFields)
       setTitleFields(newTitleFields)
-      updateCalendarConfig(newDateFields.length>0?newDateFields[0].id :0,newTitleFields.length>0?newTitleFields[0].id:0)
+      updateKanbanConfig(newBoardFields.length>0?newBoardFields[0].id :0,newTitleFields.length>0?newTitleFields[0].id:0)
     }
     useEffect(()=>{
       console.log('aaa')
       reloadColumns()
     },[columns])
-    const onDateFieldChange = (event: SelectChangeEvent) =>{
+    const onBoardFieldChange = (event: SelectChangeEvent) =>{
         var value = event.target.value as string;
         if(value === "-1")
         {
-          setIsOpenDateFieldModal(true)
+          setIsOpenBoardFieldModal(true)
           return;
         }
-        setDateFieldId(convertToInteger(value))
-        updateCalendarConfig(convertToInteger(value),titleFieldId)
+        setBoardColumnId(convertToInteger(value))
+        updateKanbanConfig(convertToInteger(value),titleFieldId)
     }
     
     const onTitleFieldChange = (event: SelectChangeEvent) =>{
@@ -92,11 +92,11 @@ export function CalendarViewConfig({submit,updateConfig,columns,availableFieldUi
           return;
       }
       setTitleFieldId(convertToInteger(value))
-      updateCalendarConfig(dateFieldId,convertToInteger(value))
+      updateKanbanConfig(boardColumnId,convertToInteger(value))
     }
-    const updateCalendarConfig = (newDateFieldId:number,newTitleId:number) =>
+    const updateKanbanConfig = (newBoardColumnId:number,newTitleId:number) =>
     {
-       updateConfig({dateFieldId:newDateFieldId,titleId:newTitleId})
+       updateConfig({boardColumnId:newBoardColumnId,titleId:newTitleId})
     }
     
     return (
@@ -104,14 +104,14 @@ export function CalendarViewConfig({submit,updateConfig,columns,availableFieldUi
             <Box>
           <Typography variant="subtitle2" gutterBottom>Field</Typography>
           <Select
-          value={`${dateFieldId}`}
-          onChange={onDateFieldChange}
+          value={`${boardColumnId}`}
+          onChange={onBoardFieldChange}
           required
-          error={submit && (!dateFieldId|| dateFieldId === 0)}
+          error={submit && (!boardColumnId|| boardColumnId === 0)}
           fullWidth
           sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
           >
-            {dateFields.map((viewColumn: ViewField) => (
+            {boardFields.map((viewColumn: ViewField) => (
               <MenuItem key={`${viewColumn.id}`} value={`${viewColumn.id}`} >{viewColumn.name}</MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
@@ -134,12 +134,12 @@ export function CalendarViewConfig({submit,updateConfig,columns,availableFieldUi
           </Select>
         </Box>
         {
-            isOpenDateFieldModal && 
+            isOpenBoardFieldModal && 
             <CreateFieldModal
-            field={newDateField}
-            fieldUiTypes={dateFieldUiTypes}
-            open = {isOpenDateFieldModal}
-            handleClose={()=>setIsOpenDateFieldModal(false)}
+            field={newBoardField}
+            fieldUiTypes={boardFieldUiTypes}
+            open = {isOpenBoardFieldModal}
+            handleClose={()=>setIsOpenBoardFieldModal(false)}
              />
         }
         {
@@ -160,4 +160,4 @@ const mapStateToProps = (state: any) => ({
   
   const mapDispatchToProps = {
   };
-  export default connect(mapStateToProps, mapDispatchToProps)(CalendarViewConfig);
+  export default connect(mapStateToProps, mapDispatchToProps)(KanbanViewConfig);
