@@ -2,13 +2,9 @@ import React, { useRef } from "react";
 import {
   Container,
   Typography,
-  Link,
   Grid,
   TextField,
   Button,
-  InputAdornment,
-  IconButton,
-  Alert,
   Box,
 } from "@mui/material";
 
@@ -32,10 +28,6 @@ const theme = createTheme({
     },
   },
 });
-
-const inputProps = {
-  type: "number",
-};
 
 const VerifyEmail = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
