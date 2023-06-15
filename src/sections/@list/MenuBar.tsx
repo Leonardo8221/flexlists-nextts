@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { ViewType } from "src/enums/SharedEnums";
+import {  PATH_MAIN } from "src/routes/paths";
 
 type MenuBarProps = {
   search?: string;
@@ -30,9 +31,9 @@ export  function MenuBar({ search ,currentView}: MenuBarProps) {
     // setSelectedViewId(router.pathname.split("/")[1]);
   }, [router.pathname]);
 
-  const handleMenu = (value: string) => {
+  const handleMenu = (id: string) => {
     // setSelectedViewId(value);
-    router.push(`/main/${value.toLowerCase()}`);
+    router.push(`${PATH_MAIN.views}/${id}`);
   };
   useEffect(() => {
     async function fetchData() {
@@ -234,7 +235,7 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
         px: { xs: 1, lg: 2 },
       }}
       onClick={() => {
-        setMenu(name);
+        setMenu(id.toString());
       }}
       onMouseOver={() => {
         setIsOver(true);

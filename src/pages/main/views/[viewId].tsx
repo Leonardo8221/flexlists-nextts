@@ -58,6 +58,17 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
     }
    
   }, [router.isReady,currentView]);
+  useEffect(() => {
+    const handleRouteChange = (url:string) => {
+      router.reload();
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.query]);
   return (
     <MainLayout>
       <Box
