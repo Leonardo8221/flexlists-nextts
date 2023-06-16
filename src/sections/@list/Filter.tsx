@@ -58,7 +58,6 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
   };
 
   const handleFilters = (index: number, key: string, value: any) => {
-    console.log('ccccc')
     var newView : View = Object.assign({},currentView)
     newView.conditions = currentView.conditions?.map((filter: any, i: number) => {
       if (index === i) filter[key] = value;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Box
+  Box, Snackbar
 } from '@mui/material';
 import ToolBarItem from '../../components/toolbar';
 import { useTheme } from '@mui/material/styles';
@@ -14,10 +14,14 @@ import Sort from "./Sort";
 import Import from "./Import";
 import Export from "./Export";
 import ViewFields from "./ViewFields";
+import { listViewService } from "src/services/listView.service";
+import { View } from "src/models/SharedModels";
+import { isSucc } from "src/models/ApiResponse";
 
 type ToolbBarProps = {
   open: boolean,
   onOpen: (action: boolean) => void;
+  currentView:View;
 };
 
 const dos = [
@@ -74,7 +78,7 @@ const actions = [
   }
 ];
 
-const ToolbBar = ({ open, onOpen }: ToolbBarProps) => {
+const ToolbBar = ({ open, onOpen,currentView }: ToolbBarProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
   const [visibleFilter, setVisibleFilter] = useState(false);
@@ -82,7 +86,23 @@ const ToolbBar = ({ open, onOpen }: ToolbBarProps) => {
   const [visibleImport, setVisibleImport] = useState(false);
   const [visibleExport, setVisibleExport] = useState(false);
   const [visibleFields, setVisibleFields] = useState(false);
-
+  const [isSaveViewModalOpen,setIsSaveViewModalOpen] = useState<boolean>(false)
+  const [saveViewMessage,setSaveViewMessage] = useState<string>('')
+  const saveView = async()=>
+  {
+     var response = await listViewService.updateView(currentView.id,currentView.name,currentView.type,currentView.config,
+      currentView.page,currentView.limit,currentView.order,currentView.query,currentView.description,currentView.conditions,
+      currentView.fields)
+    if(isSucc(response))
+    {
+       setSaveViewMessage("Save view successfully")
+    }
+    else
+    {
+      setSaveViewMessage("Save view fail")
+    }
+    setIsSaveViewModalOpen(true);
+  }
   return (
     <Box
       sx={{
@@ -95,6 +115,14 @@ const ToolbBar = ({ open, onOpen }: ToolbBarProps) => {
         justifyContent: {xs: 'space-between', md: 'inherit'}
       }}
     >
+       <Snackbar
+        anchorOrigin={{  vertical: 'top', horizontal: 'center', }}
+        open={isSaveViewModalOpen}
+        autoHideDuration={5000}
+        onClose={()=>setIsSaveViewModalOpen(false)}
+        message={saveViewMessage}
+        key={'top-center'}
+      />
       <Box sx={{ display: 'flex' }}>
         <Box
           sx={{
@@ -140,7 +168,7 @@ const ToolbBar = ({ open, onOpen }: ToolbBarProps) => {
             <Export open={visibleExport} handleClose={() => { setVisibleExport(false); }} />
           </Box>
           <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[5]} />
+            <ActionItem toolbar={actions[5]} onClick={()=>saveView()} />
           </Box>
         </Box>
       </Collapse>
@@ -168,6 +196,7 @@ const ToolbBar = ({ open, onOpen }: ToolbBarProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView
 });
 
 const mapDispatchToProps = {

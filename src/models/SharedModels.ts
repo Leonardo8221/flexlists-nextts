@@ -52,7 +52,7 @@ export type Query = {
     field:any
     query:any
 }
-type ViewFieldConfig = {
+export type ViewFieldConfig = {
     id: number,
     color?: string,
     name?: string,

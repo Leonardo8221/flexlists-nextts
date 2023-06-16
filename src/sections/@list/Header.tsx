@@ -368,10 +368,13 @@ const Header = ({ currentView }: HeaderProps) => {
           open={isDeleteOpenModal}
           handleClose={() => setIsDeleteOpenModal(false)}
         />
-        <ArchiveView
+        {
+          isArchiveOpenModal &&  <ArchiveView
           open={isArchiveOpenModal}
           handleClose={() => setIsArchiveOpenModal(false)}
         />
+        }
+       
       </>
       }
       

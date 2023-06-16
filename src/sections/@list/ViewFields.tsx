@@ -3,16 +3,18 @@ import { Box, TextField, Divider, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
-import { setColumns } from "../../redux/actions/viewActions";
+import { setColumns, setCurrentView } from "../../redux/actions/viewActions";
 import Checkbox from "@mui/material/Checkbox";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Modal from "@mui/material/Modal";
 import ViewFieldForm from "./ViewFieldForm";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
+import { View,ViewFieldConfig } from "src/models/SharedModels";
 
 type ViewFieldsProps = {
-  currentView: ViewField;
+  currentView: View;
+  setCurrentView:(view:View)=>void;
   columns: ViewField[];
   open: boolean;
   setColumns: (columns: any) => void;
@@ -21,6 +23,7 @@ type ViewFieldsProps = {
 
 const ViewFields = ({
   currentView,
+  setCurrentView,
   columns,
   open,
   setColumns,
@@ -102,6 +105,34 @@ const ViewFields = ({
         return x.id === field.id ? field : x;
       })
     );
+    let newView : View = Object.assign({},currentView);
+    let viewFieldConfig : ViewFieldConfig = {
+       id:field.id,
+       visible: field.viewFieldVisible,
+       color: field.viewFieldColor,
+       name: field.viewFieldName,
+       detailsOnly:field.viewFieldDetailsOnly,
+       ordering:field.viewFieldOrdering,
+       default: field.defaultValue
+    }
+    if(newView.fields)
+    {
+       var currentViewField = newView.fields.find((x)=>x.id===viewFieldConfig.id);
+       if(currentViewField)
+       {
+          currentViewField = viewFieldConfig
+       }
+       else
+       {
+        newView.fields.push(viewFieldConfig)
+       }
+    }
+    else
+    {
+      newView.fields = [viewFieldConfig]
+    }
+    console.log(newView);
+    setCurrentView(newView)
   };
   const handleCloseModal = () => {
     setFieldListMode(true);
@@ -352,6 +383,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setColumns,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewFields);

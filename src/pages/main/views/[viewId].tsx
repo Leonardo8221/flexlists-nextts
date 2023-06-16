@@ -39,20 +39,14 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
      }
      
   }, [router.isReady]);
-  useEffect(() => {
-    if(router.isReady && router.query.viewId && isInteger(router.query.viewId))
-    {
-      fetchColumns(convertToNumber(router.query.viewId));
-    }
-    
-  }, [router.isReady]);
+
 
   useEffect(() => {
     if(router.isReady && currentView && router.query.viewId  && isInteger(router.query.viewId) )
     {
+      fetchColumns(convertToNumber(router.query.viewId));
       fetchRows();
     }
-   
   }, [router.isReady,currentView?.id]);
   useEffect(() => {
     if(router.query.viewId)
@@ -70,7 +64,7 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
    
   }, [router.query.viewId]);
   return (
-        currentView &&
+        currentView && columns && columns.length>0 &&
         <MainLayout>
         <Box
         sx={{

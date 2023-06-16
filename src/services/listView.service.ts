@@ -26,8 +26,8 @@ async function renameView(viewId:number,name:string,description?:string): Promis
 
   return response.data;
 };
-async function updateView(listId:number,viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateView`, {listId,viewId,name,type,config,page,limit,order,query,description,conditions,fields})
+async function updateView(viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateView`, {viewId,name,type,config,page,limit,order,query,description,conditions,fields})
 
   return response.data;
 };
