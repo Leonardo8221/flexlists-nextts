@@ -24,19 +24,8 @@ import { fetchColumns, fetchRows } from "src/redux/actions/viewActions";
 interface ListFieldsProps {
   currentView: View;
   fields: Field[];
-  filters: FlatWhere[];
-  sorts: Sort[];
-  page?: number;
-  limit?: number;
   fetchColumns: (viewId: number) => void;
-  fetchRows: (
-    viewId: number,
-    page?: number,
-    limit?: number,
-    conditions?: FlatWhere[],
-    sorts?: Sort[],
-    query?: Query
-  ) => void;
+  fetchRows: () => void;
   setFields: (fields: Field[]) => void;
   fetchFields: (viewId: number) => void;
   availableFieldUiTypes:FieldUIType[];
@@ -51,10 +40,6 @@ const ListFields = ({
   fetchFields,
   open,
   onClose,
-  filters,
-  sorts,
-  page,
-  limit,
   fetchColumns,
   fetchRows,
   availableFieldUiTypes
@@ -122,7 +107,7 @@ const ListFields = ({
   };
   const reloadViewData = () => {
     fetchColumns(currentView.id);
-    fetchRows(currentView.id, page, limit, filters, sorts);
+    fetchRows();
   };
   const handleAddField = () => {
     setSelectedField({ ...newField, listId: currentView.listId });
@@ -434,10 +419,6 @@ const ListFields = ({
 const mapStateToProps = (state: any) => ({
   fields: state.list.fields,
   currentView: state.view.currentView,
-  filters: state.view.filters,
-  sorts: state.view.sorts,
-  page: state.view.page,
-  limit: state.view.limit,
   availableFieldUiTypes : state.view.availableFieldUiTypes
 });
 

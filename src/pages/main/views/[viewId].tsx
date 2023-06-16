@@ -24,7 +24,7 @@ type ListProps = {
    getCurrentView : (viewId:number)=>void;
    columns:ViewField[];
    fetchColumns: (viewId:number) => void;
-   fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],order?:Sort[],query?:Query) => void;
+   fetchRows: () => void;
 }
 export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fetchRows}:ListProps) {
   const router = useRouter();
@@ -50,15 +50,10 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
   useEffect(() => {
     if(router.isReady && currentView && router.query.viewId  && isInteger(router.query.viewId) )
     {
-      let page = currentView.page??0;
-      let limit = currentView.limit??25;
-      let orders = currentView.order??[]
-      let filters : FlatWhere[] = []
-      // fetchRows(SearchType.View,convertToNumber(router.query.viewId),page,limit,filters,orders);
-      fetchRows(convertToNumber(router.query.viewId));
+      fetchRows();
     }
    
-  }, [router.isReady,currentView]);
+  }, [router.isReady,currentView?.id]);
   useEffect(() => {
     if(router.query.viewId)
     {
@@ -75,8 +70,9 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
    
   }, [router.query.viewId]);
   return (
-    <MainLayout>
-      <Box
+        currentView &&
+        <MainLayout>
+        <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,
           boxShadow: 'none',
@@ -87,22 +83,23 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
       >
         <Header />      
         <MenuBar search="" />
+        
         {!isDesktop && <ToolBar open={open} onOpen={setOpen} />}
         {
-          currentView && currentView.type === ViewType.List && columns.length>0 &&
+          currentView.type === ViewType.List && columns.length>0 &&
           <DataTable tab={open} />
         }
         {
-          currentView && currentView.type === ViewType.Calendar && columns.length>0 &&
+          currentView.type === ViewType.Calendar && columns.length>0 &&
           <CalendarView open={open} />
         }
         {
-          currentView && currentView.type === ViewType.KanBan && columns.length>0 &&
+          currentView.type === ViewType.KanBan && columns.length>0 &&
           <KanbanView open={open} />
         }
         
       </Box>
-    </MainLayout>
+      </MainLayout>
   );
 }
 const mapStateToProps = (state: any) => ({

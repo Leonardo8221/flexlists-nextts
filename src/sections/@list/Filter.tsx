@@ -2,32 +2,30 @@ import { useEffect, useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { fetchRows, setFilters } from '../../redux/actions/viewActions';
+import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import { BooleanFilterOperatorLabel, ChoiceFilterOperatorLabel, DateFilterOperatorLabel, NumberFilterOperatorLabel, StringFilterOperatorLabel } from 'src/enums/ShareEnumLabels';
-import { FlatWhere, Query, Sort, View, WhereCmp } from 'src/models/SharedModels';
-import { FieldType, FilterOperator, SearchType } from 'src/enums/SharedEnums';
+import { FlatWhere, View } from 'src/models/SharedModels';
+import { FieldType, FilterOperator } from 'src/enums/SharedEnums';
 import { isObject } from 'src/utils/validateUtils';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 type FilterProps = {
   currentView:View;
-  columns: any;
-  filters: FlatWhere[];
-  sorts : Sort[];
+  columns: any[];
   open: boolean;
-  setFilters: (filters: FlatWhere[]) => void;
-  fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
+  fetchRows: () => void;
   handleClose: () => void;
+  setCurrentView : (view:View)=>void
 };
 
-const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows, handleClose }: FilterProps) => {
+const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClose }: FilterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [windowHeight, setWindowHeight] = useState(0);
@@ -60,19 +58,26 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
   };
 
   const handleFilters = (index: number, key: string, value: any) => {
-    setFilters(filters.map((filter: any, i: number) => {
+    console.log('ccccc')
+    var newView : View = Object.assign({},currentView)
+    newView.conditions = currentView.conditions?.map((filter: any, i: number) => {
       if (index === i) filter[key] = value;
       return filter;
-    }));
+    })
+    setCurrentView(newView)
   };
   const handleConditionOperationFilters = (index: number, value: string) => {
-    setFilters(filters.map((filter: any, i: number) => {
+    var newView : View = Object.assign({},currentView)
+    newView.conditions = currentView.conditions?.map((filter: any, i: number) => {
       if (index === i) filter = value;
       return filter;
-    }));
+    })
+    setCurrentView(newView)
   };
   const removeFilter = (index: number) => {
-    setFilters(filters.filter((filter: any, i: number) => (i !== index && (i !== index-1))));
+    var newView : View = Object.assign({},currentView)
+    newView.conditions = currentView.conditions?.filter((filter: any, i: number) => (i !== index && (i !== index-1)))
+    setCurrentView(newView)
   };
   const getDate = (date:any)=>{
     return dayjs(date, "MM/DD/YYYY HH:mm:ss")
@@ -161,24 +166,21 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
      return [defaultConditionOperator,conditionOperators,render]
   }
   const addFilter = () => {
-    if(filters.length>0)
+    let newView : View = Object.assign({},currentView);
+    if(newView.conditions && newView.conditions.length>0)
     {
-      setFilters([
-        ...filters,
-        'And',
-        {
-          left : columns[0].id,
-          leftType : 'Field',
-          right:'',
-          rightType:'SearchString',
-          cmp:getFilter({left:columns[0].id})[0]
-        } as FlatWhere
-        
-      ]);
+      newView.conditions.push('And')
+      newView.conditions.push({
+        left : columns[0].id,
+        leftType : 'Field',
+        right:'',
+        rightType:'SearchString',
+        cmp:getFilter({left:columns[0].id})[0]
+      } as FlatWhere)
     }
     else
     {
-      setFilters([
+      newView.conditions = [
         {
           left : columns[0].id,
           leftType : 'Field',
@@ -186,12 +188,12 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
           rightType:'SearchString',
           cmp:getFilter({left:columns[0].id})[0]
         } as FlatWhere
-      ]);
+      ];
     }
-    
+    setCurrentView(newView)
   };
   const onsubmit = async() =>{
-    fetchRows(currentView.id,undefined,undefined,filters,sorts)
+    fetchRows()
     handleClose()
   }
   const style = {
@@ -233,9 +235,9 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
             onClick={handleClose}
           />
         </Box>
-        { filters.length>0 &&
+        { currentView.conditions && currentView.conditions.length>0 &&
           <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 108}px`, overflow: 'auto' }}>
-          {filters.map((filter: any, index: number) =>{
+          {currentView.conditions.map((filter: any, index: number) =>{
              return isObject(filter) ? 
              (
               <Box key={filter.column} sx={{ marginBottom: 1 }}>
@@ -352,14 +354,12 @@ const Filter = ({ currentView,columns, filters,sorts, open, setFilters,fetchRows
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
-  filters: state.view.filters,
   currentView: state.view.currentView,
-  sorts: state.view.sorts
 });
 
 const mapDispatchToProps = {
-  setFilters,
-  fetchRows
+  fetchRows,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

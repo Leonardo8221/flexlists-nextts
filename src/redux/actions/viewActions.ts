@@ -5,7 +5,7 @@ import { isSucc } from 'src/models/ApiResponse';
 import { listViewService } from 'src/services/listView.service';
 import { fieldService } from 'src/services/field.service';
 import {listContentService} from 'src/services/listContent.service'
-import {Sort,Query, FlatWhere, FieldUIType} from 'src/models/SharedModels'
+import {FieldUIType} from 'src/models/SharedModels'
 import { adminService } from 'src/services/admin.service';
 // Define the actions
 export const getAvailableFieldUiTypes = (): ThunkAction<
@@ -86,7 +86,7 @@ any
     }
   };
 };
-export const fetchRows = (viewId:number,page?:number,limit?:number,conditions?: FlatWhere[],order?:Sort[],query?:Query): ThunkAction<
+export const fetchRows = (): ThunkAction<
 void,
 RootState,
 null,
@@ -94,7 +94,15 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-      const response = await listContentService.searchContents(viewId,page,limit,order,query,conditions,true);
+      var state = store.getState();
+      const response = await listContentService.searchContents(
+        state.view.currentView.id,
+        state.view.currentView.page,
+        state.view.currentView.limit,
+        state.view.currentView.order,
+        undefined,
+        state.view.currentView.conditions,
+        true);
       if(isSucc(response) && response.data && response.data.content)
       {
         var contents : any[] = []
@@ -127,11 +135,11 @@ any
       var state = store.getState();
       const response = await listContentService.searchContents(
         state.view.currentView.id,
-        state.view.page,
-        state.view.limit,
-        state.view.sorts,
+        state.view.currentView.page,
+        state.view.currentView.limit,
+        state.view.currentView.order,
         undefined,
-        state.view.filters,
+        state.view.currentView.conditions,
         true);
       if(isSucc(response) && response.data && response.data.content)
       {
@@ -169,15 +177,15 @@ export const setColumns = (columns: any) => ({
     payload: columns
   });
 
-export const setFilters = (filters: any) => ({
-  type: 'SET_FILTERS',
-  payload: filters
-});
+// export const setFilters = (filters: any) => ({
+//   type: 'SET_FILTERS',
+//   payload: filters
+// });
 
-export const setSorts = (sorts: any) => ({
-  type: 'SET_SORTS',
-  payload: sorts
-});
+// export const setSorts = (sorts: any) => ({
+//   type: 'SET_SORTS',
+//   payload: sorts
+// });
 
 export const setCount = (count: any) => ({
   type: 'SET_COUNT',

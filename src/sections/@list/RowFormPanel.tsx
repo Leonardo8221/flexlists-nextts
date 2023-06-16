@@ -112,7 +112,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         }
         else
         {
-           var createRowResponse = await listContentService.createContent(currentView.listId,values)
+           var createRowResponse = await listContentService.createContent(currentView.id,values)
            if(isSucc(createRowResponse) && createRowResponse.data && createRowResponse.data.content && createRowResponse.data.content.length>0)
            {
 

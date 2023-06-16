@@ -9,7 +9,6 @@ import Collapse from '@mui/material/Collapse';
 import ViewUsersList from './UserList';
 import ActionItem from '../../components/toolbar/ActionItem';
 import { connect } from 'react-redux';
-import { setFilters } from '../../redux/actions/viewActions';
 import Filter from "./Filter";
 import Sort from "./Sort";
 import Import from "./Import";
@@ -18,10 +17,7 @@ import ViewFields from "./ViewFields";
 
 type ToolbBarProps = {
   open: boolean,
-  columns: any,
-  filters: any,
   onOpen: (action: boolean) => void;
-  setFilters: (filters: any) => void;
 };
 
 const dos = [
@@ -78,8 +74,7 @@ const actions = [
   }
 ];
 
-const ToolbBar = (props: ToolbBarProps) => {
-  const { open, columns, filters, onOpen, setFilters } = props;
+const ToolbBar = ({ open, onOpen }: ToolbBarProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
   const [visibleFilter, setVisibleFilter] = useState(false);
@@ -173,12 +168,9 @@ const ToolbBar = (props: ToolbBarProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.view.columns,
-  filters: state.filters
 });
 
 const mapDispatchToProps = {
-  setFilters
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToolbBar);
