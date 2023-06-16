@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3002",
-    "local":"env-cmd -f local.env yarn dev",
+    "local": "env-cmd -f local.env yarn dev",
     "build": "next build",
     "start": "next start -p 3008",
     "lint": "next lint"
@@ -24,6 +24,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.103",
     "@mui/material": "^5.10.9",
+    "@mui/styles": "^5.13.2",
     "@mui/x-date-pickers": "^6.2.1",
     "@prisma/client": "^4.13.0",
     "@types/dotenv": "^8.2.0",
