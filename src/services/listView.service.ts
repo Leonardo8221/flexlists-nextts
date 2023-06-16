@@ -21,8 +21,8 @@ async function createView(listId:number,name:string,type:ViewType,config:any,tem
 
   return response.data;
 };
-async function renameView(viewId:number,name:string): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/renameView`, {viewId,name})
+async function renameView(viewId:number,name:string,description?:string): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/renameView`, {viewId,name,description})
 
   return response.data;
 };

@@ -26,6 +26,7 @@ const RenameView = ({
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
   const [view, setView] = useState<View>(currentView);
+  const [isUpdate,setIsUpdate] = useState<boolean>(false);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -35,10 +36,17 @@ const RenameView = ({
   const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     var newView = Object.assign({}, view);
     newView.name = event.target.value;
+    setIsUpdate(true)
+    setView(newView);
+  };
+  const handleViewDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    var newView = Object.assign({}, view);
+    newView.description = event.target.value;
+    setIsUpdate(true)
     setView(newView);
   };
   const onSubmit = async () => {
-    var response = await listViewService.renameView(view.id, view.name);
+    var response = await listViewService.renameView(view.id, view.name,view.description);
     if (isSucc(response)) {
       setCurrentView(view);
       handleClose();
@@ -54,7 +62,7 @@ const RenameView = ({
           fullWidth
           onChange={handleViewNameChange}
           value={view?.name}
-          placeholder="List Name"
+          placeholder="Name"
         />
       </Box>
       <Box>
@@ -65,12 +73,14 @@ const RenameView = ({
           multiline
           rows={4}
           fullWidth
-          defaultValue="Base description"
+          value={view?.description}
+          onChange={handleViewDescriptionChange}
+          defaultValue="Description"
         />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         {/* DISABLED BUTTON UNTIL CHANGE IS MADE */}
-        <Button disabled sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
+        <Button disabled={!isUpdate} sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
           Update
         </Button>
         <Button
