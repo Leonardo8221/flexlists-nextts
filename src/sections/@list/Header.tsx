@@ -352,7 +352,9 @@ const Header = ({ currentView }: HeaderProps) => {
           }}
         />
       </>
-      <>
+      {
+        currentView && 
+        <>
         <RenameView
           open={isRenameOpenModal}
           handleClose={() => setIsRenameOpenModal(false)}
@@ -362,6 +364,7 @@ const Header = ({ currentView }: HeaderProps) => {
           handleClose={() => setIsDuplicateOpenModal(false)}
         />
         <DeleteView
+          viewId={currentView.id}
           open={isDeleteOpenModal}
           handleClose={() => setIsDeleteOpenModal(false)}
         />
@@ -370,6 +373,8 @@ const Header = ({ currentView }: HeaderProps) => {
           handleClose={() => setIsArchiveOpenModal(false)}
         />
       </>
+      }
+      
     </Box>
   );
 };

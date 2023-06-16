@@ -10,12 +10,25 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import CentralModal from "src/components/modal/CentralModal";
+import { useRouter } from "next/router";
+import { listViewService } from "src/services/listView.service";
+import { isSucc } from "src/models/ApiResponse";
+import { PATH_MAIN } from "src/routes/paths";
 type DeleteViewProps = {
+  viewId:number;
   open: boolean;
   handleClose: () => void;
 };
 
-const DeleteView = ({ open, handleClose }: DeleteViewProps) => {
+const DeleteView = ({viewId, open, handleClose }: DeleteViewProps) => {
+  const router = useRouter();
+  const onSubmit = async() =>{
+     let response = await listViewService.softDeleteView(viewId)
+     if(isSucc(response))
+     {
+        router.push(PATH_MAIN.views)
+     }
+  }
   return (
     <CentralModal open={open} handleClose={handleClose}>
       <Typography variant="h6">Delete View</Typography>
@@ -26,7 +39,7 @@ const DeleteView = ({ open, handleClose }: DeleteViewProps) => {
         </Typography>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button sx={{ mt: 2 }} variant="contained">
+        <Button sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
           Delete
         </Button>
         <Button
