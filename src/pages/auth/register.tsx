@@ -19,9 +19,11 @@ import LoginIcon from "@mui/icons-material/Login";
 import { authService } from "../../services/auth.service";
 import { useRouter } from "next/router";
 import Iconify from "../../components/iconify";
-import { isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { MuiTelInput } from "mui-tel-input";
 import InfoIcon from "@mui/icons-material/Info";
+import { PATH_AUTH } from "src/routes/paths";
+import { ErrorConsts } from "src/constants/errorConstants";
 
 const Register = () => {
   const theme = useTheme();
@@ -92,10 +94,14 @@ const Register = () => {
         phoneNumber,
         password
       );
-      if (isSucc(response)) {
-        router.push({ pathname: "/auth/login" });
+      
+      if (isSucc(response) && response) {
+        router.push({ pathname: PATH_AUTH.verifyEmail });
+        return;
       }
+      setError((response as FlexlistsError).message)
     } catch (error) {
+      setError(ErrorConsts.InternalServerError)
       console.log(error);
     }
   };
