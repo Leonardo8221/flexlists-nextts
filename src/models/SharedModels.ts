@@ -20,6 +20,7 @@ export type Field = {
     id:number
     listId:number
     name:string
+    uiField: string
     type:FieldType
     ordering:number
     required:boolean
@@ -51,19 +52,31 @@ export type Query = {
     field:any
     query:any
 }
+type ViewFieldConfig = {
+    id: number,
+    color?: string,
+    name?: string,
+    detailsOnly?: boolean
+    visible?: boolean
+    ordering?: number
+    default?: string
+}
 export type View = {
     id:number
     name:string
     type:ViewType
     listId:number
     category:ListCategory
-    template?:boolean
-    config:any
-    page?:number
-    limit?:number
-    order:Sort []
-    query:Query 
-    description?:string
+    template?: boolean,
+    config: any,
+    icon?: string,
+    fields?: ViewFieldConfig[],
+    page?: number,
+    limit?: number,
+    order?: Sort[],
+    query?: Query,
+    conditions?:FlatWhere[],
+    description?: string
 }
 export type FieldUIType = {
     name:string;

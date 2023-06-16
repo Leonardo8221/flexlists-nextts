@@ -11,16 +11,13 @@ import AddColumnButton from "../../components/add-button/AddColumnButton";
 import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
-import { fetchColumns, setColumns } from "../../redux/actions/viewActions";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { setRows, fetchRows } from "src/redux/actions/viewActions";
-import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
-import { FieldType, SearchType } from "src/enums/SharedEnums";
+import { setRows } from "src/redux/actions/viewActions";
+import { View } from "src/models/SharedModels";
+import { FieldType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
-import { isInteger } from "src/utils/validateUtils";
-import { convertToNumber } from "src/utils/convertUtils";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
 
@@ -29,31 +26,11 @@ type DataTableProps = {
   currentView: View;
   columns: ViewField[];
   rows: any[];
-  setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
-  fetchColumns: (viewId: number) => void;
-  fetchRows: (
-    viewId: number,
-    page?: number,
-    limit?: number,
-    conditions?: FlatWhere[],
-    order?: Sort[],
-    query?: Query
-  ) => void;
-  count: number;
+  count:number
 };
 
-const DataTable = ({
-  tab,
-  currentView,
-  columns,
-  rows,
-  setColumns,
-  setRows,
-  fetchColumns,
-  fetchRows,
-  count,
-}: DataTableProps) => {
+const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableProps) => {
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
@@ -85,40 +62,13 @@ const DataTable = ({
     }
   }, [rows, rowSelection]);
 
-  useEffect(() => {
-    if (
-      router.isReady &&
-      router.query.viewId &&
-      isInteger(router.query.viewId)
-    ) {
-      fetchColumns(convertToNumber(router.query.viewId));
-    }
-  }, [router.isReady]);
-
-  useEffect(() => {
-    if (
-      router.isReady &&
-      currentView &&
-      router.query.viewId &&
-      isInteger(router.query.viewId)
-    ) {
-      let page = currentView.page ?? 0;
-      let limit = currentView.limit ?? 25;
-      let orders = currentView.order ?? [];
-      let filters: FlatWhere[] = [];
-      // fetchRows(SearchType.View,convertToNumber(router.query.viewId),page,limit,filters,orders);
-      fetchRows(convertToNumber(router.query.viewId));
-    }
-  }, [router.isReady, currentView]);
-
-  const getColumnKey = (column: any): string => {
-    if (
-      column.system &&
-      (column.name === "id" ||
-        column.name === "createdAt" ||
-        column.name === "updatedAt")
-    ) {
-      return column.name;
+ 
+ 
+  const getColumnKey = (column:any) : string=>
+  {
+    if(column.system && (column.name === 'id' || column.name === 'createdAt' || column.name === 'updatedAt'))
+    {
+      return column.name
     }
     return column.id;
   };
@@ -131,7 +81,9 @@ const DataTable = ({
         header: dataColumn.name,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
-            <Box
+            {
+              dataColumn.icon && 
+              <Box
               component="span"
               className="svg-color"
               sx={{
@@ -145,6 +97,8 @@ const DataTable = ({
                 marginRight: 1,
               }}
             />
+            }
+            
             <div>{column.columnDef.header}</div>
           </Box>
         ),
@@ -285,6 +239,7 @@ const DataTable = ({
     } else {
     }
   };
+
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPagination({
@@ -542,14 +497,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setColumns,
   setRows,
-  fetchColumns,
-  fetchRows,
 };
-// const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-//     setColumns:(columns: any) => dispatch(setColumns(columns)),
-//     setRows:(rows: any) => dispatch(setRows(rows)),
-//     fetchColumns: () => dispatch(fetchColumns()),
-// });
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

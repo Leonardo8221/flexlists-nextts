@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { fetchRows, setSorts } from '../../redux/actions/viewActions';
+import { fetchRows,setCurrentView } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -12,17 +12,15 @@ import { FlatWhere, Query, Sort, View } from 'src/models/SharedModels';
 
 type SortProps = {
   currentView:View;
+  setCurrentView:(view: View) =>void;
   columns: any;
-  filters: FlatWhere[];
-  sorts: Sort[];
   open: boolean;
-  setSorts: (sorts: any) => void;
   handleClose: () => void;
-  fetchRows: (viewId:number,page?:number,limit?:number,conditions?:FlatWhere[],sorts?:Sort[],query?:Query) => void;
+  fetchRows: () => void;
 };
 
 
-const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleClose,fetchRows }: SortProps) => {
+const SortPage = ({ columns,currentView,setCurrentView,open, handleClose,fetchRows }: SortProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');const [windowHeight, setWindowHeight] = useState(0);
 
@@ -31,14 +29,18 @@ const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleCl
   }, []);
 
   const handleSorts = (index: number, key: string, value: string) => {
-    setSorts(sorts.map((sort: any, i: number) => {
+    let newCurrentView : View = Object.assign({},currentView)
+    newCurrentView.order = currentView.order?.map((sort: any, i: number) => {
       if (index === i) sort[key] = value;
       return sort;
-    }));
+    })
+    setCurrentView(newCurrentView)
   };
 
   const removeSort = (index: number) => {
-    setSorts(sorts.filter((sort: any, i: number) => i !== index));
+    let newCurrentView : View = Object.assign({},currentView)
+    newCurrentView.order = currentView.order?.filter((sort: any, i: number) => i !== index)
+    setCurrentView(newCurrentView)
   };
   const getColumn = (column_id: number) => {
     const column = columns.filter((item: any) => item.id === column_id);
@@ -82,17 +84,26 @@ const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleCl
     {
       return;
     }
-    console.log('aaa')
-    setSorts([
-      ...sorts,
-      {
+    let newCurrentView : View = Object.assign({},currentView)
+    if(newCurrentView.order)
+    {
+      newCurrentView.order.push({
         fieldId: columns[0].id,
         direction: 'asc'
-      }
-    ]);
+      })
+    }
+    else
+    {
+      
+      newCurrentView.order=[{
+        fieldId: columns[0].id,
+        direction: 'asc'
+      }]
+    }
+    setCurrentView(newCurrentView)
   };
   const onsubmit = async()=>{
-     fetchRows(currentView.id,undefined,undefined,filters,sorts)
+     fetchRows()
      handleClose()
   }
   const style = {
@@ -134,9 +145,9 @@ const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleCl
             onClick={handleClose}
           />
         </Box>
-        { sorts.length >0 &&
+        { currentView.order && currentView.order.length >0 &&
           <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}`, py: 2, maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
-          {sorts.length && sorts.map((sort: any, index: number) => (
+          {currentView.order.length && currentView.order.map((sort: any, index: number) => (
             <Box key={sort.column} sx={{ marginBottom: 1, display: 'flex' }}>
               <Select
                 value={sort.fieldId}
@@ -222,13 +233,11 @@ const SortPage = ({ columns,currentView, filters,sorts, open, setSorts, handleCl
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
-  filters: state.view.filters,
   currentView: state.view.currentView,
-  sorts: state.view.sorts
 });
 
 const mapDispatchToProps = {
-  setSorts,
+  setCurrentView,
   fetchRows
 };
 

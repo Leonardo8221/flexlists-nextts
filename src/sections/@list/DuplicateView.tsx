@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -8,24 +8,71 @@ import {
   TextField,
   Typography,
   FormControlLabel,
+  Alert,
 } from "@mui/material";
 import CentralModal from "src/components/modal/CentralModal";
+import { connect } from "react-redux";
+import { View } from "src/models/SharedModels";
+import { listViewService } from "src/services/listView.service";
+import { isSucc } from "src/models/ApiResponse";
+import { ErrorConsts } from "src/constants/errorConstants";
+import { useRouter } from "next/router";
+import { PATH_MAIN } from "src/routes/paths";
 type DuplicateViewProps = {
   open: boolean;
   handleClose: () => void;
+  currentView:View
 };
 
-const DuplicateView = ({ open, handleClose }: DuplicateViewProps) => {
+const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) => {
+  const router = useRouter()
+  const [name,setName] = useState<string>('')
+  const [description,setDescription] = useState<string>('')
+  const [error,setError] = useState<string>('')
+  const [submit,setSubmit] = useState<boolean>(false)
+  
+
+  const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+  const handleViewDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(event.target.value);
+  };
+  
+  const onSubmit = async() =>{
+    setSubmit(true)
+    if(!name)
+    {
+      setError('Name required')
+      return;
+    }
+    var response = await listViewService.createView(currentView.listId,name,currentView.type,currentView.config,currentView.template,
+      currentView.category,currentView.page,currentView.limit,currentView.order,currentView.query,description,currentView.conditions,currentView.fields)
+    if(isSucc(response) && response.data && response.data.viewId)
+    {
+      router.push(`${PATH_MAIN.views}/${response.data.viewId}`)
+    }
+    else
+    {
+      setError(response.message)
+    }
+  }
   return (
     <CentralModal open={open} handleClose={handleClose}>
       <Typography variant="h6">Duplicate View</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+      </Box>
+      <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
           fullWidth
-          defaultValue="Untitled Base :)"
-          placeholder="List Name"
+          onChange={handleViewNameChange}
+          value={name}
+          placeholder="Name"
+          required
+          error = {submit && !name}
         />
       </Box>
       <Box>
@@ -36,17 +83,18 @@ const DuplicateView = ({ open, handleClose }: DuplicateViewProps) => {
           multiline
           rows={4}
           fullWidth
-          defaultValue="Base description"
+          value={description}
+          onChange={handleViewDescriptionChange}
         />
       </Box>
-      <FormGroup>
+      {/* <FormGroup>
         <FormControlLabel
           control={<Checkbox defaultChecked />}
           label="Copy content"
         />
-      </FormGroup>
+      </FormGroup> */}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button sx={{ mt: 2 }} variant="contained">
+        <Button sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
           Duplicate
         </Button>
         <Button
@@ -60,4 +108,11 @@ const DuplicateView = ({ open, handleClose }: DuplicateViewProps) => {
     </CentralModal>
   );
 };
-export default DuplicateView;
+const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
+});
+
+const mapDispatchToProps = {
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DuplicateView);

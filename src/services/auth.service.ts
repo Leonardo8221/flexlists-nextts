@@ -5,7 +5,8 @@ export const authService = {
     login,
     register,
     verifyToken,
-    logout
+    logout,
+    verifySignup
   };
 async function login(userName: string,password:string): Promise<FlexlistsError|FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError|FlexlistsSuccess<any>>('/api/auth/login', {userName,password})
@@ -21,5 +22,9 @@ async function verifyToken(): Promise<FlexlistsError|FlexlistsSuccess<any>> {
 };
 async function logout(): Promise<FlexlistsError|FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError|FlexlistsSuccess<any>>('/api/auth/logout')
+    return response.data;
+};
+async function verifySignup(token:string): Promise<FlexlistsError|FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError|FlexlistsSuccess<any>>('/api/auth/verifySignup?token='+token)
     return response.data;
 };

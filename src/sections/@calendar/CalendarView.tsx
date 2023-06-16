@@ -13,8 +13,11 @@ import MonthlyView from './MonthlyView';
 import WeeklyView from './WeeklyView';
 import DailyView from './DailyView';
 import CalendarFooter from './CalendarFooter';
+import { getDataColumnId } from 'src/utils/flexlistHelper';
+import { View } from 'src/models/SharedModels';
 
-type Props = {
+type CalendarViewProps = {
+  currentView:View,
   columns: any;
   rows: any;
   setColumns: (columns: any) => void;
@@ -22,8 +25,7 @@ type Props = {
   open: boolean;
 };
 
-const CalendarView = (props: Props) => {
-  const { columns, rows, setRows, open } = props;
+const CalendarView = ({currentView, columns, rows, setRows, open }: CalendarViewProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -74,7 +76,7 @@ const CalendarView = (props: Props) => {
   }, [currentDate, mode]);
 
   const getData = (date: Date, action: string) => {
-    const selected = rows.filter((item: any) => (compareAsc(new Date(item.date), date) >= 0 && compareAsc(new Date(item.date), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1));
+    const selected = rows.filter((item: any) => (compareAsc(new Date(item[getDataColumnId(currentView.config.dateFieldId,columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.dateFieldId,columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1));
 
     return selected;
   };
@@ -112,7 +114,9 @@ const CalendarView = (props: Props) => {
     else if (mode === 'day') setCurrentDate(addDays(currentDate, flag));
     else {}
   };
-
+  const getTitle = (data:any):string =>{
+    return data[getDataColumnId(currentView.config.titleId,columns)]
+  }
   return (
     <Box sx={{ display: {md: 'flex'}, paddingRight: {md: 1}, height: {xs: `${windowHeight - (open ? 312 : 268)}px`, md: 'calc(100% - 160px)', lg: 'calc(100% - 104px)'}, overflow: {xs: 'auto', md: 'inherit'} }}>
       <Box
@@ -129,11 +133,11 @@ const CalendarView = (props: Props) => {
           {mode !== 'day' && <WeekBar mode={mode} />}
         </Box>
         {mode === 'month' ? 
-          <MonthlyView days={days} currentDate={currentDate} cycleStart={cycleStart} getData={getData} handleData={handleData} /> :
+          <MonthlyView days={days} currentDate={currentDate} cycleStart={cycleStart} getData={getData} handleData={handleData} getTitle={getTitle} /> :
         mode === 'week' ?
-          <WeeklyView hours={hours} days={days} currentDate={currentDate} getData={getData} handleData={handleData} /> :
+          <WeeklyView hours={hours} days={days} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
         mode === 'day' ?
-          <DailyView hours={hours} currentDate={currentDate} getData={getData} handleData={handleData} /> :
+          <DailyView hours={hours} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
           <></>
         }
       </Box>
@@ -154,7 +158,8 @@ const CalendarView = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
-  rows: state.view.rows
+  rows: state.view.rows,
+  currentView:state.view.currentView
 });
 
 const mapDispatchToProps = {

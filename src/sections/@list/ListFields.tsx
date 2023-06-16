@@ -13,9 +13,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import { connect } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { fetchFields, setFields } from "src/redux/actions/listActions";
-import { Field, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import { Field, FieldUIType, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
-import { FieldType, SearchType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
 import { fieldService } from "src/services/field.service";
 import { isErr } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
@@ -24,21 +24,11 @@ import { fetchColumns, fetchRows } from "src/redux/actions/viewActions";
 interface ListFieldsProps {
   currentView: View;
   fields: Field[];
-  filters: FlatWhere[];
-  sorts: Sort[];
-  page?: number;
-  limit?: number;
   fetchColumns: (viewId: number) => void;
-  fetchRows: (
-    viewId: number,
-    page?: number,
-    limit?: number,
-    conditions?: FlatWhere[],
-    sorts?: Sort[],
-    query?: Query
-  ) => void;
+  fetchRows: () => void;
   setFields: (fields: Field[]) => void;
   fetchFields: (viewId: number) => void;
+  availableFieldUiTypes:FieldUIType[];
   open: boolean;
   onClose: () => void;
 }
@@ -50,12 +40,9 @@ const ListFields = ({
   fetchFields,
   open,
   onClose,
-  filters,
-  sorts,
-  page,
-  limit,
   fetchColumns,
   fetchRows,
+  availableFieldUiTypes
 }: ListFieldsProps) => {
   const theme = useTheme();
   const [fieldManagementMode, setFieldManagementMode] = useState<boolean>(true);
@@ -66,6 +53,7 @@ const ListFields = ({
     name: "",
     ordering: 0,
     required: false,
+    uiField: FieldUiTypeEnum.Text,
     type: FieldType.Text,
     description: "",
     detailsOnly: false,
@@ -119,7 +107,7 @@ const ListFields = ({
   };
   const reloadViewData = () => {
     fetchColumns(currentView.id);
-    fetchRows(currentView.id, page, limit, filters, sorts);
+    fetchRows();
   };
   const handleAddField = () => {
     setSelectedField({ ...newField, listId: currentView.listId });
@@ -288,7 +276,9 @@ const ListFields = ({
                                     alignItems: "center",
                                   }}
                                 >
-                                  <Box
+                                  {
+                                    field.icon &&
+                                    <Box
                                     component="span"
                                     className="svg-color"
                                     sx={{
@@ -298,11 +288,13 @@ const ListFields = ({
                                       bgcolor:
                                         theme.palette.palette_style.text
                                           .primary,
-                                      mask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
-                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg) no-repeat center / contain`,
+                                      mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
+                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
                                       marginRight: 1,
                                     }}
                                   />
+                                  }
+                                  
                                   <Box
                                     component={"span"}
                                     sx={{
@@ -387,6 +379,7 @@ const ListFields = ({
           </>
         ) : (
           <FieldFormPanel
+            fieldUiTypes={availableFieldUiTypes}
             viewId={currentView.id}
             field={selectedField}
             onAdd={(field) => addField(field)}
@@ -426,10 +419,7 @@ const ListFields = ({
 const mapStateToProps = (state: any) => ({
   fields: state.list.fields,
   currentView: state.view.currentView,
-  filters: state.view.filters,
-  sorts: state.view.sorts,
-  page: state.view.page,
-  limit: state.view.limit,
+  availableFieldUiTypes : state.view.availableFieldUiTypes
 });
 
 const mapDispatchToProps = {

@@ -24,7 +24,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { connect } from 'react-redux';
 import { setMessages } from '../../redux/actions/messageActions';
 import { ViewField } from 'src/models/ViewField';
-import { FieldType } from 'src/enums/SharedEnums';
+import { FieldType, FieldUiTypeEnum } from 'src/enums/SharedEnums';
 import { listContentService } from 'src/services/listContent.service';
 import { isErr, isSucc } from 'src/models/ApiResponse';
 import { CreateContentOutputDto } from 'src/models/ApiOutputModels';
@@ -112,7 +112,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         }
         else
         {
-           var createRowResponse = await listContentService.createContent(currentView.listId,values)
+           var createRowResponse = await listContentService.createContent(currentView.id,values)
            if(isSucc(createRowResponse) && createRowResponse.data && createRowResponse.data.content && createRowResponse.data.content.length>0)
            {
 
@@ -198,8 +198,8 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
   }
   const renderField = (column : ViewField) =>
   {
-     switch (column.type) {
-      case FieldType.Text:
+     switch (column.uiField) {
+      case FieldUiTypeEnum.Text:
         return  <TextField
         key={column.id}
         label={column.name}
@@ -215,13 +215,29 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         required = {column.required}
         error={submit && !values[column.id]}
       />
-     case FieldType.Integer:
-     case FieldType.Double:
-     case FieldType.Decimal:
-     case FieldType.Float:
+      case FieldUiTypeEnum.LongText:
+        return  <TextField
+        key={column.id}
+        label={column.name}
+        name={`${column.id}`}
+        size="small"
+        type={'text'}
+        onChange={(e) =>{
+          setValues({ ...values, [column.id]: e.target.value }) }
+        }
+        value={values?values[column.id]:''}
+        rows={4}
+        multiline={true}
+        required = {column.required}
+        error={submit && !values[column.id]}
+      />
+     case FieldUiTypeEnum.Integer:
+     case FieldUiTypeEnum.Double:
+     case FieldUiTypeEnum.Decimal:
+     case FieldUiTypeEnum.Float:
      //TODO : will use this for 
-     case FieldType.Percentage:
-     case FieldType.Money:
+     case FieldUiTypeEnum.Percentage:
+     case FieldUiTypeEnum.Money:
         return  <TextField
         key={column.id}
         label={column.name}
@@ -237,8 +253,8 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         required={column.required}
         error={submit && !values[column.id]}
       />
-      case FieldType.Date:
-      case FieldType.DateTime:
+      case FieldUiTypeEnum.Date:
+      case FieldUiTypeEnum.DateTime:
         return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
         <DateTimePicker
             value={dayjs(values[column.id])}
@@ -250,7 +266,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
             className={submit && !values[column.id] ? 'Mui-error' : ''}
           />
       </LocalizationProvider>
-      case FieldType.Choice : 
+      case FieldUiTypeEnum.Choice : 
        return <FormControl key={column.id} required = {column.required}>
        <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
         <Select
@@ -267,7 +283,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
          {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
        </Select>
      </FormControl>
-     case FieldType.Boolean :
+     case FieldUiTypeEnum.Boolean :
       return <FormControlLabel 
          key={column.id}
          control={<Checkbox checked = {values[column.id]} onChange={(e)=> setValues({ ...values, [column.id]: e.target.checked })}  />} 

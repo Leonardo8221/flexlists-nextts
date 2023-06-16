@@ -40,11 +40,13 @@ export enum FieldType {
     Double = 'Double',
     Percentage = 'Percentage',
 }
-export enum FieldUiType {
-    OneLineText = 'OneLineText',
-    TextArea = 'TextArea',
+export enum FieldUiTypeEnum {
+    Text = 'Text',
+    LongText = 'LongText',
     Integer = 'Integer',
     Float = 'Float',
+    Decimal = 'Decimal',
+    Double = 'Double',
     Date = 'Date',
     Time = 'Time',
     DateTime = 'DateTime',
@@ -80,9 +82,10 @@ export enum ExportTypes {
 export enum ViewType {
     List = 'List',
     Calendar = 'Calendar',
-    Kanban = 'Kanban',
-    TimeLine = 'TimeLine',
+    KanBan = 'KanBan',
     Gallery = 'Gallery',
+    TimeLine = 'TimeLine',
+    Gantt = 'Gantt',
     Map = 'Map',
 }
 export enum PublishType {

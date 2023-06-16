@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, TextField, Typography, Divider, Button } from "@mui/material";
+import { Box, TextField, Typography, Divider, Button, Alert } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import CentralModal from "src/components/modal/CentralModal";
@@ -26,6 +26,9 @@ const RenameView = ({
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
   const [view, setView] = useState<View>(currentView);
+  const [isUpdate,setIsUpdate] = useState<boolean>(false);
+  const [error,setError] = useState<string>('');
+  const [submit,setSubmit] = useState<boolean>(false)
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -35,10 +38,23 @@ const RenameView = ({
   const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     var newView = Object.assign({}, view);
     newView.name = event.target.value;
+    setIsUpdate(true)
+    setView(newView);
+  };
+  const handleViewDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    var newView = Object.assign({}, view);
+    newView.description = event.target.value;
+    setIsUpdate(true)
     setView(newView);
   };
   const onSubmit = async () => {
-    var response = await listViewService.renameView(view.id, view.name);
+    setSubmit(true)
+    if(!view.name)
+    {
+      setError('Name required')
+      return;
+    }
+    var response = await listViewService.renameView(view.id, view.name,view.description);
     if (isSucc(response)) {
       setCurrentView(view);
       handleClose();
@@ -49,12 +65,17 @@ const RenameView = ({
       <Typography variant="h6">Rename View</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+      </Box>
+      <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
           fullWidth
           onChange={handleViewNameChange}
           value={view?.name}
-          placeholder="List Name"
+          placeholder="Name"
+          required
+          error = {submit && !view?.name}
         />
       </Box>
       <Box>
@@ -65,12 +86,13 @@ const RenameView = ({
           multiline
           rows={4}
           fullWidth
-          defaultValue="Base description"
+          value={view?.description}
+          onChange={handleViewDescriptionChange}
         />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         {/* DISABLED BUTTON UNTIL CHANGE IS MADE */}
-        <Button disabled sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
+        <Button disabled={!isUpdate} sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
           Update
         </Button>
         <Button

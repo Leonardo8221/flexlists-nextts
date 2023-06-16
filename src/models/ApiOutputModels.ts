@@ -19,7 +19,15 @@ export type GetKeysOutputDto = {
     key:string
     role:Role
 }
+export type CreateUIFieldOutputDto = {
+    viewId:number
+    fieldId:number
+}
 export type CreateFieldOutputDto = {
+    viewId:number
+    fieldId:number
+}
+export type UpdateListFieldOutputDto = {
     viewId:number
     fieldId:number
 }
