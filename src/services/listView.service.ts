@@ -16,8 +16,8 @@ export const listViewService = {
     getView,
 };
 
-async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>>(`/api/listView/createView`, {listId,name,type,config,template,category,page,limit,order,query,description,conditions})
+async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>>(`/api/listView/createView`, {listId,name,type,config,template,category,page,limit,order,query,description,conditions,fields})
 
   return response.data;
 };
@@ -26,8 +26,8 @@ async function renameView(viewId:number,name:string,description?:string): Promis
 
   return response.data;
 };
-async function updateView(listId:number,viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateView`, {listId,viewId,name,type,config,page,limit,order,query,description,conditions})
+async function updateView(listId:number,viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateView`, {listId,viewId,name,type,config,page,limit,order,query,description,conditions,fields})
 
   return response.data;
 };

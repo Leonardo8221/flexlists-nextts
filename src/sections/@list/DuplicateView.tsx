@@ -47,7 +47,7 @@ const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) =>
       return;
     }
     var response = await listViewService.createView(currentView.listId,name,currentView.type,currentView.config,currentView.template,
-      currentView.category,currentView.page,currentView.limit,currentView.order,currentView.query,description,currentView.conditions)
+      currentView.category,currentView.page,currentView.limit,currentView.order,currentView.query,description,currentView.conditions,currentView.fields)
     if(isSucc(response) && response.data && response.data.viewId)
     {
       router.push(`${PATH_MAIN.views}/${response.data.viewId}`)
