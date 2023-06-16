@@ -23,7 +23,7 @@ import ListFields from "./ListFields";
 
 type DataTableProps = {
   tab: boolean;
-  currentView : View,
+  currentView: View;
   columns: ViewField[];
   rows: any[];
   setRows: (columns: any) => void;
@@ -36,7 +36,8 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
   const isDesktop = useResponsive("up", "lg");
 
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] = useState(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
+    useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [pagination, setPagination] = useState({
@@ -48,7 +49,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-  
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -70,7 +71,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
       return column.name
     }
     return column.id;
-  }
+  };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
@@ -105,7 +106,11 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
           let value_color = { bg: "#333", fill: "white" };
           let font = "inherit";
           dataColumns.forEach((item: any) => {
-            if (item.type === FieldType.Choice && item.config && item.config.values) {
+            if (
+              item.type === FieldType.Choice &&
+              item.config &&
+              item.config.values
+            ) {
               item.config.values.forEach((choice: any) => {
                 if (choice.name === renderedCellValue) {
                   value_color = choice.color;
@@ -114,86 +119,95 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
               });
             }
           });
-          function renderFieldData (columnType : FieldType,cellValue:any) 
-          {
-              switch (columnType) {
-                case FieldType.Integer:
-                case FieldType.Float:
-                case FieldType.Decimal:
-                case FieldType.Double:
-                case FieldType.Money:
-                case FieldType.Percentage:
-                 return <Box
-                  key={row.id}
-                  sx={{
-                    minWidth: "100px",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {cellValue}
-                </Box>
-                case FieldType.Date:
-                case FieldType.DateTime:
-                case FieldType.Time:
-                  return <Box
-                  key={row.id}
-                  sx={{
-                    minWidth: "100px",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
-                  >
-                    {new Date(cellValue).toLocaleString()}
-                  </Box>
-                case FieldType.Text:
-                  return <Box
-                  key={row.id}
-                  sx={{
-                    minWidth: "100px",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
+          function renderFieldData(columnType: FieldType, cellValue: any) {
+            switch (columnType) {
+              case FieldType.Integer:
+              case FieldType.Float:
+              case FieldType.Decimal:
+              case FieldType.Double:
+              case FieldType.Money:
+              case FieldType.Percentage:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
                   >
                     {cellValue}
                   </Box>
-                case FieldType.Choice :  
-                  return <Box
-                  key={row.id}
-                  sx={{
-                    textAlign: "center",
-                    bgcolor: value_color.bg,
-                    borderRadius: "20px",
-                    color: value_color.fill,
-                    fontFamily: font,
-                    px: 1.5,
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {cellValue}
-                </Box>
-                case FieldType.Boolean:
-                  return <Box
-                  key={row.id}
-                  sx={{
-                    minWidth: "100px",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
+                );
+              case FieldType.Date:
+              case FieldType.DateTime:
+              case FieldType.Time:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {new Date(cellValue).toLocaleString()}
+                  </Box>
+                );
+              case FieldType.Text:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {cellValue}
+                  </Box>
+                );
+              case FieldType.Choice:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      textAlign: "center",
+                      bgcolor: value_color.bg,
+                      borderRadius: "20px",
+                      color: value_color.fill,
+                      fontFamily: font,
+                      px: 1.5,
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {cellValue}
+                  </Box>
+                );
+              case FieldType.Boolean:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
                   >
                     {cellValue?.toString()}
                   </Box>
-                default:
-                  return (<></>);
-              }
+                );
+              default:
+                return <></>;
+            }
           }
-          return renderFieldData(dataColumnType,renderedCellValue)
+          return renderFieldData(dataColumnType, renderedCellValue);
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,
@@ -215,21 +229,18 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
 
   const handleRowAction = (values: any, action: string) => {
     if (action === "create" || action === "clone") {
-      var newRows = Object.assign([],rows)
+      var newRows = Object.assign([], rows);
       newRows.push(values);
       setRows(newRows);
     } else if (action === "update") {
       setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
-    } else if (action === "delete")
-    {
+    } else if (action === "delete") {
       setRows(rows.filter((row: any) => row.id !== values.id));
-    }
-      
-    else {
+    } else {
     }
   };
 
- 
+
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPagination({
       ...pagination,
@@ -238,7 +249,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
-    console.log('aaaa')
+    console.log("aaaa");
     setPagination({
       pageIndex: 0,
       pageSize: parseInt(event.target.value, 10),
@@ -246,25 +257,25 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
   };
 
   const handleNewRowPanel = () => {
-    var newValues : any = {}
-    for (const column of filter(columns,(x)=>!x.system)) {
-       var defaultValue : any = ''
+    var newValues: any = {};
+    for (const column of filter(columns, (x) => !x.system)) {
+      var defaultValue: any = "";
       switch (column.type) {
         case FieldType.Date:
         case FieldType.DateTime:
         case FieldType.Time:
-          defaultValue = new Date().toISOString()
+          defaultValue = new Date().toISOString();
           break;
         case FieldType.Choice:
-          defaultValue = column.config?.values[0]?.label
+          defaultValue = column.config?.values[0]?.label;
           break;
         case FieldType.Boolean:
-          defaultValue = false
+          defaultValue = false;
           break;
         default:
           break;
       }
-      newValues[column.id] = defaultValue
+      newValues[column.id] = defaultValue;
     }
     setVisibleAddRowPanel(true);
     setSelectedRowData(newValues);
@@ -275,15 +286,12 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
     setSelectedRowData(rows[row.index]);
     setVisibleAddRowPanel(true);
   };
-  const handleOpenFieldManagementPanel = () =>{
-    
-    setVisibleFieldManagementPanel(true)
-    
-  }
-  const handleCloseFieldManagementPanel = () =>
-  {
-     setVisibleFieldManagementPanel(false);
-  }
+  const handleOpenFieldManagementPanel = () => {
+    setVisibleFieldManagementPanel(true);
+  };
+  const handleCloseFieldManagementPanel = () => {
+    setVisibleFieldManagementPanel(false);
+  };
   return (
     <Box
       sx={{
@@ -314,15 +322,16 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
       <Box
         sx={{
           position: "absolute",
-          top: isDesktop ? "153px" : "",
           right: 8,
           zIndex: 3,
           textAlign: "center",
           paddingTop: "10px",
-          height: "39px",
+          height: "40px",
           width: "40px",
           backgroundColor:
             theme.palette.palette_style.background.table_header_footer,
+          borderBottom: "1px solid rgba(224, 224, 224, 1)",
+          boxShadow: "4px 0 8px rgba(0, 0, 0, 0.1)",
         }}
       >
         <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
@@ -470,14 +479,12 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
         onClose={() => setVisibleAddRowPanel(false)}
         comment={false}
       />
-      {
-        currentView && 
+      {currentView && (
         <ListFields
-        open={visibleFieldManagementPanel}
-        onClose={() => handleCloseFieldManagementPanel()}
-      />
-      }
-      
+          open={visibleFieldManagementPanel}
+          onClose={() => handleCloseFieldManagementPanel()}
+        />
+      )}
     </Box>
   );
 };
@@ -485,8 +492,8 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   rows: state.view.rows,
-  currentView : state.view.currentView,
-  count : state.view.count
+  currentView: state.view.currentView,
+  count: state.view.count,
 });
 
 const mapDispatchToProps = {

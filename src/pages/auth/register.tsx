@@ -10,6 +10,9 @@ import {
   IconButton,
   Alert,
   Box,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -315,6 +318,32 @@ const Register = () => {
                 width: "100%",
               }}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <FormGroup
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: { xs: "center", md: "flex-start" },
+              }}
+            >
+              <FormControlLabel
+                sx={{ mr: 0, textAlign: { xs: "center", md: "left" } }}
+                control={
+                  <Checkbox
+                    sx={{
+                      color: "#FFD232",
+                      "&.Mui-checked": { color: "#FFD232" },
+                    }}
+                    color="primary"
+                  />
+                }
+                label="I have read and agree to the&nbsp;"
+              />
+
+              <Link href="#">Terms and conditions</Link>
+            </FormGroup>
           </Grid>
 
           <Grid item xs={12}>
