@@ -34,3 +34,7 @@ export const setSearchTypes = (searchTypes: any) => ({
     type: 'SET_SEARCH_TYPES',
     payload: searchTypes
 });
+export const setLoading = (isLoading: boolean) => ({
+  type: 'SET_LOADING',
+  payload: isLoading
+});

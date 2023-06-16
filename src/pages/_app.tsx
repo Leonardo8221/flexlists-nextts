@@ -7,6 +7,7 @@ import AuthGuard from 'src/guards/AuthGuard';
 import { Provider } from 'react-redux';
 import store from '../redux/store';
 import '../styles/globals.css';
+import LoadingPage from './LoadingPage';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -16,7 +17,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <StyledChart />
         <AuthGuard>
           <Provider store={store}>
-            <Component {...pageProps} />
+            <LoadingPage>
+               <Component {...pageProps} />
+            </LoadingPage>
           </Provider>
         </AuthGuard>
       </LanguagesProvider>
