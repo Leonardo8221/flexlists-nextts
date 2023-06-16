@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, TextField, Typography, Divider, Button } from "@mui/material";
+import { Box, TextField, Typography, Divider, Button, Alert } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import CentralModal from "src/components/modal/CentralModal";
@@ -27,6 +27,8 @@ const RenameView = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [view, setView] = useState<View>(currentView);
   const [isUpdate,setIsUpdate] = useState<boolean>(false);
+  const [error,setError] = useState<string>('');
+  const [submit,setSubmit] = useState<boolean>(false)
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -46,6 +48,12 @@ const RenameView = ({
     setView(newView);
   };
   const onSubmit = async () => {
+    setSubmit(true)
+    if(!view.name)
+    {
+      setError('Name required')
+      return;
+    }
     var response = await listViewService.renameView(view.id, view.name,view.description);
     if (isSucc(response)) {
       setCurrentView(view);
@@ -57,12 +65,17 @@ const RenameView = ({
       <Typography variant="h6">Rename View</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+      </Box>
+      <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
           fullWidth
           onChange={handleViewNameChange}
           value={view?.name}
           placeholder="Name"
+          required
+          error = {submit && !view?.name}
         />
       </Box>
       <Box>
@@ -75,7 +88,6 @@ const RenameView = ({
           fullWidth
           value={view?.description}
           onChange={handleViewDescriptionChange}
-          defaultValue="Description"
         />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
