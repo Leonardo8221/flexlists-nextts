@@ -13,7 +13,7 @@ import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { setRows } from "src/redux/actions/viewActions";
+import { fetchRowsByPage, setCurrentView, setRows } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
 import { FieldType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
@@ -27,10 +27,12 @@ type DataTableProps = {
   columns: ViewField[];
   rows: any[];
   setRows: (columns: any) => void;
-  count:number
+  count:number,
+  fetchRowsByPage:(page?:number,limit?:number)=>void
+  setCurrentView :(view:View) =>void
 };
 
-const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableProps) => {
+const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPage,setCurrentView }: DataTableProps) => {
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
@@ -42,7 +44,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 25,
+    pageSize: currentView.limit??25,
   });
   const [showColumnFilters, setShowColumnFilters] = useState(false);
   const [updatingTable, setUpdatingTable] = useState(false);
@@ -78,7 +80,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
       var dataColumnType = dataColumn.type;
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
-        header: dataColumn.name,
+        header: dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
             {
@@ -246,14 +248,22 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count }: DataTableP
       ...pagination,
       pageIndex: value - 1,
     });
+    var newView : View = Object.assign({},currentView)
+    newView.page = value - 1;
+    setCurrentView(newView)
+    fetchRowsByPage(newView.page,newView.limit??25)
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
-    console.log("aaaa");
     setPagination({
       pageIndex: 0,
       pageSize: parseInt(event.target.value, 10),
     });
+    var newView : View = Object.assign({},currentView)
+    newView.page = 0;
+    newView.limit = parseInt(event.target.value, 10)
+    setCurrentView(newView)
+    fetchRowsByPage(0,newView.limit)
   };
 
   const handleNewRowPanel = () => {
@@ -498,5 +508,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setRows,
+  fetchRowsByPage,
+  setCurrentView
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

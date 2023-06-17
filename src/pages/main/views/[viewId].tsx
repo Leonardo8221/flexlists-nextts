@@ -11,7 +11,7 @@ import DataTable from 'src/sections/@list/DataTable';
 import { useRouter } from 'next/router';
 import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import { connect } from 'react-redux';
-import { fetchColumns, fetchRows, getCurrentView } from 'src/redux/actions/viewActions';
+import { fetchColumns, fetchRows, fetchRowsByPage, getCurrentView } from 'src/redux/actions/viewActions';
 import { isInteger } from 'src/utils/validateUtils';
 import { convertToNumber } from 'src/utils/convertUtils';
 import { ViewType } from 'src/enums/SharedEnums';
@@ -24,9 +24,9 @@ type ListProps = {
    getCurrentView : (viewId:number)=>void;
    columns:ViewField[];
    fetchColumns: (viewId:number) => void;
-   fetchRows: () => void;
+   fetchRowsByPage: (page?:number,limit?:number) => void;
 }
-export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fetchRows}:ListProps) {
+export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fetchRowsByPage}:ListProps) {
   const router = useRouter();
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
@@ -45,7 +45,7 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
     if(router.isReady && currentView && router.query.viewId  && isInteger(router.query.viewId) )
     {
       fetchColumns(convertToNumber(router.query.viewId));
-      fetchRows();
+      fetchRowsByPage(0,currentView.limit??25);
     }
   }, [router.isReady,currentView?.id]);
   useEffect(() => {
@@ -64,7 +64,8 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
    
   }, [router.query.viewId]);
   return (
-        currentView && columns && columns.length>0 &&
+        currentView && columns && columns.length>0 ?
+        (
         <MainLayout>
         <Box
         sx={{
@@ -80,20 +81,22 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
         
         {!isDesktop && <ToolBar open={open} onOpen={setOpen} />}
         {
-          currentView.type === ViewType.List && columns.length>0 &&
+          currentView.type === ViewType.List &&
           <DataTable tab={open} />
         }
         {
-          currentView.type === ViewType.Calendar && columns.length>0 &&
+          currentView.type === ViewType.Calendar &&
           <CalendarView open={open} />
         }
         {
-          currentView.type === ViewType.KanBan && columns.length>0 &&
+          currentView.type === ViewType.KanBan &&
           <KanbanView open={open} />
         }
         
       </Box>
       </MainLayout>
+        ):
+        (<></>)
   );
 }
 const mapStateToProps = (state: any) => ({
@@ -104,7 +107,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   getCurrentView,
   fetchColumns,
-  fetchRows
+  fetchRowsByPage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ListDetail);
 

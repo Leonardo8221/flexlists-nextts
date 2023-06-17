@@ -100,11 +100,14 @@ const ViewFields = ({
     setSelectedField(field);
   };
   const updateField = (field: ViewField) => {
-    setColumns(
-      columns.map((x) => {
-        return x.id === field.id ? field : x;
-      })
-    );
+    var newColumns = columns.map((x) => {
+      return x.id === field.id ? field : x;
+    })
+    setColumns(newColumns);
+    var newFileteColumns = filter(newColumns, (column) => {
+      return (searchText && column.name.includes(searchText)) || searchText === "";
+    });
+    setFilterColumns(newFileteColumns);
     let newView : View = Object.assign({},currentView);
     let viewFieldConfig : ViewFieldConfig = {
        id:field.id,
@@ -117,10 +120,11 @@ const ViewFields = ({
     }
     if(newView.fields)
     {
-       var currentViewField = newView.fields.find((x)=>x.id===viewFieldConfig.id);
-       if(currentViewField)
+       var currentViewFieldIndex = newView.fields.findIndex((x)=>x.id===viewFieldConfig.id);
+       if(currentViewFieldIndex>=0)
        {
-          currentViewField = viewFieldConfig
+          newView.fields[currentViewFieldIndex] = viewFieldConfig
+          console.log(newView.fields)
        }
        else
        {
@@ -298,7 +302,7 @@ const ViewFields = ({
                                 flexGrow={2}
                                 onClick={() => handleSelectField(column)}
                               >
-                                {column.name}
+                                {column.viewFieldName}
                               </Box>
                             </Box>
                             <Box
@@ -363,7 +367,7 @@ const ViewFields = ({
           <>
             {selectedField && (
               <ViewFieldForm
-                viewId={currentView.id}
+                currentView={currentView}
                 field={selectedField}
                 onUpdate={(field) => updateField(field)}
                 onClose={() => setFieldListMode(true)}

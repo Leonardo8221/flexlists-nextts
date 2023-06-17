@@ -11,6 +11,7 @@ export const fieldService = {
     createField,
     updateListField,
     updateField,
+    createViewField,
     updateViewField,
     getFields,
     deleteField,
@@ -33,6 +34,11 @@ async function updateListField(viewId:number,fieldId:number,name:string,type:str
 };
 async function updateField(viewId:number,fieldId:number,name?:string,type?:FieldType,ordering?:number,required?:boolean,detailsOnly?:boolean,description?:string,minimum?:number,maximum?:number,config?:any,icon?:string,defaultValue?:string,indexed?:boolean): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/updateField`, {viewId,fieldId,name,type,ordering,required,detailsOnly,description,minimum,maximum,config,icon,defaultValue,indexed})
+
+  return response.data;
+};
+async function createViewField(viewId:number,fieldId:number,color?:string,name?:string,detailsOnly?:boolean,visible?:boolean,ordering?:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/createViewField`, {viewId,fieldId,color,name,detailsOnly,visible,ordering})
 
   return response.data;
 };

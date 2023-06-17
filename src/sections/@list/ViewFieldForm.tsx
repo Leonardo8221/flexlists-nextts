@@ -14,15 +14,16 @@ import { ViewField } from "src/models/ViewField";
 import { isSucc } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { fieldService } from "src/services/field.service";
+import { View } from "src/models/SharedModels";
 
 interface ViewFieldFormProps {
-  viewId: number;
+  currentView: View;
   field: ViewField;
   onUpdate: (field: ViewField) => void;
   onClose: () => void;
 }
 export default function ViewFieldForm({
-  viewId,
+  currentView,
   field,
   onUpdate,
   onClose,
@@ -47,20 +48,42 @@ export default function ViewFieldForm({
 
   const handleSubmit = async () => {
     setSubmit(true);
-    var updateViewFieldResponse = await fieldService.updateViewField(
-      viewId,
-      currentField.id,
-      currentField.viewFieldColor,
-      currentField.viewFieldName,
-      currentField.viewFieldDetailsOnly,
-      currentField.viewFieldVisible
-    );
-    if (isSucc(updateViewFieldResponse)) {
-      onUpdate(currentField);
-    } else {
-      setError(ErrorConsts.InternalServerError);
-      return;
+    var existingField = currentView.fields?.find((x)=>x.id == currentField.id)
+    if(existingField)
+    {
+      var updateViewFieldResponse = await fieldService.updateViewField(
+        currentView.id,
+        currentField.id,
+        currentField.viewFieldColor,
+        currentField.viewFieldName,
+        currentField.viewFieldDetailsOnly,
+        currentField.viewFieldVisible
+      );
+      if (isSucc(updateViewFieldResponse)) {
+        onUpdate(currentField);
+      } else {
+        setError(ErrorConsts.InternalServerError);
+        return;
+      }
     }
+    else
+    {
+      var createiewFieldResponse = await fieldService.createViewField(
+        currentView.id,
+        currentField.id,
+        currentField.viewFieldColor,
+        currentField.viewFieldName,
+        currentField.viewFieldDetailsOnly,
+        currentField.viewFieldVisible
+      );
+      if (isSucc(createiewFieldResponse)) {
+        onUpdate(currentField);
+      } else {
+        setError(ErrorConsts.InternalServerError);
+        return;
+      }
+    }
+    
 
     onClose();
   };

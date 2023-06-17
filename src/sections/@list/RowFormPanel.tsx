@@ -93,7 +93,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
    
     if (values) {
       columns.forEach(column => {
-        if (!column.system && !values[column.id]) validator = false;
+        if (!column.system && column.required && !values[column.id]) validator = false;
       });
       if (validator) {
         //update row data
@@ -119,7 +119,11 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
               values.id = createRowResponse.data.content[0].id
               values.createdAt = new Date().toISOString();
               values.updatedAt = new Date().toISOString()
-              values.__archive = false;
+              var archiveField = columns.find((x)=>x.system && x.name==="___archived")
+              if(archiveField)
+              {
+                values[archiveField.id] = false;
+              }
               onSubmit(values,"create")
            } else
            {
@@ -213,7 +217,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         rows={4}
         // multiline={column.type === "textarea"}
         required = {column.required}
-        error={submit && !values[column.id]}
+        error={submit && column.required && !values[column.id]}
       />
       case FieldUiTypeEnum.LongText:
         return  <TextField
@@ -229,7 +233,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         rows={4}
         multiline={true}
         required = {column.required}
-        error={submit && !values[column.id]}
+        error={submit&& column.required && !values[column.id]}
       />
      case FieldUiTypeEnum.Integer:
      case FieldUiTypeEnum.Double:
@@ -251,7 +255,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
         rows={4}
         // multiline={column.type === "textarea"}
         required={column.required}
-        error={submit && !values[column.id]}
+        error={submit && column.required && !values[column.id]}
       />
       case FieldUiTypeEnum.Date:
       case FieldUiTypeEnum.DateTime:
@@ -263,7 +267,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
               setDateValue(column.id,x)
             }
             }
-            className={submit && !values[column.id] ? 'Mui-error' : ''}
+            className={submit&& column.required && !values[column.id] ? 'Mui-error' : ''}
           />
       </LocalizationProvider>
       case FieldUiTypeEnum.Choice : 
@@ -278,7 +282,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
              setValues({ ...values, [column.id]: e.target.value })
          }
          size="small"
-         error={submit && !values[column.id]}
+         error={submit && column.required && !values[column.id]}
        >
          {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
        </Select>

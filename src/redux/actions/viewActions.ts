@@ -124,7 +124,7 @@ any
     }
   };
 };
-export const reloadRows = (): ThunkAction<
+export const fetchRowsByPage = (page?:number,limit?:number): ThunkAction<
 void,
 RootState,
 null,
@@ -135,8 +135,8 @@ any
       var state = store.getState();
       const response = await listContentService.searchContents(
         state.view.currentView.id,
-        state.view.currentView.page,
-        state.view.currentView.limit,
+        page,
+        limit,
         state.view.currentView.order,
         undefined,
         state.view.currentView.conditions,

@@ -5,7 +5,7 @@ import CentralModal from "src/components/modal/CentralModal";
 import { connect } from "react-redux";
 import { Field, FieldUIType, View } from "src/models/SharedModels";
 import FieldFormPanel from "../@list/FieldFormPanel";
-import { reloadRows, setColumns } from "src/redux/actions/viewActions";
+import { fetchRows, setColumns } from "src/redux/actions/viewActions";
 import { ViewField } from "src/models/ViewField";
 
 
@@ -16,7 +16,7 @@ type ViewFieldConfigProps = {
   currentView:View,
   columns:ViewField[],
   fieldUiTypes : FieldUIType[];
-  reloadRows : ()=>void
+  fetchRows : ()=>void
   setColumns : (columns:ViewField[])=>void
 };
 
@@ -27,7 +27,7 @@ const ViewFieldsConfig = ({
   currentView,
   columns,
   fieldUiTypes,
-  reloadRows,
+  fetchRows,
   setColumns
 }: ViewFieldConfigProps) => {
   const theme = useTheme();
@@ -42,7 +42,7 @@ const ViewFieldsConfig = ({
     viewField.viewFieldVisible = true
     console.log([viewField].concat(columns))
     setColumns([viewField].concat(columns))
-    reloadRows()
+    fetchRows()
   }
   return (
     <CentralModal open={open} handleClose={handleClose}>
@@ -69,7 +69,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setColumns,
-  reloadRows
+  fetchRows
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewFieldsConfig);
