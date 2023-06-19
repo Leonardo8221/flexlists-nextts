@@ -12,7 +12,7 @@ import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
 import { AcceptInviteOutputDto } from 'src/models/ApiOutputModels'
 
 export const listViewService = {
-    getUsers,
+    getViewUsers,
     createView,
     renameView,
     updateView,
@@ -21,12 +21,14 @@ export const listViewService = {
     getView,
     inviteUserToView,
     inviteEmailToView,
+    updateUserRoleForView,
+    deleteUserFromView,
     checkInvite,
     acceptInvite,
 };
 
-async function getUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<User[]>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<User[]>>('/api/listView/getUsers'+`?viewId=${viewId}`)
+async function getViewUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<User[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<User[]>>('/api/listView/getViewUsers'+`?viewId=${viewId}`)
   return response.data;
 };
 async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
@@ -64,6 +66,16 @@ async function inviteUserToView(viewId:number,userId:number,role:Role): Promise<
 };
 async function inviteEmailToView(viewId:number,email:string,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/inviteEmailToView`, {viewId,email,role})
+
+  return response.data;
+};
+async function updateUserRoleForView(viewId:number,userId:number,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateUserRoleForView`, {viewId,userId,role})
+
+  return response.data;
+};
+async function deleteUserFromView(viewId:number,userId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteUserFromView`+`?viewId=${viewId}&userId=${userId}`);
 
   return response.data;
 };

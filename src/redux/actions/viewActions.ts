@@ -200,7 +200,7 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try { 
-      var response = await listViewService.getUsers(viewId);
+      var response = await listViewService.getViewUsers(viewId);
       console.log(response)
       if(isSucc(response))
       {
@@ -264,7 +264,7 @@ export const setViewUsers = (users: any) => ({
     type: 'SET_VIEW_USERS',
     payload: users
   });
-export const setViewUserGroups = (users: any) => ({
+export const setViewUserGroups = (groups: any) => ({
     type: 'SET_VIEW_USER_GROUPS',
-    payload: users
+    payload: groups
   });

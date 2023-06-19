@@ -35,6 +35,7 @@ import { listViewService } from "src/services/listView.service";
 import { GetUserContactsOutputDto } from "src/models/ApiOutputModels";
 import { convertToInteger } from "src/utils/convertUtils";
 import { setViewUsers } from "src/redux/actions/viewActions";
+import CentralModal from "src/components/modal/CentralModal";
 
 type ShareListProps = {
   open: boolean;
@@ -211,11 +212,9 @@ const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
          return;
       var existContact = contacts.find((x)=>x.email === invitedEmail );
       setSubmit(true)
-      console.log('aaa')
       if(existContact)
       {
          let inviteToUserResponse = await listViewService.inviteUserToView(convertToInteger(router.query.viewId),existContact.userId,role)
-         console.log(inviteToUserResponse)
          if(isSucc(inviteToUserResponse))
          {
           setSuccessMessage(`Invite to ${invitedEmail} sent`)
@@ -310,10 +309,12 @@ const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
           </Button>
         </Grid>
       </Grid>
-      <UserListAccess users={users} />
+      <UserListAccess users={users} roles={roles}/>
     </>
   );
 };
+
+
 type ShareGroupsProps = {
   userGroups: any[];
   roles: { name: string; label: string }[];
