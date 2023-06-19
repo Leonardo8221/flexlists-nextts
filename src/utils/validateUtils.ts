@@ -69,3 +69,7 @@ export function isEnum<T extends Record<string, string>>(enumObj: T, value: stri
 export function isEnumArray<T extends Record<string, string>>(enumObj: T, values: string[]): values is Array<T[keyof T]> {
     return values.every((value) => Object.values(enumObj).includes(value));
 }
+export function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}

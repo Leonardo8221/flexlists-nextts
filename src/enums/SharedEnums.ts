@@ -109,3 +109,14 @@ export enum FilterOperator
   in = 'in',
   nin = 'nin'
 }
+export enum UserStatus {
+    InActive = 'InActive',
+    Active = 'Active',
+    Suspended = 'Suspended',
+    ActivationPending = 'ActivationPending',
+}
+export enum MembershipLevel {
+    Free = 'Free',
+    Premium = 'Premium',
+    Enterprise = 'Enterprise',
+}

@@ -1,21 +1,34 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
+import { User } from 'src/models/SharedModels'
 import { CreateViewOutputDto } from 'src/models/ApiOutputModels'
 import { ViewType } from 'src/enums/SharedEnums'
 import { ListCategory } from 'src/enums/SharedEnums'
 import { Sort } from 'src/models/SharedModels'
 import { Query } from 'src/models/SharedModels'
 import { View } from 'src/models/SharedModels'
+import { Role } from 'src/enums/SharedEnums'
+import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
+import { AcceptInviteOutputDto } from 'src/models/ApiOutputModels'
 
 export const listViewService = {
+    getUsers,
     createView,
     renameView,
     updateView,
     getViews,
     softDeleteView,
     getView,
+    inviteUserToView,
+    inviteEmailToView,
+    checkInvite,
+    acceptInvite,
 };
 
+async function getUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<User[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<User[]>>('/api/listView/getUsers'+`?viewId=${viewId}`)
+  return response.data;
+};
 async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>>(`/api/listView/createView`, {listId,name,type,config,template,category,page,limit,order,query,description,conditions,fields})
 
@@ -42,5 +55,23 @@ async function softDeleteView(viewId:number): Promise<FlexlistsError|FlexlistsSu
 };
 async function getView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getView'+`?viewId=${viewId}`)
+  return response.data;
+};
+async function inviteUserToView(viewId:number,userId:number,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/inviteUserToView`, {viewId,userId,role})
+
+  return response.data;
+};
+async function inviteEmailToView(viewId:number,email:string,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/inviteEmailToView`, {viewId,email,role})
+
+  return response.data;
+};
+async function checkInvite(uuid:string): Promise<FlexlistsError|FlexlistsSuccess<CheckInviteOutputDto>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<CheckInviteOutputDto>>('/api/listView/checkInvite'+`?uuid=${uuid}`)
+  return response.data;
+};
+async function acceptInvite(uuid:string): Promise<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>>('/api/listView/acceptInvite'+`?uuid=${uuid}`)
   return response.data;
 };

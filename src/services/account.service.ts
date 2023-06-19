@@ -1,8 +1,10 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
+import { GetUserContactsOutputDto } from 'src/models/ApiOutputModels'
 import { GetProfileOutputDto } from 'src/models/ApiOutputModels'
 
 export const accountService = {
+    getUserContacts,
     updateProfile,
     getProfile,
     changePassword,
@@ -11,7 +13,11 @@ export const accountService = {
     deleteUser,
 };
 
-async function updateProfile(userId:number,name:string,firstName:string,lastName:string,phonenumber:string,avatar:string): Promise<FlexlistsError|FlexlistsSuccess> {
+async function getUserContacts(): Promise<FlexlistsError|FlexlistsSuccess<GetUserContactsOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetUserContactsOutputDto[]>>('/api/account/getUserContacts')
+  return response.data;
+};
+async function updateProfile(userId:number,name?:string,firstName?:string,lastName?:string,phonenumber?:string,avatar?:string): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/account/updateProfile`, {userId,name,firstName,lastName,phonenumber,avatar})
 
   return response.data;

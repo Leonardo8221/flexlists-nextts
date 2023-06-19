@@ -21,7 +21,7 @@ axiosInstance.interceptors.response.use(
     store.dispatch(setLoading(false))
     if (
       error.response.status === 401 &&
-      !originalRequest.url.includes('auth/verifyToken')
+      (!originalRequest.url.includes('auth/verifyToken'))
     ) 
     {
       window.location.href = '/auth/login';

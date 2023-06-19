@@ -11,8 +11,10 @@ import {
   Select,
   MenuItem,
   Tabs,
+  Autocomplete,
+  Alert,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import UserListAccess from "src/components/list-access/UserListAccess";
@@ -25,12 +27,21 @@ import UserGroupListAccess from "src/components/list-access/GroupListAccess";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
 import GroupsIcon from "@mui/icons-material/Groups";
+import { useRouter } from "next/router";
+import { accountService } from "src/services/account.service";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
+import { validateEmail } from "src/utils/validateUtils";
+import { listViewService } from "src/services/listView.service";
+import { GetUserContactsOutputDto } from "src/models/ApiOutputModels";
+import { convertToInteger } from "src/utils/convertUtils";
+import { setViewUsers } from "src/redux/actions/viewActions";
 
 type ShareListProps = {
   open: boolean;
   handleClose: () => void;
   users: any[];
   userGroups: any[];
+  setViewUsers:(newUsers:any[])=>void
 };
 
 const style = {
@@ -76,7 +87,9 @@ const ShareList = ({
   handleClose,
   users,
   userGroups,
+  setViewUsers
 }: ShareListProps) => {
+ 
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
   RoleLabel.forEach((value, key) => {
@@ -89,7 +102,7 @@ const ShareList = ({
     {
       value: "Users",
       icon: <PersonIcon />,
-      component: <ShareUsers users={users} roles={roles} />,
+      component: <ShareUsers users={users} roles={roles} setViewUsers= {setViewUsers} />,
     },
     {
       value: "Groups",
@@ -158,17 +171,87 @@ const ShareList = ({
 type ShareUsersProps = {
   users: any[];
   roles: { name: string; label: string }[];
+  setViewUsers: (newUsers:any[])=>void
 };
-const ShareUsers = ({ users, roles }: ShareUsersProps) => {
+const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
+  const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
+  const [contacts,setContacts] = useState<GetUserContactsOutputDto[]>([])
+  const [invitedEmail,setInvitedEmail] = useState<any>('')
+  const [submit,setSubmit] = useState<boolean>(false)
+  const [isEmailValid, setEmailValid] = useState(false);
+  const [emailDirty, setEmailDirty] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [successMessage,setSuccessMessage] = useState<string>('')
+  useEffect(()=>{
+    async function fetchData ()
+    {
+       var contactsResponse = await accountService.getUserContacts();
+       if(isSucc(contactsResponse) && contactsResponse.data)
+       {
+         setContacts(contactsResponse.data);
+       }
+    }
+    if(router.isReady)
+    {
+      fetchData()
+    }
+  },[router.isReady])
+  const onSubmit = async() =>
+  {
+      if(!router.query.viewId)
+      {
+        setError('view id not exist')
+        return;
+      }
+      if(!isEmailValid)
+         return;
+      var existContact = contacts.find((x)=>x.email === invitedEmail );
+      setSubmit(true)
+      console.log('aaa')
+      if(existContact)
+      {
+         let inviteToUserResponse = await listViewService.inviteUserToView(convertToInteger(router.query.viewId),existContact.userId,role)
+         console.log(inviteToUserResponse)
+         if(isSucc(inviteToUserResponse))
+         {
+          setSuccessMessage(`Invite to ${invitedEmail} sent`)
+         }
+         else
+         {
+          setError((inviteToUserResponse as FlexlistsError).message)
+         }
+      }
+      else
+      {
+        let inviteToEmailResponse = await listViewService.inviteEmailToView(convertToInteger(router.query.viewId),invitedEmail,role)
+        console.log(inviteToEmailResponse)
+        if(isSucc(inviteToEmailResponse))
+        {
+          console.log('bbbb')
+          setSuccessMessage(`Invite to ${invitedEmail} sent`)
+        }
+        else
+         {
+          setError((inviteToEmailResponse as FlexlistsError).message)
+         }
+      }
+
+  }
   return (
     <>
       <Typography variant="subtitle1" sx={{ mt: 1 }}>
         Invite user
       </Typography>
+      <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+      </Box>
+      <Box>
+          {submit && successMessage && <Alert severity="success">{successMessage}</Alert>}
+      </Box>
       <Grid container spacing={2}>
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
@@ -189,10 +272,40 @@ const ShareUsers = ({ users, roles }: ShareUsersProps) => {
           <FormLabel>
             <Typography variant="body2">Users</Typography>
           </FormLabel>
-          <TextField placeholder="Invite my contacts or invite by email ..."></TextField>
+          <Autocomplete
+            freeSolo
+            id="free-solo-2-demo"
+            disableClearable
+            onInputChange={(event, newInputValue) => {
+              setInvitedEmail(newInputValue);
+              if(!validateEmail(newInputValue))
+              {
+                 setEmailValid(false)
+              }
+              else
+              {
+                setEmailValid(true)
+              }
+            }}
+            options={contacts.map((option) => option.email)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Invite contacts or invite by email ..."
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'search',
+                }}
+                required
+                error={emailDirty && isEmailValid === false}                                        
+                onBlur={() => setEmailDirty(true)}
+              />
+            )}
+          />
+         
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+          <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={()=>onSubmit()}>
             Invite
           </Button>
         </Grid>
@@ -299,7 +412,9 @@ const mapStateToProps = (state: any) => ({
   userGroups: state.view.userGroups,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setViewUsers
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareList);
 // function ShareTabs() {

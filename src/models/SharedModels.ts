@@ -2,6 +2,8 @@ import { FieldType } from 'src/enums/SharedEnums'
 import { Role } from 'src/enums/SharedEnums'
 import { ViewType } from 'src/enums/SharedEnums'
 import { ListCategory } from 'src/enums/SharedEnums'
+import { UserStatus } from 'src/enums/SharedEnums'
+import { MembershipLevel } from 'src/enums/SharedEnums'
 
 export type CmpValueType = 'Field' | 'Array' | 'Variable' | 'SearchString'
 
@@ -91,4 +93,14 @@ export type SearchTypeModel = {
     name:string;
     description:string;
     text:string;
+}
+export type User = {
+    userId:number
+    name:string
+    firstName:string
+    lastName:string
+    email:string
+    systemRole:string
+    status:UserStatus
+    membershipLevel:MembershipLevel
 }

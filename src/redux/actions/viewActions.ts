@@ -199,50 +199,14 @@ null,
 any
 > => {
   return async (dispatch: Dispatch<any>) => {
-    try {
-          dispatch(setViewUsers([
-          {
-            name: 'user1',
-            avatar: '/assets/images/avatars/avatar_1.jpg'
-          },
-          {
-            name: 'user2',
-            avatar: '/assets/images/avatars/avatar_2.jpg'
-          },
-          {
-            name: 'user3',
-            avatar: '/assets/images/avatars/avatar_3.jpg'
-          },
-          {
-            name: 'user4',
-            avatar: '/assets/images/avatars/avatar_4.jpg'
-          },
-          {
-            name: 'user5',
-            avatar: '/assets/images/avatars/avatar_5.jpg'
-          },
-          {
-            name: 'user6',
-            avatar: '/assets/images/avatars/avatar_6.jpg'
-          },
-          {
-            name: 'user7',
-            avatar: '/assets/images/avatars/avatar_7.jpg'
-          },
-          {
-            name: 'user8',
-            avatar: '/assets/images/avatars/avatar_8.jpg'
-          },
-          {
-            name: 'user9',
-            avatar: '/assets/images/avatars/avatar_9.jpg'
-          }
-        ]))
-        // const response = await listViewService.getU(viewId)
-        // if(isSucc(response))
-        // {
-        //   dispatch(setViewUsers(response.data));
-        // } 
+    try { 
+      var response = await listViewService.getUsers(viewId);
+      console.log(response)
+      if(isSucc(response))
+      {
+         dispatch(setViewUsers(response.data))
+      }
+          
     } catch (error) {
      console.log(error)
     }

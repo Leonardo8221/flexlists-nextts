@@ -5,11 +5,6 @@ export type CreateListOutputDto = {
 export type PublishListOutputDto = {
     code:string
 }
-export type GetUsersOutputDto = {
-    userId:number
-    name:string
-    role:Role
-}
 export type AddAccessToListOutputDto = {
     keyId:number
     key:string
@@ -58,6 +53,14 @@ export type SearchOutputDto = {
 export type CreateViewOutputDto = {
     listId:number
     viewId:number
+}
+export type AcceptInviteOutputDto = {
+    viewId?:string
+}
+export type GetUserContactsOutputDto = {
+    userId:number
+    name:string
+    email:string
 }
 export type GetProfileOutputDto = {
     name:string

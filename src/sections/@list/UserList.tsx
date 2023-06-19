@@ -42,7 +42,7 @@ const ViewUsersList = ({ users,getViewUsers,userGroups,getViewUserGroups }: View
             <Box
               key={user.name}
               component="img"
-              src={user.avatar}
+              src={user.avatar??'/assets/images/avatars/avatar_1.jpg'}
               sx={{
                 width: 32,
                 height: 32,

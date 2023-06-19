@@ -16,7 +16,7 @@ type UserListAccessProps =
 }
 function UserListAccess({users}:UserListAccessProps) {
   const [role, setRole] = useState("");
-
+  console.log(users)
   const handleChange = (event: SelectChangeEvent) => {
   };
   return (
@@ -28,7 +28,7 @@ function UserListAccess({users}:UserListAccessProps) {
                 <Box
                   key={user.name}
                   component="img"
-                  src={user.avatar}
+                  src={user.avatar??'/assets/images/avatars/avatar_1.jpg'}
                   sx={{
                     width: 32,
                     height: 32,
@@ -47,7 +47,7 @@ function UserListAccess({users}:UserListAccessProps) {
                 >
               <Box>
                 <Typography variant="body1">{user.name}</Typography>
-                <Typography variant="body2">{user.name}</Typography>
+                <Typography variant="body2">{user.email}</Typography>
               </Box>
               <FormControl
                 variant="standard"
