@@ -6,9 +6,15 @@ import {
   TextField,
   Button,
   Box,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { authService } from "src/services/auth.service";
+import { isSucc } from "src/models/ApiResponse";
+import { useRouter } from "next/router";
+import { PATH_AUTH } from "src/routes/paths";
 
 const theme = createTheme({
   components: {
@@ -31,14 +37,23 @@ const theme = createTheme({
 
 const VerifyEmail = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [canSubmit, setCanSubmit] = React.useState(false);
+  const [token, setToken] = React.useState<string>("      ");
+  const router = useRouter();
+  const [error, setError] = React.useState<string>('');
+
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
     const inputValue = event.target.value;
+    const input = inputRefs.current[index];
+    if (isNaN(parseInt(inputValue))) {
+      input!.value = ''
+      return
+    }
     if (inputValue.length <= 1) {
-      const input = inputRefs.current[index];
       if (input) {
         input.value = inputValue;
         if (inputValue.length === 1) {
@@ -54,15 +69,49 @@ const VerifyEmail = () => {
       }
     } else {
       // If more than one character is entered, keep only the first character
-      const input = inputRefs.current[index];
       if (input) {
         input.value = inputValue.charAt(0);
       }
     }
+    let _token = token.toString()
+    // set the _token[index] to inputValue 
+    _token = _token.substring(0, index) + (input?.value && input.value.length > 0 ? input.value : ' ') + _token.substring(index + 1);
+    setToken(_token)
+    setCanSubmit(_token.split('').filter((x) => x !== ' ').length === 6)
   };
+
+  const emptyInput = () => {
+    for (let i = 0; i < 6; i++) {
+
+      const input = inputRefs.current[i];
+      input!.value = ''
+    }
+    setToken('      ')
+    inputRefs.current[0]?.focus()
+  }
+
+  const handleSubmit = async () => {
+    try {
+      setCanSubmit(false)
+      let verifyResponse = await authService.verifySignup(token)
+      if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
+        router.push({ pathname: PATH_AUTH.login });
+        return;
+      }
+      else {
+        emptyInput()
+        setError('Verification failed, invalid code.')
+      }
+    }
+    catch (err) {
+      emptyInput()
+      setError('Verification failed, invalid code.')
+    }
+  }
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Backspace") {
+
       const currentInput = event.target as HTMLInputElement;
       if (currentInput.value.length === 0) {
         const currentIndex = inputRefs.current.findIndex(
@@ -74,9 +123,15 @@ const VerifyEmail = () => {
         }
       }
     }
+    setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6)
   };
+
+  const handleClose = () => {
+    setError('')
+  }
   return (
     <>
+
       <Box
         component="img"
         sx={{
@@ -97,6 +152,7 @@ const VerifyEmail = () => {
           justifyContent: "center",
         }}
       >
+
         <Grid
           container
           rowSpacing={3}
@@ -133,7 +189,7 @@ const VerifyEmail = () => {
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
-                    type: "number",
+                    type: "text",
                   }}
                 ></TextField>
                 <TextField
@@ -143,7 +199,7 @@ const VerifyEmail = () => {
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
-                    type: "number",
+                    type: "text",
                   }}
                 ></TextField>
                 <TextField
@@ -153,7 +209,7 @@ const VerifyEmail = () => {
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
-                    type: "number",
+                    type: "text",
                   }}
                 ></TextField>
                 <TextField
@@ -163,7 +219,7 @@ const VerifyEmail = () => {
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
-                    type: "number",
+                    type: "text",
                   }}
                 ></TextField>
                 <TextField
@@ -173,7 +229,7 @@ const VerifyEmail = () => {
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
-                    type: "number",
+                    type: "text",
                   }}
                 ></TextField>
                 <TextField
@@ -183,7 +239,7 @@ const VerifyEmail = () => {
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
-                    type: "number",
+                    type: "text",
                   }}
                 ></TextField>
               </Box>
@@ -196,15 +252,22 @@ const VerifyEmail = () => {
               href="#"
               size="large"
               variant="contained"
+              disabled={!canSubmit}
               sx={{
                 width: "100%",
                 backgroundColor: "#FFD232",
                 color: "#0D0934",
                 textTransform: "uppercase",
               }}
+              onClick={() => handleSubmit()}
             >
               Submit
             </Button>
+            <Snackbar open={error !== ''} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                {error}
+              </Alert>
+            </Snackbar>
           </Grid>
         </Grid>
       </Container>
