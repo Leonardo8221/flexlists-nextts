@@ -8,6 +8,7 @@ import {
   Box,
   Alert,
   Snackbar,
+  AlertColor,
 } from "@mui/material";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -15,6 +16,8 @@ import { authService } from "src/services/auth.service";
 import { isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_AUTH } from "src/routes/paths";
+import { setMessage } from "src/redux/actions/authAction";
+import { connect } from "react-redux";
 
 const theme = createTheme({
   components: {
@@ -35,13 +38,35 @@ const theme = createTheme({
   },
 });
 
-const VerifyEmail = () => {
+
+interface VerifyEmailProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
+
+const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [canSubmit, setCanSubmit] = React.useState(false);
   const [token, setToken] = React.useState<string>("      ");
   const router = useRouter();
-  const [error, setError] = React.useState<string>('');
+  const [flash, setFlash] = React.useState<{ message: string, type: string } | undefined>(undefined);
   const [email, setEmail] = React.useState<string>('');
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
+      }
+    }
+    checkMessage()
+  }, [message])
+
+
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
 
   useEffect(() => {
     function routerCheck() {
@@ -106,17 +131,17 @@ const VerifyEmail = () => {
       setCanSubmit(false)
       let verifyResponse = await authService.verifySignup(token, email)
       if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
-        router.push({ pathname: PATH_AUTH.login });
+        await router.push({ pathname: PATH_AUTH.login });
         return;
       }
       else {
         emptyInput()
-        setError('Verification failed, invalid code.')
+        setFlashMessage('Verification failed, invalid code.')
       }
     }
     catch (err) {
       emptyInput()
-      setError('Verification failed, invalid code.')
+      setFlashMessage('Verification failed, invalid code.')
     }
   }
 
@@ -157,7 +182,9 @@ const VerifyEmail = () => {
   };
 
   const handleClose = () => {
-    setError('')
+    console.log('hiding')
+    setFlash(undefined)
+    setMessage(null)
   }
   return (
     <>
@@ -308,16 +335,25 @@ const VerifyEmail = () => {
             >
               Submit
             </Button>
-            <Snackbar open={error !== ''} autoHideDuration={6000} onClose={handleClose}>
-              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                {error}
+            <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+                {flash?.message}
               </Alert>
             </Snackbar>
           </Grid>
         </Grid>
-      </Container>
+      </Container >
     </>
   );
 };
 
-export default VerifyEmail;
+const mapStateToProps = (state: any) => ({
+  message: state.auth.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmail);
+
