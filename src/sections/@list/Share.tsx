@@ -23,7 +23,6 @@ import ManageKeys from "src/components/share-list/ManageKeys";
 import { connect } from "react-redux";
 import { RoleLabel } from "src/enums/ShareEnumLabels";
 import { Role } from "src/enums/SharedEnums";
-import UserGroupListAccess from "src/components/list-access/GroupListAccess";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -32,17 +31,19 @@ import { accountService } from "src/services/account.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { validateEmail } from "src/utils/validateUtils";
 import { listViewService } from "src/services/listView.service";
-import { GetUserContactsOutputDto } from "src/models/ApiOutputModels";
+import { GetUserContactsOutputDto, GetUserGroupsOutputDto, GetViewGroupsOutputDto } from "src/models/ApiOutputModels";
 import { convertToInteger } from "src/utils/convertUtils";
-import { setViewUsers } from "src/redux/actions/viewActions";
-import CentralModal from "src/components/modal/CentralModal";
+import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
+import GroupListAccess from "src/components/list-access/GroupListAccess";
+import { groupService } from "src/services/group.service";
 
 type ShareListProps = {
   open: boolean;
   handleClose: () => void;
   users: any[];
-  userGroups: any[];
+  viewGroups: any[];
   setViewUsers:(newUsers:any[])=>void
+  setViewGroups:(newViewGroups:GetViewGroupsOutputDto[])=>void
 };
 
 const style = {
@@ -87,8 +88,9 @@ const ShareList = ({
   open,
   handleClose,
   users,
-  userGroups,
-  setViewUsers
+  viewGroups,
+  setViewUsers,
+  setViewGroups
 }: ShareListProps) => {
  
   const [currentTab, setCurrentTab] = useState("Users");
@@ -108,7 +110,7 @@ const ShareList = ({
     {
       value: "Groups",
       icon: <GroupsIcon />,
-      component: <ShareGroups userGroups={userGroups} roles={roles} />,
+      component: <ShareGroups viewGroups={viewGroups} roles={roles} setViewGroups={setViewGroups} />,
     },
     {
       value: "Keys",
@@ -316,20 +318,77 @@ const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
 
 
 type ShareGroupsProps = {
-  userGroups: any[];
+  viewGroups: GetViewGroupsOutputDto[];
   roles: { name: string; label: string }[];
+  setViewGroups : (newViewGroups:GetViewGroupsOutputDto[]) =>void
 };
-const ShareGroups = ({ userGroups, roles }: ShareGroupsProps) => {
+const ShareGroups = ({ viewGroups, roles ,setViewGroups}: ShareGroupsProps) => {
+  const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
+  const [submit,setSubmit] = useState<boolean>(false)
+  const [groups,setGroups] = useState<GetUserGroupsOutputDto[]>([])
+  const [currentGroup,setCurrentGroup] = useState<GetUserGroupsOutputDto|null>();
+  const [error, setError] = useState<string>("");
+  const [successMessage,setSuccessMessage] = useState<string>('')
+  useEffect(()=>{
+    async function fetchData()
+    {
+        var response = await groupService.getUserGroups();
+       
+        if(isSucc(response) && response.data)
+        {
+          setGroups(response.data)
+        }
+    }
+    if(router.isReady)
+    {
+      fetchData()
+    }
+  },[router.isReady])
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
+  const onGroupChange = (newGroup : GetUserGroupsOutputDto|null) =>
+  {
+     setCurrentGroup(newGroup)
+  }
+  const onsubmit = async() =>
+  {
+     setSubmit(true)
+  
+     if(!currentGroup || !currentGroup.groupId)
+     {
+       setError("Group required")
+       setSuccessMessage("");
+       return;
+     }
+     var response = await listViewService.addTableViewToGroup(currentGroup.groupId,convertToInteger(router.query.viewId),role)
+     if(isSucc(response))
+     {
+        setError("");
+        setSuccessMessage("Group added sucessfully");
+        var newViewGroups : GetViewGroupsOutputDto[] = Object.assign([],viewGroups);
+        newViewGroups.push({groupId:currentGroup.groupId,name:currentGroup.name,role:role})
+        setViewGroups(newViewGroups);
+        setCurrentGroup(null)
+     }
+     else
+     {
+        setSuccessMessage("");
+       setError((response as FlexlistsError).message)
+     }
+  }
   return (
     <>
       <Typography variant="subtitle1" sx={{ mt: 1 }}>
         Invite group
       </Typography>
+      <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
+        {/* <Box>
+          {submit && successMessage && <Alert severity="success">{successMessage}</Alert>}
+        </Box> */}
       <Grid container spacing={2}>
+        
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
@@ -345,19 +404,34 @@ const ShareGroups = ({ userGroups, roles }: ShareGroupsProps) => {
               })}
           </Select>
         </Grid>
-        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+        {
+          groups &&  <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Groups</Typography>
           </FormLabel>
-          <TextField placeholder="Search group..."></TextField>
+          <Autocomplete
+            id="combo-box-groups"
+            filterSelectedOptions={true}
+            options={groups.filter((x)=>!viewGroups.find((g)=>g.groupId===x.groupId))}
+            getOptionLabel={(option) => option.name}
+            fullWidth
+            value={currentGroup??null}
+            onChange={(event, newInputValue) => {
+              onGroupChange(newInputValue);
+            }}
+            sx={{ my: 1 }}
+            renderInput={(params) => <TextField {...params} label="Search groups"  />}
+          />
         </Grid>
+        }
+       
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+          <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={()=>onsubmit()}>
             Add Group
           </Button>
         </Grid>
       </Grid>
-      <UserGroupListAccess userGroups={userGroups} />
+      <GroupListAccess roles={roles} viewGroups={viewGroups} setViewGroups={setViewGroups} />
     </>
   );
 };
@@ -410,276 +484,12 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
 };
 const mapStateToProps = (state: any) => ({
   users: state.view.users,
-  userGroups: state.view.userGroups,
+  viewGroups: state.view.viewGroups,
 });
 
 const mapDispatchToProps = {
-  setViewUsers
+  setViewUsers,
+  setViewGroups
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareList);
-// function ShareTabs() {
-//   const [value, setValue] = useState("1");
-
-//   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-//     setValue(newValue);
-//   };
-
-//   const [age, setAge] = React.useState("");
-
-//   const handleSelectChange = (event: SelectChangeEvent) => {
-//     setAge(event.target.value as string);
-//   };
-//   return (
-//     <React.Fragment>
-//       <TabContext value={value}>
-//         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-//           <TabList
-//             variant="fullWidth"
-//             onChange={handleChange}
-//             aria-label="lab API tabs example"
-//           >
-//             <Tab icon={<PersonIcon />} label="Users" value="users" />
-//             <Tab icon={<KeyIcon />} label="Manage / Share Keys" value="keys" />
-//             <Tab icon={<GroupsIcon />} label="Invite Groups" value="groups" />
-//           </TabList>
-//         </Box>
-//         <TabPanel value="users">
-//           <Box>
-//             <FormLabel>
-//               <Typography variant="subtitle1">People with access:</Typography>
-//             </FormLabel>
-//             <ListAccess />
-//             <Divider sx={{ my: 1 }}></Divider>
-//           </Box>
-//         </TabPanel>
-//         <TabPanel value="keys" sx={{ px: 0 }}>
-//           <Grid container spacing={2}>
-//             <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-//               <FormLabel>
-//                 <Typography variant="body2">Access / Role</Typography>
-//               </FormLabel>
-//               <Select value={age} onChange={handleSelectChange}>
-//                 <MenuItem value="1">Role 1</MenuItem>
-//                 <MenuItem value="2">Role 2</MenuItem>
-//                 <MenuItem value="3">Role 3</MenuItem>
-//               </Select>
-//             </Grid>
-//             <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-//               <FormLabel>
-//                 <Typography variant="body2">Info</Typography>
-//               </FormLabel>
-//               <TextField placeholder="Name of reciever for example..."></TextField>
-//             </Grid>
-//             <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-//               <Button variant="contained" fullWidth sx={{ height: "56px" }}>
-//                 Create Key
-//               </Button>
-//             </Grid>
-//           </Grid>
-//           <Divider sx={{ my: 3, mb: 2 }}></Divider>
-//           <Typography gutterBottom variant="h5">
-//             All keys
-//           </Typography>
-//           <ManageKeys />
-//         </TabPanel>
-//         <TabPanel value="groups">Item Two</TabPanel>
-//       </TabContext>
-//     </React.Fragment>
-//   );
-// }
-// const ShareList1 = (props: Props) => {
-//   const { open, handleClose } = props;
-//   const closeModal = () => {
-//     handleClose();
-//   };
-
-//   return (
-//     <Modal
-//       open={open}
-//       onClose={closeModal}
-//       aria-labelledby="modal-modal-title"
-//       aria-describedby="modal-modal-description"
-//     >
-//       <Box
-//         sx={style}
-//         component={motion.div}
-//         variants={scaleUp}
-//         initial="hidden"
-//         animate="visible"
-//         exit="close"
-//       >
-//         <Typography gutterBottom variant="h5" sx={{ my: 1 }}>
-//           Share
-//         </Typography>
-
-//         {/* <Typography gutterBottom variant="body2" sx={{ my: 1 }}>
-//           You can also let us mail the URL to the other users with the following
-//           form.
-//         </Typography> */}
-//         <Divider sx={{ my: 1 }}></Divider>
-//         <ShareTabs />
-
-//         <Typography variant="subtitle1" sx={{ mt: 1 }}>
-//           Invite user
-//         </Typography>
-//         <FormControl sx={{ my: 1 }}>
-//           <RadioGroup
-//             aria-labelledby="demo-radio-buttons-group-label"
-//             defaultValue="read-only"
-//             name="radio-buttons-group"
-//           >
-//             <FormControlLabel
-//               value="read-only"
-//               control={<Radio />}
-//               label={<Typography variant="body2">Read Only</Typography>}
-//             />
-//             <FormControlLabel
-//               value="read-add"
-//               control={<Radio />}
-//               label={<Typography variant="body2">Read/Add</Typography>}
-//             />
-//             <FormControlLabel
-//               value="read-edit"
-//               control={<Radio />}
-//               label={
-//                 <Typography variant="body2">
-//                   Read and Edit permissions
-//                 </Typography>
-//               }
-//             />
-//             <FormControlLabel
-//               value="full-access"
-//               control={<Radio />}
-//               label={
-//                 <Typography variant="body2">
-//                   Full Management permissions
-//                 </Typography>
-//               }
-//             />
-//           </RadioGroup>
-//         </FormControl>
-//         <Grid container spacing={1}>
-//           <Grid item xs={12} md={10}>
-//             <TextField sx={{ my: 1 }} placeholder="Email address" fullWidth />
-//             <FormLabel
-//               sx={{
-//                 fontSize: { xs: 12, md: 14 },
-//                 display: { xs: "block", md: "none" },
-//               }}
-//               id="multiple-email-address"
-//             >
-//               (separate multiple addresses with a comma)
-//             </FormLabel>
-//           </Grid>
-//           <Grid
-//             item
-//             xs={12}
-//             md={2}
-//             sx={{ display: "flex", alignItems: "center", position: "relative" }}
-//           >
-//             <Button
-//               disabled
-//               fullWidth
-//               variant="outlined"
-//               sx={{
-//                 textTransform: "none",
-//                 height: "56px",
-//               }}
-//             >
-//               Add user(s)
-//             </Button>
-//           </Grid>
-//         </Grid>
-//         <FormLabel
-//           sx={{
-//             fontSize: { xs: 12, md: 14 },
-//             display: { xs: "none", md: "block" },
-//           }}
-//           id="multiple-email-address"
-//         >
-//           (separate multiple addresses with a comma)
-//         </FormLabel>
-//         {/* <Grid container spacing={2}>
-//           <Grid item xs={12} md={6}>
-//             <Box
-//               className="grid-item"
-//               sx={{
-//                 display: "flex",
-//                 flexDirection: "column",
-//                 alignItems: "center",
-//                 border: "solid 1px #ccc",
-//                 borderRadius: "8px",
-//                 py: "16px",
-//                 cursor: "pointer",
-//                 "&:hover": {
-//                   borderColor: "primary.main",
-//                 },
-//                 transition: "all ease .2s",
-//               }}
-//             >
-//               <KeyIcon
-//                 sx={{
-//                   width: "40px",
-//                   height: "40px",
-//                   transition: "all ease .2s",
-//                   ".grid-item:hover &": { color: "primary.main" },
-//                 }}
-//               />
-//               <Typography
-//                 variant="body1"
-//                 sx={{
-//                   transition: "all ease .2s",
-//                   ".grid-item:hover &": { color: "primary.main" },
-//                 }}
-//               >
-//                 Manage / Share Keys
-//               </Typography>
-//             </Box>
-//           </Grid>
-//           <Grid item xs={12} md={6}>
-//             <Box
-//               className="grid-item"
-//               sx={{
-//                 display: "flex",
-//                 flexDirection: "column",
-//                 alignItems: "center",
-//                 border: "solid 1px #ccc",
-//                 borderRadius: "8px",
-//                 py: "16px",
-//                 cursor: "pointer",
-//                 "&:hover": {
-//                   borderColor: "primary.main",
-//                 },
-//                 transition: "all ease .2s",
-//               }}
-//             >
-//               <GroupsIcon
-//                 sx={{
-//                   width: "40px",
-//                   height: "40px",
-//                   transition: "all ease .2s",
-//                   ".grid-item:hover &": { color: "primary.main" },
-//                 }}
-//               />
-//               <Typography
-//                 variant="body1"
-//                 sx={{
-//                   transition: "all ease .2s",
-//                   ".grid-item:hover &": { color: "primary.main" },
-//                 }}
-//               >
-//                 Invite Groups
-//               </Typography>
-//             </Box>
-//           </Grid>
-//         </Grid> */}
-
-//         {/* <ManageKeys /> */}
-//         <Button variant="contained" sx={{ my: 2, mt: 3, width: "25%" }}>
-//           Save
-//         </Button>
-//       </Box>
-//     </Modal>
-//   );
-// };

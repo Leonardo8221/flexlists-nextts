@@ -10,6 +10,7 @@ import { View } from 'src/models/SharedModels'
 import { Role } from 'src/enums/SharedEnums'
 import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
 import { AcceptInviteOutputDto } from 'src/models/ApiOutputModels'
+import { GetViewGroupsOutputDto } from 'src/models/ApiOutputModels'
 import { AddTableViewToGroupOutputDto } from 'src/models/ApiOutputModels'
 
 export const listViewService = {
@@ -26,6 +27,7 @@ export const listViewService = {
     deleteUserFromView,
     checkInvite,
     acceptInvite,
+    getViewGroups,
     addTableViewToGroup,
     updateTableViewGroupRole,
     deleteTableViewFromGroup,
@@ -91,6 +93,10 @@ async function acceptInvite(uuid:string): Promise<FlexlistsError|FlexlistsSucces
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>>('/api/listView/acceptInvite'+`?uuid=${uuid}`)
   return response.data;
 };
+async function getViewGroups(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<GetViewGroupsOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetViewGroupsOutputDto[]>>('/api/listView/getViewGroups'+`?viewId=${viewId}`)
+  return response.data;
+};
 async function addTableViewToGroup(groupId:number,tableViewId:number,role:Role): Promise<FlexlistsError|FlexlistsSuccess<AddTableViewToGroupOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<AddTableViewToGroupOutputDto>>(`/api/listView/addTableViewToGroup`, {groupId,tableViewId,role})
 
@@ -101,7 +107,7 @@ async function updateTableViewGroupRole(groupId:number,tableViewId:number,role:R
 
   return response.data;
 };
-async function deleteTableViewFromGroup(groupId:number,tableViewId:string): Promise<FlexlistsError|FlexlistsSuccess> {
+async function deleteTableViewFromGroup(groupId:number,tableViewId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteTableViewFromGroup`+`?groupId=${groupId}&tableViewId=${tableViewId}`);
 
   return response.data;
