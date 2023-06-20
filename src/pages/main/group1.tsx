@@ -187,7 +187,19 @@ function group1() {
               })}
             </Grid>
           ) : (
-            <Box sx={{ my: 2 }}>List View</Box>
+            <Grid container spacing={2} sx={{ my: 2 }}>
+              {ViewCards.map((view) => {
+                return (
+                  <Grid item md={12}>
+                    <ViewCard
+                      viewName={view.viewName}
+                      viewDesc={view.viewDesc}
+                      bgImage={view.bgImage}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
           )}
         </Grid>
         <Grid
