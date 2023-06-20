@@ -46,6 +46,7 @@ const Login = ({ message, setMessage }: LoginProps) => {
 
   useEffect(() => {
     function checkMessage() {
+
       if (message?.message) {
         setFlash(message)
       }
@@ -102,6 +103,11 @@ const Login = ({ message, setMessage }: LoginProps) => {
         alt="The house from the offer."
         src="/assets/images/background.png"
       />
+      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+          {flash?.message}
+        </Alert>
+      </Snackbar>
       <Container
         maxWidth="sm"
         sx={{
@@ -257,11 +263,7 @@ const Login = ({ message, setMessage }: LoginProps) => {
             </Link>
           </Grid>
         </Grid>
-        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
-            {flash?.message}
-          </Alert>
-        </Snackbar>
+
       </Container>
     </>
   );
