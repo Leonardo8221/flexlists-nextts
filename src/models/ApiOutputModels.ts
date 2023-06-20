@@ -50,12 +50,24 @@ export type SearchOutputDto = {
     count:number
     content:any[]
 }
+export type GetViewUsersOutputDto = {
+    userId:number
+    name:string
+    email:string
+    role:Role
+}
 export type CreateViewOutputDto = {
     listId:number
     viewId:number
 }
+export type CheckInviteOutputDto = {
+    viewId?:string
+}
 export type AcceptInviteOutputDto = {
     viewId?:string
+}
+export type AddTableViewToGroupOutputDto = {
+    groupTableViewId:number
 }
 export type GetUserContactsOutputDto = {
     userId:number
@@ -68,4 +80,26 @@ export type GetProfileOutputDto = {
     lastName:string
     phonenumber?:string
     avatar?:string
+}
+export type CreateUserGroupOutputDto = {
+    groupId:number
+}
+export type GetUserGroupsOutputDto = {
+    groupId:number
+    name:string
+    description?:string
+}
+export type GetGroupViewsOutputDto = {
+    tableViewId:number
+    tableViewName:string
+    role:string
+}
+export type GetGroupUsersOutputDto = {
+    userId:number
+    userName:string
+    firstName:string
+    lastName:string
+}
+export type AddUserToGroupOutputDto = {
+    groupUserId:number
 }

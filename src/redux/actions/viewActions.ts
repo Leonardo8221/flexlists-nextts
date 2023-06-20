@@ -201,7 +201,6 @@ any
   return async (dispatch: Dispatch<any>) => {
     try { 
       var response = await listViewService.getViewUsers(viewId);
-      console.log(response)
       if(isSucc(response))
       {
          dispatch(setViewUsers(response.data))

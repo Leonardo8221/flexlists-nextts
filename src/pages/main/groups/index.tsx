@@ -1,24 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Box, Typography, Button, Grid } from "@mui/material";
 import MainLayout from "src/layouts/view/MainLayout";
 import GroupCard from "src/components/groups/groupCard";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CampaignIcon from "@mui/icons-material/Campaign";
+import { GetUserGroupsOutputDto } from "src/models/ApiOutputModels";
+import { useRouter } from "next/router";
+import { fetchGroups } from "src/redux/actions/groupAction";
+import { connect } from "react-redux";
+import { PATH_MAIN } from "src/routes/paths";
 
-const GroupCards = [
-  {
-    icon: <AttachMoneyIcon />,
-    title: "Sales",
-    description: "14 members",
-  },
-  {
-    icon: <CampaignIcon />,
-    title: "Marketing",
-    description: "7 members",
-  },
-];
+type allGroupsProps = {
+   groups:GetUserGroupsOutputDto[],
+   fetchGroups:()=>void
+}
 
-function allGroups() {
+const AllGroups =({groups,fetchGroups}:allGroupsProps) => {
+  const router = useRouter();
+  useEffect(()=>{
+    if(router.isReady)
+    {
+      fetchGroups();
+    }
+  },[router.isReady])
   return (
     <>
       <MainLayout>
@@ -37,7 +39,7 @@ function allGroups() {
             }}
           >
             <Typography variant="h6">All groups.</Typography>
-            <Button size="medium" variant="contained">
+            <Button size="medium" variant="contained" onClick={()=>{router.push(PATH_MAIN.newGroup)}}>
               Create new group
             </Button>
           </Box>
@@ -48,7 +50,7 @@ function allGroups() {
               pt: 3,
             }}
           >
-            {GroupCards.map((card) => {
+            {groups && groups.map((group) => {
               return (
                 <Grid
                   item
@@ -58,9 +60,9 @@ function allGroups() {
                   key={"/assets/home/heroimg.png"}
                 >
                   <GroupCard
-                    icon={card.icon}
-                    title={card.title}
-                    description={card.description}
+                    icon={<></>}
+                    title={group.name}
+                    description={group.description}
                   ></GroupCard>
                 </Grid>
               );
@@ -71,5 +73,13 @@ function allGroups() {
     </>
   );
 }
+const mapStateToProps = (state: any) => ({
+  groups : state.group.groups,
+});
 
-export default allGroups;
+const mapDispatchToProps = {
+  fetchGroups
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllGroups);
+

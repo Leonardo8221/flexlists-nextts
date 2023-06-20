@@ -1,6 +1,6 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
-import { User } from 'src/models/SharedModels'
+import { GetViewUsersOutputDto } from 'src/models/ApiOutputModels'
 import { CreateViewOutputDto } from 'src/models/ApiOutputModels'
 import { ViewType } from 'src/enums/SharedEnums'
 import { ListCategory } from 'src/enums/SharedEnums'
@@ -10,6 +10,7 @@ import { View } from 'src/models/SharedModels'
 import { Role } from 'src/enums/SharedEnums'
 import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
 import { AcceptInviteOutputDto } from 'src/models/ApiOutputModels'
+import { AddTableViewToGroupOutputDto } from 'src/models/ApiOutputModels'
 
 export const listViewService = {
     getViewUsers,
@@ -25,10 +26,13 @@ export const listViewService = {
     deleteUserFromView,
     checkInvite,
     acceptInvite,
+    addTableViewToGroup,
+    updateTableViewGroupRole,
+    deleteTableViewFromGroup,
 };
 
-async function getViewUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<User[]>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<User[]>>('/api/listView/getViewUsers'+`?viewId=${viewId}`)
+async function getViewUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>>('/api/listView/getViewUsers'+`?viewId=${viewId}`)
   return response.data;
 };
 async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
@@ -85,5 +89,20 @@ async function checkInvite(uuid:string): Promise<FlexlistsError|FlexlistsSuccess
 };
 async function acceptInvite(uuid:string): Promise<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>>('/api/listView/acceptInvite'+`?uuid=${uuid}`)
+  return response.data;
+};
+async function addTableViewToGroup(groupId:number,tableViewId:number,role:Role): Promise<FlexlistsError|FlexlistsSuccess<AddTableViewToGroupOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<AddTableViewToGroupOutputDto>>(`/api/listView/addTableViewToGroup`, {groupId,tableViewId,role})
+
+  return response.data;
+};
+async function updateTableViewGroupRole(groupId:number,tableViewId:number,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateTableViewGroupRole`, {groupId,tableViewId,role})
+
+  return response.data;
+};
+async function deleteTableViewFromGroup(groupId:number,tableViewId:string): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteTableViewFromGroup`+`?groupId=${groupId}&tableViewId=${tableViewId}`);
+
   return response.data;
 };

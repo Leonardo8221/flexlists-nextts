@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import {
   Grid,
@@ -19,6 +19,11 @@ import GridViewIcon from "@mui/icons-material/GridView";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import GroupMembers from "src/components/groups/groupMembers";
 import ViewCard from "src/sections/@view/ViewCard";
+import { useRouter } from "next/router";
+import { GetGroupViewsOutputDto } from "src/models/ApiOutputModels";
+import { groupService } from "src/services/group.service";
+import { convertToInteger } from "src/utils/convertUtils";
+import { isSucc } from "src/models/ApiResponse";
 
 const ViewCards = [
   {
@@ -100,14 +105,33 @@ const ListViewButton = ({
   );
 };
 
-function group1() {
-  const [age, setAge] = React.useState("");
-
+function GroupDetail() {
+  const router = useRouter();
+  const [groupViews,setGroupViews] = useState<GetGroupViewsOutputDto[]>([]) 
+  const [sort,setSort] = useState<string>('')
+  useEffect(()=>{
+    async function fetchData()
+    {
+       if(router.query.groupId)
+       {
+        let getGroupViewsResponse = await groupService.getGroupViews(convertToInteger(router.query.groupId))
+        if(isSucc(getGroupViewsResponse) && getGroupViewsResponse.data)
+        {
+           setGroupViews(getGroupViewsResponse.data)
+        }
+       }
+       
+    }
+    if(router.isReady)
+    {
+      fetchData()
+    }
+  },[router.isReady])
+  
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
   };
 
-  const [isGrid, setIsGrid] = useState(false);
+  const [isGrid, setIsGrid] = useState<boolean>(false);
 
   const handleGridView = () => {
     setIsGrid(true);
@@ -154,7 +178,7 @@ function group1() {
                 }
               />
               <Select
-                value={age}
+                value={sort}
                 variant="standard"
                 defaultValue="1"
                 onChange={handleChange}
@@ -174,13 +198,14 @@ function group1() {
 
           {isGrid ? (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {ViewCards.map((view) => {
+              {groupViews && groupViews.map((view,index) => {
                 return (
-                  <Grid item md={2}>
+                  <Grid item md={2} key={index}>
                     <ViewCard
-                      viewName={view.viewName}
-                      viewDesc={view.viewDesc}
-                      bgImage={view.bgImage}
+                      id = {view.tableViewId}
+                      viewName={view.tableViewName}
+                      viewDesc={""}
+                      bgImage={"/assets/home/heroimg.png"}
                     />
                   </Grid>
                 );
@@ -188,13 +213,14 @@ function group1() {
             </Grid>
           ) : (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {ViewCards.map((view) => {
+              {groupViews.map((view,index) => {
                 return (
-                  <Grid item md={12}>
+                  <Grid item md={12} key={index}>
                     <ViewCard
-                      viewName={view.viewName}
-                      viewDesc={view.viewDesc}
-                      bgImage={view.bgImage}
+                       id = {view.tableViewId}
+                       viewName={view.tableViewName}
+                       viewDesc={""}
+                       bgImage={"/assets/home/heroimg.png"}
                     />
                   </Grid>
                 );
@@ -214,4 +240,4 @@ function group1() {
   );
 }
 
-export default group1;
+export default GroupDetail;

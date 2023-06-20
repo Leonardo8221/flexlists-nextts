@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -8,10 +8,83 @@ import {
   TextField,
   Divider,
   Avatar,
+  Autocomplete,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRouter } from "next/router";
+import { groupService } from "src/services/group.service";
+import { isErr, isSucc } from "src/models/ApiResponse";
+import { convertToInteger } from "src/utils/convertUtils";
+import { GetGroupUsersOutputDto, GetUserContactsOutputDto } from "src/models/ApiOutputModels";
+import { accountService } from "src/services/account.service";
 
 function GroupMembers() {
+  const router = useRouter()
+  const [groupUsers,setGroupUsers] = useState<GetGroupUsersOutputDto[]>([]);
+  const [userContacts,setUserContacts] = useState<GetUserContactsOutputDto[]>([])
+  const [selectedUserName,setSelectedUserName] = useState<string>('')
+  const [submit, setSubmit] = useState(false);
+  const [error, setError] = useState<string>('');
+  useEffect(()=>{
+    async function fetchGroupUsers()
+    {
+       if(router.query.groupId)
+       {
+        let getGroupUsersResponse = await groupService.getGroupUsers(convertToInteger(router.query.groupId))
+        if(isSucc(getGroupUsersResponse) && getGroupUsersResponse.data)
+        {
+          setGroupUsers(getGroupUsersResponse.data)
+        }
+       }
+       
+    }
+    if(router.isReady)
+    {
+      fetchGroupUsers()
+    }
+  },[router.isReady])
+  useEffect(()=>{
+    async function fetchUserContacts()
+    {
+       if(router.query.groupId)
+       {
+        let getUserContactsResponse = await accountService.getUserContacts()
+        console.log(getUserContactsResponse)
+        if(isSucc(getUserContactsResponse) && getUserContactsResponse.data)
+        {
+          setUserContacts(getUserContactsResponse.data)
+        }
+       }
+       
+    }
+    if(router.isReady)
+    {
+      fetchUserContacts()
+    }
+  },[router.isReady])
+  const onSubmit = async()=>{
+     setSubmit(true)
+     if(selectedUserName)
+     {
+       setError("Username required")
+       return;
+     }
+     var user = userContacts.find((x)=>x.email === selectedUserName)
+     if(!user)
+     {
+       setError("Email invalid")
+       return
+     }
+     
+     var response = await groupService.addUserToGroup(convertToInteger(router.query.groupId),user.userId)
+     if(isSucc(response))
+     {
+        var newGroupUsers = Object.assign([],groupUsers);
+        newGroupUsers.push({firstName:'',lastName:'',userId:user.userId,userName:user.name})
+     }
+  }
+
   return (
     <Box>
       <Typography
@@ -23,16 +96,34 @@ function GroupMembers() {
       </Typography>
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          <TextField sx={{ my: 1 }} placeholder="Email address" fullWidth />
+          <Box>
+            {error && <Alert severity="error">{error}</Alert>}
+          </Box>
+          <Autocomplete
+            id="combo-box-user-contact"
+            value = {selectedUserName}
+            onChange={(event: any, newValue: string|null) => {
+              if(newValue)
+              {
+                setSelectedUserName(newValue)
+              }
+            }}
+            options={userContacts.map((option) => option.name)}
+            fullWidth
+            sx={{ my: 1 }}
+            renderInput={(params) => <TextField {...params} label="User name" 
+            error={submit && !selectedUserName} />}
+          
+          />
 
-          <FormLabel
+          {/* <FormLabel
             sx={{
               fontSize: { xs: 12 },
             }}
             id="multiple-email-address"
           >
             (multiple emails separate using comma)
-          </FormLabel>
+          </FormLabel> */}
         </Grid>
         <Grid
           item
@@ -40,15 +131,15 @@ function GroupMembers() {
           sx={{ display: "flex", alignItems: "center", position: "relative" }}
         >
           <Button
-            disabled
             fullWidth
             variant="contained"
             sx={{
               textTransform: "none",
               height: "56px",
             }}
+            onClick={()=>onSubmit()}
           >
-            Add user(s)
+            Add user
           </Button>
         </Grid>
       </Grid>

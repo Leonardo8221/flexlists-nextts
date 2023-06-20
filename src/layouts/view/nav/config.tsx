@@ -6,21 +6,21 @@ const navConfig = [
     path: PATH_MAIN.newView,
     icon: "Favourites_plus",
   },
-  {
-    title: "Dashboard",
-    path: "/dashboard",
-    icon: "Home",
-  },
+  // {
+  //   title: "Dashboard",
+  //   path: "/dashboard",
+  //   icon: "Home",
+  // },
   {
     title: "My Views",
     path: PATH_MAIN.views,
     icon: "List",
   },
-  {
-    title: "Calendar",
-    path: "/main/calendar",
-    icon: "Projects",
-  },
+  // {
+  //   title: "Calendar",
+  //   path: "/main/calendar",
+  //   icon: "Projects",
+  // },
   {
     title: "Apps",
     path: "/",
@@ -28,7 +28,7 @@ const navConfig = [
   },
   {
     title: "Groups",
-    path: "/main/newGroup",
+    path: PATH_MAIN.groups,
     icon: "Groups",
   },
   {

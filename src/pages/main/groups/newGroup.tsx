@@ -5,60 +5,42 @@ import {
   Box,
   Typography,
   TextField,
-  Select,
-  MenuItem,
   Button,
   Divider,
-  Link,
-  SelectChangeEvent,
 } from "@mui/material";
 import IconUploadButton from "src/components/groups/UploadButton";
-import { ListCategory, ViewType } from "src/enums/SharedEnums";
-import { ListCategoryLabel } from "src/enums/ShareEnumLabels";
 import { useRouter } from "next/router";
-import { listService } from "src/services/list.service";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
+import { groupService } from "src/services/group.service";
 export default function NewGroup() {
   const router = useRouter();
-  var categories: { key: string; name: string }[] = [];
-  Object.keys(ListCategory).forEach((x) => {
-    categories.push({ key: x, name: ListCategoryLabel.get(x) ?? "" });
-  });
-  const [currentList, setCurrentList] = useState<{
+  const [currentGroup, setCurrentGroup] = useState<{
     name: string;
     description: string;
-    category: string;
-  }>({ name: "", description: "", category: categories[0].key });
+  }>({ name: "", description: "" });
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    var newList = Object.assign({}, currentList);
-    newList.name = event.target.value;
-    setCurrentList(newList);
+    var newGroup = Object.assign({}, currentGroup);
+    newGroup.name = event.target.value;
+    setCurrentGroup(newGroup);
   };
   const onDescriptionChange = (newValue: string) => {
-    var newList = Object.assign({}, currentList);
-    newList.description = newValue;
-    setCurrentList(newList);
-  };
-  const onCategoryChange = (event: SelectChangeEvent) => {
-    var newList = Object.assign({}, currentList);
-    newList.category = event.target.value;
-    setCurrentList(newList);
+    var newGroup = Object.assign({}, currentGroup);
+    newGroup.description = newValue;
+    setCurrentGroup(newGroup);
   };
   const handleSubmit = async () => {
-    var createListResponse = await listService.createList(
-      currentList.name,
-      currentList.description,
-      currentList.category as ListCategory,
-      ViewType.List
+    var createListResponse = await groupService.createUserGroup(
+      currentGroup.name,
+      currentGroup.description
     );
     if (
       isSucc(createListResponse) &&
       createListResponse.data &&
-      createListResponse.data.listId
+      createListResponse.data.groupId
     ) {
       router.push({
-        pathname: `${PATH_MAIN.views}/${createListResponse.data.listId}`,
+        pathname: `${PATH_MAIN.groups}/${createListResponse.data.groupId}`,
       });
     }
   };
@@ -85,7 +67,7 @@ export default function NewGroup() {
               required
               fullWidth
               id="fullWidth"
-              value={currentList.name}
+              value={currentGroup.name}
               onChange={onNameChange}
             />
           </Box>
@@ -94,27 +76,11 @@ export default function NewGroup() {
               Description
             </Typography>
             <WysiwygEditor
-              value={currentList.description}
+              value={currentGroup.description}
               setValue={(newValue) => onDescriptionChange(newValue)}
             />
           </Box>
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Category
-            </Typography>
-            <Select
-              fullWidth
-              displayEmpty
-              value={currentList.category}
-              onChange={onCategoryChange}
-            >
-              {categories.map((option) => (
-                <MenuItem key={option.key} value={option.key}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </Box>
+          
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
               Icon
@@ -130,12 +96,6 @@ export default function NewGroup() {
             Create Group
           </Button>
         </Box>
-        {/* <Box sx={{ borderLeft: "solid 1px #ccc", p: 2 }}>
-          <Typography variant="h4">List details</Typography>
-          <Typography variant="body1">
-            Color picker, users and their permissions
-          </Typography>
-        </Box> */}
       </Box>
     </MainLayout>
   );
