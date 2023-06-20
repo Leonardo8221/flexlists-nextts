@@ -11,60 +11,84 @@ import {
   InputAdornment,
   IconButton,
   Alert,
-  Box
+  Box,
+  Snackbar,
+  AlertColor
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
 import SocialLogin from '../../sections/auth/SocialLoginButtons';
 import LoginIcon from "@mui/icons-material/Login";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { authService } from '../../services/auth.service';
 import Iconify from '../../components/iconify';
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
+import { setMessage } from "src/redux/actions/authAction";
+import { connect } from "react-redux";
 
-const Login = () => {
+
+interface LoginProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
+
+const Login = ({ message, setMessage }: LoginProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
-  const [userName,setUserName] = useState<string>('');
-  const [password,setPassword] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
 
-  const handleSubmit = async() => {
-      try {
-         if(!userName)
-         {
-          setError("User Name required")
-          return;
-         }
-         if(!password)
-         {
-          setError("Password required")
-          return;
-         }
-         var response = await authService.login(userName,password);
-         if(isSucc(response))
-         {
-           router.push({pathname:PATH_MAIN.views});
-         }
-      } catch (error) {
-        
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
       }
+    }
+    checkMessage()
+  }, [message])
+
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
+  const handleClose = () => {
+    setFlash(undefined)
+    setMessage(null)
+  }
+
+  const handleSubmit = async () => {
+    try {
+      if (!userName) {
+        setError("User Name required")
+        return;
+      }
+      if (!password) {
+        setError("Password required")
+        return;
+      }
+      var response = await authService.login(userName, password);
+      if (isSucc(response)) {
+        router.push({ pathname: PATH_MAIN.views });
+      }
+    } catch (error) {
+
+    }
   };
 
-  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) =>
-  {
-     setUserName(event.target.value);
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserName(event.target.value);
   }
 
-  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
-  {
-     setPassword(event.target.value);
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
   }
-  
+
   return (
     <>
       <Box
@@ -94,7 +118,7 @@ const Login = () => {
             alignItems: "center",
             justifyContent: "center",
             py: 4,
-            px: {xs: 1, md: 4},
+            px: { xs: 1, md: 4 },
             borderRadius: "4px",
             boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
             backgroundColor: 'white',
@@ -138,7 +162,7 @@ const Login = () => {
               type="email"
               required
               value={userName}
-              onChange = {handleChangeEmail}
+              onChange={handleChangeEmail}
             ></TextField>
           </Grid>
 
@@ -233,9 +257,23 @@ const Login = () => {
             </Link>
           </Grid>
         </Grid>
+        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+            {flash?.message}
+          </Alert>
+        </Snackbar>
       </Container>
     </>
   );
 };
 
-export default Login;
+const mapStateToProps = (state: any) => ({
+  message: state.auth.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
+

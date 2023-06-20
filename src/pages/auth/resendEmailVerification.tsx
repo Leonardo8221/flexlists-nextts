@@ -55,7 +55,16 @@ const VerifyEmail = () => {
               Please click button below to send verification link again.
             </Typography>
           </Grid>
-
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Email"
+              type="email"
+              required
+            // value={userName}
+            // onChange={handleChangeEmail}
+            ></TextField>
+          </Grid>
           <Grid item xs={12}>
             <Button
               fullWidth
