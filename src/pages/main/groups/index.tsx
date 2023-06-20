@@ -50,16 +50,18 @@ const AllGroups =({groups,fetchGroups}:allGroupsProps) => {
               pt: 3,
             }}
           >
-            {groups && groups.map((group) => {
+            {groups && groups.map((group,index) => {
               return (
                 <Grid
                   item
                   xs={12}
                   sm={6}
                   md={2}
-                  key={"/assets/home/heroimg.png"}
+                  key={index}
+                  
                 >
                   <GroupCard
+                    groupId={group.groupId}
                     icon={<></>}
                     title={group.name}
                     description={group.description}

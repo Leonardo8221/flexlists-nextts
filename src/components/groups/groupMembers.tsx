@@ -14,10 +14,11 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/router";
 import { groupService } from "src/services/group.service";
-import { isErr, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { convertToInteger } from "src/utils/convertUtils";
 import { GetGroupUsersOutputDto, GetUserContactsOutputDto } from "src/models/ApiOutputModels";
 import { accountService } from "src/services/account.service";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function GroupMembers() {
   const router = useRouter()
@@ -27,7 +28,7 @@ function GroupMembers() {
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState<string>('');
   useEffect(()=>{
-    async function fetchGroupUsers()
+    async function fetchData()
     {
        if(router.query.groupId)
        {
@@ -36,21 +37,7 @@ function GroupMembers() {
         {
           setGroupUsers(getGroupUsersResponse.data)
         }
-       }
-       
-    }
-    if(router.isReady)
-    {
-      fetchGroupUsers()
-    }
-  },[router.isReady])
-  useEffect(()=>{
-    async function fetchUserContacts()
-    {
-       if(router.query.groupId)
-       {
         let getUserContactsResponse = await accountService.getUserContacts()
-        console.log(getUserContactsResponse)
         if(isSucc(getUserContactsResponse) && getUserContactsResponse.data)
         {
           setUserContacts(getUserContactsResponse.data)
@@ -60,31 +47,54 @@ function GroupMembers() {
     }
     if(router.isReady)
     {
-      fetchUserContacts()
+      fetchData()
     }
   },[router.isReady])
+
   const onSubmit = async()=>{
      setSubmit(true)
-     if(selectedUserName)
+     if(!selectedUserName)
      {
        setError("Username required")
        return;
      }
-     var user = userContacts.find((x)=>x.email === selectedUserName)
+     var user = userContacts.find((x)=>x.name === selectedUserName)
      if(!user)
      {
-       setError("Email invalid")
+       setError("userName invalid")
        return
      }
-     
+     var existMember = groupUsers.find((x)=>x.userId===user?.userId)
+     if(existMember)
+     {
+        setError("User already added")
+        return;
+     }
      var response = await groupService.addUserToGroup(convertToInteger(router.query.groupId),user.userId)
      if(isSucc(response))
      {
         var newGroupUsers = Object.assign([],groupUsers);
-        newGroupUsers.push({firstName:'',lastName:'',userId:user.userId,userName:user.name})
+        newGroupUsers.push({firstName:'',lastName:'',userId:user.userId,userName:user.name});
+        setGroupUsers(newGroupUsers)
+        setSelectedUserName('')
+        setSubmit(false)
+        return;
      }
-  }
+     else
+     {
+      setError((response as FlexlistsError).message)
+     }
+     
 
+  }
+  const handleDeleteMember = async(userId:number) =>
+  {
+      var response = await groupService.deleteUserFromGroup(convertToInteger(router.query.groupId),userId);
+      if(isSucc(response))
+      {
+         setGroupUsers(groupUsers.filter((x)=>x.userId != userId))
+      }
+  }
   return (
     <Box>
       <Typography
@@ -102,13 +112,14 @@ function GroupMembers() {
           <Autocomplete
             id="combo-box-user-contact"
             value = {selectedUserName}
+            key={"auto-complete-contact"}
             onChange={(event: any, newValue: string|null) => {
               if(newValue)
               {
                 setSelectedUserName(newValue)
               }
             }}
-            options={userContacts.map((option) => option.name)}
+            options={userContacts.filter((x)=>!groupUsers.find((g)=>g.userId === x.userId)).map((option) => option.name)}
             fullWidth
             sx={{ my: 1 }}
             renderInput={(params) => <TextField {...params} label="User name" 
@@ -160,31 +171,64 @@ function GroupMembers() {
           (1)
         </Typography>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          my: 1,
-          p: 1,
-          borderRadius: 1,
-          "&:hover": {
-            background: "#eee",
-          },
-          "&:hover .deleteMember": {
-            display: "block",
-          },
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Avatar>A</Avatar>
-          <Typography variant="body1">John Doe</Typography>
-        </Box>
-        <CloseIcon
-          sx={{ display: "none", cursor: "pointer" }}
-          className="deleteMember"
-        />
-      </Box>
+      {
+        groupUsers && groupUsers.map((user,index)=>{
+           return (
+           <Box
+            key = {index}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              my: 1,
+              p: 1,
+              borderRadius: 1,
+              "&:hover": {
+                background: "#eee",
+              },
+              "&:hover .deleteMember": {
+                display: "block",
+              },
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Avatar>A</Avatar>
+              <Typography variant="body1">{user.userName}</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "#eb2027",
+                  fontWeight: 500,
+                }}
+                onClick={() => handleDeleteMember(user.userId)}
+              >
+                <DeleteIcon />
+                <Typography
+                  variant="subtitle2"
+                  component={"span"}
+                  sx={{
+                    display: {
+                      xs: "none",
+                      md: "block",
+                    },
+                  }}
+                >
+                  Delete
+                </Typography>
+              </Box>
+              {/* <Typography variant="body1">{user.userName}</Typography> */}
+            </Box>
+            <CloseIcon
+              sx={{ display: "none", cursor: "pointer" }}
+              className="deleteMember"
+            />
+          </Box>)
+        })
+      }
+      
     </Box>
   );
 }

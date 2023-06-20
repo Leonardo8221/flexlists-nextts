@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
+import { PATH_MAIN } from "src/routes/paths";
 
 // const CardIconStyle = styled("img")(({ theme }) => ({
 //   width: 40,
@@ -18,19 +20,22 @@ import { motion } from "framer-motion";
 // }));
 
 type GroupCard = {
+  groupId:number;
   icon: JSX.Element;
   title?: string;
   description?: string;
 };
 
 export default function GroupCard({
+  groupId,
   icon,
   title,
   description,
   ...other
 }: GroupCard) {
+  const router = useRouter();
   return (
-    <Link href="#chosenGroup" style={{ textDecoration: "none" }}>
+    <Link href="" onClick={()=>{router.push(`${PATH_MAIN.groups}/${groupId}`)}} style={{ textDecoration: "none" }}>
       <Card
         component={motion.div}
         {...other}

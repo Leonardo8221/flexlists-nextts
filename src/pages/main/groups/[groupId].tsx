@@ -20,25 +20,12 @@ import ViewListIcon from "@mui/icons-material/ViewList";
 import GroupMembers from "src/components/groups/groupMembers";
 import ViewCard from "src/sections/@view/ViewCard";
 import { useRouter } from "next/router";
-import { GetGroupViewsOutputDto } from "src/models/ApiOutputModels";
+import { GetGroupViewsOutputDto, GetUserGroupsOutputDto } from "src/models/ApiOutputModels";
 import { groupService } from "src/services/group.service";
 import { convertToInteger } from "src/utils/convertUtils";
 import { isSucc } from "src/models/ApiResponse";
+import { connect } from "react-redux";
 
-const ViewCards = [
-  {
-    bgImage: "/assets/home/heroimg.png",
-    viewName: "View Name",
-    viewDesc:
-      "View description - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis, fugiat!",
-  },
-  {
-    bgImage: "/assets/home/heroimg.png",
-    viewName: "View Name 2",
-    viewDesc:
-      "View description 2 - Lorem ipsum dolor sit amet consectetur, adipisicing elitasas. Officiis, fugiat!",
-  },
-];
 
 const activeButtonStyle: React.CSSProperties = {
   border: "1px solid #eee",
@@ -104,11 +91,14 @@ const ListViewButton = ({
     </Box>
   );
 };
-
+type GroupDetailProps = {
+  groups : GetUserGroupsOutputDto[]
+}
 function GroupDetail() {
   const router = useRouter();
   const [groupViews,setGroupViews] = useState<GetGroupViewsOutputDto[]>([]) 
   const [sort,setSort] = useState<string>('')
+  const [currentGroup,setCurrentGroup] = useState<GetUserGroupsOutputDto>()
   useEffect(()=>{
     async function fetchData()
     {
@@ -119,6 +109,15 @@ function GroupDetail() {
         {
            setGroupViews(getGroupViewsResponse.data)
         }
+        let groupsResponse = await groupService.getUserGroups();
+        if(isSucc(groupsResponse) && groupsResponse.data)
+        {
+          console.log(groupsResponse.data)
+          let group = groupsResponse.data.find((x:any)=>x.groupId ===  convertToInteger(router.query.groupId))
+          console.log(group)
+          setCurrentGroup(group)
+        }
+        
        }
        
     }
@@ -146,18 +145,15 @@ function GroupDetail() {
         <Grid item xs={10} sx={{ p: 2 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Avatar sx={{ backgroundColor: "green" }}>
-                <CampaignIcon />
-              </Avatar>
-              <Typography variant="h6">Marketing</Typography>
+              
+              <Typography variant="h6">{currentGroup?.name}</Typography>
             </Box>
-            <Button variant="contained" disabled>
-              Save group
+            <Button variant="contained" >
+              Rename Group
             </Button>
           </Box>
           <Typography component={"div"} variant="body1" sx={{ mt: 2 }}>
-            Description maybe lorem ipsum dolor sit amet consectetur. Tincidunt
-            vitae aliquam tristique non ut risus felis massa fringilla.
+            {currentGroup?.description}
           </Typography>
           <Divider light sx={{ my: 2 }}></Divider>
           <Box
@@ -239,5 +235,11 @@ function GroupDetail() {
     </MainLayout>
   );
 }
+const mapStateToProps = (state: any) => ({
+  groups:state.group.groups
+});
 
-export default GroupDetail;
+const mapDispatchToProps = {
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(GroupDetail);
