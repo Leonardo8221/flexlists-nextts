@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Container,
   Typography,
@@ -41,7 +41,17 @@ const VerifyEmail = () => {
   const [token, setToken] = React.useState<string>("      ");
   const router = useRouter();
   const [error, setError] = React.useState<string>('');
-  const [email, setEmail] = React.useState<string>((router.query.email as string) ?? '');
+  const [email, setEmail] = React.useState<string>('');
+
+  useEffect(() => {
+    function routerCheck() {
+      if (router.query.email) {
+        setEmail(router.query.email as string)
+      }
+
+    }
+    routerCheck()
+  })
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
