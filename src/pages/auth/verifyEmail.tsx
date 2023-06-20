@@ -41,7 +41,7 @@ const VerifyEmail = () => {
   const [token, setToken] = React.useState<string>("      ");
   const router = useRouter();
   const [error, setError] = React.useState<string>('');
-
+  const [email, setEmail] = React.useState<string>((router.query.email as string) ?? '');
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -54,6 +54,7 @@ const VerifyEmail = () => {
       return
     }
     if (inputValue.length <= 1) {
+
       if (input) {
         input.value = inputValue;
         if (inputValue.length === 1) {
@@ -77,7 +78,7 @@ const VerifyEmail = () => {
     // set the _token[index] to inputValue 
     _token = _token.substring(0, index) + (input?.value && input.value.length > 0 ? input.value : ' ') + _token.substring(index + 1);
     setToken(_token)
-    setCanSubmit(_token.split('').filter((x) => x !== ' ').length === 6)
+    setCanSubmit(_token.split('').filter((x) => x !== ' ').length === 6 && email.length > 0)
   };
 
   const emptyInput = () => {
@@ -93,7 +94,7 @@ const VerifyEmail = () => {
   const handleSubmit = async () => {
     try {
       setCanSubmit(false)
-      let verifyResponse = await authService.verifySignup(token)
+      let verifyResponse = await authService.verifySignup(token, email)
       if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
         router.push({ pathname: PATH_AUTH.login });
         return;
@@ -113,17 +114,36 @@ const VerifyEmail = () => {
     if (event.key === "Backspace") {
 
       const currentInput = event.target as HTMLInputElement;
+
+
+
       if (currentInput.value.length === 0) {
         const currentIndex = inputRefs.current.findIndex(
           (ref) => ref === currentInput
         );
+
         const previousInput = inputRefs.current[currentIndex - 1];
         if (previousInput) {
           previousInput.focus(); // Move focus to the previous input
         }
+      } else {
+        const index = inputRefs.current.findIndex(
+          (ref) => ref === currentInput
+        );
+        let _token = token.toString()
+        // set the _token[index] to inputValue 
+        _token = _token.substring(0, index) + ' ' + _token.substring(index + 1);
+        setToken(_token)
+        setCanSubmit(_token.split('').filter((x) => x !== ' ').length === 6 && email.length > 0)
+        return
       }
+
     }
-    setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6)
+
+
+
+    setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6 && email.length > 0)
+
   };
 
   const handleClose = () => {
@@ -177,6 +197,21 @@ const VerifyEmail = () => {
               Please insert code from email below.
             </Typography>
           </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Email"
+              type="email"
+              required
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value)
+                setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6 && event.target.value.length > 0)
+              }}
+            ></TextField>
+          </Grid>
+
           <Grid item xs={12} xl={12}>
             <ThemeProvider theme={theme}>
               <Box
