@@ -182,10 +182,10 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
   };
 
   const handleClose = () => {
-    console.log('hiding')
     setFlash(undefined)
     setMessage(null)
   }
+
   return (
     <>
 
@@ -257,7 +257,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                 <TextField
                   size="small"
                   inputRef={(ref) => (inputRefs.current[0] = ref)}
-                  onChange={(event) => handleInputChange(event, 0)}
+                  onChange={(event: any) => handleInputChange(event, 0)}
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
@@ -267,7 +267,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                 <TextField
                   size="small"
                   inputRef={(ref) => (inputRefs.current[1] = ref)}
-                  onChange={(event) => handleInputChange(event, 1)}
+                  onChange={(event: any) => handleInputChange(event, 1)}
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
@@ -277,7 +277,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                 <TextField
                   size="small"
                   inputRef={(ref) => (inputRefs.current[2] = ref)}
-                  onChange={(event) => handleInputChange(event, 2)}
+                  onChange={(event: any) => handleInputChange(event, 2)}
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
@@ -287,7 +287,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                 <TextField
                   size="small"
                   inputRef={(ref) => (inputRefs.current[3] = ref)}
-                  onChange={(event) => handleInputChange(event, 3)}
+                  onChange={(event: any) => handleInputChange(event, 3)}
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
@@ -297,7 +297,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                 <TextField
                   size="small"
                   inputRef={(ref) => (inputRefs.current[4] = ref)}
-                  onChange={(event) => handleInputChange(event, 4)}
+                  onChange={(event: any) => handleInputChange(event, 4)}
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
@@ -307,7 +307,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                 <TextField
                   size="small"
                   inputRef={(ref) => (inputRefs.current[5] = ref)}
-                  onChange={(event) => handleInputChange(event, 5)}
+                  onChange={(event: any) => handleInputChange(event, 5)}
                   onKeyDown={handleInputKeyDown}
                   inputProps={{
                     maxLength: 1,
