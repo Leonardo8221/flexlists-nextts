@@ -4,7 +4,7 @@ import Header from "./header";
 import Nav from "./nav";
 import Footer from "./footer";
 import { getAvailableFieldUiTypes } from "src/redux/actions/viewActions";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { getSearchTypes } from "src/redux/actions/adminAction";
 
@@ -36,7 +36,7 @@ const Main = styled("div")(({ theme }) => ({
 
 const Content = styled("div")(
   ({ theme, disableOverflow }: { theme: any; disableOverflow: boolean }) => ({
-    backgroundColor: "#fafafa",
+    backgroundColor: "#fff",
     width: "100%",
     overflow: disableOverflow ? "hidden" : "scroll",
 
@@ -53,46 +53,45 @@ type MainLayoutProps = {
   children: ReactNode;
   removeFooter?: boolean;
   disableOverflow?: boolean;
-  getAvailableFieldUiTypes: ()=>void;
-  getSearchTypes: ()=>void;
+  getAvailableFieldUiTypes: () => void;
+  getSearchTypes: () => void;
 };
 
- const MainLayout = ({
+const MainLayout = ({
   children,
   removeFooter = false,
   disableOverflow = false,
   getAvailableFieldUiTypes,
-  getSearchTypes
+  getSearchTypes,
 }: MainLayoutProps) => {
   const theme = useTheme();
-  const router = useRouter()
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  useEffect(()=>{
-     if(router.isReady)
-     {
-       getAvailableFieldUiTypes();
-       getSearchTypes();
-     }
-  },[router.isReady])
+  useEffect(() => {
+    if (router.isReady) {
+      getAvailableFieldUiTypes();
+      getSearchTypes();
+    }
+  }, [router.isReady]);
   return (
     <StyledRoot>
       <Header onOpenNav={() => setOpen(true)} />
 
       <Main>
         <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-        <Content theme={theme} disableOverflow={disableOverflow}>{children}</Content>
+        <Content theme={theme} disableOverflow={disableOverflow}>
+          {children}
+        </Content>
       </Main>
       {removeFooter == false && <Footer />}
     </StyledRoot>
   );
-}
-const mapStateToProps = (state: any) => ({
- 
-});
+};
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
   getAvailableFieldUiTypes,
-  getSearchTypes
+  getSearchTypes,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

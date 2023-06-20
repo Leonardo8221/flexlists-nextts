@@ -1,4 +1,3 @@
-
 import { LanguagesProvider } from "src/contexts/LanguageContext";
 import "src/styles/globals.css";
 import type { AppProps } from "next/app";
@@ -8,7 +7,7 @@ import AuthGuard from "src/guards/AuthGuard";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 import "../styles/globals.css";
-import LoadingPage from './LoadingPage';
+import LoadingPage from "./LoadingPage";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -19,7 +18,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <AuthGuard>
           <Provider store={store}>
             <LoadingPage>
-               <Component {...pageProps} />
+              <Component {...pageProps} />
             </LoadingPage>
           </Provider>
         </AuthGuard>
