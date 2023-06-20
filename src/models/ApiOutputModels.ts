@@ -66,6 +66,11 @@ export type CheckInviteOutputDto = {
 export type AcceptInviteOutputDto = {
     viewId?:string
 }
+export type GetViewGroupsOutputDto = {
+    groupId:number
+    name:string
+    role:Role
+}
 export type AddTableViewToGroupOutputDto = {
     groupTableViewId:number
 }

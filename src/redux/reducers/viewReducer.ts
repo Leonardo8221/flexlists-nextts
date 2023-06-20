@@ -2,7 +2,7 @@
 const initialState = {
   currentView:undefined,
   users: [],
-  userGroups:[],
+  viewGroups:[],
   columns: [
   ],
   // page:undefined,
@@ -22,8 +22,8 @@ const viewReducer = (state = initialState, action: any) => {
         return { ...state, currentView: action.payload };
       case 'SET_VIEW_USERS':
           return { ...state, users: action.payload };
-      case 'SET_VIEW_USER_GROUPS':
-        return { ...state, userGroups: action.payload };
+      case 'SET_VIEW_GROUPS':
+        return { ...state, viewGroups: action.payload };
       case 'SET_COLUMNS':
         return { ...state, columns: action.payload };
       // case 'SET_FILTERS':

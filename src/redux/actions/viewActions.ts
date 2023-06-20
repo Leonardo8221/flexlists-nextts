@@ -219,38 +219,13 @@ any
 > => {
   return async (dispatch: Dispatch<any>) => {
     try {
-          dispatch(setViewUserGroups([
+          var respone = await listViewService.getViewGroups(viewId)
+          if(isSucc(respone) && respone.data)
           {
-            name: 'group1',
-            avatar: '/assets/images/avatars/avatar_1.jpg'
-          },
-          {
-            name: 'group2',
-            avatar: '/assets/images/avatars/avatar_2.jpg'
-          },
-          {
-            name: 'group3',
-            avatar: '/assets/images/avatars/avatar_3.jpg'
-          },
-          {
-            name: 'group4',
-            avatar: '/assets/images/avatars/avatar_4.jpg'
-          },
-          {
-            name: 'group5',
-            avatar: '/assets/images/avatars/avatar_5.jpg'
-          },
-          {
-            name: 'group6',
-            avatar: '/assets/images/avatars/avatar_6.jpg'
+            dispatch(setViewGroups(respone.data))
           }
-        ]))
-        // const response = await listViewService.getU(viewId)
-        // if(isSucc(response))
-        // {
-        //   dispatch(setViewUsers(response.data));
-        // } 
-    } catch (error) {
+    } 
+    catch (error) {
      console.log(error)
     }
   };
@@ -263,7 +238,7 @@ export const setViewUsers = (users: any) => ({
     type: 'SET_VIEW_USERS',
     payload: users
   });
-export const setViewUserGroups = (groups: any) => ({
-    type: 'SET_VIEW_USER_GROUPS',
+export const setViewGroups = (groups: any) => ({
+    type: 'SET_VIEW_GROUPS',
     payload: groups
   });
