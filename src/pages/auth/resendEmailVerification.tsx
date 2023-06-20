@@ -13,6 +13,8 @@ import {
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
+import { authService } from "src/services/auth.service";
+import { isSucc } from "src/models/ApiResponse";
 interface VerifyEmailProps {
   message: any;
   setMessage: (message: any) => void;
@@ -50,6 +52,18 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
   const handleClose = () => {
     setFlash(undefined)
     setMessage(null)
+  }
+
+  const handleResend = async () => {
+    if (email) {
+      const res = await authService.resendSignupEmail(email)
+      if (isSucc(res)) {
+        setFlashMessage('Verification code sent successfully. Please check your email.')
+      } else {
+        setFlashMessage('Something went wrong. Please try again.')
+      }
+    }
+
   }
 
   return (
@@ -119,6 +133,8 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               href="#"
               size="large"
               variant="contained"
+              onClick={() => handleResend()}
+
               sx={{
                 width: "100%",
                 backgroundColor: "#FFD232",

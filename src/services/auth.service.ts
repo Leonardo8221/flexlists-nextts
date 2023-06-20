@@ -6,7 +6,8 @@ export const authService = {
     register,
     verifyToken,
     logout,
-    verifySignup
+    verifySignup,
+    resendSignupEmail
 };
 async function login(userName: string, password: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/login', { userName, password })
@@ -28,3 +29,7 @@ async function verifySignup(token: string, email: string): Promise<FlexlistsErro
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/verifySignup?token=' + token + '&email=' + email)
     return response.data;
 };
+async function resendSignupEmail(email: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/resendSignupEmail?email=' + email)
+    return response.data;
+}
