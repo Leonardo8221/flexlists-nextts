@@ -49,6 +49,8 @@ const Register = ({ message, setMessage }: RegisterProps) => {
   const [password, setPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
+
   const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
 
   useEffect(() => {
@@ -97,6 +99,12 @@ const Register = ({ message, setMessage }: RegisterProps) => {
     setPassword(event.target.value);
   };
 
+  const handleTermsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTermsAndConditions(event.target.checked);
+  }
+
+
+
   const handleSubmit = async () => {
     try {
       if (!firstName) {
@@ -120,13 +128,20 @@ const Register = ({ message, setMessage }: RegisterProps) => {
         return;
       }
 
+      if (!termsAndConditions) {
+
+        setError("Please accept terms and conditions");
+        return;
+      }
+
       var response = await authService.register(
         firstName,
         lastName,
         userName,
         userEmail,
         phoneNumber,
-        password
+        password,
+        termsAndConditions
       );
 
       if (isSucc(response) && response) {
@@ -370,6 +385,8 @@ const Register = ({ message, setMessage }: RegisterProps) => {
                 sx={{ mr: 0, textAlign: { xs: "center", md: "left" } }}
                 control={
                   <Checkbox
+                    onChange={handleTermsChange}
+                    value={termsAndConditions}
                     sx={{
                       color: "#FFD232",
                       "&.Mui-checked": { color: "#FFD232" },
