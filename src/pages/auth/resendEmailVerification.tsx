@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
 import { authService } from "src/services/auth.service";
-import { isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { PATH_AUTH } from "src/routes/paths";
 interface VerifyEmailProps {
   message: any;
@@ -63,8 +63,16 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
         await router.push({ pathname: PATH_AUTH.verifyEmail });
 
       } else {
-        console.log('hier')
-        setFlashMessage('Something went wrong. Please try again.')
+        if ((res as FlexlistsError).code === 509) { // already verified
+          setMessage({ message: 'Your account has been activated, please login!', type: 'success' })
+          await router.push({ pathname: PATH_AUTH.login, query: { email: email } });
+        } else {
+          if (isErr(res)) {
+            setFlashMessage((res as FlexlistsError).message)
+          } else {
+            setFlashMessage('Something went wrong. Please try again.')
+          }
+        }
       }
     }
 
