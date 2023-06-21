@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
 import { authService } from "src/services/auth.service";
 import { isSucc } from "src/models/ApiResponse";
+import { PATH_AUTH } from "src/routes/paths";
 interface VerifyEmailProps {
   message: any;
   setMessage: (message: any) => void;
@@ -58,7 +59,9 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
     if (email) {
       const res = await authService.resendSignupEmail(email)
       if (isSucc(res)) {
-        setFlashMessage('Verification code sent successfully. Please check your email.')
+        setMessage({ message: 'Verification code sent successfully. Please check your email.', type: 'success' })
+        await router.push({ pathname: PATH_AUTH.verifyEmail });
+
       } else {
         console.log('hier')
         setFlashMessage('Something went wrong. Please try again.')
