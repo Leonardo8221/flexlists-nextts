@@ -32,8 +32,8 @@ export default function ViewCard({
   ...other
 }: ViewCardProps) {
   const router = useRouter();
-  const openViewDetail = (id: number) => {
-    router.push(`${PATH_MAIN.views}/${id}`);
+  const openViewDetail = async (id: number) => {
+    await router.push(`${PATH_MAIN.views}/${id}`);
   };
   const theme = useTheme();
   return (

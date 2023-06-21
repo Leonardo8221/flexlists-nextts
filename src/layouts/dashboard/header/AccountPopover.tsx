@@ -25,16 +25,16 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const router = useRouter();
-  const handleOpen = (event:any) => {
+  const handleOpen = (event: any) => {
     setOpen(event.currentTarget);
   };
 
   const handleClose = () => {
     setOpen(null);
   };
-  const logout = async() =>{
-     await authService.logout();
-     router.push({
+  const logout = async () => {
+    await authService.logout();
+    await router.push({
       pathname: '/'
     });
   }
@@ -46,7 +46,7 @@ export default function AccountPopover() {
       height: '100%',
       borderRadius: '50%',
       position: 'absolute',
-      bgcolor: (theme:any) => alpha(theme.palette.grey[900], 0.8),
+      bgcolor: (theme: any) => alpha(theme.palette.grey[900], 0.8),
     },
   })
   return (

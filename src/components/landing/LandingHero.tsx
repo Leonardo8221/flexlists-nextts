@@ -121,10 +121,9 @@ const ButtonStyle = styled(motion.div)(({ theme }) => ({
 export default function LandingHero() {
   const isOffset = useOffSetTop(50);
   const router = useRouter();
-  const gotoSignup = () =>
-  {
-    router.push({
-      pathname:'/auth/register'
+  const gotoSignup = async () => {
+    await router.push({
+      pathname: '/auth/register'
     })
   }
   return (
@@ -175,15 +174,15 @@ export default function LandingHero() {
                 <Button
                   size="large"
                   variant="contained"
-                  sx={{ px: { xs: '10px'} }}
-                  onClick={()=>gotoSignup()}
+                  sx={{ px: { xs: '10px' } }}
+                  onClick={() => gotoSignup()}
                 >
                   Sign up, it is free
                 </Button>
                 <Button
                   size="large"
                   variant="contained"
-                  sx={{ml:'3px'}}
+                  sx={{ ml: '3px' }}
                 >
                   Request a demo
                 </Button>

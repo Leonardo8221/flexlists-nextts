@@ -78,8 +78,8 @@ const Login = ({ message, setMessage }: LoginProps) => {
       }
       var response = await authService.login(userName, password);
       if (isSucc(response)) {
-        setFlashMessage('Login successful, going to your Dashboard!', 'success')
-        router.push({ pathname: PATH_MAIN.views });
+        setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
+        await router.push({ pathname: PATH_MAIN.views });
         return
       }
       setError('Invalid username or password. Please try again or request a new password.')

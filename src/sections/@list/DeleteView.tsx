@@ -15,19 +15,18 @@ import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
 type DeleteViewProps = {
-  viewId:number;
+  viewId: number;
   open: boolean;
   handleClose: () => void;
 };
 
-const DeleteView = ({viewId, open, handleClose }: DeleteViewProps) => {
+const DeleteView = ({ viewId, open, handleClose }: DeleteViewProps) => {
   const router = useRouter();
-  const onSubmit = async() =>{
-     let response = await listViewService.softDeleteView(viewId)
-     if(isSucc(response))
-     {
-        router.push(PATH_MAIN.views)
-     }
+  const onSubmit = async () => {
+    let response = await listViewService.softDeleteView(viewId)
+    if (isSucc(response)) {
+      await router.push(PATH_MAIN.views)
+    }
   }
   return (
     <CentralModal open={open} handleClose={handleClose}>
@@ -39,7 +38,7 @@ const DeleteView = ({viewId, open, handleClose }: DeleteViewProps) => {
         </Typography>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
+        <Button sx={{ mt: 2 }} variant="contained" onClick={() => onSubmit()}>
           Delete
         </Button>
         <Button

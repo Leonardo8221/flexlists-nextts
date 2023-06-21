@@ -38,7 +38,7 @@ export default function AccountPopover() {
 
   const logout = async () => {
     await authService.logout();
-    router.push({
+    await router.push({
       pathname: "/",
     });
   };

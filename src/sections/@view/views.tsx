@@ -1,6 +1,6 @@
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
-import { Box, Grid, Container, Typography, Button } from "@mui/material";
+import { Box, Grid, Container, Typography, Button, Snackbar, Alert, AlertColor } from "@mui/material";
 import { useState, useEffect } from "react";
 import ViewCard from "./ViewCard";
 import { View } from "src/models/SharedModels";
@@ -8,6 +8,8 @@ import { isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import { listViewService } from "src/services/listView.service";
+import { setMessage } from "src/redux/actions/viewActions";
+import { connect } from "react-redux";
 
 const ViewCards = [
   {
@@ -24,7 +26,12 @@ const ViewCards = [
   },
 ];
 
-export default function Views() {
+interface ViewsProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
+
+function Views({ message, setMessage }: ViewsProps) {
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -33,6 +40,31 @@ export default function Views() {
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
   const [views, setViews] = useState<View[]>([]);
+
+  // error handling 
+  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
+      }
+    }
+    checkMessage()
+  }, [message, router.isReady])
+
+  const flashHandleClose = () => {
+    setFlash(undefined)
+    setMessage(null)
+  }
+  function setError(message: string) {
+    setFlashMessage(message);
+  }
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
+
   useEffect(() => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
@@ -50,11 +82,19 @@ export default function Views() {
     async function fetchData() {
       var response = await listViewService.getViews();
       if (isSucc(response) && response.data && response.data.length > 0) {
-        setViews(response.data);
+        if (response.data.length > 0) {
+          setViews(response.data);
+        }
+      }
+      else {
+        setMessage({ message: "No views yet, click a template to create your first one!", type: "success" })
+        await router.push(PATH_MAIN.newView);
+
       }
     }
     fetchData();
   }, [router.isReady]);
+
   const maskProperties = [
     {
       left: { xs: "115px", md: "215px" },
@@ -111,8 +151,8 @@ export default function Views() {
     setSteps(steps + 1);
     setMaskProperty(maskProperties[steps + 1]);
   };
-  const createNewView = () => {
-    router.push(PATH_MAIN.newView);
+  const createNewView = async () => {
+    await router.push(PATH_MAIN.newView);
   };
 
   const MaskedBackground = styled("div")(({ theme }) => ({
@@ -177,8 +217,25 @@ export default function Views() {
               );
             })}
         </Grid>
+        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={flashHandleClose}>
+          <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+            {flash?.message}
+          </Alert>
+        </Snackbar>
       </Container>
       {visibleMask && <MaskedBackground />}
     </>
   );
 }
+
+const mapStateToProps = (state: any) => ({
+  message: state.view.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Views);
+//export default Views
+

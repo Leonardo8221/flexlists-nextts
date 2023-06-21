@@ -21,16 +21,16 @@ import { PATH_MAIN } from "src/routes/paths";
 type DuplicateViewProps = {
   open: boolean;
   handleClose: () => void;
-  currentView:View
+  currentView: View
 };
 
-const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) => {
+const DuplicateView = ({ open, handleClose, currentView }: DuplicateViewProps) => {
   const router = useRouter()
-  const [name,setName] = useState<string>('')
-  const [description,setDescription] = useState<string>('')
-  const [error,setError] = useState<string>('')
-  const [submit,setSubmit] = useState<boolean>(false)
-  
+  const [name, setName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+  const [error, setError] = useState<string>('')
+  const [submit, setSubmit] = useState<boolean>(false)
+
 
   const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -38,22 +38,19 @@ const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) =>
   const handleViewDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(event.target.value);
   };
-  
-  const onSubmit = async() =>{
+
+  const onSubmit = async () => {
     setSubmit(true)
-    if(!name)
-    {
+    if (!name) {
       setError('Name required')
       return;
     }
-    var response = await listViewService.createView(currentView.listId,name,currentView.type,currentView.config,currentView.template,
-      currentView.category,currentView.page,currentView.limit,currentView.order,currentView.query,description,currentView.conditions,currentView.fields)
-    if(isSucc(response) && response.data && response.data.viewId)
-    {
-      router.push(`${PATH_MAIN.views}/${response.data.viewId}`)
+    var response = await listViewService.createView(currentView.listId, name, currentView.type, currentView.config, currentView.template,
+      currentView.category, currentView.page, currentView.limit, currentView.order, currentView.query, description, currentView.conditions, currentView.fields)
+    if (isSucc(response) && response.data && response.data.viewId) {
+      await router.push(`${PATH_MAIN.views}/${response.data.viewId}`)
     }
-    else
-    {
+    else {
       setError(response.message)
     }
   }
@@ -62,7 +59,7 @@ const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) =>
       <Typography variant="h6">Duplicate View</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
-          {error && <Alert severity="error">{error}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
       </Box>
       <Box>
         <Typography variant="subtitle2">Name</Typography>
@@ -72,7 +69,7 @@ const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) =>
           value={name}
           placeholder="Name"
           required
-          error = {submit && !name}
+          error={submit && !name}
         />
       </Box>
       <Box>
@@ -94,7 +91,7 @@ const DuplicateView = ({ open, handleClose ,currentView}: DuplicateViewProps) =>
         />
       </FormGroup> */}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
+        <Button sx={{ mt: 2 }} variant="contained" onClick={() => onSubmit()}>
           Duplicate
         </Button>
         <Button

@@ -20,34 +20,28 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       //   return;
       // }
       const path = url.split('/')[1];
-      var isValidated:Boolean = false;
-      try
-      {
-       var verifyTokenResponse = await authService.verifyToken();
-       isValidated = isSucc(verifyTokenResponse) && verifyTokenResponse.data && verifyTokenResponse.data.isValidated;
+      var isValidated: Boolean = false;
+      try {
+        var verifyTokenResponse = await authService.verifyToken();
+        isValidated = isSucc(verifyTokenResponse) && verifyTokenResponse.data && verifyTokenResponse.data.isValidated;
       }
-      catch(error)
-      {
+      catch (error) {
         console.log('unauthorize')
       }
-      
-      if(path == 'auth'||path == '')
-      {
-         if(isValidated)
-         {
-          router.push({
+
+      if (path == 'auth' || path == '') {
+        if (isValidated) {
+          await router.push({
             pathname: PATH_MAIN.views
           });
-         }
+        }
       }
-      else
-      {
-         if(!isValidated)
-         {
-          router.push({
+      else {
+        if (!isValidated) {
+          await router.push({
             pathname: '/'
           });
-         }
+        }
       }
     }
 

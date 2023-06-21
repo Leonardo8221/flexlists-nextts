@@ -63,14 +63,14 @@ export default function MainNavbar() {
   const router = useRouter();
   var pathname = router.pathname;
   const isHome = pathname === '/';
-  const gotoSignin = ()=>{
-    router.push({
-      pathname : '/auth/login'
+  const gotoSignin = async () => {
+    await router.push({
+      pathname: '/auth/login'
     })
   }
-  const gotoSignup = ()=>{
-    router.push({
-      pathname : '/auth/register'
+  const gotoSignup = async () => {
+    await router.push({
+      pathname: '/auth/register'
     })
   }
   return (
@@ -101,11 +101,11 @@ export default function MainNavbar() {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Button variant="contained" onClick={()=>gotoSignup()}>
+            <Button variant="contained" onClick={() => gotoSignup()}>
               Sign up, it is free
             </Button>
 
-            <Typography sx={{ ml: 1, color: 'text.secondary', cursor: 'pointer' }} onClick={()=>gotoSignin()}>
+            <Typography sx={{ ml: 1, color: 'text.secondary', cursor: 'pointer' }} onClick={() => gotoSignin()}>
               Sign in
             </Typography>
           </MHidden>

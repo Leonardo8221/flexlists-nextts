@@ -8,21 +8,21 @@ import { connect } from "react-redux";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { ViewType } from "src/enums/SharedEnums";
-import {  PATH_MAIN } from "src/routes/paths";
+import { PATH_MAIN } from "src/routes/paths";
 
 type MenuBarProps = {
   search?: string;
-  currentView:View;
+  currentView: View;
 };
 
 
 
-export  function MenuBar({ search ,currentView}: MenuBarProps) {
+export function MenuBar({ search, currentView }: MenuBarProps) {
   const [selectedViewId, setSelectedViewId] = useState(0);
   const [viewsSearchBar, setViewsSearchBar] = useState(false);
   const [viewsSearch, setViewsSearch] = useState("");
   const [views, setViews] = useState<View[]>([]);
-  const [filterViews,setFilerViews] = useState<View[]>([])
+  const [filterViews, setFilerViews] = useState<View[]>([])
   const theme = useTheme();
 
   const router = useRouter();
@@ -31,9 +31,9 @@ export  function MenuBar({ search ,currentView}: MenuBarProps) {
     // setSelectedViewId(router.pathname.split("/")[1]);
   }, [router.pathname]);
 
-  const handleMenu = (id: string) => {
+  const handleMenu = async (id: string) => {
     // setSelectedViewId(value);
-    router.push(`${PATH_MAIN.views}/${id}`);
+    await router.push(`${PATH_MAIN.views}/${id}`);
   };
   useEffect(() => {
     async function fetchData() {
@@ -43,14 +43,13 @@ export  function MenuBar({ search ,currentView}: MenuBarProps) {
         setFilerViews(response.data)
       }
     }
-    if(currentView)
-    {
+    if (currentView) {
       fetchData();
     }
   }, [currentView]);
   const handleViewsSearch = (e: any) => {
     setViewsSearch(e.target.value);
-    setFilerViews(views.filter((view)=>view.name.toLowerCase().includes(e.target.value)));
+    setFilerViews(views.filter((view) => view.name.toLowerCase().includes(e.target.value)));
   };
 
   const [open, setOpen] = useState(false);
@@ -197,21 +196,20 @@ type MenuItemProps = {
 };
 
 function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
-  const {id, type,name } = menu;
+  const { id, type, name } = menu;
   const theme = useTheme();
   const [isOver, setIsOver] = useState(false);
-  
-  const getIcon = (type:string) : string =>
-  {
-     let icon = 'menu/checklist'
-     switch (type) {
+
+  const getIcon = (type: string): string => {
+    let icon = 'menu/checklist'
+    switch (type) {
       case ViewType.List:
         return "menu/checklist"
       case ViewType.Calendar:
         return "menu/calendar"
       case ViewType.Gallery:
         return "menu/gallery"
-      case ViewType.Kanban:
+      case ViewType.KanBan:
         return "menu/kanban"
       // case ViewType.G:
       //   return "menu/gantt"
@@ -223,8 +221,8 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
       //   return "menu/chart"
       default:
         break;
-     }
-     return icon
+    }
+    return icon
   }
   return (
     <Box

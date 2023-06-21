@@ -39,7 +39,7 @@ export default function NewGroup() {
       createListResponse.data &&
       createListResponse.data.groupId
     ) {
-      router.push({
+      await router.push({
         pathname: `${PATH_MAIN.groups}/${createListResponse.data.groupId}`,
       });
     }
@@ -80,7 +80,7 @@ export default function NewGroup() {
               setValue={(newValue) => onDescriptionChange(newValue)}
             />
           </Box>
-          
+
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
               Icon

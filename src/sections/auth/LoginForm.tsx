@@ -13,36 +13,33 @@ export default function LoginForm() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [userName,setUserName] = useState<string>('');
-  const [password,setPassword] = useState<string>('');
-  const handleSubmit = async() => {
-      try {
-         var response = await authService.login(userName,password);
-         if(isSucc(response))
-         {
-           router.push({pathname:'/dashboard'});
-         }
-      } catch (error) {
-        
+  const [userName, setUserName] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const handleSubmit = async () => {
+    try {
+      var response = await authService.login(userName, password);
+      if (isSucc(response)) {
+        await router.push({ pathname: '/dashboard' });
       }
+    } catch (error) {
+
+    }
   };
-  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) =>
-  {
-     setUserName(event.target.value);
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserName(event.target.value);
   }
-  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
-  {
-     setPassword(event.target.value);
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
   }
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField 
-        name="email" 
-        label="Email address" 
-        value={userName}
-        onChange = {handleChangeEmail}
+        <TextField
+          name="email"
+          label="Email address"
+          value={userName}
+          onChange={handleChangeEmail}
         />
 
         <TextField

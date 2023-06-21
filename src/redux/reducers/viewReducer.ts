@@ -1,8 +1,8 @@
 // Define the initial state
 const initialState = {
-  currentView:undefined,
+  currentView: undefined,
   users: [],
-  viewGroups:[],
+  viewGroups: [],
   columns: [
   ],
   // page:undefined,
@@ -13,35 +13,39 @@ const initialState = {
   // ],
   rows: [
   ],
-  count:0,
-  availableFieldUiTypes:[]
+  count: 0,
+  availableFieldUiTypes: [],
+  message: {}
 };
 const viewReducer = (state = initialState, action: any) => {
-    switch (action.type) {
-      case 'SET_CURRENT_VIEW':
-        return { ...state, currentView: action.payload };
-      case 'SET_VIEW_USERS':
-          return { ...state, users: action.payload };
-      case 'SET_VIEW_GROUPS':
-        return { ...state, viewGroups: action.payload };
-      case 'SET_COLUMNS':
-        return { ...state, columns: action.payload };
-      // case 'SET_FILTERS':
-      //   return { ...state, filters: action.payload };
-      // case 'SET_SORTS':
-      //   return { ...state, sorts: action.payload };
-      case 'SET_ROWS':
-        return { ...state, rows: action.payload };
-      // case 'SET_PAGE':
-      //   return { ...state, page: action.payload };
-      // case 'SET_LIMIT':
-      //   return { ...state, limit: action.payload };
-      case 'SET_COUNT':
-        return { ...state, count: action.payload };
-      case 'SET_AVAILABLE_FIELD_UI_TYPES':
-        return { ...state, availableFieldUiTypes: action.payload };
-      default:
-        return state;
-    }
-  };
-  export default viewReducer
+  switch (action.type) {
+    case 'SET_CURRENT_VIEW':
+      return { ...state, currentView: action.payload };
+    case 'SET_VIEW_USERS':
+      return { ...state, users: action.payload };
+    case 'SET_VIEW_GROUPS':
+      return { ...state, viewGroups: action.payload };
+    case 'SET_COLUMNS':
+      return { ...state, columns: action.payload };
+    // case 'SET_FILTERS':
+    //   return { ...state, filters: action.payload };
+    // case 'SET_SORTS':
+    //   return { ...state, sorts: action.payload };
+    case 'SET_ROWS':
+      return { ...state, rows: action.payload };
+    // case 'SET_PAGE':
+    //   return { ...state, page: action.payload };
+    // case 'SET_LIMIT':
+    //   return { ...state, limit: action.payload };
+    case 'SET_COUNT':
+      return { ...state, count: action.payload };
+    case 'SET_AVAILABLE_FIELD_UI_TYPES':
+      return { ...state, availableFieldUiTypes: action.payload };
+    case 'SET_MESSAGE':
+      //console.log('message', action.payload, state)
+      return { ...state, message: action.payload }
+    default:
+      return state;
+  }
+};
+export default viewReducer
