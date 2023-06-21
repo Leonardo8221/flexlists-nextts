@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Container,
   Typography,
@@ -6,9 +6,66 @@ import {
   TextField,
   Button,
   Box,
+  Snackbar,
+  Alert,
+  AlertColor,
 } from "@mui/material";
+import { useRouter } from "next/router";
+import { connect } from "react-redux";
+import { setMessage } from "src/redux/actions/authAction";
+import { authService } from "src/services/auth.service";
+import { isSucc } from "src/models/ApiResponse";
+interface VerifyEmailProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
 
-const VerifyEmail = () => {
+const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
+  const router = useRouter();
+  const [flash, setFlash] = React.useState<{ message: string, type: string } | undefined>(undefined);
+  const [email, setEmail] = React.useState<string>('');
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
+      }
+    }
+    checkMessage()
+  }, [message])
+
+
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
+
+  useEffect(() => {
+    function routerCheck() {
+      if (router.query.email) {
+        setEmail(router.query.email as string)
+      }
+
+    }
+    routerCheck()
+  })
+  const handleClose = () => {
+    setFlash(undefined)
+    setMessage(null)
+  }
+
+  const handleResend = async () => {
+    if (email) {
+      const res = await authService.resendSignupEmail(email)
+      if (isSucc(res)) {
+        setFlashMessage('Verification code sent successfully. Please check your email.')
+      } else {
+        setFlashMessage('Something went wrong. Please try again.')
+      }
+    }
+
+  }
+
   return (
     <>
       <Box
@@ -22,6 +79,11 @@ const VerifyEmail = () => {
         alt="The house from the offer."
         src="/assets/images/background.png"
       />
+      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+          {flash?.message}
+        </Alert>
+      </Snackbar>
       <Container
         maxWidth="sm"
         sx={{
@@ -61,8 +123,8 @@ const VerifyEmail = () => {
               placeholder="Email"
               type="email"
               required
-            // value={userName}
-            // onChange={handleChangeEmail}
+              value={email}
+              onChange={(e) => { setEmail(e.target.value) }}
             ></TextField>
           </Grid>
           <Grid item xs={12}>
@@ -71,6 +133,8 @@ const VerifyEmail = () => {
               href="#"
               size="large"
               variant="contained"
+              onClick={() => handleResend()}
+
               sx={{
                 width: "100%",
                 backgroundColor: "#FFD232",
@@ -87,4 +151,12 @@ const VerifyEmail = () => {
   );
 };
 
-export default VerifyEmail;
+const mapStateToProps = (state: any) => ({
+  message: state.auth.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmail);

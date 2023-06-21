@@ -127,21 +127,31 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
   }
 
   const handleSubmit = async () => {
+
     try {
       setCanSubmit(false)
       let verifyResponse = await authService.verifySignup(token, email)
       if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
+        setFlashMessage('Your account has been activated, please login!', 'success')
         await router.push({ pathname: PATH_AUTH.login });
         return;
       }
       else {
         emptyInput()
-        setFlashMessage('Verification failed, invalid code.')
+        setFlashMessage('Verification failed, invalid code. Please request a new code.', 'error')
+        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: email } });
+        return;
+        // emptyInput()
+        // setFlashMessage('Verification failed, invalid code.')
       }
     }
     catch (err) {
       emptyInput()
-      setFlashMessage('Verification failed, invalid code.')
+      setFlashMessage('Verification failed, invalid code. Please request a new code.', 'error')
+      await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: email } });
+      return;
+      // emptyInput()
+      // setFlashMessage('Verification failed, invalid code.')
     }
   }
 
