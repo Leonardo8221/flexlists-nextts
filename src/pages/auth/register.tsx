@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -13,6 +13,8 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Snackbar,
+  AlertColor,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -27,11 +29,18 @@ import { MuiTelInput } from "mui-tel-input";
 import InfoIcon from "@mui/icons-material/Info";
 import { PATH_AUTH } from "src/routes/paths";
 import { ErrorConsts } from "src/constants/errorConstants";
+import { connect } from "react-redux";
+import { setMessage } from "src/redux/actions/authAction";
 
-const Register = () => {
+
+interface RegisterProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
+const Register = ({ message, setMessage }: RegisterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
-  const [error, setError] = useState<string>();
+  //const [error, setError] = useState<string>();
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -40,6 +49,28 @@ const Register = () => {
   const [password, setPassword] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
+      }
+    }
+    checkMessage()
+  }, [message])
+
+  const handleClose = () => {
+    setFlash(undefined)
+    setMessage(null)
+  }
+  function setError(message: string) {
+    setFlashMessage(message);
+  }
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
 
   const handlePhoneChange = (newPhoneNumber: string) => {
     setPhoneNumber(newPhoneNumber);
@@ -97,11 +128,13 @@ const Register = () => {
         phoneNumber,
         password
       );
-      
+
       if (isSucc(response) && response) {
-        router.push({ pathname: PATH_AUTH.verifyEmail });
+        setMessage({ message: "Registration successful! Please check your email to verify your account.", type: "success" })
+        router.push({ pathname: PATH_AUTH.verifyEmail, query: { email: userEmail } });
         return;
       }
+
       setError((response as FlexlistsError).message)
     } catch (error) {
       setError(ErrorConsts.InternalServerError)
@@ -132,6 +165,11 @@ const Register = () => {
         alt="The house from the offer."
         src="/assets/images/background.png"
       />
+      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+          {flash?.message}
+        </Alert>
+      </Snackbar>
       <Container
         maxWidth="sm"
         sx={{
@@ -184,9 +222,9 @@ const Register = () => {
             </Typography>
           </Grid>
 
-          <Grid item container>
+          {/* <Grid item container>
             {error && <Alert severity="error">{error}</Alert>}
-          </Grid>
+          </Grid> */}
 
           <Grid item container>
             <Grid item xs={6} sx={{ paddingRight: 1 }}>
@@ -398,4 +436,12 @@ const Register = () => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state: any) => ({
+  message: state.auth.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

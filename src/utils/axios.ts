@@ -33,7 +33,7 @@ async function get<T>(url: string, params?: any) {
   try {
     return await axiosInstance.get<T>(url, { params })
   } catch (e: any) {
-    return { data: { isSuccess: false, message: e.message, data: null } }
+    return { data: { isSuccess: false, message: 'Unknown Error, please try again.', data: e } }
   }
 }
 
@@ -41,7 +41,7 @@ async function post<T>(url: string, data?: any) {
   try {
     return await axiosInstance.post<T>(url, data)
   } catch (e: any) {
-    return { data: { isSuccess: false, message: e.message, data: null } }
+    return { data: { isSuccess: false, message: 'Unknown Error, please try again.', data: e } }
   }
 }
 

@@ -132,8 +132,8 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
       setCanSubmit(false)
       let verifyResponse = await authService.verifySignup(token, email)
       if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
-        setFlashMessage('Your account has been activated, please login!', 'success')
-        await router.push({ pathname: PATH_AUTH.login });
+        setMessage({ message: 'Your account has been activated, please login!', type: 'success' })
+        await router.push({ pathname: PATH_AUTH.login, query: { email: email } });
         return;
       }
       else {

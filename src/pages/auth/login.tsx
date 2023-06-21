@@ -38,7 +38,7 @@ const Login = ({ message, setMessage }: LoginProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const router = useRouter();
-  const [error, setError] = useState<string>();
+  //const [error, setError] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -54,6 +54,9 @@ const Login = ({ message, setMessage }: LoginProps) => {
     checkMessage()
   }, [message])
 
+  function setError(message: string) {
+    setFlashMessage(message)
+  }
   function setFlashMessage(message: string, type: string = 'error') {
     setFlash({ message: message, type: type })
     setMessage({ message: message, type: type })
@@ -75,10 +78,14 @@ const Login = ({ message, setMessage }: LoginProps) => {
       }
       var response = await authService.login(userName, password);
       if (isSucc(response)) {
+        setFlashMessage('Login successful, going to your Dashboard!', 'success')
         router.push({ pathname: PATH_MAIN.views });
+        return
       }
-    } catch (error) {
-
+      setError('Invalid username or password. Please try again or request a new password.')
+    } catch (error: any) {
+      console.log(error)
+      setError('Unknown error. Please try again.')
     }
   };
 
@@ -154,18 +161,18 @@ const Login = ({ message, setMessage }: LoginProps) => {
             </Typography>
           </Grid>
 
-          <Grid
+          {/* <Grid
             item
             container
           >
             {error && <Alert severity="error">{error}</Alert>}
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="Email"
-              type="email"
+              placeholder="Email or Username"
+              type="text"
               required
               value={userName}
               onChange={handleChangeEmail}
