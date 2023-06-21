@@ -5,7 +5,6 @@ import store from 'src/redux/store';
 
 const axiosInstance = axios.create({ withCredentials: true, baseURL: process.env.NEXT_PUBLIC_FLEXLIST_API_URL });
 
-
 axiosInstance.interceptors.request.use(function (config) {
   store.dispatch(setLoading(true))
   return config;
@@ -30,5 +29,21 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+async function get<T>(url: string, params?: any) {
+  try {
+    return await axiosInstance.get<T>(url, { params })
+  } catch (e: any) {
+    return { data: { isSuccess: false, message: e.message, data: null } }
+  }
+}
 
-export default axiosInstance;
+async function post<T>(url: string, data?: any) {
+  try {
+    return await axiosInstance.post<T>(url, data)
+  } catch (e: any) {
+    return { data: { isSuccess: false, message: e.message, data: null } }
+  }
+}
+
+
+export default { get, post };

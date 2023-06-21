@@ -30,6 +30,8 @@ async function verifySignup(token: string, email: string): Promise<FlexlistsErro
     return response.data;
 };
 async function resendSignupEmail(email: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
-    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/resendSignupEmail?email=' + email)
+
+    const response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/resendSignupEmail?email=' + email)
     return response.data;
+
 }

@@ -60,6 +60,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
       if (isSucc(res)) {
         setFlashMessage('Verification code sent successfully. Please check your email.')
       } else {
+        console.log('hier')
         setFlashMessage('Something went wrong. Please try again.')
       }
     }
