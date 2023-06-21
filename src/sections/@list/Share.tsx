@@ -31,7 +31,7 @@ import { accountService } from "src/services/account.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { validateEmail } from "src/utils/validateUtils";
 import { listViewService } from "src/services/listView.service";
-import { GetUserContactsOutputDto, GetUserGroupsOutputDto, GetViewGroupsOutputDto } from "src/models/ApiOutputModels";
+import { GetKeysForViewOutputDto, GetUserContactsOutputDto, GetUserGroupsOutputDto, GetViewGroupsOutputDto } from "src/models/ApiOutputModels";
 import { convertToInteger } from "src/utils/convertUtils";
 import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
 import GroupListAccess from "src/components/list-access/GroupListAccess";
@@ -439,13 +439,52 @@ type ShareKeysProps = {
   roles: { name: string; label: string }[];
 };
 const ShareKeys = ({ roles }: ShareKeysProps) => {
+  const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
-
+  const [keyName,setKeyName] = useState<string>('')
+  const [viewKeys,setViewKeys] = useState<GetKeysForViewOutputDto[]>([])
+  const [error, setError] = useState<string>("");
+  const [submit,setSubmit] = useState<boolean>(false)
+  useEffect(()=>{
+    async function fetchData() {
+       var response = await listViewService.getKeysForView(convertToInteger(router.query.viewId))
+       if(isSucc(response) && response.data)
+       {
+          setViewKeys(response.data)
+       }
+    }
+    if(router.isReady)
+    {
+      fetchData()
+    }
+  },[router.isReady])
+  const onKeyNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyName(event.target.value)
+  };
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
+  const onSubmit = async() =>{
+      setSubmit(true)
+      var response = await listViewService.addKeyToView(convertToInteger(router.query.viewId),role,keyName);
+      if(isSucc(response))
+      {
+          var newViewKeys : GetKeysForViewOutputDto[] = Object.assign([],viewKeys)
+          newViewKeys.push({keyId:response.data.keyId,key:response.data.key,role:role,name:keyName})
+          setViewKeys(newViewKeys)
+      }
+      else
+      {
+          setError((response as FlexlistsError).message)
+      }
+  }
+  const onUpdateViewKeys = (newViewKeys:GetKeysForViewOutputDto[])=>
+  {
+     setViewKeys(newViewKeys)
+  }
   return (
     <>
+       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Grid container spacing={2}>
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
@@ -466,10 +505,10 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
           <FormLabel>
             <Typography variant="body2">Info</Typography>
           </FormLabel>
-          <TextField placeholder="Name of reciever for example..."></TextField>
+          <TextField placeholder="Name of key..." value={keyName} onChange={onKeyNameChange}></TextField>
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button variant="contained" fullWidth sx={{ height: "56px" }}>
+          <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={()=>onSubmit()}>
             Create Key
           </Button>
         </Grid>
@@ -478,7 +517,7 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
       <Typography gutterBottom variant="h5">
         All keys
       </Typography>
-      <ManageKeys />
+      <ManageKeys viewKeys={viewKeys} roles={roles} onUpdateViewKeys={(newViewKeys)=>onUpdateViewKeys(newViewKeys)} />
     </>
   );
 };

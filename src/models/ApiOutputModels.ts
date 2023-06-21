@@ -74,6 +74,16 @@ export type GetViewGroupsOutputDto = {
 export type AddTableViewToGroupOutputDto = {
     groupTableViewId:number
 }
+export type AddKeyToViewOutputDto = {
+    keyId:number
+    key:string
+}
+export type GetKeysForViewOutputDto = {
+    keyId:number
+    key:string
+    role:Role
+    name?:string
+}
 export type GetUserContactsOutputDto = {
     userId:number
     name:string

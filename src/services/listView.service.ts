@@ -12,6 +12,8 @@ import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
 import { AcceptInviteOutputDto } from 'src/models/ApiOutputModels'
 import { GetViewGroupsOutputDto } from 'src/models/ApiOutputModels'
 import { AddTableViewToGroupOutputDto } from 'src/models/ApiOutputModels'
+import { AddKeyToViewOutputDto } from 'src/models/ApiOutputModels'
+import { GetKeysForViewOutputDto } from 'src/models/ApiOutputModels'
 
 export const listViewService = {
     getViewUsers,
@@ -31,6 +33,9 @@ export const listViewService = {
     addTableViewToGroup,
     updateTableViewGroupRole,
     deleteTableViewFromGroup,
+    addKeyToView,
+    getKeysForView,
+    deleteKeyFromView,
 };
 
 async function getViewUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>> {
@@ -109,6 +114,20 @@ async function updateTableViewGroupRole(groupId:number,tableViewId:number,role:R
 };
 async function deleteTableViewFromGroup(groupId:number,tableViewId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteTableViewFromGroup`+`?groupId=${groupId}&tableViewId=${tableViewId}`);
+
+  return response.data;
+};
+async function addKeyToView(viewId:number,role:Role,name?:string): Promise<FlexlistsError|FlexlistsSuccess<AddKeyToViewOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<AddKeyToViewOutputDto>>(`/api/listView/addKeyToView`, {viewId,role,name})
+
+  return response.data;
+};
+async function getKeysForView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<GetKeysForViewOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetKeysForViewOutputDto[]>>('/api/listView/getKeysForView'+`?viewId=${viewId}`)
+  return response.data;
+};
+async function deleteKeyFromView(viewId:number,keyId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteKeyFromView`+`?viewId=${viewId}&keyId=${keyId}`);
 
   return response.data;
 };
