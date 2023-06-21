@@ -47,7 +47,6 @@ function NewList({ message, setMessage }: NewListProps) {
       }
     }
     checkMessage()
-    console.log('hier')
   }, [message])
 
   const flashHandleClose = () => {

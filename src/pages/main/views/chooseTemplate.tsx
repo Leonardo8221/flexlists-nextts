@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -10,6 +10,9 @@ import {
   CardContent,
   Card,
   Divider,
+  Snackbar,
+  Alert,
+  AlertColor,
 } from "@mui/material";
 import HomeCard from "src/sections/@tour/HomeCard";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
@@ -17,6 +20,8 @@ import CategoriesSelect from "src/components/categories/categories";
 import MainLayout from "src/layouts/view/MainLayout";
 import { motion } from "framer-motion";
 import AddIcon from "@mui/icons-material/Add";
+import { connect } from "react-redux";
+import { setMessage } from "src/redux/actions/viewActions";
 
 const HomeCards = [
   {
@@ -46,7 +51,37 @@ const HomeCards = [
   },
 ];
 
-function chooseTemplate() {
+interface ChooseTemplateProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
+
+
+function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
+  // error handling 
+  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
+      }
+    }
+    checkMessage()
+  }, [message])
+
+  const flashHandleClose = () => {
+    setFlash(undefined)
+    setMessage(null)
+  }
+  function setError(message: string) {
+    setFlashMessage(message);
+  }
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
+
   return (
     <MainLayout>
       <Container
@@ -58,6 +93,11 @@ function chooseTemplate() {
           backgroundColor: "#fff",
         }}
       >
+        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={flashHandleClose}>
+          <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+            {flash?.message}
+          </Alert>
+        </Snackbar>
         <Box>
           <Typography variant="h6" gutterBottom>
             Most popular templates
@@ -133,4 +173,15 @@ function chooseTemplate() {
   );
 }
 
-export default chooseTemplate;
+const mapStateToProps = (state: any) => ({
+  message: state.view.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(chooseTemplate);
+
+
+
