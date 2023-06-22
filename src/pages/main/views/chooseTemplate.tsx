@@ -124,43 +124,42 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
         </Box>
         <Grid container spacing={3} sx={{ my: 0 }}>
           <Grid item xs={12} sm={6} md={2}>
-            <Link href="/main/views/newView" style={{ textDecoration: "none" }}>
-              <Card
-                component={motion.div}
-                // onClick={async () => {
-                //   await router.push("/main/views/newView");
-                // }}
-                sx={{
-                  margin: "auto",
-                  height: 160,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-evenly",
-                  flexDirection: "column",
-                }}
-                whileHover={{ scale: 1.1 }}
-              >
-                <CardContent sx={{ p: 0 }}>
-                  <Link href="/main/views/newView">
-                    <Button
-                      variant="contained"
-                      sx={{
-                        textAlign: "center !important",
-                        minWidth: 32,
-                        aspectRatio: "1 / 1",
-                        borderRadius: "100px",
-                      }}
-                    >
-                      <AddIcon />
-                    </Button>
-                  </Link>
-                </CardContent>
-                <CardHeader
-                  title="New from scratch"
-                  sx={{ textAlign: "center", py: 0 }}
-                />
-              </Card>
-            </Link>
+            <Card
+              component={motion.div}
+              onClick={async () => {
+                await router.push("/main/views/newView");
+              }}
+              sx={{
+                margin: "auto",
+                height: 160,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+                flexDirection: "column",
+              }}
+              whileHover={{ scale: 1.1 }}
+            >
+
+              <CardContent sx={{ p: 0 }}>
+                <Link href="/main/views/newView">
+                  <Button
+                    variant="contained"
+                    sx={{
+                      textAlign: "center !important",
+                      minWidth: 32,
+                      aspectRatio: "1 / 1",
+                      borderRadius: "100px",
+                    }}
+                  >
+                    <AddIcon />
+                  </Button>
+                </Link>
+              </CardContent>
+              <CardHeader
+                title="New from scratch"
+                sx={{ textAlign: "center", py: 0 }}
+              />
+            </Card>
           </Grid>
           {HomeCards.map((card: any) => {
             return (
