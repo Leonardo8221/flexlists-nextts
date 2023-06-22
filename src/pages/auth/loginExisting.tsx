@@ -25,16 +25,18 @@ import { authService } from '../../services/auth.service';
 import Iconify from '../../components/iconify';
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
-import { setMessage } from "src/redux/actions/authAction";
+import { LegacyCredentials, setLegacyCredentials, setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 
 
 interface LoginProps {
   message: any;
+  legacyCredentials: LegacyCredentials;
   setMessage: (message: any) => void;
+  setLegacyCredentials: (credentials: LegacyCredentials) => void;
 }
 
-const Login = ({ message, setMessage }: LoginProps) => {
+const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }: LoginProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const router = useRouter();
@@ -76,20 +78,20 @@ const Login = ({ message, setMessage }: LoginProps) => {
         setError("Password required")
         return;
       }
-      console.log('xxxx')
       var response = await authService.loginExisting(userName, password);
       if (isSucc(response)) {
-
+        console.log(response)
         if (response.data.wasMigrated) {
           setMessage({ message: 'Your account was already migrated, please login via the regular login.', type: 'success' })
           await router.push({ pathname: PATH_AUTH.login });
           return
         } else {
-
+          setLegacyCredentials({ username: userName, password: password, legacyId: response.data.user.userId, session: response.data.session, email: response.data.user.email })
+          setMessage({ message: 'Login successful, please sign up for the new Flexlists!', type: 'success' })
+          await router.push({ pathname: PATH_AUTH.registerExisting });
+          return
         }
-        // setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
-        // await router.push({ pathname: PATH_MAIN.views });
-        return
+
       }
       setError('Invalid username or password. Please try again or request a new password.')
     } catch (error: any) {
@@ -292,10 +294,12 @@ const Login = ({ message, setMessage }: LoginProps) => {
 
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
+  legacyCredentials: state.auth.legacyCredentials
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
+  setLegacyCredentials
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

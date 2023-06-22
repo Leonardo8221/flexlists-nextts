@@ -30,14 +30,15 @@ import InfoIcon from "@mui/icons-material/Info";
 import { PATH_AUTH } from "src/routes/paths";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { connect } from "react-redux";
-import { setMessage } from "src/redux/actions/authAction";
+import { LegacyCredentials, setMessage } from "src/redux/actions/authAction";
 
 
 interface RegisterProps {
   message: any;
+  legacyCredentials: LegacyCredentials;
   setMessage: (message: any) => void;
 }
-const Register = ({ message, setMessage }: RegisterProps) => {
+const Register = ({ message, legacyCredentials, setMessage }: RegisterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   //const [error, setError] = useState<string>();
@@ -52,6 +53,17 @@ const Register = ({ message, setMessage }: RegisterProps) => {
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
 
   const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+
+  useEffect(() => {
+    function checkCreds() {
+      if (legacyCredentials?.username) {
+        setUserName(legacyCredentials.username)
+        setUserEmail(legacyCredentials.email)
+        setPassword(legacyCredentials.password)
+      }
+    }
+    checkCreds()
+  }, [legacyCredentials])
 
   useEffect(() => {
     function checkMessage() {
@@ -371,7 +383,7 @@ const Register = ({ message, setMessage }: RegisterProps) => {
             <MuiTelInput
               value={phoneNumber}
               onChange={handlePhoneChange}
-              defaultCountry="VN"
+              defaultCountry="NL"
               sx={{
                 width: "100%",
               }}
@@ -460,6 +472,8 @@ const Register = ({ message, setMessage }: RegisterProps) => {
 
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
+  legacyCredentials: state.auth.legacyCredentials
+
 });
 
 const mapDispatchToProps = {

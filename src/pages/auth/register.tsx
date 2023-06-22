@@ -366,7 +366,7 @@ const Register = ({ message, setMessage }: RegisterProps) => {
             <MuiTelInput
               value={phoneNumber}
               onChange={handlePhoneChange}
-              defaultCountry="VN"
+              defaultCountry="NL"
               sx={{
                 width: "100%",
               }}
