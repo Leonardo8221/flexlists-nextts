@@ -8,7 +8,8 @@ export const authService = {
     logout,
     verifySignup,
     resendSignupEmail,
-    loginExisting
+    loginExisting,
+    registerExisting
 };
 export async function login(userName: string, password: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/login', { userName, password })
@@ -20,6 +21,10 @@ export async function loginExisting(userName: string, password: string): Promise
 };
 export async function register(firstName: string, lastName: string, userName: string, email: string, phoneNumber: string, password: string, termsAndConditions: boolean): Promise<FlexlistsError | FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/register', { firstName, lastName, userName, email, password, phoneNumber, termsAndConditions })
+    return response.data;
+};
+export async function registerExisting(userName: string, password: string, acceptTermsAndConditions: boolean, firstName: string, lastName: string, email: string, phoneNumber: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/register', { userName, password, acceptTermsAndConditions, firstName, lastName, email, phoneNumber })
     return response.data;
 };
 export async function verifyToken(): Promise<FlexlistsError | FlexlistsSuccess<any>> {

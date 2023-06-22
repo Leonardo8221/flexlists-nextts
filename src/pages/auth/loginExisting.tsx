@@ -80,13 +80,12 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
       }
       var response = await authService.loginExisting(userName, password);
       if (isSucc(response)) {
-        console.log(response)
         if (response.data.wasMigrated) {
           setMessage({ message: 'Your account was already migrated, please login via the regular login.', type: 'success' })
           await router.push({ pathname: PATH_AUTH.login });
           return
         } else {
-          setLegacyCredentials({ username: userName, password: password, legacyId: response.data.user.userId, session: response.data.session, email: response.data.user.email })
+          setLegacyCredentials({ lists: response.data.lists, username: userName, password: password, legacyId: response.data.user.userId, session: response.data.session, email: response.data.user.email })
           setMessage({ message: 'Login successful, please sign up for the new Flexlists!', type: 'success' })
           await router.push({ pathname: PATH_AUTH.registerExisting });
           return

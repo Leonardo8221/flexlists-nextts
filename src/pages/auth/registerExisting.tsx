@@ -30,15 +30,16 @@ import InfoIcon from "@mui/icons-material/Info";
 import { PATH_AUTH } from "src/routes/paths";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { connect } from "react-redux";
-import { LegacyCredentials, setMessage } from "src/redux/actions/authAction";
+import { LegacyCredentials, setLegacyCredentials, setMessage } from "src/redux/actions/authAction";
 
 
 interface RegisterProps {
   message: any;
   legacyCredentials: LegacyCredentials;
   setMessage: (message: any) => void;
+  setLegacyCredentials: (credentials: LegacyCredentials) => void;
 }
-const Register = ({ message, legacyCredentials, setMessage }: RegisterProps) => {
+const Register = ({ message, legacyCredentials, setMessage, setLegacyCredentials }: RegisterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   //const [error, setError] = useState<string>();
@@ -146,21 +147,54 @@ const Register = ({ message, legacyCredentials, setMessage }: RegisterProps) => 
         return;
       }
 
-      var response = await authService.register(
+      if (!legacyCredentials?.username) {
+        // if we don't have ye-olde creds, we need to see if they exist, or move this user off 
+        // the legacy system
+        var response = await authService.loginExisting(userName, password);
+        if (isSucc(response)) {
+          if (response.data.wasMigrated) {
+            setMessage({ message: 'Your account was already migrated, please login via the regular login.', type: 'success' })
+            await router.push({ pathname: PATH_AUTH.login });
+            return
+          } else {
+            setLegacyCredentials({ lists: response.data.lists, username: userName, password: password, legacyId: response.data.user.userId, session: response.data.session, email: response.data.user.email })
+            // setMessage({ message: 'Login successful, please sign up for the new Flexlists!', type: 'success' })
+            // await router.push({ pathname: PATH_AUTH.registerExisting });
+            // return
+          }
+
+        } else {
+          // it's an error, so that aint good 
+          setFlashMessage(`We could not retrieve your username/password combination on the old system. Please check if your username and password are the ones you use on that system.`)
+          return
+        }
+      }
+
+      var response = await authService.registerExisting(
+        userName,
+        password,
+        termsAndConditions,
         firstName,
         lastName,
-        userName,
         userEmail,
-        phoneNumber,
-        password,
-        termsAndConditions
-      );
+        phoneNumber
+      )
+      // var response = await authService.register(
+      //   firstName,
+      //   lastName,
+      //   userName,
+      //   userEmail,
+      //   phoneNumber,
+      //   password,
+      //   termsAndConditions
+      // );
 
-      if (isSucc(response) && response) {
+      if (isSucc(response)) {
         setMessage({ message: "Registration successful! Please check your email to verify your account.", type: "success" })
         router.push({ pathname: PATH_AUTH.verifyEmail, query: { email: userEmail } });
         return;
       }
+
 
       setError((response as FlexlistsError).message)
     } catch (error) {
@@ -192,7 +226,7 @@ const Register = ({ message, legacyCredentials, setMessage }: RegisterProps) => 
         alt="The house from the offer."
         src="/assets/images/background.png"
       />
-      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar open={flash !== undefined} autoHideDuration={10000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
           {flash?.message}
         </Alert>
@@ -356,7 +390,7 @@ const Register = ({ message, legacyCredentials, setMessage }: RegisterProps) => 
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="Password"
+              placeholder="Your current password"
               required
               value={password}
               onChange={handleChangePassword}
@@ -477,7 +511,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
+  setLegacyCredentials
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);

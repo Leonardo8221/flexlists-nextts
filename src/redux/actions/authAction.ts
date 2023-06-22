@@ -28,7 +28,8 @@ export type LegacyCredentials = {
     password: string,
     email: string,
     legacyId: number,
-    session: string
+    session: string,
+    lists: any[]
 }
 
 export const setLegacyCredentials: any = (credentials: LegacyCredentials) => ({
