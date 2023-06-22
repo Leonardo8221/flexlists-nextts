@@ -21,6 +21,7 @@ type HomeCard = {
   title?: string;
   description?: string;
   button: string;
+  link: string;
 };
 
 export default function HomeCard({
@@ -28,10 +29,11 @@ export default function HomeCard({
   title,
   description,
   button,
+  link,
   ...other
 }: HomeCard) {
   return (
-    <Link href="#chosenTemplate" style={{ textDecoration: "none" }}>
+    <Link href={link} style={{ textDecoration: "none" }}>
       <Card
         component={motion.div}
         {...other}

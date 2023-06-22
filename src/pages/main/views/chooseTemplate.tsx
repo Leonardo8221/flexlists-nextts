@@ -26,29 +26,40 @@ import { useRouter } from "next/router";
 
 const HomeCards = [
   {
+    icon: "/assets/icons/tour/add-icon.svg",
+    title: "New List",
+    description: "Crreate from scratch",
+    button: "Create",
+    link: '/main/views/newView'
+  },
+  {
     icon: "/assets/icons/tour/ic_tick.svg",
     title: "Todo list",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
+    link: '/main/views/newView'
   },
   {
     icon: "/assets/icons/tour/ic_music.svg",
     title: "Music playlist",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
+    link: '/main/views/newView'
   },
   {
     icon: "/assets/icons/tour/ic_project_m.svg",
-    title: "Project management",
+    title: "Project",
     description:
       "Lorem ipsum dolor sit amet consectetur.eweffasfsafdasasdasfsddscyasdfasfasfasdfasdasdsadasda",
     button: "Use template",
+    link: '/main/views/newView'
   },
   {
     icon: "/assets/icons/tour/ic_bug.svg",
     title: "Bug fixing",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
+    link: '/main/views/newView'
   },
 ];
 
@@ -123,7 +134,7 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
           <PlainSearchBar />
         </Box>
         <Grid container spacing={3} sx={{ my: 0 }}>
-          <Grid item xs={12} sm={6} md={2}>
+          {/* <Grid item xs={12} sm={6} md={2}>
             <Card
               component={motion.div}
               onClick={async () => {
@@ -160,7 +171,7 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
                 sx={{ textAlign: "center", py: 0 }}
               />
             </Card>
-          </Grid>
+          </Grid> */}
           {HomeCards.map((card: any) => {
             return (
               <Grid item xs={12} sm={6} md={2} key={card.icon}>
@@ -170,6 +181,7 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
                   title={card.title}
                   description={card.description}
                   button={card.button}
+                  link={card.link}
                 ></HomeCard>
               </Grid>
             );
