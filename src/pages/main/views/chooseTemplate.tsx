@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import AddIcon from "@mui/icons-material/Add";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/viewActions";
+import { useRouter } from "next/router";
 
 const HomeCards = [
   {
@@ -59,6 +60,7 @@ interface ChooseTemplateProps {
 
 function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
   // error handling 
+  const router = useRouter();
   const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
 
   useEffect(() => {
@@ -122,43 +124,49 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
         </Box>
         <Grid container spacing={3} sx={{ my: 0 }}>
           <Grid item xs={12} sm={6} md={2}>
-            <Card
-              component={motion.div}
-              sx={{
-                margin: "auto",
-                height: 160,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-evenly",
-                flexDirection: "column",
-              }}
-              whileHover={{ scale: 1.1 }}
-            >
-              <CardContent sx={{ p: 0 }}>
-                <Link href="/main/views/newView">
-                  <Button
-                    variant="contained"
-                    sx={{
-                      textAlign: "center !important",
-                      minWidth: 32,
-                      aspectRatio: "1 / 1",
-                      borderRadius: "100px",
-                    }}
-                  >
-                    <AddIcon />
-                  </Button>
-                </Link>
-              </CardContent>
-              <CardHeader
-                title="New from scratch"
-                sx={{ textAlign: "center", py: 0 }}
-              />
-            </Card>
+            <Link href="/main/views/newView" style={{ textDecoration: "none" }}>
+              <Card
+                component={motion.div}
+                // onClick={async () => {
+                //   await router.push("/main/views/newView");
+                // }}
+                sx={{
+                  margin: "auto",
+                  height: 160,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  flexDirection: "column",
+                }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <CardContent sx={{ p: 0 }}>
+                  <Link href="/main/views/newView">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        textAlign: "center !important",
+                        minWidth: 32,
+                        aspectRatio: "1 / 1",
+                        borderRadius: "100px",
+                      }}
+                    >
+                      <AddIcon />
+                    </Button>
+                  </Link>
+                </CardContent>
+                <CardHeader
+                  title="New from scratch"
+                  sx={{ textAlign: "center", py: 0 }}
+                />
+              </Card>
+            </Link>
           </Grid>
           {HomeCards.map((card: any) => {
             return (
               <Grid item xs={12} sm={6} md={2} key={card.icon}>
                 <HomeCard
+
                   icon={card.icon}
                   title={card.title}
                   description={card.description}
