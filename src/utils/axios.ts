@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { de } from 'date-fns/locale';
 import { setLoading } from 'src/redux/actions/adminAction';
 import store from 'src/redux/store';
 // ----------------------------------------------------------------------
@@ -47,5 +48,12 @@ async function post<T>(url: string, data?: any) {
   }
 }
 
+async function axiosDelete<T>(url: string, params?: any) {
+  try {
+    return await axiosInstance.delete<T>(url, { params })
+  } catch (e: any) {
+    return { data: { code: e.code ?? 999, isSuccess: e.isSuccess, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
+  }
+}
 
-export default { get, post };
+export default { get, post,delete : axiosDelete };
