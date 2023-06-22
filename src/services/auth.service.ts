@@ -24,7 +24,7 @@ export async function register(firstName: string, lastName: string, userName: st
     return response.data;
 };
 export async function registerExisting(userName: string, password: string, acceptTermsAndConditions: boolean, firstName: string, lastName: string, email: string, phoneNumber: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
-    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/register', { userName, password, acceptTermsAndConditions, firstName, lastName, email, phoneNumber })
+    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/registerExisting', { userName, password, acceptTermsAndConditions, firstName, lastName, email, phoneNumber })
     return response.data;
 };
 export async function verifyToken(): Promise<FlexlistsError | FlexlistsSuccess<any>> {

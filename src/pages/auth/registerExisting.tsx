@@ -24,7 +24,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import { authService } from "../../services/auth.service";
 import { useRouter } from "next/router";
 import Iconify from "../../components/iconify";
-import { FlexlistsError, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { MuiTelInput } from "mui-tel-input";
 import InfoIcon from "@mui/icons-material/Info";
 import { PATH_AUTH } from "src/routes/paths";
@@ -195,8 +195,17 @@ const Register = ({ message, legacyCredentials, setMessage, setLegacyCredentials
         return;
       }
 
+      // cannot really happen, but what can you do 
+      if (isErr(response)) {
+        if ((response as FlexlistsError).code === 503) { // UserAlreadyMigrated
+          setMessage({ message: 'Your account was already migrated, please login via the regular login.', type: 'success' })
+          await router.push({ pathname: PATH_AUTH.login });
+          return
+        }
+      }
 
-      setError((response as FlexlistsError).message)
+
+      setError((response as FlexlistsError)?.message ?? 'Could not create account, please try again or contact support.')
     } catch (error) {
       setError(ErrorConsts.InternalServerError)
       console.log(error);
