@@ -24,7 +24,7 @@ import { useRouter } from "next/router";
 import { authService } from '../../services/auth.service';
 import Iconify from '../../components/iconify';
 import { isSucc } from "src/models/ApiResponse";
-import { PATH_MAIN } from "src/routes/paths";
+import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 
@@ -78,13 +78,20 @@ const Login = ({ message, setMessage }: LoginProps) => {
       }
       console.log('xxxx')
       var response = await authService.loginExisting(userName, password);
-      console.log(response)
-      // if (isSucc(response)) {
-      //   setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
-      //   await router.push({ pathname: PATH_MAIN.views });
-      //   return
-      // }
-      //setError('Invalid username or password. Please try again or request a new password.')
+      if (isSucc(response)) {
+
+        if (response.data.wasMigrated) {
+          setMessage({ message: 'Your account was already migrated, please login via the regular login.', type: 'success' })
+          await router.push({ pathname: PATH_AUTH.login });
+          return
+        } else {
+
+        }
+        // setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
+        // await router.push({ pathname: PATH_MAIN.views });
+        return
+      }
+      setError('Invalid username or password. Please try again or request a new password.')
     } catch (error: any) {
       console.log(error)
       setError('Unknown error. Please try again.')
