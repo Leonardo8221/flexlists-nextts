@@ -198,14 +198,14 @@ function Views({ message, setMessage }: ViewsProps) {
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
           {views.length > 0 &&
-            views.map((view) => {
+            views.map((view,index) => {
               return (
                 <Grid
                   item
                   xs={12}
                   sm={6}
                   md={2}
-                  key={"/assets/home/heroimg.png"}
+                  key={index}
                 >
                   <ViewCard
                     id={view.id}
