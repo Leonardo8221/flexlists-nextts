@@ -1,5 +1,5 @@
 import { useState, ReactNode, useEffect } from 'react';
-import  { Router, useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
 import { isSucc } from 'src/models/ApiResponse';
 import { PATH_MAIN } from 'src/routes/paths';
@@ -14,17 +14,16 @@ type AuthGuardProps = {
   setLoading: (isLoading: boolean) => void;
 };
 
-export function AuthGuard({ children,isLoading,setLoading }: AuthGuardProps) {
+export function AuthGuard({ children, isLoading, setLoading }: AuthGuardProps) {
   const router = useRouter();
   const url = router.asPath;
   const [isRouteChange, setIsRouteChange] = useState<boolean>(false);
   useEffect(() => {
     async function initialize() {
       const path = url.split('/')[1];
-      let isValidated : Boolean = true;  
+      let isValidated: Boolean = false;
       //if user refresh page or enter url directly, need to verify token
-      if(!isRouteChange)
-      {
+      if (!isRouteChange) {
         try {
           var verifyTokenResponse = await authService.verifyToken();
           isValidated = isSucc(verifyTokenResponse) && verifyTokenResponse.data && verifyTokenResponse.data.isValidated;
@@ -34,22 +33,20 @@ export function AuthGuard({ children,isLoading,setLoading }: AuthGuardProps) {
         }
         setIsRouteChange(true);
       }
-      
-      if (path == 'auth' || path == '') {       
+
+      if (path == 'auth' || path == '') {
         if (isValidated) {
           await router.push({
             pathname: PATH_MAIN.views
           });
         }
       }
-      else
-      {
-        if(!isValidated)
-          {
-            await router.push({
-              pathname: '/auth/login'
-            });
-          }
+      else {
+        if (!isValidated) {
+          await router.push({
+            pathname: '/auth/login'
+          });
+        }
       }
       // else {
       //   if (!isValidated) {
@@ -59,9 +56,9 @@ export function AuthGuard({ children,isLoading,setLoading }: AuthGuardProps) {
       //   }
       // }
 
-      
+
     }
-    
+
     initialize();
   }, [router, url]);
   useEffect(() => {
@@ -72,7 +69,7 @@ export function AuthGuard({ children,isLoading,setLoading }: AuthGuardProps) {
     const stopLoading = () => {
       setLoading(false);
     };
-    
+
     Router.events.on('routeChangeStart', startLoading);
     Router.events.on('routeChangeComplete', stopLoading);
     Router.events.on('routeChangeError', stopLoading);
@@ -90,7 +87,7 @@ export function AuthGuard({ children,isLoading,setLoading }: AuthGuardProps) {
 const mapStateToProps = (state: any) => ({
   isLoading: state.admin.isLoading
 });
-const mapDispatchToProps = { 
+const mapDispatchToProps = {
   setLoading
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AuthGuard);
