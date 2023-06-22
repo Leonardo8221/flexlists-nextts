@@ -15,13 +15,15 @@ export default function App({ Component, pageProps }: AppProps) {
       <LanguagesProvider>
         {/* <ScrollToTop /> */}
         <StyledChart />
+        <Provider store={store}>
         <AuthGuard>
-          <Provider store={store}>
+         
             <LoadingPage>
               <Component {...pageProps} />
             </LoadingPage>
-          </Provider>
+        
         </AuthGuard>
+        </Provider>
       </LanguagesProvider>
     </ThemeProvider>
   );
