@@ -14,7 +14,7 @@ type KanbanViewConfigProps = {
   columns:ViewField[];
   availableFieldUiTypes: FieldUIType[]
 }
-export function KanbanViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:KanbanViewConfigProps)
+function KanbanViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:KanbanViewConfigProps)
 {
     const [boardColumnId,setBoardColumnId] = useState<number>(0)
     const [titleFieldId,setTitleFieldId] = useState<number>(0)

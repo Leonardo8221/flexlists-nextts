@@ -45,3 +45,7 @@ export async function resendSignupEmail(email: string): Promise<FlexlistsError |
     return response.data;
 
 }
+export async function validateAccessKey(key:string): Promise<FlexlistsError|FlexlistsSuccess<{viewId:number}>> {
+    var response = await axios.get<FlexlistsError|FlexlistsSuccess<{viewId:number}>>('/api/auth/validateAccessKey'+`?key=${key}`)
+    return response.data;
+  };

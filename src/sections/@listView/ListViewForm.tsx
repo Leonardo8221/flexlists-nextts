@@ -13,7 +13,8 @@ import { isSucc } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
-import { CalendarViewConfig } from "./CalendarViewConfig";
+import KanbanViewConfig from "./KanbanViewConfig";
+import CalendarViewConfig from "./CalendarViewConfig";
 
 
 const style = {
@@ -161,6 +162,7 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
   }
   const onTypeSelect = (type: ViewType) => {
     setViewType(type)
+    setSteps(1)
     //  reloadColumns(type)
   }
   const updateConfig = (newConfig: any) => {
@@ -214,7 +216,14 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
                   <CalendarViewConfig
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
-                    columns={columns}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                }
+                 {
+                  currentView && viewType === ViewType.KanBan &&
+                  <KanbanViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
                   />
                 }

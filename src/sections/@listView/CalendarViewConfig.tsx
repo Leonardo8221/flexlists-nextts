@@ -4,8 +4,7 @@ import { connect } from "react-redux";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "src/utils/convertUtils";
-import ViewFieldsConfig from "./CreateFieldModal";
-import { Field, FieldUIType } from "src/models/SharedModels";
+import { FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
 
 type CalendarViewConfigProps = {
@@ -14,7 +13,7 @@ type CalendarViewConfigProps = {
   columns:ViewField[];
   availableFieldUiTypes: FieldUIType[]
 }
-export function CalendarViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:CalendarViewConfigProps)
+function CalendarViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:CalendarViewConfigProps)
 {
     const [dateFieldId,setDateFieldId] = useState<number>(0)
     const [titleFieldId,setTitleFieldId] = useState<number>(0)
