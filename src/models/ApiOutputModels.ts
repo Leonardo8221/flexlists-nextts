@@ -22,7 +22,7 @@ export type CreateFieldOutputDto = {
     viewId:number
     fieldId:number
 }
-export type UpdateListFieldOutputDto = {
+export type UpdateUiFieldOutputDto = {
     viewId:number
     fieldId:number
 }

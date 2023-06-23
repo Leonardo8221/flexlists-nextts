@@ -3,13 +3,13 @@ import axios from "src/utils/axios";
 import { CreateUIFieldOutputDto } from 'src/models/ApiOutputModels'
 import { CreateFieldOutputDto } from 'src/models/ApiOutputModels'
 import { FieldType } from 'src/enums/SharedEnums'
-import { UpdateListFieldOutputDto } from 'src/models/ApiOutputModels'
+import { UpdateUiFieldOutputDto } from 'src/models/ApiOutputModels'
 import { Field } from 'src/models/SharedModels'
 
 export const fieldService = {
     createUIField,
     createField,
-    updateListField,
+    updateUiField,
     updateField,
     createViewField,
     updateViewField,
@@ -27,8 +27,8 @@ async function createField(viewId:number,name:string,type:FieldType,ordering:num
 
   return response.data;
 };
-async function updateListField(viewId:number,fieldId:number,name:string,type:string,required:boolean,detailsOnly:boolean,description?:string,config?:any,icon?:string,defaultValue?:string): Promise<FlexlistsError|FlexlistsSuccess<UpdateListFieldOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<UpdateListFieldOutputDto>>(`/api/field/updateListField`, {viewId,fieldId,name,type,required,detailsOnly,description,config,icon,defaultValue})
+async function updateUiField(viewId:number,fieldId:number,name:string,type:string,required:boolean,detailsOnly:boolean,description?:string,config?:any,icon?:string,defaultValue?:string): Promise<FlexlistsError|FlexlistsSuccess<UpdateUiFieldOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<UpdateUiFieldOutputDto>>(`/api/field/updateUiField`, {viewId,fieldId,name,type,required,detailsOnly,description,config,icon,defaultValue})
 
   return response.data;
 };

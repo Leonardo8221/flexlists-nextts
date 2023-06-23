@@ -133,7 +133,7 @@ export  function FieldFormPanel({
         return;
       }
     } else {
-      var updateFieldResponse = await fieldService.updateListField(
+      var updateFieldResponse = await fieldService.updateUiField(
         viewId,
         field.id,
         currentField.name,
