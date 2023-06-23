@@ -1,7 +1,8 @@
 // Define the initial state
 const initialState = {
     searchTypes:[],
-    isLoading:false
+    isLoading:false,
+    authValidate:{isUserValidated:false,isKeyValidated:false}
   };
   const adminReducer = (state = initialState, action: any) => {
       switch (action.type) {
@@ -9,6 +10,8 @@ const initialState = {
           return { ...state, searchTypes: action.payload }
         case 'SET_LOADING':
           return { ...state, isLoading: action.payload }
+        case 'SET_AUTH_VALIDATE':
+          return { ...state, authValidate: action.payload }
         default:
           return state;
       }

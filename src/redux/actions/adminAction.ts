@@ -38,3 +38,7 @@ export const setLoading = (isLoading: boolean) => ({
   type: 'SET_LOADING',
   payload: isLoading
 });
+export const setAuthValidate = (authValidate: any) => ({  
+  type: 'SET_AUTH_VALIDATE',  
+  payload: authValidate 
+});

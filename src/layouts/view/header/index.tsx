@@ -7,6 +7,8 @@ import SearchBarContainer from '../../../components/search-bar/SearchBarContaine
 import SearchBarMin from "../../../components/search-bar/SearchBarMin";
 import useResponsive from '../../../hooks/useResponsive';
 import Link from 'next/link';
+import { connect } from 'react-redux';
+import { AuthValidate } from 'src/models/AuthValidate';
 
 const HEADER_MOBILE = 48;
 const HEADER_DESKTOP = 48;
@@ -31,9 +33,10 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 type HeaderProps = {
   onOpenNav: (value:any)=>void,
+  authValidate: AuthValidate
 };
 
-export default function Header({ onOpenNav }:HeaderProps) {
+export  function Header({ onOpenNav,authValidate }:HeaderProps) {
   const theme = useTheme();
   const isMobile = useResponsive('down', 'sm');
 
@@ -70,8 +73,9 @@ export default function Header({ onOpenNav }:HeaderProps) {
         {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
 
         <Box sx={{ flexGrow: 1 }} />
-
-        <Stack
+        {
+          authValidate && authValidate.isUserValidated && 
+          <Stack
           direction="row"
           alignItems="center"
           spacing={{
@@ -82,7 +86,16 @@ export default function Header({ onOpenNav }:HeaderProps) {
           <NotificationsPopover />
           <AccountPopover />
         </Stack>
+        }
+        
       </StyledToolbar>
     </StyledRoot>
   );
 }
+const mapStateToProps = (state: any) => ({
+  authValidate : state.admin.authValidate
+});
+const mapDispatchToProps = { 
+   
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

@@ -3,8 +3,9 @@ import  { Router, useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
 import { isSucc } from 'src/models/ApiResponse';
 import { PATH_MAIN } from 'src/routes/paths';
-import { setLoading } from 'src/redux/actions/adminAction';
+import { setAuthValidate, setLoading } from 'src/redux/actions/adminAction';
 import { connect } from 'react-redux';
+import { getAuthValidatePayLoad } from 'src/utils/tokenUtils';
 
 // ----------------------------------------------------------------------
 
@@ -12,16 +13,18 @@ type AuthGuardProps = {
   children: ReactNode;
   isLoading: boolean;
   setLoading: (isLoading: boolean) => void;
+  setAuthValidate:(authValidate:any)=>void;
 };
 
-export function AuthGuard({ children,isLoading,setLoading }: AuthGuardProps) {
+export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: AuthGuardProps) {
   const router = useRouter();
   const url = router.asPath;
+ 
   useEffect(() => {
     async function initialize() {
       const path = url.split('/')[1];
      
-
+      setAuthValidate(getAuthValidatePayLoad());
       if (path == 'auth' || path == '') {
         var isValidated: Boolean = false;
         try {
@@ -77,7 +80,8 @@ const mapStateToProps = (state: any) => ({
   isLoading: state.admin.isLoading
 });
 const mapDispatchToProps = { 
-  setLoading
+  setLoading,
+  setAuthValidate
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AuthGuard);
 
