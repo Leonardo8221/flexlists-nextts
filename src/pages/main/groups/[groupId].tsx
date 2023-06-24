@@ -22,13 +22,15 @@ import ViewListIcon from "@mui/icons-material/ViewList";
 import GroupMembers from "src/components/groups/groupMembers";
 import ViewCard from "src/sections/@view/ViewCard";
 import { useRouter } from "next/router";
-import { GetGroupViewsOutputDto, GetUserGroupsOutputDto } from "src/models/ApiOutputModels";
+import {
+  GetGroupViewsOutputDto,
+  GetUserGroupsOutputDto,
+} from "src/models/ApiOutputModels";
 import { groupService } from "src/services/group.service";
 import { convertToInteger } from "src/utils/convertUtils";
 import { isSucc } from "src/models/ApiResponse";
 import { connect } from "react-redux";
 import CentralModal from "src/components/modal/CentralModal";
-
 
 const activeButtonStyle: React.CSSProperties = {
   border: "1px solid #eee",
@@ -96,38 +98,35 @@ const ListViewButton = ({
 };
 function GroupDetail() {
   const router = useRouter();
-  const [groupViews,setGroupViews] = useState<GetGroupViewsOutputDto[]>([]) 
-  const [sort,setSort] = useState<string>('')
-  const [currentGroup,setCurrentGroup] = useState<GetUserGroupsOutputDto>()
-  const [isRenameGroupOpenModal,setIsRenameGroupOpenModal] = useState<boolean>(false);
-  useEffect(()=>{
-    async function fetchData()
-    {
-       if(router.query.groupId)
-       {
-        let getGroupViewsResponse = await groupService.getGroupViews(convertToInteger(router.query.groupId))
-        if(isSucc(getGroupViewsResponse) && getGroupViewsResponse.data)
-        {
-           setGroupViews(getGroupViewsResponse.data)
+  const [groupViews, setGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
+  const [sort, setSort] = useState<string>("");
+  const [currentGroup, setCurrentGroup] = useState<GetUserGroupsOutputDto>();
+  const [isRenameGroupOpenModal, setIsRenameGroupOpenModal] =
+    useState<boolean>(false);
+  useEffect(() => {
+    async function fetchData() {
+      if (router.query.groupId) {
+        let getGroupViewsResponse = await groupService.getGroupViews(
+          convertToInteger(router.query.groupId)
+        );
+        if (isSucc(getGroupViewsResponse) && getGroupViewsResponse.data) {
+          setGroupViews(getGroupViewsResponse.data);
         }
         let groupsResponse = await groupService.getUserGroups();
-        if(isSucc(groupsResponse) && groupsResponse.data)
-        {
-          let group = groupsResponse.data.find((x:any)=>x.groupId ===  convertToInteger(router.query.groupId))
-          setCurrentGroup(group)
+        if (isSucc(groupsResponse) && groupsResponse.data) {
+          let group = groupsResponse.data.find(
+            (x: any) => x.groupId === convertToInteger(router.query.groupId)
+          );
+          setCurrentGroup(group);
         }
-        
-       }
-       
+      }
     }
-    if(router.isReady)
-    {
-      fetchData()
+    if (router.isReady) {
+      fetchData();
     }
-  },[router.isReady])
-  
-  const handleChange = (event: SelectChangeEvent) => {
-  };
+  }, [router.isReady]);
+
+  const handleChange = (event: SelectChangeEvent) => {};
 
   const [isGrid, setIsGrid] = useState<boolean>(false);
 
@@ -138,23 +137,21 @@ function GroupDetail() {
   const handleListView = () => {
     setIsGrid(false);
   };
-  const onOpenRenameModal = ()=>{
-    setIsRenameGroupOpenModal(true)
-  }
-  const handleUpdateGroup = (newGroup:GetUserGroupsOutputDto) =>
-  {
-    setCurrentGroup(newGroup)
-  }
+  const onOpenRenameModal = () => {
+    setIsRenameGroupOpenModal(true);
+  };
+  const handleUpdateGroup = (newGroup: GetUserGroupsOutputDto) => {
+    setCurrentGroup(newGroup);
+  };
   return (
     <MainLayout>
       <Grid container>
         <Grid item xs={10} sx={{ p: 2 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              
               <Typography variant="h6">{currentGroup?.name}</Typography>
             </Box>
-            <Button variant="contained" onClick={()=>onOpenRenameModal()} >
+            <Button variant="contained" onClick={() => onOpenRenameModal()}>
               Rename Group
             </Button>
           </Box>
@@ -200,29 +197,30 @@ function GroupDetail() {
 
           {isGrid ? (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {groupViews && groupViews.map((view,index) => {
-                return (
-                  <Grid item md={2} key={index}>
-                    <ViewCard
-                      id = {view.tableViewId}
-                      viewName={view.tableViewName}
-                      viewDesc={""}
-                      bgImage={"/assets/home/heroimg.png"}
-                    />
-                  </Grid>
-                );
-              })}
+              {groupViews &&
+                groupViews.map((view, index) => {
+                  return (
+                    <Grid item md={2} key={index}>
+                      <ViewCard
+                        id={view.tableViewId}
+                        viewName={view.tableViewName}
+                        viewDesc={""}
+                        bgImage={"/assets/home/heroimg.png"}
+                      />
+                    </Grid>
+                  );
+                })}
             </Grid>
           ) : (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {groupViews.map((view,index) => {
+              {groupViews.map((view, index) => {
                 return (
                   <Grid item md={12} key={index}>
                     <ViewCard
-                       id = {view.tableViewId}
-                       viewName={view.tableViewName}
-                       viewDesc={""}
-                       bgImage={"/assets/home/heroimg.png"}
+                      id={view.tableViewId}
+                      viewName={view.tableViewName}
+                      viewDesc={""}
+                      bgImage={"/assets/home/heroimg.png"}
                     />
                   </Grid>
                 );
@@ -238,19 +236,22 @@ function GroupDetail() {
           <GroupMembers />
         </Grid>
       </Grid>
-      {
-        currentGroup && <RenameGroup  group={currentGroup} handleClose={()=>setIsRenameGroupOpenModal(false)} 
-        open={isRenameGroupOpenModal} onUpdate={(newGroup)=>handleUpdateGroup(newGroup)} />
-      }
+      {currentGroup && (
+        <RenameGroup
+          group={currentGroup}
+          handleClose={() => setIsRenameGroupOpenModal(false)}
+          open={isRenameGroupOpenModal}
+          onUpdate={(newGroup) => handleUpdateGroup(newGroup)}
+        />
+      )}
     </MainLayout>
   );
 }
 const mapStateToProps = (state: any) => ({
-  groups:state.group.groups
+  groups: state.group.groups,
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupDetail);
 
@@ -258,47 +259,55 @@ type RenameGroupProps = {
   open: boolean;
   handleClose: () => void;
   group: GetUserGroupsOutputDto;
-  onUpdate:(newGroup:GetUserGroupsOutputDto) =>void
+  onUpdate: (newGroup: GetUserGroupsOutputDto) => void;
 };
 
 const RenameGroup = ({
   open,
   handleClose,
   group,
-  onUpdate
+  onUpdate,
 }: RenameGroupProps) => {
   const [windowHeight, setWindowHeight] = useState(0);
-  const [currentGroup, setCurrentGroup] = useState<GetUserGroupsOutputDto>(group);
-  const [error,setError] = useState<string>('');
-  const [submit,setSubmit] = useState<boolean>(false)
-  const [isUpdate,setIsUpdate] = useState<boolean>(false);
+  const [currentGroup, setCurrentGroup] =
+    useState<GetUserGroupsOutputDto>(group);
+  const [error, setError] = useState<string>("");
+  const [submit, setSubmit] = useState<boolean>(false);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
-  
-  const handleGroupNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleGroupNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     var newGroup = Object.assign({}, currentGroup);
     newGroup.name = event.target.value;
-    setIsUpdate(true)
+    setIsUpdate(true);
     setCurrentGroup(newGroup);
   };
-  const handleGroupDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGroupDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     var newGroup = Object.assign({}, currentGroup);
     newGroup.description = event.target.value;
-    setIsUpdate(true)
+    setIsUpdate(true);
     setCurrentGroup(newGroup);
   };
   const onSubmit = async () => {
-    setSubmit(true)
-    if(!currentGroup.name)
-    {
-      setError('Name required')
+    setSubmit(true);
+    if (!currentGroup.name) {
+      setError("Name required");
       return;
     }
-    var response = await groupService.updateUserGroup(currentGroup.groupId, currentGroup.name,currentGroup.description);
+    var response = await groupService.updateUserGroup(
+      currentGroup.groupId,
+      currentGroup.name,
+      currentGroup.description
+    );
     if (isSucc(response)) {
-      setIsUpdate(false)
-      onUpdate(currentGroup)
+      setIsUpdate(false);
+      onUpdate(currentGroup);
       handleClose();
     }
   };
@@ -306,9 +315,7 @@ const RenameGroup = ({
     <CentralModal open={open} handleClose={handleClose}>
       <Typography variant="h6">Rename Group</Typography>
       <Divider sx={{ my: 2 }}></Divider>
-      <Box>
-          {error && <Alert severity="error">{error}</Alert>}
-      </Box>
+      <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
@@ -317,7 +324,7 @@ const RenameGroup = ({
           value={currentGroup?.name}
           placeholder="Name"
           required
-          error = {submit && !currentGroup?.name}
+          error={submit && !currentGroup?.name}
         />
       </Box>
       <Box>
@@ -333,7 +340,12 @@ const RenameGroup = ({
         />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button disabled={!isUpdate} sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
+        <Button
+          disabled={!isUpdate}
+          sx={{ mt: 2 }}
+          variant="contained"
+          onClick={() => onSubmit()}
+        >
           Update
         </Button>
         <Button

@@ -177,7 +177,7 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
           </Grid> */}
           {HomeCards.map((card: any) => {
             return (
-              <Grid item xs={12} sm={6} md={2} key={card.icon}>
+              <Grid item xs={6} md={4} xl={2} key={card.icon}>
                 <HomeCard
                   icon={card.icon}
                   title={card.title}

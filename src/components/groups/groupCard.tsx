@@ -20,7 +20,7 @@ import { PATH_MAIN } from "src/routes/paths";
 // }));
 
 type GroupCard = {
-  groupId:number;
+  groupId: number;
   icon: JSX.Element;
   title?: string;
   description?: string;
@@ -35,7 +35,13 @@ export default function GroupCard({
 }: GroupCard) {
   const router = useRouter();
   return (
-    <Link href="" onClick={()=>{router.push(`${PATH_MAIN.groups}/${groupId}`)}} style={{ textDecoration: "none" }}>
+    <Link
+      href=""
+      onClick={() => {
+        router.push(`${PATH_MAIN.groups}/${groupId}`);
+      }}
+      style={{ textDecoration: "none" }}
+    >
       <Card
         component={motion.div}
         {...other}
@@ -54,7 +60,12 @@ export default function GroupCard({
         <Box sx={{ pt: 3 }}>
           <Avatar sx={{ backgroundColor: "green" }}>{icon}</Avatar>
         </Box>
-        <CardHeader title={title} sx={{ textAlign: "center" }} />
+        <CardHeader
+          title={title}
+          sx={{
+            textAlign: "center",
+          }}
+        />
         <CardContent
           sx={{
             textAlign: "center",

@@ -9,21 +9,20 @@ import { connect } from "react-redux";
 import { PATH_MAIN } from "src/routes/paths";
 
 type allGroupsProps = {
-   groups:GetUserGroupsOutputDto[],
-   fetchGroups:()=>void
-}
+  groups: GetUserGroupsOutputDto[];
+  fetchGroups: () => void;
+};
 
-const AllGroups =({groups,fetchGroups}:allGroupsProps) => {
+const AllGroups = ({ groups, fetchGroups }: allGroupsProps) => {
   const router = useRouter();
-  useEffect(()=>{
-    if(router.isReady)
-    {
+  useEffect(() => {
+    if (router.isReady) {
       fetchGroups();
     }
-  },[router.isReady])
+  }, [router.isReady]);
   return (
     <>
-      <MainLayout>
+      <MainLayout removeFooter={true}>
         <Container
           sx={{
             py: 3,
@@ -39,7 +38,13 @@ const AllGroups =({groups,fetchGroups}:allGroupsProps) => {
             }}
           >
             <Typography variant="h6">All groups.</Typography>
-            <Button size="medium" variant="contained" onClick={()=>{router.push(PATH_MAIN.newGroup)}}>
+            <Button
+              size="medium"
+              variant="contained"
+              onClick={() => {
+                router.push(PATH_MAIN.newGroup);
+              }}
+            >
               Create new group
             </Button>
           </Box>
@@ -50,38 +55,31 @@ const AllGroups =({groups,fetchGroups}:allGroupsProps) => {
               pt: 3,
             }}
           >
-            {groups && groups.map((group,index) => {
-              return (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={2}
-                  key={index}
-                  
-                >
-                  <GroupCard
-                    groupId={group.groupId}
-                    icon={<></>}
-                    title={group.name}
-                    description={group.description}
-                  ></GroupCard>
-                </Grid>
-              );
-            })}
+            {groups &&
+              groups.map((group, index) => {
+                return (
+                  <Grid item xs={12} sm={6} md={2} key={index}>
+                    <GroupCard
+                      groupId={group.groupId}
+                      icon={<></>}
+                      title={group.name}
+                      description={group.description}
+                    ></GroupCard>
+                  </Grid>
+                );
+              })}
           </Grid>
         </Container>
       </MainLayout>
     </>
   );
-}
+};
 const mapStateToProps = (state: any) => ({
-  groups : state.group.groups,
+  groups: state.group.groups,
 });
 
 const mapDispatchToProps = {
-  fetchGroups
+  fetchGroups,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllGroups);
-

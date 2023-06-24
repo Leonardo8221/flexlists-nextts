@@ -1,6 +1,7 @@
 import { styled, useTheme } from "@mui/material/styles";
 import { Box, Stack, AppBar, Toolbar, IconButton } from "@mui/material";
 import Logo from "../../../components/logo";
+import DarkLogo from "src/components/dark-logo/";
 import AccountPopover from "./AccountPopover";
 import NotificationsPopover from "./NotificationsPopover";
 import SearchBarContainer from "../../../components/search-bar/SearchBarContainer";
@@ -75,7 +76,7 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
               justifyContent: "center",
             }}
           >
-            <Logo />
+            {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
 

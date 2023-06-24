@@ -1,12 +1,6 @@
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
-import {
-  Card,
-  Button,
-  Typography,
-  CardHeader,
-  CardContent,
-} from "@mui/material";
+import { Card, Typography, CardHeader, CardContent } from "@mui/material";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -48,7 +42,15 @@ export default function HomeCard({
         whileHover={{ scale: 1.1 }}
       >
         <CardIconStyle src={icon} alt={title} />
-        <CardHeader title={title} sx={{ textAlign: "center", px: 0 }} />
+        <CardHeader
+          title={title}
+          sx={{
+            textAlign: "center",
+            px: 0,
+            overflow: "hidden",
+            whiteSpace: { xs: "nowrap", xl: "normal" },
+          }}
+        />
         <CardContent
           sx={{
             textAlign: "center",

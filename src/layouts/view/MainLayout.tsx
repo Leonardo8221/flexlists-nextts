@@ -13,7 +13,7 @@ const APP_BAR_DESKTOP = 48;
 
 const StyledRoot = styled("div")(({ theme }) => ({
   display: "flex",
-  minHeight: "100%",
+  minHeight: "100vh",
   backgroundColor: theme.palette.palette_style.background.default,
   color: theme.palette.palette_style.text.primary,
 }));
