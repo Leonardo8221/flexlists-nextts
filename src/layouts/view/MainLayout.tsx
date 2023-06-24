@@ -36,9 +36,8 @@ const Main = styled("div")(({ theme }) => ({
 
 const Content = styled("div")(
   ({ theme, disableOverflow }: { theme: any; disableOverflow: boolean }) => ({
-    backgroundColor: "#fff",
     width: "100%",
-    overflow: disableOverflow ? "hidden" : "scroll",
+    overflow: disableOverflow ? "hidden" : "auto",
 
     // [theme.breakpoints.up('lg')]: {
     //   paddingLeft: theme.spacing(1),

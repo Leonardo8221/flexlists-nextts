@@ -1,4 +1,5 @@
 import { styled } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
   Card,
   Button,
@@ -32,12 +33,18 @@ export default function HomeCard({
   link,
   ...other
 }: HomeCard) {
+  const theme = useTheme();
   return (
     <Link href={link} style={{ textDecoration: "none" }}>
       <Card
         component={motion.div}
         {...other}
-        sx={{ margin: "auto", maxHeight: "260px", px: 4 }}
+        sx={{
+          margin: "auto",
+          maxHeight: "260px",
+          px: 4,
+          backgroundColor: theme.palette.palette_style.background.paper,
+        }}
         whileHover={{ scale: 1.1 }}
       >
         <CardIconStyle src={icon} alt={title} />

@@ -13,21 +13,24 @@ import {
   Alert,
   Box,
   Snackbar,
-  AlertColor
+  AlertColor,
 } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
-import useResponsive from '../../hooks/useResponsive';
-import SocialLogin from '../../sections/auth/SocialLoginButtons';
+import { useTheme } from "@mui/material/styles";
+import useResponsive from "../../hooks/useResponsive";
+import SocialLogin from "../../sections/auth/SocialLoginButtons";
 import LoginIcon from "@mui/icons-material/Login";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { authService } from '../../services/auth.service';
-import Iconify from '../../components/iconify';
+import { authService } from "../../services/auth.service";
+import Iconify from "../../components/iconify";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
-import { LegacyCredentials, setLegacyCredentials, setMessage } from "src/redux/actions/authAction";
+import {
+  LegacyCredentials,
+  setLegacyCredentials,
+  setMessage,
+} from "src/redux/actions/authAction";
 import { connect } from "react-redux";
-
 
 interface LoginProps {
   message: any;
@@ -36,92 +39,121 @@ interface LoginProps {
   setLegacyCredentials: (credentials: LegacyCredentials) => void;
 }
 
-const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }: LoginProps) => {
+const Login = ({
+  message,
+  legacyCredentials,
+  setMessage,
+  setLegacyCredentials,
+}: LoginProps) => {
   const theme = useTheme();
-  const isDesktop = useResponsive('up', 'md');
+  const isDesktop = useResponsive("up", "md");
   const router = useRouter();
   //const [error, setError] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
-  const [userName, setUserName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+  const [userName, setUserName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [flash, setFlash] = useState<
+    { message: string; type: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     function checkMessage() {
-
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
   function setError(message: string) {
-    setFlashMessage(message)
+    setFlashMessage(message);
   }
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
   const handleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
 
   const handleSubmit = async () => {
     try {
       if (!userName) {
-        setError("User Name required")
+        setError("User Name required");
         return;
       }
       if (!password) {
-        setError("Password required")
+        setError("Password required");
         return;
       }
       var response = await authService.loginExisting(userName, password);
       if (isSucc(response)) {
         if (response.data.wasMigrated) {
-          setMessage({ message: 'Your account was already migrated, please login via the regular login.', type: 'success' })
+          setMessage({
+            message:
+              "Your account was already migrated, please login via the regular login.",
+            type: "success",
+          });
           await router.push({ pathname: PATH_AUTH.login });
-          return
+          return;
         } else {
-          setLegacyCredentials({ lists: response.data.lists, username: userName, password: password, legacyId: response.data.user.userId, session: response.data.session, email: response.data.user.email })
-          setMessage({ message: 'Login successful, please sign up for the new Flexlists!', type: 'success' })
+          setLegacyCredentials({
+            lists: response.data.lists,
+            username: userName,
+            password: password,
+            legacyId: response.data.user.userId,
+            session: response.data.session,
+            email: response.data.user.email,
+          });
+          setMessage({
+            message: "Login successful, please sign up for the new Flexlists!",
+            type: "success",
+          });
           await router.push({ pathname: PATH_AUTH.registerExisting });
-          return
+          return;
         }
-
       }
-      setError('Invalid username or password. Please try again or request a new password.')
+      setError(
+        "Invalid username or password. Please try again or request a new password."
+      );
     } catch (error: any) {
-      console.log(error)
-      setError('Unknown error. Please try again.')
+      console.log(error);
+      setError("Unknown error. Please try again.");
     }
   };
 
   const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
-  }
+  };
 
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-  }
+  };
 
   return (
     <>
       <Box
         component="img"
         sx={{
-          height: '100%',
-          width: '100%',
-          position: 'absolute',
-          zIndex: -1
+          height: "100%",
+          width: "100%",
+          position: "absolute",
+          zIndex: -1,
         }}
         alt="The house from the offer."
         src="/assets/images/background.png"
       />
-      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+      <Snackbar
+        open={flash !== undefined}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={flash?.type as AlertColor}
+          sx={{ width: "100%" }}
+        >
           {flash?.message}
         </Alert>
       </Snackbar>
@@ -144,35 +176,47 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
             px: { xs: 1, md: 4 },
             borderRadius: "4px",
             boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
-            backgroundColor: 'white',
+            backgroundColor: "white",
             marginTop: 0,
-            maxHeight: '93vh',
-            overflow: 'auto'
+            maxHeight: "93vh",
+            overflow: "auto",
           }}
         >
-          <Grid item xs={12} sx={{ paddingTop: '0 !important' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
+          <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: 2,
+              }}
+            >
               <Link href="/">
                 <Box
                   component="img"
                   sx={{
                     width: 60,
                     height: 45,
-                    objectFit: 'contain',
-                    marginTop: '2px'
+                    objectFit: "contain",
+                    marginTop: "2px",
                   }}
                   alt="Logo"
                   src="/assets/logo_auth.png"
                 />
               </Link>
             </Box>
-            <Typography variant="h3" textAlign="center">
+            <Typography variant="h3" gutterBottom textAlign="center">
               Sign in - Existing User
             </Typography>
-            <Typography variant="body1" textAlign="center">
-              This is the sign in for existing Flexlists users; after logging in, your lists will be
-              migrated to the new system and you can continue working. If you already logged in before in
-              the new version, please Sign in <Link href="/auth/login">here</Link>.
+            <Typography
+              variant="body1"
+              textAlign="center"
+              sx={{ color: "#666" }}
+            >
+              This is the sign in for existing Flexlists users; after logging
+              in, your lists will be migrated to the new system and you can
+              continue working. <br />
+              If you already logged in before in the new version, please Sign in
+              <Link href="/auth/login">here</Link>.
             </Typography>
           </Grid>
 
@@ -201,12 +245,19 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
               required
               value={password}
               onChange={handleChangePassword}
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      <Iconify
+                        icon={
+                          showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
+                        }
+                      />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -217,7 +268,15 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
           <Grid item xs={6}>
             <FormGroup>
               <FormControlLabel
-                control={<Checkbox defaultChecked sx={{ color: '#FFD232', '&.Mui-checked': { color: '#FFD232', }, }} />}
+                control={
+                  <Checkbox
+                    defaultChecked
+                    sx={{
+                      color: "#FFD232",
+                      "&.Mui-checked": { color: "#FFD232" },
+                    }}
+                  />
+                }
                 label="Remember me"
               />
             </FormGroup>
@@ -231,7 +290,11 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
               justifyContent: "flex-end",
             }}
           >
-            <Link href="/auth/forgotPassword" variant="body1" sx={{ color: '#0D0934' }}>
+            <Link
+              href="/auth/forgotPassword"
+              variant="body1"
+              sx={{ color: "#0D0934" }}
+            >
               Forgot password?
             </Link>
           </Grid>
@@ -244,8 +307,8 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
               endIcon={<LoginIcon />}
               sx={{
                 width: "100%",
-                backgroundColor: '#FFD232',
-                color: '#0D0934'
+                backgroundColor: "#FFD232",
+                color: "#0D0934",
               }}
               onClick={handleSubmit}
             >
@@ -262,7 +325,7 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
             sx={{
               display: "flex",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Typography
@@ -278,14 +341,13 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
               variant="body1"
               sx={{
                 paddingLeft: "4px",
-                color: '#0D0934'
+                color: "#0D0934",
               }}
             >
               Sign Up
             </Link>
           </Grid>
         </Grid>
-
       </Container>
     </>
   );
@@ -293,13 +355,12 @@ const Login = ({ message, legacyCredentials, setMessage, setLegacyCredentials }:
 
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
-  legacyCredentials: state.auth.legacyCredentials
+  legacyCredentials: state.auth.legacyCredentials,
 });
 
 const mapDispatchToProps = {
   setMessage,
-  setLegacyCredentials
+  setLegacyCredentials,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
-

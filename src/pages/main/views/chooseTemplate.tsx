@@ -4,11 +4,6 @@ import {
   Grid,
   Typography,
   Container,
-  Button,
-  CardHeader,
-  Link,
-  CardContent,
-  Card,
   Divider,
   Snackbar,
   Alert,
@@ -30,21 +25,21 @@ const HomeCards = [
     title: "New List",
     description: "Crreate from scratch",
     button: "Create",
-    link: '/main/views/newView'
+    link: "/main/views/newView",
   },
   {
     icon: "/assets/icons/tour/ic_tick.svg",
     title: "Todo list",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
-    link: '/main/views/newView'
+    link: "/main/views/newView",
   },
   {
     icon: "/assets/icons/tour/ic_music.svg",
     title: "Music playlist",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
-    link: '/main/views/newView'
+    link: "/main/views/newView",
   },
   {
     icon: "/assets/icons/tour/ic_project_m.svg",
@@ -52,14 +47,14 @@ const HomeCards = [
     description:
       "Lorem ipsum dolor sit amet consectetur.eweffasfsafdasasdasfsddscyasdfasfasfasdfasdasdsadasda",
     button: "Use template",
-    link: '/main/views/newView'
+    link: "/main/views/newView",
   },
   {
     icon: "/assets/icons/tour/ic_bug.svg",
     title: "Bug fixing",
     description: "Lorem ipsum dolor sit amet consectetur.",
     button: "Use template",
-    link: '/main/views/newView'
+    link: "/main/views/newView",
   },
 ];
 
@@ -68,46 +63,54 @@ interface ChooseTemplateProps {
   setMessage: (message: any) => void;
 }
 
-
 function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
-  // error handling 
+  // error handling
   const router = useRouter();
-  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+  const [flash, setFlash] = useState<
+    { message: string; type: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
   const flashHandleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
   function setError(message: string) {
     setFlashMessage(message);
   }
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
 
   return (
-    <MainLayout>
+    <MainLayout removeFooter={true}>
       <Container
         sx={{
           py: 3,
           maxWidth: "inherit !important",
           overflow: "auto",
           height: "calc(100vh - 96px)",
-          backgroundColor: "#fff",
         }}
       >
-        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={flashHandleClose}>
-          <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+        <Snackbar
+          open={flash !== undefined}
+          autoHideDuration={6000}
+          onClose={flashHandleClose}
+        >
+          <Alert
+            onClose={flashHandleClose}
+            severity={flash?.type as AlertColor}
+            sx={{ width: "100%" }}
+          >
             {flash?.message}
           </Alert>
         </Snackbar>
@@ -176,7 +179,6 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
             return (
               <Grid item xs={12} sm={6} md={2} key={card.icon}>
                 <HomeCard
-
                   icon={card.icon}
                   title={card.title}
                   description={card.description}
@@ -197,10 +199,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(chooseTemplate);
-
-
-

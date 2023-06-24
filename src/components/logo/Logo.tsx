@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 // material
-import { useTheme } from '@mui/material/styles';
-import { Box, BoxProps } from '@mui/material';
-import Image from 'next/image'
+import { useTheme } from "@mui/material/styles";
+import { Box, BoxProps } from "@mui/material";
+import Image from "next/image";
 
 // ----------------------------------------------------------------------
 
@@ -11,9 +11,8 @@ const Logo = React.forwardRef<any, BoxProps>(({ sx }, ref) => {
   const theme = useTheme();
 
   return (
-    <Box ref={ref} sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}>
-      <Image  src="/assets/logo.svg" alt='logo' width={40} height={40} />
-      
+    <Box ref={ref} sx={{ width: 44, height: 32, cursor: "pointer", ...sx }}>
+      <Image src="/assets/logo.png" alt="logo" width={44} height={32} />
     </Box>
   );
 });

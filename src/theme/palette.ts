@@ -81,14 +81,14 @@ export const palette_dark = {
   grey: GREY,
   divider: alpha(GREY[500], 0.24),
   text: {
-    primary: "#eee",
+    primary: "#fafafa",
     secondary: GREY[600],
     disabled: GREY[500],
     selected: "#54A6FB",
   },
   background: {
-    paper: "#fff",
-    default: "#333",
+    paper: "#0A121C",
+    default: "#112233",
     neutral: GREY[200],
     gap: "#f5f5f5",
     table_header_footer: "#666",
