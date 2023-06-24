@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Divider,
-} from "@mui/material";
+import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import IconUploadButton from "src/components/groups/UploadButton";
 import { useRouter } from "next/router";
 import { isSucc } from "src/models/ApiResponse";
@@ -49,8 +43,7 @@ export default function NewGroup() {
       <Box
         sx={{
           display: "flex",
-          bgcolor: "#fff",
-          overflow: "scroll",
+          overflow: "auto",
         }}
       >
         <Box sx={{ py: 4, mx: 2, flexGrow: 1 }}>
