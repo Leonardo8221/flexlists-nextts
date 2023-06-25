@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
+import { ChoiceModel } from "src/models/ChoiceModel";
 
 type DataTableProps = {
   tab: boolean;
@@ -173,6 +174,16 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
                   </Box>
                 );
               case FieldType.Choice:
+                let value_color = { bg: "#333", fill: "white" };
+                let font = "inherit";
+                let choiceLabel :string =''
+                let choiceValue : ChoiceModel = dataColumn.config?.values?.find((x:any)=>x.id === cellValue)
+                if(choiceValue)
+                {
+                  choiceLabel = choiceValue.label
+                  value_color = choiceValue.color;
+                  font = choiceValue.font;
+                }
                 return (
                   <Box
                     key={row.id}
@@ -188,7 +199,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue}
+                    {choiceLabel}
                   </Box>
                 );
               case FieldType.Boolean:

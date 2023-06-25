@@ -1,18 +1,8 @@
 import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from "@coreui/react";
 import { Box, FormControl, FormLabel, TextField, useTheme } from "@mui/material";
-import { type } from "os";
-import { useState } from "react";
-import theme from "src/theme";
+import { ChoiceModel } from "src/models/ChoiceModel";
+import Guid from "src/utils/guidHelper";
 
-type Choice = {
-    label: string,
-    color: {
-      bg: string;
-      fill: string;
-    },
-    font: string,
-    visibleColorBar: boolean
-  };
   
   const colors = [
     {
@@ -75,8 +65,8 @@ type Choice = {
 const fonts = ['Public Sans,sans-serif', 'Arial sans-serif', 'Verdana sans-serif', 'Tahoma sans-serif', 'Trebuchet MS sans-serif', 'Times New Roman serif', 'Georgia serif', 'Garamond serif', 'Courier New monospace', 'Brush Script MT cursive'];
 
 type ChoiceConfigProps = {
-    choices : Choice[],
-    updateChoices : (newChoices:Choice[]) => void
+    choices : ChoiceModel[],
+    updateChoices : (newChoices:ChoiceModel[]) => void
 }
 export default function ChoiceConfig ({
    choices,
@@ -85,19 +75,20 @@ export default function ChoiceConfig ({
     const theme = useTheme();
     // const [choices, setChoices] = useState<Choice[]>([]);
     const addChoice = () => {
-        var choice : Choice = {
+        var choice : ChoiceModel = {
+          id: Guid.newGuid(),
           label: `Choice ${choices.length + 1}`,
           color: colors[0],
           font: fonts[0],
           visibleColorBar: false
         }
-        var newChoices : Choice[] = Object.assign([],choices)
+        var newChoices : ChoiceModel[] = Object.assign([],choices)
         newChoices.push(choice)
         updateChoices(newChoices);
       };
   
       const removeChoice = (index: number) => {
-        var newChoices : Choice[] = Object.assign([],choices)
+        var newChoices : ChoiceModel[] = Object.assign([],choices)
         newChoices = newChoices.filter((choice, i) => i !== index)
         updateChoices(newChoices);
       };

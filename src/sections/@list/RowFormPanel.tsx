@@ -284,7 +284,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, messages, comment, o
          size="small"
          error={submit && column.required && !values[column.id]}
        >
-         {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.label} value={choice.label} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
+         {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.id} value={choice.id} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
        </Select>
      </FormControl>
      case FieldUiTypeEnum.Boolean :

@@ -5,6 +5,7 @@ import KanbanColumn from './KanbanColumn';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { styled } from '@mui/material/styles';
 import ViewFooter from '../../components/view-footer/ViewFooter';
+import { ChoiceModel } from "src/models/ChoiceModel";
 
 type Props = {
   rows: any;
@@ -14,12 +15,12 @@ type Props = {
 
 const KanbanView = (props: Props) => {
   const { rows, open, setRows } = props;
-
+  
   const [testData, setTestData] = useState<any>();
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [rowData, setRowData] = useState(null);
   const [windowHeight, setWindowHeight] = useState(0);
-
+  const [boardColumns, setBoardColumns] = useState<ChoiceModel[]>([]);
   const Container = styled('div')(({ theme }) => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(1, 1fr)',
@@ -85,82 +86,82 @@ const KanbanView = (props: Props) => {
   }, [rows]);
 
   const onDragEnd = (result: any) => {
-    if (!result.destination) return;
-    const { source, destination, draggableId } = result;
+    // if (!result.destination) return;
+    // const { source, destination, draggableId } = result;
 
-    if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = testData.columns[source.droppableId];
-      const destColumn = testData.columns[destination.droppableId];
-      const sourceTasks = [...sourceColumn.taskIds];
-      const destTasks = [...destColumn.taskIds];
-      const [removed] = sourceTasks.splice(source.index, 1);
-      destTasks.splice(destination.index, 0, removed);
+    // if (source.droppableId !== destination.droppableId) {
+    //   const sourceColumn = testData.columns[source.droppableId];
+    //   const destColumn = testData.columns[destination.droppableId];
+    //   const sourceTasks = [...sourceColumn.taskIds];
+    //   const destTasks = [...destColumn.taskIds];
+    //   const [removed] = sourceTasks.splice(source.index, 1);
+    //   destTasks.splice(destination.index, 0, removed);
       
-      setTestData({
-        ...testData,
-        tasks: {
-          ...testData.tasks,
-          [removed]: {
-            ...testData.tasks[removed],
-            phase: destColumn.title
-          }
-        },
-        columns: {
-          ...testData.columns,
-          [source.droppableId]: {
-            ...sourceColumn,
-            taskIds: sourceTasks,
-          },
-          [destination.droppableId]: {
-            ...destColumn,
-            taskIds: destTasks,
-          }
-        }
-      });
+    //   setTestData({
+    //     ...testData,
+    //     tasks: {
+    //       ...testData.tasks,
+    //       [removed]: {
+    //         ...testData.tasks[removed],
+    //         phase: destColumn.title
+    //       }
+    //     },
+    //     columns: {
+    //       ...testData.columns,
+    //       [source.droppableId]: {
+    //         ...sourceColumn,
+    //         taskIds: sourceTasks,
+    //       },
+    //       [destination.droppableId]: {
+    //         ...destColumn,
+    //         taskIds: destTasks,
+    //       }
+    //     }
+    //   });
 
-      let sourceIndex = 0;
-      let destIndex = 0;
+    //   let sourceIndex = 0;
+    //   let destIndex = 0;
       
-      setRows(rows.map((row: any, index: number) => {
-        if (row.id === parseInt(removed.split('-')[1])) row.phase = destColumn.title;
-        if (row.id === parseInt(destTasks[destination.index + 1] ? destTasks[destination.index + 1].split('-')[1] : destTasks[destination.index - 1].split('-')[1])) destIndex = index;
-        if (row.id === parseInt(draggableId.split('-')[1])) sourceIndex = index;
+    //   setRows(rows.map((row: any, index: number) => {
+    //     if (row.id === parseInt(removed.split('-')[1])) row.phase = destColumn.title;
+    //     if (row.id === parseInt(destTasks[destination.index + 1] ? destTasks[destination.index + 1].split('-')[1] : destTasks[destination.index - 1].split('-')[1])) destIndex = index;
+    //     if (row.id === parseInt(draggableId.split('-')[1])) sourceIndex = index;
 
-        return row;
-      }));
+    //     return row;
+    //   }));
       
-      const [changed] = rows.splice(sourceIndex, 1);
-      rows.splice(destIndex, 0, changed);
+    //   const [changed] = rows.splice(sourceIndex, 1);
+    //   rows.splice(destIndex, 0, changed);
       
-      setRows(rows);
-    } else {
-      if (source.droppableId === "board") {
-        const newColumnOrder = testData.columnOrder;
-        const [removed] = newColumnOrder.splice(source.index, 1);
-        newColumnOrder.splice(destination.index, 0, removed);
+    //   setRows(rows);
+    // } else {
+    //   if (source.droppableId === "board") {
+    //     const newColumnOrder = testData.columnOrder;
+    //     const [removed] = newColumnOrder.splice(source.index, 1);
+    //     newColumnOrder.splice(destination.index, 0, removed);
 
-        setTestData({
-          ...testData,
-          columnOrder: newColumnOrder
-        });
-      } else {
-        const column = testData.columns[source.droppableId];
-        const copiedTasks = [...column.taskIds];
-        const [removed] = copiedTasks.splice(source.index, 1);
-        copiedTasks.splice(destination.index, 0, removed);
+    //     setTestData({
+    //       ...testData,
+    //       columnOrder: newColumnOrder
+    //     });
+    //   } else {
+    //     const column = testData.columns[source.droppableId];
+    //     const copiedTasks = [...column.taskIds];
+    //     const [removed] = copiedTasks.splice(source.index, 1);
+    //     copiedTasks.splice(destination.index, 0, removed);
         
-        setTestData({
-          ...testData,
-          columns: {
-            ...testData.columns,
-            [source.droppableId]: {
-              ...column,
-              taskIds: copiedTasks,
-            }
-          }
-        });
-      }
-    }
+    //     setTestData({
+    //       ...testData,
+    //       columns: {
+    //         ...testData.columns,
+    //         [source.droppableId]: {
+    //           ...column,
+    //           taskIds: copiedTasks,
+    //         }
+    //       }
+    //     });
+    //   }
+    // }
   };
 
   const handleRowData = (row: any) => {
@@ -172,13 +173,13 @@ const KanbanView = (props: Props) => {
       <Droppable droppableId="board" direction="horizontal" type="column">
         {(provided: any) => (
           provided.droppableProps && <Container ref={provided.innerRef} {...provided.droppableProps} className="board">
-            {testData && testData.columnOrder.map((columnId: any, index: number) => {
+            {/* {boardColumns && boardColumns.length>0 && boardColumns.map((boardColumn: any, index: number) => {
               const column = testData.columns[columnId];
               const tasks = column.taskIds.map((taskId: any) => testData.tasks[taskId]);
               
               return <KanbanColumn key={column.id} column={column} tasks={tasks} index={index} openNewRowPanel={() => { setVisibleAddRowPanel(true); }} handleRowData={handleRowData} />;
             })}
-            {provided.placeholder}
+            {provided.placeholder} */}
           </Container>
         )}
       </Droppable>
