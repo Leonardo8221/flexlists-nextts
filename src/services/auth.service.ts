@@ -9,7 +9,8 @@ export const authService = {
     verifySignup,
     resendSignupEmail,
     loginExisting,
-    registerExisting
+    registerExisting,
+    verifyPasswordChange
 };
 export async function login(userName: string, password: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/login', { userName, password })
@@ -61,3 +62,13 @@ export async function getMigrationProgress(): Promise<FlexlistsError | Flexlists
     var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ totalLists: number, migratedLists: number, currentLists: number[], currentRowCount: number, totalRowCount: number, status: LegacyMigrationQueueStatusEnum }>>('/api/migrate/getMigrationProgress')
     return response.data;
 };
+
+export async function forgotPassword(email: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/forgotPassword', { email })
+    return response.data;
+}
+
+export async function verifyPasswordChange(email: string, token: string, password: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/verifyPasswordChange', { email, token, password })
+    return response.data;
+}

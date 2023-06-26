@@ -43,10 +43,11 @@ const Register = ({ message, setMessage }: RegisterProps) => {
   //const [error, setError] = useState<string>();
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+
   const [userEmail, setUserEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);

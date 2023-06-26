@@ -1,4 +1,4 @@
-import { Alert, AlertColor, Box, Container, Grid, Snackbar, Stack, TextField, Typography } from "@mui/material"
+import { Alert, AlertColor, Box, Button, Container, Grid, IconButton, InputAdornment, Snackbar, Stack, TextField, Typography } from "@mui/material"
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
@@ -7,6 +7,7 @@ import { isSucc } from "src/models/ApiResponse";
 import { setMessage } from "src/redux/actions/authAction";
 import { PATH_AUTH } from "src/routes/paths";
 import { authService } from "src/services/auth.service";
+import Iconify from "../../../components/iconify";
 
 interface VerifyEmailTokenProps {
   message: any;
@@ -19,6 +20,8 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
   // const [email, setEmail] = useState<string>('');
   // const [verifyResult, setVerifyResult] = useState<string>('Verifying')
   // const [isValidated, setIsValidated] = useState<boolean>(false);
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     function checkMessage() {
@@ -34,35 +37,40 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
     setMessage(null)
   }
 
-  useEffect(() => {
-    async function verifyEmail() {
-      try {
-        let verifyResponse = await authService.verifySignup(router.query.token as string, router.query.email as string)
-        if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
-          setMessage({ message: 'Your account has been activated, please login!', type: 'success' })
-          await router.push({ pathname: PATH_AUTH.login });
-          return;
-          // setVerifyResult("Verify successfully")
-          // setIsValidated(true)
-        }
-        else {
-          setMessage({ message: 'Verification failed, invalid code. Please request a new code.', type: 'error' })
-          await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: router.query.email as string } });
-          return;
-          //setVerifyResult("Verify fail")
-        }
-      }
-      catch (err) {
-        setMessage({ message: 'Verification failed, invalid code. Please request a new code.', type: 'error' })
-        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: router.query.email as string } });
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
+  async function handleSubmit() {
+    try {
+      let verifyResponse = await authService.verifyPasswordChange(router.query.email as string, router.query.token as string, password)
+      if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
+        setMessage({ message: 'Your password has been changed, please login!', type: 'success' })
+        await router.push({ pathname: PATH_AUTH.login });
         return;
-        //console.log(err)
+        // setVerifyResult("Verify successfully")
+        // setIsValidated(true)
+      }
+      else {
+        setMessage({ message: 'Verification failed, invalid code. Please request a new code.', type: 'error' })
+        await router.push({ pathname: PATH_AUTH.forgotPassword, query: { email: router.query.email as string } });
+        return;
         //setVerifyResult("Verify fail")
       }
-
     }
+    catch (err) {
+      setMessage({ message: 'Verification failed, invalid code. Please request a new code.', type: 'error' })
+      await router.push({ pathname: PATH_AUTH.forgotPassword, query: { email: router.query.email as string } });
+      return;
+      //console.log(err)
+      //setVerifyResult("Verify fail")
+    }
+
+  }
+  useEffect(() => {
+
     if (router.query.token && router.isReady) {
-      verifyEmail()
+      //verifyEmail()
     }
   }, [router.query.token])
   return (
@@ -110,11 +118,55 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
         >
           <Grid item xs={12}>
             <Typography variant="h4" gutterBottom>
-              Verifying your email address.
+              Enter a new password for your account below.
             </Typography>
             <Typography variant="body1">
               Please do not close this window.
             </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="New Password"
+              required
+              value={password}
+              onChange={handleChangePassword}
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      <Iconify
+                        icon={
+                          showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
+                        }
+                      />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              href="#"
+              size="large"
+              variant="contained"
+              disabled={false}
+              sx={{
+                width: "100%",
+                backgroundColor: "#FFD232",
+                color: "#0D0934",
+                textTransform: "uppercase",
+              }}
+              onClick={() => handleSubmit()}
+            >
+              Submit
+            </Button>
           </Grid>
         </Grid>
       </Container>
