@@ -98,6 +98,8 @@ function MigrateModal({ message, setMessage }: MigrateModelProps) {
           return
         }
 
+        // TODO: what else? 
+
       } else if (result.data!.status === LegacyMigrationQueueStatusEnum.Success) {
         setProgress(100);
         clearInterval(timer);
