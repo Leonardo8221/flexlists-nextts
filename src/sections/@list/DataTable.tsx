@@ -108,20 +108,20 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
         Cell: ({ renderedCellValue, row }: any) => {
           let value_color = { bg: "#333", fill: "white" };
           let font = "inherit";
-          dataColumns.forEach((item: any) => {
-            if (
-              item.type === FieldType.Choice &&
-              item.config &&
-              item.config.values
-            ) {
-              item.config.values.forEach((choice: any) => {
-                if (choice.name === renderedCellValue) {
-                  value_color = choice.color;
-                  font = choice.font;
-                }
-              });
-            }
-          });
+          // dataColumns.forEach((item: any) => {
+          //   if (
+          //     item.type === FieldType.Choice &&
+          //     item.config &&
+          //     item.config.values
+          //   ) {
+          //     item.config.values.forEach((choice: any) => {
+          //       if (choice.name === renderedCellValue) {
+          //         value_color = choice.color;
+          //         font = choice.font;
+          //       }
+          //     });
+          //   }
+          // });
           function renderFieldData(columnType: FieldType, cellValue: any) {
             switch (columnType) {
               case FieldType.Integer:

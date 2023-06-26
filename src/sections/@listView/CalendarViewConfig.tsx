@@ -6,10 +6,11 @@ import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "src/utils/convertUtils";
 import { FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
+import { CalendarConfig } from "src/models/ViewConfig";
 
 type CalendarViewConfigProps = {
   submit : boolean,
-  updateConfig :(config : any) => void
+  updateConfig :(config : CalendarConfig) => void
   columns:ViewField[];
   availableFieldUiTypes: FieldUIType[]
 }
@@ -69,7 +70,6 @@ function CalendarViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:
       updateCalendarConfig(newDateFields.length>0?newDateFields[0].id :0,newTitleFields.length>0?newTitleFields[0].id:0)
     }
     useEffect(()=>{
-      console.log('aaa')
       reloadColumns()
     },[columns])
     const onDateFieldChange = (event: SelectChangeEvent) =>{

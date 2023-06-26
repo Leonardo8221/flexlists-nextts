@@ -2,10 +2,12 @@ import { Box } from '@mui/material';
 import { Draggable } from 'react-beautiful-dnd';
 import { styled } from '@mui/material/styles';
 import ProgressBar from '../../components/progress-bar/ProgressBar';
+import { KanbanConfig } from 'src/models/ViewConfig';
 
-type Props = {
+type KanbanTaskProps = {
   task: any;
   index: number;
+  kanbanConfig: KanbanConfig;
   editRow: (id: string) => void;
 };
 
@@ -25,15 +27,14 @@ const Label = styled('div')(({ theme }) => ({
 
 const progressValue = (phase: string) => phase === 'In progress' ? 50 : phase === 'Testing' ? 70 : phase === 'Done' ? 100 : 0;
 
-const KanbanTask = (props: Props) => {
-  const { task, index, editRow } = props;
+const KanbanTask = ({kanbanConfig, task, index, editRow }: KanbanTaskProps) => {
 
   const getColorByImportance = (importance: string) => {
     return importance === 'Very important' ? '#FFB7B7' : '#FFEBB7';
   };
 
   return (
-    <Draggable draggableId={task.id} index={index}>
+    <Draggable draggableId={`${task.id}`} index={index}>
       {(provided: any) =>
         <Container
           {...provided.draggableProps}
@@ -44,9 +45,9 @@ const KanbanTask = (props: Props) => {
         >
           <Box>
             <Label>Task Name</Label>
-            <Box>{task.task_name}</Box>
+            <Box>{task[kanbanConfig.titleId]}</Box>
           </Box>
-          <Box>
+          {/* <Box>
             <Label>User(s)</Label>
             <img
               alt="avatar"
@@ -56,19 +57,19 @@ const KanbanTask = (props: Props) => {
               style={{ borderRadius: '50%' }}
               className="edit_row"
             />
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+          </Box> */}
+          {/* <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
             <Box sx={{ width: '50%' }}>
               <Label>Progress</Label>
               <Box sx={{ marginTop: 1 }}>
-                <ProgressBar value={progressValue(task.phase)} />
+                 <ProgressBar value={progressValue(task.phase)} />
               </Box>
             </Box>
             <Box sx={{ textAlign: 'right' }}>
               <Label>Deadline</Label>
               <Box>{task.date.split(' ')[0]}</Box>
             </Box>
-          </Box>
+          </Box> */}
         </Container>
       }
     </Draggable>
