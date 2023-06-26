@@ -46,50 +46,6 @@ const KanbanView = ({currentView,columns, rows, open, setRows }: KanbanViewProps
     setWindowHeight(window.innerHeight);
   }, []);
 
-  // useEffect(() => {
-  //   const tasks: any = {};
-  //   const inProgresstaskIds: string[] = [];
-  //   const testingtaskIds: string[] = [];
-  //   const donetaskIds: string[] = [];
-
-  //   rows.map((row: any) => {
-  //     const row_id = `task-${row.id}`;
-  //     const task = {...row, id: row_id};
-
-  //     task.id = row_id;
-  //     tasks[row_id] = task;
-
-  //     if (row.phase === 'In progress') inProgresstaskIds.push(row_id);
-  //     else if (row.phase === 'Testing') testingtaskIds.push(row_id);
-  //     else if (row.phase === 'Done') donetaskIds.push(row_id);
-  //     else {}
-  //   });
-
-  //   const initialData = {
-  //     tasks: tasks,
-  //     columns: {
-  //       'column-1': {
-  //         id: 'column-1',
-  //         title: 'In progress',
-  //         taskIds: inProgresstaskIds,
-  //       },
-  //       'column-2': {
-  //         id: 'column-2',
-  //         title: 'Testing',
-  //         taskIds: testingtaskIds,
-  //       },
-  //       'column-3': {
-  //         id: 'column-3',
-  //         title: 'Done',
-  //         taskIds: donetaskIds,
-  //       }
-  //     },
-  //     columnOrder: ['column-1', 'column-2', 'column-3']
-  //   };
-
-  //   setTestData(initialData);
-  // }, [rows]);
-
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
@@ -103,14 +59,8 @@ const KanbanView = ({currentView,columns, rows, open, setRows }: KanbanViewProps
        reorderRowMap(draggableId,source,destination)
     } else {
       if (source.droppableId === "board") {
-        // const newColumnOrder = testData.columnOrder;
-        // const [removed] = newColumnOrder.splice(source.index, 1);
-        // newColumnOrder.splice(destination.index, 0, removed);
-
-        // setTestData({
-        //   ...testData,
-        //   columnOrder: newColumnOrder
-        // });
+        const [changed] = boardColumns.splice(source.index, 1);
+        boardColumns.splice(destination.index, 0, changed);
       } else {
         reorderRowMap(draggableId,source,destination)
       }
