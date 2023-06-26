@@ -78,6 +78,13 @@ const Login = ({ message, setMessage }: LoginProps) => {
       }
       var response = await authService.login(userName, password);
       if (isSucc(response)) {
+        // check if this user is a legacy user ;
+        if (response.data.legacyUser && !response.data.wasMigrated) {
+          setMessage({ message: 'Your lists are still migrating, please wait for this process to complete.', type: 'warning' })
+          await router.push({ pathname: PATH_MAIN.migratedLists });
+          return
+        }
+
         setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
         await router.push({ pathname: PATH_MAIN.views });
         return

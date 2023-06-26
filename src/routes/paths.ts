@@ -11,11 +11,13 @@ export const PATH_AUTH = {
   registerExisting: path(ROOTS_AUTH, "/registerExisting"),
   verifyEmail: path(ROOTS_AUTH, "/verifyEmail"),
   resendEmailVerification: path(ROOTS_AUTH, "/resendEmailVerification"),
+
 };
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {
   views: path(ROOTS_MAIN, "/views"),
   newView: path(ROOTS_MAIN, "/views/chooseTemplate"),
   groups: path(ROOTS_MAIN, "/groups"),
-  newGroup: path(ROOTS_MAIN, "/groups/newGroup")
+  newGroup: path(ROOTS_MAIN, "/groups/newGroup"),
+  migratedLists: path(ROOTS_MAIN, "/migrate"),
 };
