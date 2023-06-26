@@ -11,7 +11,8 @@ export const PATH_AUTH = {
   registerExisting: path(ROOTS_AUTH, "/registerExisting"),
   verifyEmail: path(ROOTS_AUTH, "/verifyEmail"),
   resendEmailVerification: path(ROOTS_AUTH, "/resendEmailVerification"),
-
+  forgotPasswordVerificationManual: path(ROOTS_AUTH, "/forgotPasswordVerificationManual"),
+  forgotPasswordVerification: path(ROOTS_AUTH, "/forgotPasswordVerification"),
 };
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {
