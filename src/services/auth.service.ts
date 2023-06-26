@@ -45,7 +45,12 @@ export async function resendSignupEmail(email: string): Promise<FlexlistsError |
     return response.data;
 
 }
-export async function validateAccessKey(key:string): Promise<FlexlistsError|FlexlistsSuccess<{viewId:number}>> {
-    var response = await axios.get<FlexlistsError|FlexlistsSuccess<{viewId:number}>>('/api/auth/validateAccessKey'+`?key=${key}`)
+export async function validateAccessKey(key: string): Promise<FlexlistsError | FlexlistsSuccess<{ viewId: number }>> {
+    var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ viewId: number }>>('/api/auth/validateAccessKey' + `?key=${key}`)
     return response.data;
-  };
+};
+
+export async function getMigrationProgress(key: string): Promise<FlexlistsError | FlexlistsSuccess<{ id: number, userName: string, firstName: string, lastName: string, legacyUser: boolean, wasMigrated: boolean }>> {
+    var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ id: number, userName: string, firstName: string, lastName: string, legacyUser: boolean, wasMigrated: boolean }>>('/api/migrate/getMigrationProgress')
+    return response.data;
+};

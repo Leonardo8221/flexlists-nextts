@@ -45,7 +45,7 @@ function ProgressBar(props: LinearProgressProps & { value: number }) {
 function MigrateModal() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => setOpen(true);
 
   const [progress, setProgress] = React.useState(10);
 
