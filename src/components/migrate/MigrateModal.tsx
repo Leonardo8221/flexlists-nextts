@@ -92,7 +92,7 @@ function MigrateModal({ message, setMessage }: MigrateModelProps) {
       //console.log(result)
       if (isErr(result)) {
         // this should definitely be sent to the admin as it means catestrophic failure 
-        if (result.code === 401) {
+        if (result.code === 401) { // unauthorized
           setMessage({ message: 'Unauthorized, please login!', type: 'error' })
           await router.push({ pathname: PATH_AUTH.login });
           return
