@@ -45,7 +45,19 @@ export async function resendSignupEmail(email: string): Promise<FlexlistsError |
     return response.data;
 
 }
-export async function validateAccessKey(key:string): Promise<FlexlistsError|FlexlistsSuccess<{viewId:number}>> {
-    var response = await axios.get<FlexlistsError|FlexlistsSuccess<{viewId:number}>>('/api/auth/validateAccessKey'+`?key=${key}`)
+export async function validateAccessKey(key: string): Promise<FlexlistsError | FlexlistsSuccess<{ viewId: number }>> {
+    var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ viewId: number }>>('/api/auth/validateAccessKey' + `?key=${key}`)
     return response.data;
-  };
+};
+
+export enum LegacyMigrationQueueStatusEnum {
+    Pending,
+    Running,
+    Success,
+    Error,
+}
+
+export async function getMigrationProgress(): Promise<FlexlistsError | FlexlistsSuccess<{ totalLists: number, migratedLists: number, currentLists: number[], currentRowCount: number, totalRowCount: number, status: LegacyMigrationQueueStatusEnum }>> {
+    var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ totalLists: number, migratedLists: number, currentLists: number[], currentRowCount: number, totalRowCount: number, status: LegacyMigrationQueueStatusEnum }>>('/api/migrate/getMigrationProgress')
+    return response.data;
+};

@@ -24,7 +24,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import { authService } from "../../services/auth.service";
 import { useRouter } from "next/router";
 import Iconify from "../../components/iconify";
-import { FlexlistsError, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { MuiTelInput } from "mui-tel-input";
 import InfoIcon from "@mui/icons-material/Info";
 import { PATH_AUTH } from "src/routes/paths";
@@ -146,8 +146,17 @@ const Register = ({ message, setMessage }: RegisterProps) => {
 
       if (isSucc(response) && response) {
         setMessage({ message: "Registration successful! Please check your email to verify your account.", type: "success" })
-        router.push({ pathname: PATH_AUTH.verifyEmail, query: { email: userEmail } });
+        await router.push({ pathname: PATH_AUTH.verifyEmail, query: { email: userEmail } });
         return;
+      }
+
+      // this should already be fine coming from the backend, but this is just a lot clearer for 
+      // the actual flow
+      if (isErr(response)) {
+        if ((response as FlexlistsError).code === 511) { // ReservedUserName
+          setError("User name is already taken. Please try another one.")
+          return
+        }
       }
 
       setError((response as FlexlistsError).message)

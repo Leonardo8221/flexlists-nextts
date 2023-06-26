@@ -1,11 +1,17 @@
 import React from "react";
-import { Modal, Box, Typography, Button, LinearProgress } from "@mui/material";
+import { Modal, Box, Typography, Button, LinearProgress, Snackbar, Alert, AlertColor } from "@mui/material";
 import {
   LinearProgressProps,
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
+import { useRouter } from "next/router";
+import { LegacyMigrationQueueStatusEnum, getMigrationProgress } from '../../services/auth.service'
+import { isErr } from "src/models/ApiResponse";
+import { setMessage } from "src/redux/actions/viewActions";
+import { connect } from "react-redux";
+import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -42,12 +48,70 @@ function ProgressBar(props: LinearProgressProps & { value: number }) {
   );
 }
 
-function MigrateModal() {
+interface MigrateModelProps {
+  message: any;
+  setMessage: (message: any) => void;
+}
+
+function MigrateModal({ message, setMessage }: MigrateModelProps) {
+
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => setOpen(true);
 
   const [progress, setProgress] = React.useState(10);
+
+  // error handling 
+  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message)
+      }
+    }
+    checkMessage()
+  }, [message])
+
+  const flashHandleClose = () => {
+    setFlash(undefined)
+    setMessage(null)
+  }
+  function setError(message: string) {
+    setFlashMessage(message);
+  }
+  function setFlashMessage(message: string, type: string = 'error') {
+    setFlash({ message: message, type: type })
+    setMessage({ message: message, type: type })
+  }
+
+  React.useEffect(() => {
+    const timer = setInterval(async () => {
+      const result = await getMigrationProgress()
+      //console.log(result)
+      if (isErr(result)) {
+        // this should definitely be sent to the admin as it means catestrophic failure 
+        if (result.code === 401) { // unauthorized
+          setMessage({ message: 'Unauthorized, please login!', type: 'error' })
+          await router.push({ pathname: PATH_AUTH.login });
+          return
+        }
+
+        // TODO: what else? 
+
+      } else if (result.data!.status === LegacyMigrationQueueStatusEnum.Success) {
+        setProgress(100);
+        clearInterval(timer);
+        setMessage({ message: 'Migration finished successful!', type: 'success' })
+        await router.push({ pathname: PATH_MAIN.views });
+        return
+      }
+    }, 2000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -93,7 +157,11 @@ function MigrateModal() {
         sx={{ display: "none" }}
       ></Button>
       {/* --------------------BUTTON THAT AUTO OPENS MODAL ON PAGE LOAD---------------------------------------------------- */}
-
+      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+          {flash?.message}
+        </Alert>
+      </Snackbar>
       <Modal
         open={open}
         onClose={handleClose}
@@ -128,4 +196,13 @@ function MigrateModal() {
   );
 }
 
-export default MigrateModal;
+const mapStateToProps = (state: any) => ({
+
+  message: state.view.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MigrateModal);

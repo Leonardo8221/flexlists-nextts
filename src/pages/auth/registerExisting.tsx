@@ -204,7 +204,6 @@ const Register = ({ message, legacyCredentials, setMessage, setLegacyCredentials
         }
       }
 
-
       setError((response as FlexlistsError)?.message ?? 'Could not create account, please try again or contact support.')
     } catch (error) {
       setError(ErrorConsts.InternalServerError)
