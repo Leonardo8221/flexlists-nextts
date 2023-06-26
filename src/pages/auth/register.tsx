@@ -146,7 +146,7 @@ const Register = ({ message, setMessage }: RegisterProps) => {
 
       if (isSucc(response) && response) {
         setMessage({ message: "Registration successful! Please check your email to verify your account.", type: "success" })
-        router.push({ pathname: PATH_AUTH.verifyEmail, query: { email: userEmail } });
+        await router.push({ pathname: PATH_AUTH.verifyEmail, query: { email: userEmail } });
         return;
       }
 

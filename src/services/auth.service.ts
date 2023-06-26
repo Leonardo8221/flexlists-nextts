@@ -50,7 +50,14 @@ export async function validateAccessKey(key: string): Promise<FlexlistsError | F
     return response.data;
 };
 
-export async function getMigrationProgress(key: string): Promise<FlexlistsError | FlexlistsSuccess<{ id: number, userName: string, firstName: string, lastName: string, legacyUser: boolean, wasMigrated: boolean }>> {
-    var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ id: number, userName: string, firstName: string, lastName: string, legacyUser: boolean, wasMigrated: boolean }>>('/api/migrate/getMigrationProgress')
+export enum LegacyMigrationQueueStatusEnum {
+    Pending,
+    Running,
+    Success,
+    Error,
+}
+
+export async function getMigrationProgress(): Promise<FlexlistsError | FlexlistsSuccess<{ totalLists: number, migratedLists: number, currentLists: number[], currentRowCount: number, totalRowCount: number, status: LegacyMigrationQueueStatusEnum }>> {
+    var response = await axios.get<FlexlistsError | FlexlistsSuccess<{ totalLists: number, migratedLists: number, currentLists: number[], currentRowCount: number, totalRowCount: number, status: LegacyMigrationQueueStatusEnum }>>('/api/migrate/getMigrationProgress')
     return response.data;
 };
