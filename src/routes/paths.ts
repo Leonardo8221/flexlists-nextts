@@ -13,6 +13,7 @@ export const PATH_AUTH = {
   resendEmailVerification: path(ROOTS_AUTH, "/resendEmailVerification"),
   forgotPasswordVerificationManual: path(ROOTS_AUTH, "/forgotPasswordVerificationManual"),
   forgotPasswordVerification: path(ROOTS_AUTH, "/forgotPasswordVerification"),
+  forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
 };
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {

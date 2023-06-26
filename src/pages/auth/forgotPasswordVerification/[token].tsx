@@ -40,11 +40,12 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
+
   async function handleSubmit() {
     try {
-      let verifyResponse = await authService.verifySignup(router.query.token as string, router.query.email as string)
+      let verifyResponse = await authService.verifyPasswordChange(router.query.email as string, router.query.token as string, password)
       if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
-        setMessage({ message: 'Your account has been activated, please login!', type: 'success' })
+        setMessage({ message: 'Your password has been changed, please login!', type: 'success' })
         await router.push({ pathname: PATH_AUTH.login });
         return;
         // setVerifyResult("Verify successfully")
@@ -52,14 +53,14 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
       }
       else {
         setMessage({ message: 'Verification failed, invalid code. Please request a new code.', type: 'error' })
-        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: router.query.email as string } });
+        await router.push({ pathname: PATH_AUTH.forgotPassword, query: { email: router.query.email as string } });
         return;
         //setVerifyResult("Verify fail")
       }
     }
     catch (err) {
       setMessage({ message: 'Verification failed, invalid code. Please request a new code.', type: 'error' })
-      await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: router.query.email as string } });
+      await router.push({ pathname: PATH_AUTH.forgotPassword, query: { email: router.query.email as string } });
       return;
       //console.log(err)
       //setVerifyResult("Verify fail")

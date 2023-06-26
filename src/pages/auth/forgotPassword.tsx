@@ -55,6 +55,17 @@ const ForgotPassword = ({ message, setMessage }: ForgotPasswordProps) => {
     setMessage(null)
   }
 
+
+  useEffect(() => {
+    function routerCheck() {
+      if (router.query.email) {
+        setEmail(router.query.email as string)
+      }
+
+    }
+    routerCheck()
+  })
+
   async function handleSubmit(event: any) {
     if (!validateEmail(email)) {
       setFlashMessage('Invalid email address')

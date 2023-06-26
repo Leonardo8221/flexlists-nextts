@@ -9,7 +9,8 @@ export const authService = {
     verifySignup,
     resendSignupEmail,
     loginExisting,
-    registerExisting
+    registerExisting,
+    verifyPasswordChange
 };
 export async function login(userName: string, password: string): Promise<FlexlistsError | FlexlistsSuccess<any>> {
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/login', { userName, password })
