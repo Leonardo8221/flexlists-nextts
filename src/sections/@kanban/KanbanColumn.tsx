@@ -5,12 +5,15 @@ import KanbanTask from './KanbanTask';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { styled } from '@mui/material/styles';
 import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react';
+import { ChoiceModel } from 'src/models/ChoiceModel';
+import { KanbanConfig } from 'src/models/ViewConfig';
 
-type Props = {
+type KanbanColumnProps = {
   index: number;
   rows: any;
-  column: any;
+  column: ChoiceModel;
   tasks: any;
+  kanbanConfig: KanbanConfig;
   openNewRowPanel: () => void;
   handleRowData: (row: any) => void;
 };
@@ -60,10 +63,9 @@ const lists = [
   }
 ];
 
-const KanbanColumn = (props: Props) => {
-  const { index, rows, column, tasks, openNewRowPanel, handleRowData } = props;
+const KanbanColumn = ({ index, rows, column, tasks,kanbanConfig, openNewRowPanel, handleRowData }: KanbanColumnProps) => {
   const theme = useTheme();
-  const newRow = { phase: column.title };
+  const newRow = { phase: column.label };
 
   const addRow = () => {
     handleRowData(newRow);
@@ -72,14 +74,14 @@ const KanbanColumn = (props: Props) => {
 
   const editRow = (id: string) => {
     rows.forEach((row: any) => {
-      if (row.id === parseInt(id.split('-')[1])) handleRowData(row);
+      if (row.id === id) handleRowData(row);
     });
 
     openNewRowPanel();
   };
 
   return (
-    <Draggable draggableId={column.id} index={index}>
+    <Draggable draggableId={`${column.id}`} index={index}>
     {(provided: any) =>
       <Container
         {...provided.draggableProps}
@@ -88,7 +90,7 @@ const KanbanColumn = (props: Props) => {
       >
         <Header>
           <Box sx={{ display: 'flex' }}>
-            <Title>{column.title}</Title>
+            <Title>{column.label}</Title>
             <Box sx={{ marginLeft: 1, borderRadius: '5px', border: '1px solid rgba(0, 0, 0, 0.1)', fontSize: '12px', width: '20px', height: '20px', textAlign: 'center' }}>{tasks.length}</Box>
           </Box>
           <Box sx={{ display: 'flex' }}>
@@ -132,13 +134,13 @@ const KanbanColumn = (props: Props) => {
             </CDropdown>
           </Box>
         </Header>
-        <Droppable droppableId={column.id} type="task">
+        <Droppable droppableId={`${column.id}`} type="task">
           {(provided: any) =>
           <TaskList
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {tasks.map((task: any, index: number) => <KanbanTask key={task.id} task={task} index={index} editRow={editRow} />)}
+            {tasks.map((task: any, index: number) => <KanbanTask kanbanConfig={kanbanConfig} key={task.id} task={task} index={index} editRow={editRow} />)}
             {provided.placeholder}
           </TaskList>
           }
@@ -150,7 +152,7 @@ const KanbanColumn = (props: Props) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  rows: state.view.columns
+  rows: state.view.rows
 });
 
 export default connect(mapStateToProps)(KanbanColumn);

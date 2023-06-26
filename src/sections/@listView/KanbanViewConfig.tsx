@@ -4,13 +4,13 @@ import { connect } from "react-redux";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "src/utils/convertUtils";
-import ViewFieldsConfig from "./CreateFieldModal";
 import { Field, FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
+import { KanbanConfig } from "src/models/ViewConfig";
 
 type KanbanViewConfigProps = {
   submit : boolean,
-  updateConfig :(config : any) => void
+  updateConfig :(config : KanbanConfig) => void
   columns:ViewField[];
   availableFieldUiTypes: FieldUIType[]
 }
@@ -70,7 +70,6 @@ function KanbanViewConfig({submit,updateConfig,columns,availableFieldUiTypes}:Ka
       updateKanbanConfig(newBoardFields.length>0?newBoardFields[0].id :0,newTitleFields.length>0?newTitleFields[0].id:0)
     }
     useEffect(()=>{
-      console.log('aaa')
       reloadColumns()
     },[columns])
     const onBoardFieldChange = (event: SelectChangeEvent) =>{
