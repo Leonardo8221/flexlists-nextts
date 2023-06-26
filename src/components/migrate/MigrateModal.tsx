@@ -7,11 +7,11 @@ import {
 import { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import { getMigrationProgress } from '../../services/auth.service'
+import { LegacyMigrationQueueStatusEnum, getMigrationProgress } from '../../services/auth.service'
 import { isErr } from "src/models/ApiResponse";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
-import { PATH_AUTH } from "src/routes/paths";
+import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -89,15 +89,21 @@ function MigrateModal({ message, setMessage }: MigrateModelProps) {
   React.useEffect(() => {
     const timer = setInterval(async () => {
       const result = await getMigrationProgress()
-      console.log(result)
+      //console.log(result)
       if (isErr(result)) {
         // this should definitely be sent to the admin as it means catestrophic failure 
         if (result.code === 401) {
           setMessage({ message: 'Unauthorized, please login!', type: 'error' })
-          router.push({ pathname: PATH_AUTH.login });
+          await router.push({ pathname: PATH_AUTH.login });
           return
-
         }
+
+      } else if (result.data!.status === LegacyMigrationQueueStatusEnum.Success) {
+        setProgress(100);
+        clearInterval(timer);
+        setMessage({ message: 'Migration finished successful!', type: 'success' })
+        await router.push({ pathname: PATH_MAIN.views });
+        return
       }
     }, 2000);
     return () => {
