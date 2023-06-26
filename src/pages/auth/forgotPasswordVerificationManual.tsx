@@ -9,6 +9,8 @@ import {
   Alert,
   Snackbar,
   AlertColor,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -18,6 +20,7 @@ import { useRouter } from "next/router";
 import { PATH_AUTH } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
+import Iconify from "../../components/iconify";
 
 const theme = createTheme({
   components: {
@@ -52,6 +55,8 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
   const router = useRouter();
   const [flash, setFlash] = React.useState<{ message: string, type: string } | undefined>(undefined);
   const [email, setEmail] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>("");
+  const [showPassword, setShowPassword] = React.useState(false);
 
   useEffect(() => {
     function checkMessage() {
@@ -73,10 +78,13 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
       if (router.query.email) {
         setEmail(router.query.email as string)
       }
-
     }
     routerCheck()
   })
+
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -241,7 +249,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               Email with verification code sent.{" "}
             </Typography>
             <Typography variant="body1">
-              Please insert code from email below.
+              Please insert code from the email below to change your password.
             </Typography>
           </Grid>
 
@@ -255,6 +263,32 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               onChange={(event) => {
                 setEmail(event.target.value)
                 setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6 && event.target.value.length > 0)
+              }}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="New Password"
+              required
+              value={password}
+              onChange={handleChangePassword}
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      <Iconify
+                        icon={
+                          showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
+                        }
+                      />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
             ></TextField>
           </Grid>
