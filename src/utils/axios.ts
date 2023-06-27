@@ -2,7 +2,7 @@ import axios from 'axios';
 import { de } from 'date-fns/locale';
 import { setLoading } from 'src/redux/actions/adminAction';
 import store from 'src/redux/store';
-import { PATH_AUTH } from 'src/routes/paths';
+import { PATH_AUTH, PATH_AUTH_API } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({ withCredentials: true, baseURL: process.env.NEXT_PUBLIC_FLEXLIST_API_URL });
@@ -23,13 +23,13 @@ axiosInstance.interceptors.response.use(
     store.dispatch(setLoading(false))
 
     const ignore = [
-      PATH_AUTH.verifyToken,
-      PATH_AUTH.resendSignupEmail,
-      PATH_AUTH.verifySignup,
-      PATH_AUTH.verifyPasswordChange,
-      PATH_AUTH.forgotPassword,
-      PATH_AUTH.resetPassword,
-      PATH_AUTH.registerExisting
+      PATH_AUTH_API.verifyToken,
+      PATH_AUTH_API.resendSignupEmail,
+      PATH_AUTH_API.verifySignup,
+      PATH_AUTH_API.verifyPasswordChange,
+      PATH_AUTH_API.forgotPassword,
+      PATH_AUTH_API.resetPassword,
+      PATH_AUTH_API.registerExisting
     ]
 
     if (
@@ -50,6 +50,7 @@ async function get<T>(url: string, params?: any) {
   try {
     return await axiosInstance.get<T>(url, { params })
   } catch (e: any) {
+    store.dispatch(setLoading(false))
     return { data: { code: e.code ?? 999, isSuccess: e.isSuccess, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
   }
 }
@@ -58,6 +59,7 @@ async function post<T>(url: string, data?: any) {
   try {
     return await axiosInstance.post<T>(url, data)
   } catch (e: any) {
+    store.dispatch(setLoading(false))
     return { data: { code: e.code ?? 999, isSuccess: e.isSuccess, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
   }
 }
@@ -66,6 +68,7 @@ async function axiosDelete<T>(url: string, params?: any) {
   try {
     return await axiosInstance.delete<T>(url, { params })
   } catch (e: any) {
+    store.dispatch(setLoading(false))
     return { data: { code: e.code ?? 999, isSuccess: e.isSuccess, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
   }
 }

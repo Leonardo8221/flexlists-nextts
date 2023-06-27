@@ -136,6 +136,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               type="email"
               required
               value={email}
+              disabled
               onChange={(e) => { setEmail(e.target.value) }}
             ></TextField>
           </Grid>

@@ -15,10 +15,6 @@ export const PATH_AUTH = {
   forgotPasswordVerification: path(ROOTS_AUTH, "/forgotPasswordVerification"),
   forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
   verifyToken: path(ROOTS_AUTH, "/verifyToken"),
-  resendSignupEmail: path(ROOTS_AUTH, "/resendSignupEmail"),
-  verifySignup: path(ROOTS_AUTH, "/verifySignup"),
-  verifyPasswordChange: path(ROOTS_AUTH, "/verifyPasswordChange"),
-  resetPassword: path(ROOTS_AUTH, "/resetPassword"),
   logout: path(ROOTS_AUTH, "/logout"),
 };
 const ROOTS_MAIN = "/main";
@@ -29,3 +25,12 @@ export const PATH_MAIN = {
   newGroup: path(ROOTS_MAIN, "/groups/newGroup"),
   migratedLists: path(ROOTS_MAIN, "/migrate"),
 };
+export const PATH_AUTH_API = {
+  verifyToken: path(ROOTS_AUTH, "/verifyToken"),
+  resendSignupEmail: path(ROOTS_AUTH, "/resendSignupEmail"),
+  verifySignup: path(ROOTS_AUTH, "/verifySignup"),
+  verifyPasswordChange: path(ROOTS_AUTH, "/verifyPasswordChange"),
+  resetPassword: path(ROOTS_AUTH, "/resetPassword"),
+  registerExisting: path(ROOTS_AUTH, "/registerExisting"),
+  forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
+}

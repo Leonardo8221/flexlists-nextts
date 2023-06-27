@@ -89,9 +89,9 @@ const Login = ({ message, setMessage }: LoginProps) => {
         await router.push({ pathname: PATH_MAIN.views });
         return
       }
-      if (isErr(response) && (response as FlexlistsError).code === 512) {
+      if (isErr(response) && (response as FlexlistsError).code === 512 && (response as FlexlistsError).data?.email) {
         setMessage({ message: 'Your account is not activated. Please check your email for an activation link or request a new one.', type: 'error' })
-        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: userName } })
+        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: (response as FlexlistsError).data.email } })
         return
       }
       setError('Invalid username or password. Please try again or request a new password.')
