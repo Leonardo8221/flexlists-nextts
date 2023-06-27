@@ -31,68 +31,91 @@ interface NewListProps {
 
 function NewList({ message, setMessage }: NewListProps) {
   const router = useRouter();
-  var categories: { key: string, name: string }[] = []
+  var categories: { key: string; name: string }[] = [];
   Object.keys(ListCategory).forEach((x) => {
-    categories.push({ key: x, name: ListCategoryLabel.get(x) ?? "" })
-  })
-  const [currentList, setCurrentList] = useState<{ name: string, description: string, category: string }>({ name: "", description: "", category: categories[0].key })
+    categories.push({ key: x, name: ListCategoryLabel.get(x) ?? "" });
+  });
+  const [currentList, setCurrentList] = useState<{
+    name: string;
+    description: string;
+    category: string;
+  }>({ name: "", description: "", category: categories[0].key });
 
-  // error handling 
-  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+  // error handling
+  const [flash, setFlash] = useState<
+    { message: string; type: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
   const flashHandleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
   function setError(message: string) {
     setFlashMessage(message);
   }
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     var newList = Object.assign({}, currentList);
-    newList.name = event.target.value
-    setCurrentList(newList)
-  }
+    newList.name = event.target.value;
+    setCurrentList(newList);
+  };
   const onDescriptionChange = (newValue: string) => {
     var newList = Object.assign({}, currentList);
-    newList.description = newValue
-    setCurrentList(newList)
-  }
+    newList.description = newValue;
+    setCurrentList(newList);
+  };
   const onCategoryChange = (event: SelectChangeEvent) => {
     var newList = Object.assign({}, currentList);
-    newList.category = event.target.value
-    setCurrentList(newList)
-  }
+    newList.category = event.target.value;
+    setCurrentList(newList);
+  };
   const handleSubmit = async () => {
-    var createListResponse = await listService.createList(currentList.name, currentList.description, currentList.category as ListCategory, ViewType.List);
-    if (isSucc(createListResponse) && createListResponse.data && createListResponse.data.listId) {
-      await router.push({ pathname: `${PATH_MAIN.views}/${createListResponse.data.viewId}` })
+    var createListResponse = await listService.createList(
+      currentList.name,
+      currentList.description,
+      currentList.category as ListCategory,
+      ViewType.List
+    );
+    if (
+      isSucc(createListResponse) &&
+      createListResponse.data &&
+      createListResponse.data.listId
+    ) {
+      await router.push({
+        pathname: `${PATH_MAIN.views}/${createListResponse.data.viewId}`,
+      });
     }
-  }
+  };
   return (
     <MainLayout removeFooter={true}>
-
       <Box
         sx={{
           display: "flex",
-          bgcolor: "#fff",
         }}
       >
-        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={flashHandleClose}>
-          <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+        <Snackbar
+          open={flash !== undefined}
+          autoHideDuration={6000}
+          onClose={flashHandleClose}
+        >
+          <Alert
+            onClose={flashHandleClose}
+            severity={flash?.type as AlertColor}
+            sx={{ width: "100%" }}
+          >
             {flash?.message}
           </Alert>
         </Snackbar>
@@ -103,19 +126,33 @@ function NewList({ message, setMessage }: NewListProps) {
             <Typography variant="subtitle2" gutterBottom>
               Name
             </Typography>
-            <TextField required fullWidth id="fullWidth" value={currentList.name} onChange={onNameChange} />
+            <TextField
+              required
+              fullWidth
+              id="fullWidth"
+              value={currentList.name}
+              onChange={onNameChange}
+            />
           </Box>
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               Description
             </Typography>
-            <WysiwygEditor value={currentList.description} setValue={(newValue) => onDescriptionChange(newValue)} />
+            <WysiwygEditor
+              value={currentList.description}
+              setValue={(newValue) => onDescriptionChange(newValue)}
+            />
           </Box>
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
               Category
             </Typography>
-            <Select fullWidth displayEmpty value={currentList.category} onChange={onCategoryChange}>
+            <Select
+              fullWidth
+              displayEmpty
+              value={currentList.category}
+              onChange={onCategoryChange}
+            >
               {categories.map((option) => (
                 <MenuItem key={option.key} value={option.key}>
                   {option.name}
@@ -131,7 +168,6 @@ function NewList({ message, setMessage }: NewListProps) {
           >
             Create list
           </Button>
-
         </Box>
         {/* <Box sx={{ borderLeft: "solid 1px #ccc", p: 2 }}>
           <Typography variant="h4">List details</Typography>
@@ -149,9 +185,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewList);
-
-
