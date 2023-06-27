@@ -104,13 +104,19 @@ export type User = {
     status:UserStatus
     membershipLevel:MembershipLevel
 }
+export type OwnerInfo = {
+    userName:string
+    firstName:string
+    lastName:string
+}
 export type ViewChat = {
     id:number
     contentId?:number
     message:string
     ownerId:number
+    ownerInfo:OwnerInfo
     createdAt?:Date
     updatedAt?:Date
-} & {
+}& {
     over: boolean
 }

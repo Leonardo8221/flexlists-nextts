@@ -7,6 +7,7 @@ import { getAvailableFieldUiTypes } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { getSearchTypes } from "src/redux/actions/adminAction";
+import { View } from "src/models/SharedModels";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -52,6 +53,7 @@ type MainLayoutProps = {
   children: ReactNode;
   removeFooter?: boolean;
   disableOverflow?: boolean;
+  currentView: View;
   getAvailableFieldUiTypes: () => void;
   getSearchTypes: () => void;
 };
@@ -62,6 +64,7 @@ const MainLayout = ({
   disableOverflow = false,
   getAvailableFieldUiTypes,
   getSearchTypes,
+  currentView
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
@@ -82,11 +85,14 @@ const MainLayout = ({
           {children}
         </Content>
       </Main>
-      {removeFooter == false && <Footer />}
+      {removeFooter == false && currentView && <Footer />}
+      
     </StyledRoot>
   );
 };
-const mapStateToProps = (state: any) => ({});
+const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
+});
 
 const mapDispatchToProps = {
   getAvailableFieldUiTypes,
