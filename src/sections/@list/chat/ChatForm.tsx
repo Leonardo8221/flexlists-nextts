@@ -105,12 +105,17 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
   const isOwner = (userId:number) : boolean => {
     return userId === authValidate.user?.userId;
     }
+  const getTime = (date?: Date) => {
+      return date != null ? new Date(date).getTime() : 0;
+  }
   return (
   
         <Box sx={{  }}>
           <Box sx={{ fontWeight: '900', marginBottom: 1 }}>Comments</Box>
           <Box sx={{ border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px' }}>
-            {messages.map((message: ViewChat) => (
+            {messages.sort((a: ViewChat, b: ViewChat) => {
+              return getTime(a.createdAt) - getTime(b.createdAt);
+            }).map((message: ViewChat) => (
               <Box key={`${message.id}-message`} sx={{ display: 'flex', justifyContent: isOwner(message.ownerId) ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
                 <Box sx={{ width: '82%' }}>
                   {!isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
