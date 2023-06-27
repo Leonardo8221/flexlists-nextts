@@ -7,13 +7,11 @@ import { PublishListOutputDto } from 'src/models/ApiOutputModels'
 import { PublishType } from 'src/enums/SharedEnums'
 import { List } from 'src/models/SharedModels'
 import { Role } from 'src/enums/SharedEnums'
-import { GetUsersOutputDto } from 'src/models/ApiOutputModels'
 import { AddAccessToListOutputDto } from 'src/models/ApiOutputModels'
 import { GetKeysOutputDto } from 'src/models/ApiOutputModels'
 
 export const listService = {
     createList,
-    renameList,
     deleteList,
     archiveList,
     unArchiveList,
@@ -26,19 +24,13 @@ export const listService = {
     copyList,
     addUserToList,
     removeUserFromList,
-    getUsers,
     addAccessToList,
     removeAccessFromList,
     getKeys,
 };
 
-async function createList(name:string,description:string,category:ListCategory,type:ViewType): Promise<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>> {
+async function createList(name:string,description?:string,category?:ListCategory,type?:ViewType): Promise<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateListOutputDto>>(`/api/list/createList`, {name,description,category,type})
-
-  return response.data;
-};
-async function renameList(id:number,name:string): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/list/renameList`, {id,name})
 
   return response.data;
 };
@@ -57,7 +49,7 @@ async function unArchiveList(id:number): Promise<FlexlistsError|FlexlistsSuccess
 
   return response.data;
 };
-async function publishList(listId:number,type:PublishType,name:string): Promise<FlexlistsError|FlexlistsSuccess<PublishListOutputDto>> {
+async function publishList(listId:number,type:PublishType,name?:string): Promise<FlexlistsError|FlexlistsSuccess<PublishListOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<PublishListOutputDto>>(`/api/list/publishList`, {listId,type,name})
 
   return response.data;
@@ -98,11 +90,7 @@ async function removeUserFromList(listId:number,userId:number): Promise<Flexlist
 
   return response.data;
 };
-async function getUsers(listId:number): Promise<FlexlistsError|FlexlistsSuccess<GetUsersOutputDto[]>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetUsersOutputDto[]>>('/api/list/getUsers'+`?listId=${listId}`)
-  return response.data;
-};
-async function addAccessToList(listId:number,role:number,name:string): Promise<FlexlistsError|FlexlistsSuccess<AddAccessToListOutputDto>> {
+async function addAccessToList(listId:number,role:number,name?:string): Promise<FlexlistsError|FlexlistsSuccess<AddAccessToListOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<AddAccessToListOutputDto>>(`/api/list/addAccessToList`, {listId,role,name})
 
   return response.data;

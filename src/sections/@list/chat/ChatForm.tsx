@@ -8,38 +8,81 @@ import {
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import { connect } from 'react-redux';
-import { setMessages } from '../../../redux/actions/messageActions';
+import { ChatType } from 'src/enums/ChatType';
+import { View, ViewChat } from 'src/models/SharedModels';
+import { use } from 'passport';
+import { useRouter } from 'next/router';
+import { listChatService } from 'src/services/listChat.service';
+import { isSucc } from 'src/models/ApiResponse';
+import { AuthValidate } from 'src/models/AuthValidate';
 
 interface ChatFormProps {
-  messages: any;
-  setMessages: (columns: any) => void;
+  chatType : ChatType,
+  id:number;
+  currentView:View,
+  authValidate:AuthValidate
 }
 
-const ChatForm = ({ messages, setMessages }: ChatFormProps) => {
+const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
+  const router = useRouter();
   const theme = useTheme();
+  const [messages, setMessages] = useState<ViewChat[]>([]);
   const [message, setMessage] = useState('');
   const [windowHeight, setWindowHeight] = useState(0);
-
+  const [page, setPage] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(25);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
-
+  
+  useEffect(() => {
+    async function fetchData() {
+        if(chatType === ChatType.View)
+        {
+            var chatViewResponse = await listChatService.getViewChat(id,page,limit);
+            if(isSucc(chatViewResponse))
+            {
+                setMessages(chatViewResponse.data);
+            }
+        }
+        else
+        {
+            var chatContentResponse = await listChatService.getContentChat(id,page,limit);
+            if(isSucc(chatContentResponse))
+            {
+                setMessages(chatContentResponse.data);
+            }
+        }
+    }
+    if (router.isReady) {
+        fetchData();
+    }
+  } , [router.isReady]);
 
 
   const formatNumber = (num: number) => num < 10 ? `0${num}` : num;
 
-  const handleMessage = () => {
+  const handleMessage = async() => {
     const today = new Date();
-
-    messages.push({
-      id: Math.floor(Math.random() * (99999 - 10000 + 1) ) + 10000,
-      content: message,
-      user: 'me',
-      avatar: '/assets/images/avatars/avatar_1.jpg',
-      time: `${formatNumber(today.getMonth() + 1)}/${formatNumber(today.getDate())}/${formatNumber(today.getFullYear())} ${formatNumber(today.getHours())}:${formatNumber(today.getMinutes())}:${formatNumber(today.getSeconds())}`
-    });
-    setMessages([...messages]);
-    setMessage('');
+    if (!message) return;
+  
+    if(chatType === ChatType.View)
+    {
+        var chatViewResponse = await listChatService.chatInView(id,message);
+        if(isSucc(chatViewResponse))
+        {
+            setMessages([...messages,chatViewResponse.data]);
+        }
+    }
+    else
+    {
+        var chatContentResponse = await listChatService.chatInContent(currentView.id,id,message);
+        if(isSucc(chatContentResponse))
+        {
+            setMessages([...messages,chatContentResponse.data]);
+        }
+    }
+    setMessage('')
   };
 
   const handleMessageOver = (id: number, value: boolean) => {
@@ -50,34 +93,37 @@ const ChatForm = ({ messages, setMessages }: ChatFormProps) => {
     ));
   };
 
-  const getDifference = (time: string) => {
+  const getDifference = (time?: Date) => {
     const now = dayjs();
-    const difference = now.diff(dayjs(time), 'second');
+    const difference = now.diff(time, 'second');
     const min = Math.floor(difference/60);
     const hour = Math.floor(min/60);
     const date = Math.floor(hour/24);
 
     return difference < 60 ? 'just now' : date ? `${date} day${date > 1 ? 's' : ''} ago` : hour ? `${hour} hour${hour > 1 ? 's' : ''} ago` : `${min} min${min > 1 ? 's' : ''} ago`;
   };
-
+  const isOwner = (userId:number) : boolean => {
+    return userId === authValidate.user?.userId;
+    }
   return (
   
         <Box sx={{  }}>
           <Box sx={{ fontWeight: '900', marginBottom: 1 }}>Comments</Box>
           <Box sx={{ border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px' }}>
-            {messages.map((message: any) => (
-              <Box key={`${message.id}-message`} sx={{ display: 'flex', justifyContent: message.user === 'me' ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
+            {messages.map((message: ViewChat) => (
+              <Box key={`${message.id}-message`} sx={{ display: 'flex', justifyContent: isOwner(message.ownerId) ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
                 <Box sx={{ width: '82%' }}>
-                  {message.user !== 'me' && <Box sx={{ display: 'flex' }}>
+                  {isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
                     <Box
                       component="img"
-                      src={message.avatar}
+                      src={'/assets/images/avatars/avatar_1.jpg'}
                       sx={{ width: 24, height: 24, borderRadius: 50, marginRight: 1 }}
                     />
-                    <Box sx={{ marginTop: 0.2 }}>{message.user}</Box>
+                    <Box sx={{ marginTop: 0.2 }}>{"User"}</Box>
+                    {/* <Box sx={{ marginTop: 0.2 }}>{message.ownerId}</Box> */}
                   </Box>}
-                  <Box sx={{ marginTop: 1, borderRadius: '10px', backgroundColor: message.user === 'me' ? '#54A6FB' : '#003249', color: 'white', p: 1.2 }}>{message.content}</Box>
-                  <Box sx={{ marginTop: 1, color: 'rgba(102, 102, 102, 0.4)', fontSize: '12px', textTransform: 'uppercase', textAlign: message.user === 'me' ? 'right' : 'left' }}>{getDifference(message.time)}</Box>
+                  <Box sx={{ marginTop: 1, borderRadius: '10px', backgroundColor: isOwner(message.ownerId) ? '#54A6FB' : '#003249', color: 'white', p: 1.2 }}>{message.message}</Box>
+                  <Box sx={{ marginTop: 1, color: 'rgba(102, 102, 102, 0.4)', fontSize: '12px', textTransform: 'uppercase', textAlign: isOwner(message.ownerId) ? 'right' : 'left' }}>{getDifference(message.createdAt)}</Box>
                 </Box>
                 {message.over && <Box sx={{ position: 'absolute', top: 6, right: 24, display: 'flex', justifyContent: 'right' }}>
                   <Box
@@ -151,7 +197,7 @@ const ChatForm = ({ messages, setMessages }: ChatFormProps) => {
                       mask: `url(/assets/icons/send.svg) no-repeat center / contain`,
                       WebkitMask: `url(/assets/icons/send.svg) no-repeat center / contain`
                     }}
-                    onClick={handleMessage}
+                    onClick={()=>handleMessage()}
                   />
                 </Box>
               </form>
@@ -162,11 +208,11 @@ const ChatForm = ({ messages, setMessages }: ChatFormProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  messages: state.message.messages
+    currentView: state.view.currentView,
+    authValidate: state.admin.authValidate
 });
 
 const mapDispatchToProps = {
-  setMessages
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatForm);

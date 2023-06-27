@@ -2,7 +2,7 @@
 const initialState = {
     searchTypes:[],
     isLoading:false,
-    authValidate:{isUserValidated:false,isKeyValidated:false}
+    authValidate:{isUserValidated:false,isKeyValidated:false,user:undefined}
   };
   const adminReducer = (state = initialState, action: any) => {
       switch (action.type) {

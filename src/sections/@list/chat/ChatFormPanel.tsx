@@ -7,13 +7,16 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import ChatForm from './ChatForm';
+import { ChatType } from 'src/enums/ChatType';
 
 interface ChatFormPanelProps {
+  chatType : ChatType;
+  id:number;
   open: boolean;
   onClose: () => void;
 }
 
-const ChatFormPanel = ({ open, onClose } : ChatFormPanelProps) => {
+const ChatFormPanel = ({chatType,id, open, onClose } : ChatFormPanelProps) => {
   const theme = useTheme();
   const [windowHeight, setWindowHeight] = useState(0);
 
@@ -53,7 +56,7 @@ const ChatFormPanel = ({ open, onClose } : ChatFormPanelProps) => {
         />
       </Box>  */}
       <DialogContent>
-        <ChatForm />
+        <ChatForm chatType={chatType} id = {id} />
       </DialogContent>
     </Drawer>
   );

@@ -1,26 +1,29 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
+import { ViewChat } from 'src/models/SharedModels'
 
 export const listChatService = {
-    createListChat,
-    updateListChat,
-    getListChats,
-    deleteListChat,
+    chatInView,
+    chatInContent,
+    getViewChat,
+    getContentChat,
 };
 
-async function createListChat(): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listChat/createListChat')
+async function chatInView(viewId:number,message:string): Promise<FlexlistsError|FlexlistsSuccess<ViewChat>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<ViewChat>>(`/api/listChat/chatInView`, {viewId,message})
+
   return response.data;
 };
-async function updateListChat(): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listChat/updateListChat')
+async function chatInContent(viewId:number,contentId:number,message:string): Promise<FlexlistsError|FlexlistsSuccess<ViewChat>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<ViewChat>>(`/api/listChat/chatInContent`, {viewId,contentId,message})
+
   return response.data;
 };
-async function getListChats(): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listChat/getListChats')
+async function getViewChat(viewId:number,page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<ViewChat[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<ViewChat[]>>('/api/listChat/getViewChat'+`?viewId=${viewId}&page=${page}&limit=${limit}`)
   return response.data;
 };
-async function deleteListChat(): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listChat/deleteListChat')
+async function getContentChat(viewId:number,contentId:number,page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<ViewChat[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<ViewChat[]>>('/api/listChat/getContentChat'+`?viewId=${viewId}&contentId=${contentId}&page=${page}&limit=${limit}`)
   return response.data;
 };

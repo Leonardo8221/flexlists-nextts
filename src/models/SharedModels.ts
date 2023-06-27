@@ -104,3 +104,13 @@ export type User = {
     status:UserStatus
     membershipLevel:MembershipLevel
 }
+export type ViewChat = {
+    id:number
+    contentId?:number
+    message:string
+    ownerId:number
+    createdAt?:Date
+    updatedAt?:Date
+} & {
+    over: boolean
+}

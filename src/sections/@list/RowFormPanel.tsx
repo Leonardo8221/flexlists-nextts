@@ -29,6 +29,7 @@ import { isErr, isSucc } from 'src/models/ApiResponse';
 import { filter } from 'lodash';
 import { ErrorConsts } from 'src/constants/errorConstants';
 import ChatForm from './chat/ChatForm';
+import { ChatType } from 'src/enums/ChatType';
 
 interface RowFormProps {
   currentView: ViewField;
@@ -259,11 +260,16 @@ const RowFormPanel = ({currentView, rowData, open, columns, comment, onClose, on
         return <div key={column.id}></div>
      }
   }
+  const handleCloseModal = () =>  
+  {
+    setCommentMode(false);
+    onClose();
+  }
   return (
     <Drawer
       anchor="right"
       open={open}
-      onClose={onClose}
+      onClose={handleCloseModal}
       PaperProps={{
         sx: {
           width: {xs: '100%', lg: '500px'},
@@ -356,7 +362,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, comment, onClose, on
             )}
           </Stack>
         </form> :
-        <ChatForm />
+        <ChatForm chatType={ChatType.RowData} id={rowData.id} />
         }
       </DialogContent>
       <DialogActions sx={{ p: '1.25rem', borderTop: `1px solid ${theme.palette.palette_style.border.default}`, justifyContent: 'space-between' }}>
@@ -377,7 +383,7 @@ const RowFormPanel = ({currentView, rowData, open, columns, comment, onClose, on
         />
           
         <Box sx={{ display: 'flex' }}>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={handleCloseModal}>Cancel</Button>
           <Button color="secondary" onClick={handleSubmit} variant="contained" type="submit">
             {rowData && rowData.id ? "Update Row" : "Create New Row"}
           </Button>

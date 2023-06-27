@@ -21,6 +21,7 @@ import RenameView from "./RenameView";
 import DuplicateView from "./DuplicateView";
 import DeleteView from "./DeleteView";
 import ArchiveView from "./ArchiveView";
+import { ChatType } from "src/enums/ChatType";
 
 type HeaderProps = {
   currentView: View;
@@ -333,6 +334,8 @@ const Header = ({ currentView }: HeaderProps) => {
         </Box> */}
       </Box>
       <ChatFormPanel
+        chatType={ChatType.View}
+        id={currentView.id}
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
       />

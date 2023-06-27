@@ -5,9 +5,12 @@ import { connect } from 'react-redux';
 import useResponsive from '../../../hooks/useResponsive';
 import ChatFormPanel from 'src/sections/@list/chat/ChatFormPanel';
 import { setRows } from 'src/redux/actions/viewActions';
-type Props = {
+import { ChatType } from 'src/enums/ChatType';
+import { View } from 'src/models/SharedModels';
+type FooterProps = {
   columns: any;
   rows: any;
+  currentView: View;
   setRows: (columns: any) => void;
 };
 
@@ -18,8 +21,7 @@ const toolbars = [
   }
 ];
 
-const Footer = (props: Props) => {
-  const { columns, rows, setRows } = props;
+const Footer = ({currentView, columns, rows, setRows }: FooterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
@@ -92,6 +94,8 @@ const Footer = (props: Props) => {
         </Box>
       ))}
       <ChatFormPanel
+        chatType = {ChatType.View}
+        id={currentView.id}
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
       />
@@ -100,6 +104,7 @@ const Footer = (props: Props) => {
 }
 
 const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
   columns: state.view.columns,
   rows: state.view.columns
 });
