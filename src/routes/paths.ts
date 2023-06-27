@@ -14,6 +14,7 @@ export const PATH_AUTH = {
   forgotPasswordVerificationManual: path(ROOTS_AUTH, "/forgotPasswordVerificationManual"),
   forgotPasswordVerification: path(ROOTS_AUTH, "/forgotPasswordVerification"),
   forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
+  verifyToken: path(ROOTS_AUTH, "/verifyToken"),
 };
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {

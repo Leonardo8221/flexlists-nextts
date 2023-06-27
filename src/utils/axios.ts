@@ -2,6 +2,7 @@ import axios from 'axios';
 import { de } from 'date-fns/locale';
 import { setLoading } from 'src/redux/actions/adminAction';
 import store from 'src/redux/store';
+import { PATH_AUTH } from 'src/routes/paths';
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({ withCredentials: true, baseURL: process.env.NEXT_PUBLIC_FLEXLIST_API_URL });
@@ -16,18 +17,18 @@ axiosInstance.interceptors.response.use(
     //console.log('response1')
     return response
   },
-  (error) => {
+  async (error) => {
     const originalRequest = error.config
     store.dispatch(setLoading(false))
-    // if (
-    //   error.response.status === 401 &&
-    //   (!originalRequest.url.includes('auth/verifyToken'))
-    // ) {
-    //   window.location.href = '/auth/login';
-    //   return Promise.reject(error)
-    // }
+    if (
+      error.response.status === 401
+      && (!originalRequest.url.includes(PATH_AUTH.verifyToken))
+    ) {
+      window.location.href = PATH_AUTH.login//'/auth/login';
+      return await Promise.reject(error)
+    }
     //console.log('error', error.response.data)
-    return Promise.resolve(error.response)
+    return await Promise.resolve(error.response)
     //return Promise.reject((error.response && error.response.data) || 'Something went wrong')
   }
 );
@@ -56,4 +57,4 @@ async function axiosDelete<T>(url: string, params?: any) {
   }
 }
 
-export default { get, post,delete : axiosDelete };
+export default { get, post, delete: axiosDelete };
