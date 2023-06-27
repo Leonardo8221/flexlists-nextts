@@ -47,7 +47,7 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
         }
         else
         {
-            var chatContentResponse = await listChatService.getContentChat(id,page,limit);
+            var chatContentResponse = await listChatService.getContentChat(currentView.id,id,page,limit);
             if(isSucc(chatContentResponse))
             {
                 setMessages(chatContentResponse.data);
