@@ -97,8 +97,8 @@ function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
         sx={{
           py: 3,
           maxWidth: "inherit !important",
-          overflow: "auto",
-          height: "calc(100vh - 96px)",
+          overflow: "hidden",
+          minHeight: { xs: "100vh", md: "calc(100vh - 96px)" },
         }}
       >
         <Snackbar
