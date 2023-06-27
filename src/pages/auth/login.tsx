@@ -23,8 +23,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { authService } from '../../services/auth.service';
 import Iconify from '../../components/iconify';
-import { isSucc } from "src/models/ApiResponse";
-import { PATH_MAIN } from "src/routes/paths";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
+import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 
@@ -87,6 +87,11 @@ const Login = ({ message, setMessage }: LoginProps) => {
 
         setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
         await router.push({ pathname: PATH_MAIN.views });
+        return
+      }
+      if (isErr(response) && (response as FlexlistsError).code === 512) {
+        setMessage({ message: 'Your account is not activated. Please check your email for an activation link or request a new one.', type: 'error' })
+        await router.push({ pathname: PATH_AUTH.verifyEmail })
         return
       }
       setError('Invalid username or password. Please try again or request a new password.')
