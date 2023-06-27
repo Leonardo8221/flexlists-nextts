@@ -113,13 +113,13 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
             {messages.map((message: ViewChat) => (
               <Box key={`${message.id}-message`} sx={{ display: 'flex', justifyContent: isOwner(message.ownerId) ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
                 <Box sx={{ width: '82%' }}>
-                  {isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
+                  {!isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
                     <Box
                       component="img"
                       src={'/assets/images/avatars/avatar_1.jpg'}
                       sx={{ width: 24, height: 24, borderRadius: 50, marginRight: 1 }}
                     />
-                    <Box sx={{ marginTop: 0.2 }}>{"User"}</Box>
+                    <Box sx={{ marginTop: 0.2 }}>{`${message.ownerInfo.firstName} ${message.ownerInfo.lastName}`}</Box>
                     {/* <Box sx={{ marginTop: 0.2 }}>{message.ownerId}</Box> */}
                   </Box>}
                   <Box sx={{ marginTop: 1, borderRadius: '10px', backgroundColor: isOwner(message.ownerId) ? '#54A6FB' : '#003249', color: 'white', p: 1.2 }}>{message.message}</Box>
