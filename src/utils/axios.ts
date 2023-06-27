@@ -21,8 +21,14 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config
     store.dispatch(setLoading(false))
     if (
-      error.response.status === 401
-      && (!originalRequest.url.includes(PATH_AUTH.verifyToken))
+      error.response.status === 401 &&
+       (!originalRequest.url.includes('auth/verifyToken')) &&
+       (!originalRequest.url.includes('auth/resendSignupEmail')) &&
+       (!originalRequest.url.includes('auth/verifySignup')) &&
+        (!originalRequest.url.includes('auth/verifyPasswordChange')) &&
+        (!originalRequest.url.includes('auth/forgotPassword')) &&
+        (!originalRequest.url.includes('auth/resetPassword')) &&
+        (!originalRequest.url.includes('auth/registerExisting'))
     ) {
       window.location.href = PATH_AUTH.login//'/auth/login';
       return await Promise.reject(error)
