@@ -250,7 +250,7 @@ const Login = ({ message, setMessage }: LoginProps) => {
             </Button>
           </Grid>
 
-          <SocialLogin />
+          {/* <SocialLogin /> */}
 
           <Grid
             item

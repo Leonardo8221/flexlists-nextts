@@ -18,22 +18,29 @@ axiosInstance.interceptors.response.use(
     return response
   },
   async (error) => {
+
     const originalRequest = error.config
     store.dispatch(setLoading(false))
+
+    const ignore = [
+      PATH_AUTH.verifyToken,
+      PATH_AUTH.resendSignupEmail,
+      PATH_AUTH.verifySignup,
+      PATH_AUTH.verifyPasswordChange,
+      PATH_AUTH.forgotPassword,
+      PATH_AUTH.resetPassword,
+      PATH_AUTH.registerExisting
+    ]
+
     if (
       error.response.status === 401 &&
-       (!originalRequest.url.includes('auth/verifyToken')) &&
-       (!originalRequest.url.includes('auth/resendSignupEmail')) &&
-       (!originalRequest.url.includes('auth/verifySignup')) &&
-        (!originalRequest.url.includes('auth/verifyPasswordChange')) &&
-        (!originalRequest.url.includes('auth/forgotPassword')) &&
-        (!originalRequest.url.includes('auth/resetPassword')) &&
-        (!originalRequest.url.includes('auth/registerExisting'))
+      !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1)
     ) {
       window.location.href = PATH_AUTH.login//'/auth/login';
       return await Promise.reject(error)
     }
-    //console.log('error', error.response.data)
+
+    console.log('error', error.response.data)
     return await Promise.resolve(error.response)
     //return Promise.reject((error.response && error.response.data) || 'Something went wrong')
   }

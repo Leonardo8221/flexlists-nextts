@@ -15,6 +15,11 @@ export const PATH_AUTH = {
   forgotPasswordVerification: path(ROOTS_AUTH, "/forgotPasswordVerification"),
   forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
   verifyToken: path(ROOTS_AUTH, "/verifyToken"),
+  resendSignupEmail: path(ROOTS_AUTH, "/resendSignupEmail"),
+  verifySignup: path(ROOTS_AUTH, "/verifySignup"),
+  verifyPasswordChange: path(ROOTS_AUTH, "/verifyPasswordChange"),
+  resetPassword: path(ROOTS_AUTH, "/resetPassword"),
+  logout: path(ROOTS_AUTH, "/logout"),
 };
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {
