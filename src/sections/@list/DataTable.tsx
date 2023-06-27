@@ -13,7 +13,11 @@ import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { fetchRowsByPage, setCurrentView, setRows } from "src/redux/actions/viewActions";
+import {
+  fetchRowsByPage,
+  setCurrentView,
+  setRows,
+} from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
 import { FieldType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
@@ -28,12 +32,21 @@ type DataTableProps = {
   columns: ViewField[];
   rows: any[];
   setRows: (columns: any) => void;
-  count:number,
-  fetchRowsByPage:(page?:number,limit?:number)=>void
-  setCurrentView :(view:View) =>void
+  count: number;
+  fetchRowsByPage: (page?: number, limit?: number) => void;
+  setCurrentView: (view: View) => void;
 };
 
-const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPage,setCurrentView }: DataTableProps) => {
+const DataTable = ({
+  tab,
+  currentView,
+  columns,
+  rows,
+  setRows,
+  count,
+  fetchRowsByPage,
+  setCurrentView,
+}: DataTableProps) => {
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
@@ -45,7 +58,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: currentView.limit??25,
+    pageSize: currentView.limit ?? 25,
   });
   const [showColumnFilters, setShowColumnFilters] = useState(false);
   const [updatingTable, setUpdatingTable] = useState(false);
@@ -65,13 +78,14 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
     }
   }, [rows, rowSelection]);
 
- 
- 
-  const getColumnKey = (column:any) : string=>
-  {
-    if(column.system && (column.name === 'id' || column.name === 'createdAt' || column.name === 'updatedAt'))
-    {
-      return column.name
+  const getColumnKey = (column: any): string => {
+    if (
+      column.system &&
+      (column.name === "id" ||
+        column.name === "createdAt" ||
+        column.name === "updatedAt")
+    ) {
+      return column.name;
     }
     return column.id;
   };
@@ -84,24 +98,23 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
         header: dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
-            {
-              dataColumn.icon && 
+            {dataColumn.icon && (
               <Box
-              component="span"
-              className="svg-color"
-              sx={{
-                width: 16,
-                height: 16,
-                display: "inline-block",
-                bgcolor: theme.palette.palette_style.text.primary,
-                mask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
-                WebkitMask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
-                marginTop: 0.5,
-                marginRight: 1,
-              }}
-            />
-            }
-            
+                component="span"
+                className="svg-color"
+                sx={{
+                  width: 16,
+                  height: 16,
+                  display: "inline-block",
+                  bgcolor: theme.palette.palette_style.text.primary,
+                  mask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
+                  marginTop: 0.5,
+                  marginRight: 1,
+                }}
+              />
+            )}
+
             <div>{column.columnDef.header}</div>
           </Box>
         ),
@@ -176,11 +189,12 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
               case FieldType.Choice:
                 let value_color = { bg: "#333", fill: "white" };
                 let font = "inherit";
-                let choiceLabel :string =''
-                let choiceValue : ChoiceModel = dataColumn.config?.values?.find((x:any)=>x.id === cellValue)
-                if(choiceValue)
-                {
-                  choiceLabel = choiceValue.label
+                let choiceLabel: string = "";
+                let choiceValue: ChoiceModel = dataColumn.config?.values?.find(
+                  (x: any) => x.id === cellValue
+                );
+                if (choiceValue) {
+                  choiceLabel = choiceValue.label;
                   value_color = choiceValue.color;
                   font = choiceValue.font;
                 }
@@ -253,16 +267,15 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
     }
   };
 
-
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPagination({
       ...pagination,
       pageIndex: value - 1,
     });
-    var newView : View = Object.assign({},currentView)
+    var newView: View = Object.assign({}, currentView);
     newView.page = value - 1;
-    setCurrentView(newView)
-    fetchRowsByPage(newView.page,newView.limit??25)
+    setCurrentView(newView);
+    fetchRowsByPage(newView.page, newView.limit ?? 25);
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
@@ -270,11 +283,11 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
       pageIndex: 0,
       pageSize: parseInt(event.target.value, 10),
     });
-    var newView : View = Object.assign({},currentView)
+    var newView: View = Object.assign({}, currentView);
     newView.page = 0;
-    newView.limit = parseInt(event.target.value, 10)
-    setCurrentView(newView)
-    fetchRowsByPage(0,newView.limit)
+    newView.limit = parseInt(event.target.value, 10);
+    setCurrentView(newView);
+    fetchRowsByPage(0, newView.limit);
   };
 
   const handleNewRowPanel = () => {
@@ -343,7 +356,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
       <Box
         sx={{
           position: "absolute",
-          right: 8,
+          right: 0,
           zIndex: 3,
           textAlign: "center",
           paddingTop: "10px",
@@ -351,8 +364,9 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
           width: "40px",
           backgroundColor:
             theme.palette.palette_style.background.table_header_footer,
-          borderBottom: "1px solid rgba(224, 224, 224, 1)",
-          boxShadow: "4px 0 8px rgba(0, 0, 0, 0.1)",
+          borderBottom: "1px solid",
+          borderColor: theme.palette.palette_style.border.default,
+          borderTop: "none",
         }}
       >
         <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
@@ -370,8 +384,14 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
                 xs: `${windowHeight - (!tab ? 255 : 301)}px`,
                 lg: "calc(100vh - 204px)",
               },
-              width: { lg: "calc(100vw - 100px)" },
+              width: { lg: "100vw" },
               minHeight: "300px",
+              "& .MuiTableHead-root": {
+                width: "calc(100% - 40px)",
+              },
+              "& .MuiTableRow-root": {
+                boxShadow: "none",
+              },
             },
           }}
           enableRowSelection={true}
@@ -407,6 +427,7 @@ const DataTable = ({ tab,currentView, columns, rows, setRows,count,fetchRowsByPa
                 theme.palette.palette_style.background.table_header_footer,
               py: 0.7,
               height: showColumnFilters ? 84 : 40,
+              borderColor: theme.palette.palette_style.border.default,
             }),
           }}
           muiTableFooterCellProps={{
@@ -520,6 +541,6 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setRows,
   fetchRowsByPage,
-  setCurrentView
+  setCurrentView,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

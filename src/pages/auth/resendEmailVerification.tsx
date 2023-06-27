@@ -23,60 +23,69 @@ interface VerifyEmailProps {
 
 const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
   const router = useRouter();
-  const [flash, setFlash] = React.useState<{ message: string, type: string } | undefined>(undefined);
-  const [email, setEmail] = React.useState<string>('');
+  const [flash, setFlash] = React.useState<
+    { message: string; type: string } | undefined
+  >(undefined);
+  const [email, setEmail] = React.useState<string>("");
 
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
-
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
 
   useEffect(() => {
     function routerCheck() {
       if (router.query.email) {
-        setEmail(router.query.email as string)
+        setEmail(router.query.email as string);
       }
-
     }
-    routerCheck()
-  })
+    routerCheck();
+  });
   const handleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
 
   const handleResend = async () => {
     if (email) {
-      const res = await authService.resendSignupEmail(email)
+      const res = await authService.resendSignupEmail(email);
       if (isSucc(res)) {
-        setMessage({ message: 'Verification code sent successfully. Please check your email.', type: 'success' })
+        setMessage({
+          message:
+            "Verification code sent successfully. Please check your email.",
+          type: "success",
+        });
         await router.push({ pathname: PATH_AUTH.verifyEmail });
-
       } else {
-        if ((res as FlexlistsError).code === 509) { // already verified
-          setMessage({ message: 'Your account has been activated, please login!', type: 'success' })
-          await router.push({ pathname: PATH_AUTH.login, query: { email: email } });
+        if ((res as FlexlistsError).code === 509) {
+          // already verified
+          setMessage({
+            message: "Your account has been activated, please login!",
+            type: "success",
+          });
+          await router.push({
+            pathname: PATH_AUTH.login,
+            query: { email: email },
+          });
         } else {
           if (isErr(res)) {
-            setFlashMessage((res as FlexlistsError).message)
+            setFlashMessage((res as FlexlistsError).message);
           } else {
-            setFlashMessage('Something went wrong. Please try again.')
+            setFlashMessage("Something went wrong. Please try again.");
           }
         }
       }
     }
-
-  }
+  };
 
   return (
     <>
@@ -91,8 +100,16 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
         alt="The house from the offer."
         src="/assets/images/background.png"
       />
-      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+      <Snackbar
+        open={flash !== undefined}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={flash?.type as AlertColor}
+          sx={{ width: "100%" }}
+        >
           {flash?.message}
         </Alert>
       </Snackbar>
@@ -137,7 +154,9 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               required
               value={email}
               disabled
-              onChange={(e) => { setEmail(e.target.value) }}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             ></TextField>
           </Grid>
           <Grid item xs={12}>
@@ -147,7 +166,6 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               size="large"
               variant="contained"
               onClick={() => handleResend()}
-
               sx={{
                 width: "100%",
                 backgroundColor: "#FFD232",
@@ -169,7 +187,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmail);
