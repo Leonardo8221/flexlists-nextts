@@ -85,14 +85,15 @@ export const palette_dark = {
     secondary: GREY[600],
     disabled: GREY[500],
     selected: "#54A6FB",
+    white: "#fff",
   },
   background: {
     paper: "#0A121C",
     default: "#112233",
     neutral: GREY[200],
     gap: "#f5f5f5",
-    table_header_footer: "#666",
-    table_body: "#999",
+    table_header_footer: "#0A121C",
+    table_body: "#112233",
     selected: "#EEF7FF",
   },
   border: {
@@ -125,6 +126,7 @@ export const palette_light = {
     secondary: GREY[600],
     disabled: GREY[500],
     selected: "#54A6FB",
+    white: "#fff",
   },
   background: {
     paper: "#fff",

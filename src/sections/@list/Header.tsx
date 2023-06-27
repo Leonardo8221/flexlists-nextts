@@ -22,6 +22,7 @@ import DuplicateView from "./DuplicateView";
 import DeleteView from "./DeleteView";
 import ArchiveView from "./ArchiveView";
 import { ChatType } from "src/enums/ChatType";
+import { color } from "framer-motion";
 
 type HeaderProps = {
   currentView: View;
@@ -262,16 +263,17 @@ const Header = ({ currentView }: HeaderProps) => {
               flexDirection: { xs: "column", md: "row" },
               alignItems: { xs: "flex-start", md: "center" },
               p: { xs: 1 },
-              bg: "background.default",
               boxShadow: { xs: "0 0 24px 0 rgba(24,24,24,.2)", md: "none" },
-              backgroundColor: "#fff",
             }}
           >
             <Button
               onClick={handleOpenPublish}
-              sx={{ mt: { xs: 1, md: 0 }, mr: { xs: 0, md: 2 } }}
+              sx={{
+                mt: { xs: 1, md: 0 },
+                mr: { xs: 0, md: 2 },
+                color: theme.palette.palette_style.text.white,
+              }}
               size="small"
-              color="primary"
               variant="contained"
               startIcon={<Iconify icon={"eva:paper-plane-fill"} />}
             >
@@ -355,32 +357,29 @@ const Header = ({ currentView }: HeaderProps) => {
           }}
         />
       </>
-      {
-        currentView && 
+      {currentView && (
         <>
-        <RenameView
-          open={isRenameOpenModal}
-          handleClose={() => setIsRenameOpenModal(false)}
-        />
-        <DuplicateView
-          open={isDuplicateOpenModal}
-          handleClose={() => setIsDuplicateOpenModal(false)}
-        />
-        <DeleteView
-          viewId={currentView.id}
-          open={isDeleteOpenModal}
-          handleClose={() => setIsDeleteOpenModal(false)}
-        />
-        {
-          isArchiveOpenModal &&  <ArchiveView
-          open={isArchiveOpenModal}
-          handleClose={() => setIsArchiveOpenModal(false)}
-        />
-        }
-       
-      </>
-      }
-      
+          <RenameView
+            open={isRenameOpenModal}
+            handleClose={() => setIsRenameOpenModal(false)}
+          />
+          <DuplicateView
+            open={isDuplicateOpenModal}
+            handleClose={() => setIsDuplicateOpenModal(false)}
+          />
+          <DeleteView
+            viewId={currentView.id}
+            open={isDeleteOpenModal}
+            handleClose={() => setIsDeleteOpenModal(false)}
+          />
+          {isArchiveOpenModal && (
+            <ArchiveView
+              open={isArchiveOpenModal}
+              handleClose={() => setIsArchiveOpenModal(false)}
+            />
+          )}
+        </>
+      )}
     </Box>
   );
 };

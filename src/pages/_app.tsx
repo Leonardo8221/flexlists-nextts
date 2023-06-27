@@ -16,13 +16,11 @@ export default function App({ Component, pageProps }: AppProps) {
         {/* <ScrollToTop /> */}
         <StyledChart />
         <Provider store={store}>
-        <AuthGuard>
-         
+          <AuthGuard>
             <LoadingPage>
               <Component {...pageProps} />
             </LoadingPage>
-        
-        </AuthGuard>
+          </AuthGuard>
         </Provider>
       </LanguagesProvider>
     </ThemeProvider>
