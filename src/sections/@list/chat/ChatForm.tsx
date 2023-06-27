@@ -8,17 +8,14 @@ import {
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import { connect } from 'react-redux';
-import { setMessages } from '../../redux/actions/messageActions';
+import { setMessages } from '../../../redux/actions/messageActions';
 
-interface Props {
-  open: boolean;
+interface ChatFormProps {
   messages: any;
-  onClose: () => void;
   setMessages: (columns: any) => void;
 }
 
-const AddCommentPanel = (props: Props) => {
-  const { open, messages, onClose, setMessages } = props;
+const ChatForm = ({ messages, setMessages }: ChatFormProps) => {
   const theme = useTheme();
   const [message, setMessage] = useState('');
   const [windowHeight, setWindowHeight] = useState(0);
@@ -64,37 +61,7 @@ const AddCommentPanel = (props: Props) => {
   };
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      PaperProps={{
-        sx: {
-          width: {xs: '100%', lg: '500px'},
-          border: 'none',
-          height: `${windowHeight}px`,
-          backgroundColor: theme.palette.palette_style.background.default,
-        },
-      }}
-    >
-      <Box sx={{ display: 'flex', width: '100%', px: {xs: 1, md: 3}, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
-        <Box
-          component="span"
-          className="svg-color"
-          sx={{
-            width: 22,
-            height: 22,
-            display: 'inline-block',
-            bgcolor: theme.palette.palette_style.text.primary,
-            mask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
-            WebkitMask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
-            cursor: 'pointer',
-            marginRight: {xs: 1.5, md: 4}
-          }}
-          onClick={() => {  }}
-        />
-      </Box> 
-      <DialogContent>
+  
         <Box sx={{  }}>
           <Box sx={{ fontWeight: '900', marginBottom: 1 }}>Comments</Box>
           <Box sx={{ border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px' }}>
@@ -191,8 +158,6 @@ const AddCommentPanel = (props: Props) => {
             </Box>
           </Box>
         </Box>
-      </DialogContent>
-    </Drawer>
   );
 };
 
@@ -204,4 +169,4 @@ const mapDispatchToProps = {
   setMessages
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddCommentPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatForm);

@@ -13,7 +13,7 @@ import "@coreui/coreui/dist/css/coreui.min.css";
 import useResponsive from "../../hooks/useResponsive";
 import ViewUsersList from "./UserList";
 import { connect } from "react-redux";
-import AddCommentPanel from "src/components/right-panel/AddCommentPanel";
+import ChatFormPanel from "src/sections/@list/chat/ChatFormPanel";
 import PublishList from "./Publish";
 import ShareList from "./Share";
 import { View } from "src/models/SharedModels";
@@ -332,7 +332,7 @@ const Header = ({ currentView }: HeaderProps) => {
           </Button>
         </Box> */}
       </Box>
-      <AddCommentPanel
+      <ChatFormPanel
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
       />

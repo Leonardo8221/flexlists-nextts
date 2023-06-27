@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import useResponsive from '../../../hooks/useResponsive';
-import AddCommentPanel from 'src/components/right-panel/AddCommentPanel';
+import ChatFormPanel from 'src/sections/@list/chat/ChatFormPanel';
 import { setRows } from 'src/redux/actions/viewActions';
 type Props = {
   columns: any;
@@ -91,7 +91,7 @@ const Footer = (props: Props) => {
           </Box>
         </Box>
       ))}
-      <AddCommentPanel
+      <ChatFormPanel
         open={visiblePanel}
         onClose={() => setVisiblePanel(false)}
       />
