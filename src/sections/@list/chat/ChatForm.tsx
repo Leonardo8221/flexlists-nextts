@@ -13,7 +13,7 @@ import { View, ViewChat } from 'src/models/SharedModels';
 import { use } from 'passport';
 import { useRouter } from 'next/router';
 import { listChatService } from 'src/services/listChat.service';
-import { isSucc } from 'src/models/ApiResponse';
+import { FlexlistsError, FlexlistsSuccess, isSucc } from 'src/models/ApiResponse';
 import { AuthValidate } from 'src/models/AuthValidate';
 
 interface ChatFormProps {
@@ -30,37 +30,63 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
   const [message, setMessage] = useState('');
   const [windowHeight, setWindowHeight] = useState(0);
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(25);
+  const [limit, setLimit] = useState<number>(5);
+  const [hasMore, setHasMore] = useState<boolean>(true);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
   
   useEffect(() => {
-    async function fetchData() {
-        if(chatType === ChatType.View)
-        {
-            var chatViewResponse = await listChatService.getViewChat(id,page,limit);
-            if(isSucc(chatViewResponse))
-            {
-                setMessages(chatViewResponse.data);
-            }
-        }
-        else
-        {
-            var chatContentResponse = await listChatService.getContentChat(currentView.id,id,page,limit);
-            if(isSucc(chatContentResponse))
-            {
-                setMessages(chatContentResponse.data);
-            }
-        }
-    }
+    
     if (router.isReady) {
         fetchData();
     }
   } , [router.isReady]);
 
-
-  const formatNumber = (num: number) => num < 10 ? `0${num}` : num;
+  const fetchData = async() =>
+   {
+      let chatResponse : FlexlistsError|FlexlistsSuccess<ViewChat[]>;
+      if(chatType === ChatType.View)
+      {
+          chatResponse= await listChatService.getViewChat(id,page,limit);
+      }
+      else
+      {
+        chatResponse = await listChatService.getContentChat(currentView.id,id,page,limit);
+      }
+      if(isSucc(chatResponse) && chatResponse.data)
+      {
+          console.log(chatResponse.data)
+          if (chatResponse.data.length === 0) {
+            setHasMore(false);
+          } else {
+            setMessages((prevPosts) => [...prevPosts, ...chatResponse.data].sort((a: ViewChat, b: ViewChat) => {
+              return getTime(a.createdAt) - getTime(b.createdAt);
+              }));
+            setPage((prevPage) => prevPage + 1);
+          }
+          
+      }
+      
+    }
+    const handleScroll = () => {
+      console.log('rrrr');
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      
+      if (scrollTop + clientHeight >= scrollHeight - 20 && hasMore) {
+        console.log('fetch');
+        fetchData();
+      }
+    };
+  
+    useEffect(() => {
+      console.log('bbbb')
+      window.addEventListener('scroll', handleScroll);
+  
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }, [hasMore]);
 
   const handleMessage = async() => {
     const today = new Date();
@@ -113,9 +139,7 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
         <Box sx={{  }}>
           <Box sx={{ fontWeight: '900', marginBottom: 1 }}>Comments</Box>
           <Box sx={{ border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px' }}>
-            {messages.sort((a: ViewChat, b: ViewChat) => {
-              return getTime(a.createdAt) - getTime(b.createdAt);
-            }).map((message: ViewChat) => (
+            {messages.map((message: ViewChat) => (
               <Box key={`${message.id}-message`} sx={{ display: 'flex', justifyContent: isOwner(message.ownerId) ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
                 <Box sx={{ width: '82%' }}>
                   {!isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
