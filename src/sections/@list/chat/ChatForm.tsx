@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  DialogContent,
   TextField,
-  Drawer,
   Box
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -10,12 +8,11 @@ import dayjs from 'dayjs';
 import { connect } from 'react-redux';
 import { ChatType } from 'src/enums/ChatType';
 import { View, ViewChat } from 'src/models/SharedModels';
-import { use } from 'passport';
 import { useRouter } from 'next/router';
 import { listChatService } from 'src/services/listChat.service';
 import { FlexlistsError, FlexlistsSuccess, isSucc } from 'src/models/ApiResponse';
 import { AuthValidate } from 'src/models/AuthValidate';
-
+import InfiniteScroll from "react-infinite-scroll-component";
 interface ChatFormProps {
   chatType : ChatType,
   id:number;
@@ -30,7 +27,7 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
   const [message, setMessage] = useState('');
   const [windowHeight, setWindowHeight] = useState(0);
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(5);
+  const [limit, setLimit] = useState<number>(25);
   const [hasMore, setHasMore] = useState<boolean>(true);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -56,57 +53,35 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
       }
       if(isSucc(chatResponse) && chatResponse.data)
       {
-          console.log(chatResponse.data)
           if (chatResponse.data.length === 0) {
             setHasMore(false);
           } else {
-            setMessages((prevPosts) => [...prevPosts, ...chatResponse.data].sort((a: ViewChat, b: ViewChat) => {
-              return getTime(a.createdAt) - getTime(b.createdAt);
-              }));
+            setMessages((prevPosts) => [...prevPosts, ...chatResponse.data]);
+            // setMessages((prevPosts) => [...prevPosts, ...chatResponse.data].sort((a: ViewChat, b: ViewChat) => {
+            //   return getTime(a.createdAt) - getTime(b.createdAt);
+            //   }));
             setPage((prevPage) => prevPage + 1);
           }
           
       }
       
     }
-    const handleScroll = () => {
-      console.log('rrrr');
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-      
-      if (scrollTop + clientHeight >= scrollHeight - 20 && hasMore) {
-        console.log('fetch');
-        fetchData();
-      }
-    };
-  
-    useEffect(() => {
-      console.log('bbbb')
-      window.addEventListener('scroll', handleScroll);
-  
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }, [hasMore]);
 
   const handleMessage = async() => {
     const today = new Date();
     if (!message) return;
-  
+    let addChatResponse : FlexlistsError|FlexlistsSuccess<ViewChat>;
     if(chatType === ChatType.View)
     {
-        var chatViewResponse = await listChatService.chatInView(id,message);
-        if(isSucc(chatViewResponse))
-        {
-            setMessages([...messages,chatViewResponse.data]);
-        }
+        addChatResponse= await listChatService.chatInView(id,message);
     }
     else
     {
-        var chatContentResponse = await listChatService.chatInContent(currentView.id,id,message);
-        if(isSucc(chatContentResponse))
-        {
-            setMessages([...messages,chatContentResponse.data]);
-        }
+         addChatResponse = await listChatService.chatInContent(currentView.id,id,message);
+    }
+    if(isSucc(addChatResponse))
+    {
+        setMessages([addChatResponse.data,...messages]);
     }
     setMessage('')
   };
@@ -118,7 +93,11 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
     }
     ));
   };
-
+  const handleKeyPress = async(event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      await handleMessage()
+    }
+  };
   const getDifference = (time?: Date) => {
     const now = dayjs();
     const difference = now.diff(time, 'second');
@@ -135,71 +114,10 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
       return date != null ? new Date(date).getTime() : 0;
   }
   return (
-  
         <Box sx={{  }}>
           <Box sx={{ fontWeight: '900', marginBottom: 1 }}>Comments</Box>
           <Box sx={{ border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px' }}>
-            {messages.map((message: ViewChat) => (
-              <Box key={`${message.id}-message`} sx={{ display: 'flex', justifyContent: isOwner(message.ownerId) ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
-                <Box sx={{ width: '82%' }}>
-                  {!isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
-                    <Box
-                      component="img"
-                      src={'/assets/images/avatars/avatar_1.jpg'}
-                      sx={{ width: 24, height: 24, borderRadius: 50, marginRight: 1 }}
-                    />
-                    <Box sx={{ marginTop: 0.2 }}>{`${message.ownerInfo.firstName} ${message.ownerInfo.lastName}`}</Box>
-                    {/* <Box sx={{ marginTop: 0.2 }}>{message.ownerId}</Box> */}
-                  </Box>}
-                  <Box sx={{ marginTop: 1, borderRadius: '10px', backgroundColor: isOwner(message.ownerId) ? '#54A6FB' : '#003249', color: 'white', p: 1.2 }}>{message.message}</Box>
-                  <Box sx={{ marginTop: 1, color: 'rgba(102, 102, 102, 0.4)', fontSize: '12px', textTransform: 'uppercase', textAlign: isOwner(message.ownerId) ? 'right' : 'left' }}>{getDifference(message.createdAt)}</Box>
-                </Box>
-                {message.over && <Box sx={{ position: 'absolute', top: 6, right: 24, display: 'flex', justifyContent: 'right' }}>
-                  <Box
-                    component="span"
-                    className="svg-color"
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      display: 'inline-block',
-                      bgcolor: theme.palette.palette_style.text.primary,
-                      mask: `url(/assets/icons/reply.svg) no-repeat center / contain`,
-                      WebkitMask: `url(/assets/icons/reply.svg) no-repeat center / contain`,
-                      cursor: 'pointer',
-                      marginRight: 1
-                    }}
-                  />
-                  <Box
-                    component="span"
-                    className="svg-color"
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      display: 'inline-block',
-                      bgcolor: theme.palette.palette_style.text.primary,
-                      mask: `url(/assets/icons/check_circle.svg) no-repeat center / contain`,
-                      WebkitMask: `url(/assets/icons/check_circle.svg) no-repeat center / contain`,
-                      cursor: 'pointer',
-                      marginRight: 1
-                    }}
-                  />
-                  <Box
-                    component="span"
-                    className="svg-color"
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      display: 'inline-block',
-                      bgcolor: theme.palette.palette_style.text.primary,
-                      mask: `url(/assets/icons/footer/delete_list.svg) no-repeat center / contain`,
-                      WebkitMask: `url(/assets/icons/footer/delete_list.svg) no-repeat center / contain`,
-                      cursor: 'pointer'
-                    }}
-                  />
-                </Box>}
-              </Box>
-            ))}
-            <Box sx={{ display: 'flex', p: 1.5, borderTop: `1px solid ${theme.palette.palette_style.border.default}`, position: 'relative', marginTop: 3 }}>
+          <Box sx={{ display: 'flex', p: 1.5, borderTop: `1px solid ${theme.palette.palette_style.border.default}`, position: 'relative', marginTop: 3 }}>
               <Box
                 component="img"
                 src='/assets/images/avatars/avatar_9.jpg'
@@ -212,6 +130,7 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
                   value={message}
                   size="medium"
                   onChange={(e) => { setMessage(e.target.value); }}
+                  onKeyDown={(e)=>handleKeyPress(e)}
                   fullWidth
                 />
                 <Box sx={{ borderRadius: 50, backgroundColor: '#54A6FB', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', width: 32, height: 32, top: 24, right: 22, cursor: 'pointer' }}>
@@ -226,11 +145,86 @@ const ChatForm = ({currentView,authValidate,chatType,id }: ChatFormProps) => {
                       mask: `url(/assets/icons/send.svg) no-repeat center / contain`,
                       WebkitMask: `url(/assets/icons/send.svg) no-repeat center / contain`
                     }}
+                    
                     onClick={()=>handleMessage()}
                   />
                 </Box>
               </form>
             </Box>
+            <InfiniteScroll
+            dataLength={messages.length}
+            next={fetchData}
+            hasMore={hasMore}
+            loader={<h4>Loading...</h4>}
+            height={'80vh'}
+            endMessage={
+              <p style={{ textAlign: "center" }}>
+                <b></b>
+              </p>
+            }
+            >
+              {messages.map((message: ViewChat,index) => (
+                <Box key={`${index}-${message.id}-message`} sx={{ display: 'flex', justifyContent: isOwner(message.ownerId) ? 'right' : 'left', p: 2, '&:hover': { backgroundColor: '#EEF7FF' }, position: 'relative' }} onMouseOver={() => { handleMessageOver(message.id, true); }} onMouseOut={() => { handleMessageOver(message.id, false); }} >
+                  <Box sx={{ width: '82%' }}>
+                    {!isOwner(message.ownerId) && <Box sx={{ display: 'flex' }}>
+                      <Box
+                        component="img"
+                        src={'/assets/images/avatars/avatar_1.jpg'}
+                        sx={{ width: 24, height: 24, borderRadius: 50, marginRight: 1 }}
+                      />
+                      <Box sx={{ marginTop: 0.2 }}>{`${message.ownerInfo.firstName} ${message.ownerInfo.lastName}`}</Box>
+                      {/* <Box sx={{ marginTop: 0.2 }}>{message.ownerId}</Box> */}
+                    </Box>}
+                    <Box sx={{ marginTop: 1, borderRadius: '10px', backgroundColor: isOwner(message.ownerId) ? '#54A6FB' : '#003249', color: 'white', p: 1.2 }}>{message.message}</Box>
+                    <Box sx={{ marginTop: 1, color: 'rgba(102, 102, 102, 0.4)', fontSize: '12px', textTransform: 'uppercase', textAlign: isOwner(message.ownerId) ? 'right' : 'left' }}>{getDifference(message.createdAt)}</Box>
+                  </Box>
+                  {message.over && <Box sx={{ position: 'absolute', top: 6, right: 24, display: 'flex', justifyContent: 'right' }}>
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        display: 'inline-block',
+                        bgcolor: theme.palette.palette_style.text.primary,
+                        mask: `url(/assets/icons/reply.svg) no-repeat center / contain`,
+                        WebkitMask: `url(/assets/icons/reply.svg) no-repeat center / contain`,
+                        cursor: 'pointer',
+                        marginRight: 1
+                      }}
+                    />
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        display: 'inline-block',
+                        bgcolor: theme.palette.palette_style.text.primary,
+                        mask: `url(/assets/icons/check_circle.svg) no-repeat center / contain`,
+                        WebkitMask: `url(/assets/icons/check_circle.svg) no-repeat center / contain`,
+                        cursor: 'pointer',
+                        marginRight: 1
+                      }}
+                    />
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        display: 'inline-block',
+                        bgcolor: theme.palette.palette_style.text.primary,
+                        mask: `url(/assets/icons/footer/delete_list.svg) no-repeat center / contain`,
+                        WebkitMask: `url(/assets/icons/footer/delete_list.svg) no-repeat center / contain`,
+                        cursor: 'pointer'
+                      }}
+                    />
+                  </Box>}
+                </Box>
+              ))}
+            </InfiniteScroll>
+            
           </Box>
         </Box>
   );
