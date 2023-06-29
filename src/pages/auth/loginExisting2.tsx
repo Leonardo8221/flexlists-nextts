@@ -36,17 +36,18 @@ import { styled } from "@mui/material/styles";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
-    backgroundColor: "transparent",
-    color: "#fff",
+    backgroundColor: "#fcfeff",
+    border: "none",
+    color: "#666",
+    boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
   },
-  "& .MuiInputBase-root::placeholder": {
-    color: "red", // Change the color to your desired value
+
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      border: "none",
+    },
   },
 }));
-
-const placeholderColor = {
-  color: "red",
-};
 
 interface LoginProps {
   message: any;
@@ -169,7 +170,6 @@ const Login = ({
       minHeight: { md: "100vh" },
       display: "flex",
       alignItems: "center",
-      zIndex: 1,
       textAlign: { xs: "center", md: "left" },
     },
 
@@ -178,7 +178,8 @@ const Login = ({
       justifyContent: "center",
       alignItems: "center",
       pr: { xs: 0, md: 4 },
-      zIndex: 2,
+      py: { xs: 4, md: 0 },
+      zIndex: 5,
     },
     circleEffect: {
       width: 400,
@@ -188,7 +189,7 @@ const Login = ({
       position: "absolute",
       top: "40px",
       left: { xs: "100px", md: "400px" },
-      opacity: 0.5,
+      opacity: 0.4,
       zIndex: 1,
       filter: "blur(100px)",
     },
@@ -302,35 +303,41 @@ const Login = ({
                   />
                 </Link>
               </Box>
-              <Typography variant="body1" color={"white"}>
-                This is the sign in for existing Flexlists users; after logging
-                in, your lists will be migrated to the new system and you can
-                continue working. <br />
-                If you already logged in before in the new version, please Sign
-                in{" "}
-                <Link sx={styles?.link} href="/auth/login">
-                  here
-                </Link>
-                .
-              </Typography>
-              <br />
-              <br />
-              <Typography variant="body1" color={"white"}>
-                If you need a lot of text you can add there and of course Lorem
-                ipsum dolor sit, amet consectetur adipisicing elit.
-                Necessitatibus quia error sunt aperiam voluptas illum aut, eum
-                soluta, voluptate sint delectus. Animi omnis, reiciendis dolores
-                inventore sit deleniti aliquid! Adipisci earum quidem iure
-                exercitationem debitis amet modi dignissimos, sit quibusdam
-                similique, odio labore repellat, facilis nobis aliquam. Quia
-                nisi distinctio optio inventore dolorum excepturi debitis,
-                exercitationem commodi? Dignissimos quia sit atque, odio nobis
-                distinctio magnam sequi omnis veniam numquam quo, excepturi est
-                eos aspernatur magni autem similique itaque ut quas labore
-                explicabo! Saepe facilis laborum eveniet voluptas repellendus
-                culpa libero, nulla ipsam consequuntur mollitia soluta, beatae
-                optio neque veniam iure?
-              </Typography>
+              <Box
+                sx={{
+                  zIndex: 5,
+                }}
+              >
+                <Typography variant="body1" color={"white"}>
+                  This is the sign in for existing Flexlists users; after
+                  logging in, your lists will be migrated to the new system and
+                  you can continue working. <br />
+                  If you already logged in before in the new version, please
+                  Sign in{" "}
+                  <Link sx={styles?.link} href="/auth/login">
+                    here
+                  </Link>
+                  .
+                </Typography>
+                <br />
+                <br />
+                <Typography variant="body1" color={"white"}>
+                  If you need a lot of text you can add there and of course
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                  Necessitatibus quia error sunt aperiam voluptas illum aut, eum
+                  soluta, voluptate sint delectus. Animi omnis, reiciendis
+                  dolores inventore sit deleniti aliquid! Adipisci earum quidem
+                  iure exercitationem debitis amet modi dignissimos, sit
+                  quibusdam similique, odio labore repellat, facilis nobis
+                  aliquam. Quia nisi distinctio optio inventore dolorum
+                  excepturi debitis, exercitationem commodi? Dignissimos quia
+                  sit atque, odio nobis distinctio magnam sequi omnis veniam
+                  numquam quo, excepturi est eos aspernatur magni autem
+                  similique itaque ut quas labore explicabo! Saepe facilis
+                  laborum eveniet voluptas repellendus culpa libero, nulla ipsam
+                  consequuntur mollitia soluta, beatae optio neque veniam iure?
+                </Typography>
+              </Box>
             </Grid>
           </Box>
 
@@ -370,6 +377,7 @@ const Login = ({
                   fullWidth
                   placeholder="Current Flexlists Password"
                   required
+                  variant="outlined"
                   value={password}
                   onChange={handleChangePassword}
                   type={showPassword ? "text" : "password"}
