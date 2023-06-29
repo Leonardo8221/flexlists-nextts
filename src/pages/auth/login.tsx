@@ -13,129 +13,160 @@ import {
   Alert,
   Box,
   Snackbar,
-  AlertColor
+  AlertColor,
 } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
-import useResponsive from '../../hooks/useResponsive';
-import SocialLogin from '../../sections/auth/SocialLoginButtons';
+import { useTheme } from "@mui/material/styles";
+import useResponsive from "../../hooks/useResponsive";
+import SocialLogin from "../../sections/auth/SocialLoginButtons";
 import LoginIcon from "@mui/icons-material/Login";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { authService } from '../../services/auth.service';
-import Iconify from '../../components/iconify';
+import { authService } from "../../services/auth.service";
+import Iconify from "../../components/iconify";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 
-
 interface LoginProps {
   message: any;
   setMessage: (message: any) => void;
+  styles?: any;
 }
 
-const Login = ({ message, setMessage }: LoginProps) => {
+const Login = ({ message, setMessage, styles }: LoginProps) => {
   const theme = useTheme();
-  const isDesktop = useResponsive('up', 'md');
+  const isDesktop = useResponsive("up", "md");
   const router = useRouter();
   //const [error, setError] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
-  const [userName, setUserName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+  const [userName, setUserName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [flash, setFlash] = useState<
+    { message: string; type: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     function checkMessage() {
-
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
   function setError(message: string) {
-    setFlashMessage(message)
+    setFlashMessage(message);
   }
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
   const handleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
 
   const handleSubmit = async () => {
     try {
       if (!userName) {
-        setError("User Name required")
+        setError("User Name required");
         return;
       }
       if (!password) {
-        setError("Password required")
+        setError("Password required");
         return;
       }
       var response = await authService.login(userName, password);
       if (isSucc(response)) {
         // check if this user is a legacy user ;
         if (response.data.legacyUser && !response.data.wasMigrated) {
-          setMessage({ message: 'Your lists are still migrating, please wait for this process to complete.', type: 'warning' })
+          setMessage({
+            message:
+              "Your lists are still migrating, please wait for this process to complete.",
+            type: "warning",
+          });
           await router.push({ pathname: PATH_MAIN.migratedLists });
-          return
+          return;
         }
 
-        setMessage({ message: 'Login successful, going to your Dashboard!', type: 'success' })
+        setMessage({
+          message: "Login successful, going to your Dashboard!",
+          type: "success",
+        });
         await router.push({ pathname: PATH_MAIN.views });
-        return
+        return;
       }
-      if (isErr(response) && (response as FlexlistsError).code === 512 && (response as FlexlistsError).data?.email) {
-        setMessage({ message: 'Your account is not activated. Please check your email for an activation link or request a new one.', type: 'error' })
-        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: (response as FlexlistsError).data.email } })
-        return
+      if (
+        isErr(response) &&
+        (response as FlexlistsError).code === 512 &&
+        (response as FlexlistsError).data?.email
+      ) {
+        setMessage({
+          message:
+            "Your account is not activated. Please check your email for an activation link or request a new one.",
+          type: "error",
+        });
+        await router.push({
+          pathname: PATH_AUTH.resendEmailVerification,
+          query: { email: (response as FlexlistsError).data.email },
+        });
+        return;
       }
-      setError('Invalid username or password. Please try again or request a new password.')
+      setError(
+        "Invalid username or password. Please try again or request a new password."
+      );
     } catch (error: any) {
-      console.log(error)
-      setError('Unknown error. Please try again.')
+      console.log(error);
+      setError("Unknown error. Please try again.");
     }
   };
 
   const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
-  }
+  };
 
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-  }
+  };
+
+  styles = {
+    container: {
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    FormLogo: {
+      height: "100%",
+      width: "100%",
+      position: "absolute",
+      zIndex: -1,
+    },
+  };
 
   return (
     <>
       <Box
         component="img"
-        sx={{
-          height: '100%',
-          width: '100%',
-          position: 'absolute',
-          zIndex: -1
-        }}
-        alt="The house from the offer."
+        sx={styles?.FormLogo}
+        alt="fl-logo"
         src="/assets/images/background.png"
       />
-      <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+      <Snackbar
+        open={flash !== undefined}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={flash?.type as AlertColor}
+          sx={{ width: "100%" }}
+        >
           {flash?.message}
         </Alert>
       </Snackbar>
-      <Container
-        maxWidth="sm"
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <Container maxWidth="sm" sx={styles?.container}>
         <Grid
           container
           rowSpacing={4}
@@ -146,22 +177,28 @@ const Login = ({ message, setMessage }: LoginProps) => {
             px: { xs: 1, md: 4 },
             borderRadius: "4px",
             boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
-            backgroundColor: 'white',
+            backgroundColor: "white",
             marginTop: 0,
-            maxHeight: '93vh',
-            overflow: 'auto'
+            maxHeight: "93vh",
+            overflow: "auto",
           }}
         >
-          <Grid item xs={12} sx={{ paddingTop: '0 !important' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
+          <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: 2,
+              }}
+            >
               <Link href="/">
                 <Box
                   component="img"
                   sx={{
                     width: 60,
                     height: 45,
-                    objectFit: 'contain',
-                    marginTop: '2px'
+                    objectFit: "contain",
+                    marginTop: "2px",
                   }}
                   alt="Logo"
                   src="/assets/logo_auth.png"
@@ -198,12 +235,19 @@ const Login = ({ message, setMessage }: LoginProps) => {
               required
               value={password}
               onChange={handleChangePassword}
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      <Iconify
+                        icon={
+                          showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
+                        }
+                      />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -214,7 +258,15 @@ const Login = ({ message, setMessage }: LoginProps) => {
           <Grid item xs={6}>
             <FormGroup>
               <FormControlLabel
-                control={<Checkbox defaultChecked sx={{ color: '#FFD232', '&.Mui-checked': { color: '#FFD232', }, }} />}
+                control={
+                  <Checkbox
+                    defaultChecked
+                    sx={{
+                      color: "#FFD232",
+                      "&.Mui-checked": { color: "#FFD232" },
+                    }}
+                  />
+                }
                 label="Remember me"
               />
             </FormGroup>
@@ -228,7 +280,11 @@ const Login = ({ message, setMessage }: LoginProps) => {
               justifyContent: "flex-end",
             }}
           >
-            <Link href="/auth/forgotPassword" variant="body1" sx={{ color: '#0D0934' }}>
+            <Link
+              href="/auth/forgotPassword"
+              variant="body1"
+              sx={{ color: "#0D0934" }}
+            >
               Forgot password?
             </Link>
           </Grid>
@@ -241,8 +297,8 @@ const Login = ({ message, setMessage }: LoginProps) => {
               endIcon={<LoginIcon />}
               sx={{
                 width: "100%",
-                backgroundColor: '#FFD232',
-                color: '#0D0934'
+                backgroundColor: "#FFD232",
+                color: "#0D0934",
               }}
               onClick={handleSubmit}
             >
@@ -259,7 +315,7 @@ const Login = ({ message, setMessage }: LoginProps) => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Typography
@@ -275,14 +331,13 @@ const Login = ({ message, setMessage }: LoginProps) => {
               variant="body1"
               sx={{
                 paddingLeft: "4px",
-                color: '#0D0934'
+                color: "#0D0934",
               }}
             >
               Sign Up
             </Link>
           </Grid>
         </Grid>
-
       </Container>
     </>
   );
@@ -293,8 +348,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
-

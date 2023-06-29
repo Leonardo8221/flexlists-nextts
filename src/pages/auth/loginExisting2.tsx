@@ -14,6 +14,7 @@ import {
   Box,
   Snackbar,
   AlertColor,
+  Divider,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -49,12 +50,14 @@ const placeholderColor = {
 
 interface LoginProps {
   message: any;
+  styles?: any;
   legacyCredentials: LegacyCredentials;
   setMessage: (message: any) => void;
   setLegacyCredentials: (credentials: LegacyCredentials) => void;
 }
 
 const Login = ({
+  styles,
   message,
   legacyCredentials,
   setMessage,
@@ -146,6 +149,120 @@ const Login = ({
     setPassword(event.target.value);
   };
 
+  styles = {
+    body: {
+      background:
+        "linear-gradient(45deg, hsl(219deg 41% 13%) 0%, hsl(213deg 41% 19%) 50%, hsl(212deg 40% 24%) 100%)",
+      overflow: "hidden",
+    },
+    container: {
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: { xs: "column", md: "row" },
+      alignItems: "center",
+      justifyContent: "center",
+      px: { xs: 0, sm: 0, md: 0 },
+    },
+    leftBox: {
+      width: { xs: "100%", md: "50%" },
+      position: "relative",
+      minHeight: { md: "100vh" },
+      display: "flex",
+      alignItems: "center",
+      zIndex: 1,
+      textAlign: { xs: "center", md: "left" },
+    },
+
+    leftBoxGrid: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      pr: { xs: 0, md: 4 },
+      zIndex: 2,
+    },
+    circleEffect: {
+      width: 400,
+      height: 400,
+      borderRadius: 400,
+      background: "linear-gradient(#9bf8f4, #ffeda0, #fa9372)",
+      position: "absolute",
+      top: "40px",
+      left: { xs: "100px", md: "400px" },
+      opacity: 0.5,
+      zIndex: 1,
+      filter: "blur(100px)",
+    },
+    logoWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      my: { xs: 2, md: 0 },
+      position: { xs: "relative", md: "absolute" },
+      top: { xs: 0, md: 48 },
+      left: 0,
+    },
+    logoImg: {
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+    },
+    link: {
+      color: theme.palette.palette_style.text.selected,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
+    },
+    rightBox: {
+      width: { xs: "100%", md: "50%" },
+      minHeight: { md: "100vh" },
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      textAlign: "center",
+      position: "relative",
+      backgroundColor: "#fff",
+      "&::after": {
+        position: "absolute",
+        content: '" "',
+        height: "100%",
+        width: "250px",
+        right: 0,
+        backgroundColor: "#fff",
+        transform: "translateX(250px)",
+        display: { xs: "none", md: "block" },
+      },
+    },
+    rightBoxGrid: {
+      py: 4,
+      px: { xs: 1, md: 4 },
+      boxShadow: "none !important",
+      marginTop: 0,
+      overflow: "auto",
+      zIndex: 2,
+    },
+    formActionsWrapper: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    checkbox: {
+      color: theme.palette.palette_style.primary.main,
+      "&.Mui-checked": { color: theme.palette.palette_style.primary.main },
+    },
+    forgotPassword: {
+      color: theme.palette.palette_style.primary.main,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
+    },
+    button: {
+      backgroundColor: theme.palette.palette_style.primary.main,
+      width: "100%",
+    },
+    signUpWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  };
+
   return (
     <>
       <Snackbar
@@ -161,80 +278,25 @@ const Login = ({
           {flash?.message}
         </Alert>
       </Snackbar>
-      <Box sx={{ backgroundColor: "#112233", overflowY: "hidden" }}>
-        <Container
-          maxWidth="xl"
-          sx={{
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              width: "50%",
-              position: "relative",
-              minHeight: "100vh",
-              display: "grid",
-              placeContent: "center",
-              zIndex: 1,
-            }}
-          >
-            <Grid
-              container
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                pr: 4,
-              }}
-            >
+      <Box sx={styles?.body}>
+        <Container maxWidth="xl" sx={styles?.container}>
+          <Box sx={styles?.leftBox}>
+            <Grid container sx={styles?.leftBoxGrid}>
               <Box
                 sx={{
-                  width: 400,
-                  height: 400,
-                  borderRadius: 400,
-                  backgroundColor: "skyblue",
-                  position: "absolute",
-                  top: "40px",
-                  left: "150%",
-                  opacity: ".1",
-                  zIndex: 1,
+                  ...styles?.circleEffect,
+                  ...{
+                    top: { xs: "100px", md: "820px" },
+                    left: { xs: "-100px", md: "0" },
+                    background: "#103783",
+                  },
                 }}
               ></Box>
-              <Box
-                sx={{
-                  width: 400,
-                  height: 400,
-                  borderRadius: 400,
-                  backgroundColor: "skyblue",
-                  position: "absolute",
-                  top: "820px",
-                  left: "0",
-                  opacity: ".2",
-                  zIndex: 1,
-                }}
-              ></Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: 2,
-                  position: "absolute",
-                  top: 48,
-                  left: 0,
-                }}
-              >
+              <Box sx={styles?.logoWrapper}>
                 <Link href="/">
                   <Box
                     component="img"
-                    sx={{
-                      width: 60,
-                      height: 45,
-                      objectFit: "contain",
-                      marginTop: "2px",
-                    }}
+                    sx={styles?.logoImg}
                     alt="Logo"
                     src="/assets/logo_dark.png"
                   />
@@ -246,14 +308,7 @@ const Login = ({
                 continue working. <br />
                 If you already logged in before in the new version, please Sign
                 in{" "}
-                <Link
-                  sx={{
-                    color: "#54A6FB",
-                    textDecoration: "none",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                  href="/auth/login"
-                >
+                <Link sx={styles?.link} href="/auth/login">
                   here
                 </Link>
                 .
@@ -279,29 +334,16 @@ const Login = ({
             </Grid>
           </Box>
 
-          <Box sx={{ width: "50%", zIndex: 5 }}>
-            <Grid
-              container
-              rowSpacing={1}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                py: 4,
-                px: { xs: 1, md: 4 },
-                boxShadow: "none !important",
-                backgroundColor: "rgba(255,255,255,.2)",
-                color: "#fff !important",
-                marginTop: 0,
-                overflow: "auto",
-                zIndex: 10,
-                borderRadius: 2,
-                backdropFilter: "blur(100px)",
-              }}
-            >
+          <Box sx={styles?.rightBox}>
+            <Box sx={styles?.circleEffect}></Box>
+            <Grid container rowSpacing={3} sx={styles?.rightBoxGrid}>
               <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
-                <Typography variant="h3" gutterBottom textAlign="center">
+                <Typography variant="h3" gutterBottom color={"#141E30"}>
                   Sign in - Existing User
+                </Typography>
+                <Typography variant="caption" color={"#666"}>
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Delectus, iure.
                 </Typography>
               </Grid>
 
@@ -350,39 +392,17 @@ const Login = ({
                 ></CustomTextField>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item sx={styles?.formActionsWrapper} xs={12}>
                 <FormGroup>
                   <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked
-                        sx={{
-                          color: "#54A6FB",
-                          "&.Mui-checked": { color: "#54A6FB" },
-                        }}
-                      />
-                    }
+                    control={<Checkbox defaultChecked sx={styles?.checkbox} />}
                     label="Remember me"
                   />
                 </FormGroup>
-              </Grid>
-
-              <Grid
-                item
-                xs={6}
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
                 <Link
                   href="/auth/forgotPassword"
                   variant="body1"
-                  sx={{
-                    color: "#54A6FB",
-                    textDecoration: "none",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
+                  sx={styles?.forgotPassword}
                 >
                   Forgot password?
                 </Link>
@@ -394,11 +414,7 @@ const Login = ({
                   size="large"
                   variant="contained"
                   endIcon={<LoginIcon />}
-                  sx={{
-                    width: "100%",
-                    backgroundColor: "#54A6FB",
-                    color: "#0D0934",
-                  }}
+                  sx={styles?.button}
                   onClick={handleSubmit}
                 >
                   Sign in - Existing User
@@ -407,38 +423,21 @@ const Login = ({
 
               {/* <SocialLogin /> */}
 
-              <Grid
-                item
-                xs={12}
-                columnSpacing={1}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  mt: 4,
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  sx={{
-                    display: "inline",
-                  }}
-                >
-                  Don&apos;t have an account?
-                </Typography>
-                <Link
-                  href="/auth/registerExisting"
-                  variant="body1"
-                  sx={{
-                    paddingLeft: "4px",
-                    color: "#54A6FB",
+              <Grid item xs={12}>
+                <Divider light sx={{ my: 2 }}></Divider>
+              </Grid>
 
-                    textDecoration: "none",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  Sign Up
-                </Link>
+              <Grid item xs={12} columnSpacing={1} sx={styles?.signUpWrapper}>
+                <Typography variant="body1">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/auth/registerExisting"
+                    variant="body1"
+                    sx={styles?.link}
+                  >
+                    Sign Up
+                  </Link>
+                </Typography>
               </Grid>
             </Grid>
           </Box>
