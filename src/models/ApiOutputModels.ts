@@ -1,4 +1,5 @@
 import { Role } from 'src/enums/SharedEnums'
+import { TranslationKeyType } from 'src/enums/SharedEnums'
 export type CreateListOutputDto = {
     listId:number
 }
@@ -117,4 +118,26 @@ export type GetGroupUsersOutputDto = {
 }
 export type AddUserToGroupOutputDto = {
     groupUserId:number
+}
+export type AddTranslationKeyToContentManagementOutputDto = {
+    id:number
+}
+export type TranslationKeysGetContentManagementWithAccessKeysOutputDto = {
+    id:number
+    name:string
+    type:TranslationKeyType
+}
+export type GetContentManagementWithAccessKeysOutputDto = {
+    id:number
+    translationKeys:TranslationKeysGetContentManagementWithAccessKeysOutputDto[]
+}
+export type GetContentManagementTranslationTextsOutputDto = {
+}
+export type SaveManyTranslationTextsOutputDto = {
+}
+export type GetTranslationTextsOutputDto = {
+    id:number
+    translationKey:string
+    i18N:string
+    translation?:string
 }

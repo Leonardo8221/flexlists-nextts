@@ -34,3 +34,9 @@ export const PATH_AUTH_API = {
   registerExisting: path(ROOTS_AUTH, "/registerExisting"),
   forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
 }
+const ROOTS_ADMIN = "/admin";
+export const PATH_ADMIN = {
+  contentKeys: path(ROOTS_ADMIN, "/contentKeys"),
+  contentsBuilder: path(ROOTS_ADMIN, "/contentsBuilder"),
+  contentsEditor: path(ROOTS_MAIN, "/contentsEditor")
+};
