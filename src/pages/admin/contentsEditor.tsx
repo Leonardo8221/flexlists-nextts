@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, useEffect } from 'react';
-import { Button, Box, Card, Grid, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography, MenuItem, ListItemIcon } from '@mui/material';
+import { Button, Box, Card, Grid, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography, MenuItem, ListItemIcon, Autocomplete, Alert } from '@mui/material';
 import MainLayout from 'src/layouts/amin/MainLayout';
 import Scrollbar from 'src/components/scrollbar';
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import { filter } from 'lodash';
 import { TranslationText } from 'src/models/SharedModels';
 import { Language } from 'src/models/Language';
 import { languages } from 'src/utils/i18n';
+import { translationTextService } from 'src/services/admin/translationText.service';
 
 type ContentEditorProps = {
   authValidate: AuthValidate;
@@ -20,18 +21,20 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
   const router = useRouter()
   const [searchText,setSearchText] = useState<string>('')
   const [contentManagements, setContentManagements] = useState<ContentManagementDto[]>([])
-  const [filteredContentManagements, setFilteredContentManagements] = useState<ContentManagementDto[]>(contentManagements);
+  const [filteredContentManagements, setFilteredContentManagements] = useState<ContentManagementDto[]>([]);
   const [selectedContentManagement, setSelectedContentManagement] = useState<ContentManagementDto>()
   const [translationTexts, setTranslationTexts] = useState<TranslationText[]>([])
   const [availableLanguages,setAvailableLanguages] = useState<Language[]>(languages)
   const [selectedLanguage,setSelectedLanguage] = useState<Language>(languages[0])
+  const [successMessage,setSuccessMessage] = useState<string>('')
   useEffect(() => {
     async function fetchContentManagements() {
       let response = await contentManagementService.getAllContentManagement()
       if(isSucc(response))
       {
         setContentManagements(response.data as ContentManagementDto[])
-        
+        setFilteredContentManagements(response.data as ContentManagementDto[])
+        await loadTranslationTexts(response.data[0].id,languages[0].id)
       }
     }
     if(router.isReady)
@@ -39,30 +42,34 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
       fetchContentManagements()
     }
   },[router.isReady])
-  const onSearchTextChange = (e:ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value)
-    searchContentManagement(e.target.value)
-  }
-  const searchContentManagement = (search: string) => {
-    var newContentManagements = filter(contentManagements, (column) => {
-      return (search && column.name.includes(search)) || search === "";
-    });
-    setFilteredContentManagements(newContentManagements);
-  };
-  const handleSelectContentMangement = async(contentManagement:ContentManagementDto) => {
-    setSelectedContentManagement(contentManagement);
-    let response = await contentManagementService.getContentManagementTranslationTexts(contentManagement.id,selectedLanguage.id)
+  const loadTranslationTexts = async(contentManagementId:number,languageId:string) => {
+    let response = await contentManagementService.getContentManagementTranslationTexts(contentManagementId,languageId)
     if(isSucc(response))
     {
       setTranslationTexts(response.data as TranslationText[])
     }
   }
-  const onLanguageChange = async(id:string) => {
+  const onSearchTextChange = (e:ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value)
+    searchContentManagement(e.target.value)
+  }
+  const searchContentManagement = (search: string) => {
+    var newContentManagements = filter(contentManagements, (contentManagement) => {
+      return (search && contentManagement.name.toLowerCase().includes(search.toLowerCase())) || search === "";
+    });
+    setFilteredContentManagements(newContentManagements);
+  };
+  const handleSelectContentMangement = async(contentManagement:ContentManagementDto) => {
+    setSelectedContentManagement(contentManagement);
+    loadTranslationTexts(contentManagement.id,selectedLanguage.id)
+  }
+  const onLanguageChange = async(name:string) => {
+    setSuccessMessage('')
     if(!selectedContentManagement)
     {
       return
     }
-    let language = availableLanguages.find(x=>x.id === id)
+    let language = availableLanguages.find(x=>x.name === name)
     if(language)
     {
       setSelectedLanguage(language)
@@ -74,8 +81,9 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
     }
   }
   const onTranslationTextChange = (e:ChangeEvent<HTMLInputElement|HTMLTextAreaElement>,translationText:TranslationText) => {
+    setSuccessMessage('')
     let newTranslationTexts = translationTexts.map(x=>{
-      if(x.id === translationText.id)
+      if(x.translationKeyId === translationText.translationKeyId)
       {
         x.translation = e.target.value
       }
@@ -84,12 +92,20 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
     )
     setTranslationTexts(newTranslationTexts)
   }
+  const onSubmit = async() => {
+    let response = await translationTextService.saveManyTranslationTexts(translationTexts)
+    if(isSucc(response))
+    {
+      setSuccessMessage("Saved successfully")
+    }
+  }
   return (
     <MainLayout>
        {/* <Container> */}
        <Grid container spacing={2}>
           <Grid item xs={3}>
              <Card sx={{ p: 3 , minHeight: '80vh'}}>
+                    
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
                       <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
                               <Typography variant="body2" component="span" sx={{marginLeft:'15px'}} >
@@ -119,7 +135,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
                             {
                               filteredContentManagements.map((contentManagement,index)=>{
                                     return (
-                                    <ListItem disablePadding key={index}>
+                                    <ListItem disablePadding key={index} style={{backgroundColor: selectedContentManagement && selectedContentManagement.id === contentManagement.id?'blue':''}}>
                                         <ListItemButton onClick={()=>handleSelectContentMangement(contentManagement)}>
                                             <ListItemText>{contentManagement.name}</ListItemText>
                                         </ListItemButton>
@@ -136,41 +152,67 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
           </Grid>
           <Grid item xs = {9}>
              <Card sx={{ p: 3 , minHeight: '80vh'}}>
+                <Stack>
+                    <Box>
+                      { successMessage && <Alert severity="success">{successMessage}</Alert>}
+                    </Box>
+                 </Stack>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
                   <Grid container>
                     <Grid item xs={3}>
-                    {availableLanguages.map((option) => (
-                          <MenuItem
-                            key={option.id}
-                            selected={option.id === availableLanguages[0].id}
-                            onClick={() => onLanguageChange(option.id)}
-                            sx={{ py: 1, px: 2.5 }}
-                          >
-                            <ListItemIcon>
-                              <Box component='img' alt={option.name} src={option.icon} />
-                            </ListItemIcon>
-                            <ListItemText primaryTypographyProps={{ variant: 'body2' }}>
-                              {option.name}
-                            </ListItemText>
-                          </MenuItem>
-                        ))}
+                    <Autocomplete
+                      id="language-select"
+                      sx={{ width: 300 }}
+                      options={availableLanguages}
+                      autoHighlight
+                      getOptionLabel={(option) => option.name}
+                      value={selectedLanguage}
+                      onChange={(event, value) => {
+                        if(value)
+                        {
+                          onLanguageChange(value.id)
+                        }
+                      }}
+                      renderOption={(props, option) => (
+                        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                          <img
+                            loading="lazy"
+                            width="20"
+                            src={option.icon}
+                            srcSet={`{option.icon} 2x`}
+                            alt=""
+                          />
+                          {option.name}
+                        </Box>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Choose a Language"
+                          inputProps={{
+                            ...params.inputProps,
+                            autoComplete: 'new-password', // disable autocomplete and autofill
+                          }}
+                        />
+                      )}
+                    />
                       
                     </Grid>
                     <Grid item xs={6}>
                     </Grid>
                     <Grid item xs={3}>
-                      <Button variant="contained" color="primary" sx={{float:'right'}}>
+                      <Button variant="contained" color="primary" sx={{float:'right'}} onClick={()=>onSubmit()}>
                         Save
                       </Button>
                     </Grid>
                   </Grid>
                 </Stack>
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
+                <Stack>
                   {
                     translationTexts.map((translationText,index)=>{
                       return (
-                        <Stack direction={{ xs: 'column', md: 'row' }} spacing={5} key={index}>
-                          <TextField key={index} label={translationText.translationKey} value={translationText.translation} onChange={(e)=>{onTranslationTextChange(e,translationText)}} />
+                        <Stack direction={{ xs: 'column', md: 'row' }} spacing={5} key={index} style={{marginTop:10}}>
+                          <TextField fullWidth key={index} label={translationText.translationKey} value={translationText.translation} onChange={(e)=>{onTranslationTextChange(e,translationText)}} />
                         </Stack>
                       )
                     })

@@ -1,11 +1,11 @@
 import { PATH_ADMIN } from "src/routes/paths";
 
 const navConfig = [
-  {
-    title: "Content Keys",
-    path: PATH_ADMIN.contentKeys,
-    icon: "Apps",
-  },
+  // {
+  //   title: "Content Keys",
+  //   path: PATH_ADMIN.contentKeys,
+  //   icon: "Apps",
+  // },
   {
     title: "Contents Builder",
     path: PATH_ADMIN.contentsBuilder,
@@ -14,7 +14,7 @@ const navConfig = [
   {
     title: "Contents Editor",
     path: PATH_ADMIN.contentsEditor,
-    icon: "Info",
+    icon: "Apps",
   },
 ];
 

@@ -38,5 +38,5 @@ const ROOTS_ADMIN = "/admin";
 export const PATH_ADMIN = {
   contentKeys: path(ROOTS_ADMIN, "/contentKeys"),
   contentsBuilder: path(ROOTS_ADMIN, "/contentsBuilder"),
-  contentsEditor: path(ROOTS_MAIN, "/contentsEditor")
+  contentsEditor: path(ROOTS_ADMIN, "/contentsEditor")
 };
