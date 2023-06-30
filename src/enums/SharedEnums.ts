@@ -120,3 +120,9 @@ export enum MembershipLevel {
     Premium = 'Premium',
     Enterprise = 'Enterprise',
 }
+export enum TranslationKeyType {
+    Text = 'Text',
+    Html = 'Html',
+    Markdown = 'Markdown',
+    Image = 'Image',
+}
