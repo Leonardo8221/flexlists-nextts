@@ -42,6 +42,10 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
     boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
   },
 
+  "& ::placeholder": {
+    color: "#ccc",
+  },
+
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       border: "none",
@@ -381,6 +385,9 @@ const Login = ({
                   value={password}
                   onChange={handleChangePassword}
                   type={showPassword ? "text" : "password"}
+                  inputProps={{
+                    color: theme.palette.palette_style.primary.main,
+                  }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">

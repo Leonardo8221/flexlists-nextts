@@ -14,6 +14,7 @@ import {
   Box,
   Snackbar,
   AlertColor,
+  Divider,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -131,28 +132,109 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
   };
 
   styles = {
+    body: {
+      background:
+        "linear-gradient(45deg, hsl(219deg 41% 13%) 0%, hsl(213deg 41% 19%) 50%, hsl(212deg 40% 24%) 100%)",
+      overflow: "hidden",
+    },
     container: {
       minHeight: "100vh",
       display: "flex",
+      flexDirection: { xs: "column", md: "row" },
       alignItems: "center",
       justifyContent: "center",
+      px: { xs: 0, sm: 0, md: 0 },
+    },
+
+    leftBox: {
+      width: { xs: "100%", md: "50%" },
+      position: "relative",
+      minHeight: { md: "100vh" },
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      gap: 4,
+      alignItems: "center",
+      textAlign: { xs: "center", md: "left" },
+      color: theme.palette.palette_style.text.white,
+      py: { xs: 4, md: 0 },
+    },
+
+    loginIllustration: {
+      width: 250,
+      height: 250,
+      objectFit: "contain",
+    },
+
+    rightBox: {
+      width: { xs: "100%", md: "50%" },
+      minHeight: { md: "100vh" },
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      textAlign: "center",
+      position: "relative",
+      backgroundColor: "#fff",
+      "&::after": {
+        position: "absolute",
+        content: '" "',
+        height: "100%",
+        width: "250px",
+        right: 0,
+        backgroundColor: "#fff",
+        transform: "translateX(250px)",
+        display: { xs: "none", md: "block" },
+      },
+    },
+    rightBoxGrid: {
+      py: 4,
+      px: { xs: 1, md: 4 },
+      boxShadow: "none !important",
+      marginTop: 0,
+      overflow: "auto",
+      zIndex: 2,
     },
     FormLogo: {
-      height: "100%",
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+      marginTop: "2px",
+    },
+
+    formActionsWrapper: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    checkbox: {
+      color: theme.palette.palette_style.primary.main,
+      "&.Mui-checked": { color: theme.palette.palette_style.primary.main },
+    },
+    forgotPassword: {
+      color: theme.palette.palette_style.primary.main,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
+    },
+    button: {
+      backgroundColor: theme.palette.palette_style.primary.main,
       width: "100%",
-      position: "absolute",
-      zIndex: -1,
+    },
+
+    signUpWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+
+    link: {
+      color: theme.palette.palette_style.text.selected,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
     },
   };
 
   return (
     <>
-      <Box
-        component="img"
-        sx={styles?.FormLogo}
-        alt="fl-logo"
-        src="/assets/images/background.png"
-      />
       <Snackbar
         open={flash !== undefined}
         autoHideDuration={6000}
@@ -166,179 +248,143 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           {flash?.message}
         </Alert>
       </Snackbar>
-      <Container maxWidth="sm" sx={styles?.container}>
-        <Grid
-          container
-          rowSpacing={4}
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-            py: 4,
-            px: { xs: 1, md: 4 },
-            borderRadius: "4px",
-            boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
-            backgroundColor: "white",
-            marginTop: 0,
-            maxHeight: "93vh",
-            overflow: "auto",
-          }}
-        >
-          <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginBottom: 2,
-              }}
-            >
-              <Link href="/">
-                <Box
-                  component="img"
-                  sx={{
-                    width: 60,
-                    height: 45,
-                    objectFit: "contain",
-                    marginTop: "2px",
-                  }}
-                  alt="Logo"
-                  src="/assets/logo_auth.png"
-                />
-              </Link>
-            </Box>
-            <Typography variant="h3" textAlign="center">
-              Sign in
+      <Box sx={styles?.body}>
+        <Container maxWidth="xl" sx={styles?.container}>
+          <Box sx={styles?.leftBox}>
+            <Typography variant="h3">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
             </Typography>
-          </Grid>
+            <Typography variant="body1">
+              If you need a lot of text you can add there and of course Lorem
+              ipsum dolor sit, amet consectetur adipisicing elit. Necessitatibus
+              quia error sunt aperiam voluptas illum aut, eum soluta, voluptate
+              sint delectus.
+            </Typography>
 
-          {/* <Grid
+            <Box
+              component="img"
+              sx={styles?.loginIllustration}
+              alt="Logo"
+              src="/assets/illustrations/illustration_login.png"
+            />
+          </Box>
+          <Box sx={styles?.rightBox}>
+            <Grid container rowSpacing={4} sx={styles?.rightBoxGrid}>
+              <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: 2,
+                  }}
+                >
+                  <Link href="/">
+                    <Box
+                      component="img"
+                      sx={styles?.FormLogo}
+                      alt="Logo"
+                      src="/assets/logo.png"
+                    />
+                  </Link>
+                </Box>
+                <Typography variant="h3" textAlign="center" color={"#141E30"}>
+                  Sign in
+                </Typography>
+              </Grid>
+
+              {/* <Grid
             item
             container
           >
             {error && <Alert severity="error">{error}</Alert>}
           </Grid> */}
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              placeholder="Email or Username"
-              type="text"
-              required
-              value={userName}
-              onChange={handleChangeEmail}
-            ></TextField>
-          </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  placeholder="Email or Username"
+                  type="text"
+                  required
+                  value={userName}
+                  onChange={handleChangeEmail}
+                ></TextField>
+              </Grid>
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              placeholder="Password"
-              required
-              value={password}
-              onChange={handleChangePassword}
-              type={showPassword ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      <Iconify
-                        icon={
-                          showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
-                        }
-                      />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            ></TextField>
-          </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  placeholder="Password"
+                  required
+                  value={password}
+                  onChange={handleChangePassword}
+                  type={showPassword ? "text" : "password"}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          <Iconify
+                            icon={
+                              showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
+                            }
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                ></TextField>
+              </Grid>
 
-          <Grid item xs={6}>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    defaultChecked
-                    sx={{
-                      color: "#FFD232",
-                      "&.Mui-checked": { color: "#FFD232" },
-                    }}
+              <Grid item xs={12} sx={styles?.formActionsWrapper}>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked sx={styles?.checkbox} />}
+                    label="Remember me"
                   />
-                }
-                label="Remember me"
-              />
-            </FormGroup>
-          </Grid>
+                </FormGroup>
 
-          <Grid
-            item
-            xs={6}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Link
-              href="/auth/forgotPassword"
-              variant="body1"
-              sx={{ color: "#0D0934" }}
-            >
-              Forgot password?
-            </Link>
-          </Grid>
+                <Link
+                  href="/auth/forgotPassword"
+                  variant="body1"
+                  sx={styles?.forgotPassword}
+                >
+                  Forgot password?
+                </Link>
+              </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              href="#"
-              size="large"
-              variant="contained"
-              endIcon={<LoginIcon />}
-              sx={{
-                width: "100%",
-                backgroundColor: "#FFD232",
-                color: "#0D0934",
-              }}
-              onClick={handleSubmit}
-            >
-              Sign in
-            </Button>
-          </Grid>
+              <Grid item xs={12}>
+                <Button
+                  href="#"
+                  size="large"
+                  variant="contained"
+                  endIcon={<LoginIcon />}
+                  sx={styles?.button}
+                  onClick={handleSubmit}
+                >
+                  Sign in
+                </Button>
+              </Grid>
 
-          {/* <SocialLogin /> */}
+              {/* <SocialLogin /> */}
 
-          <Grid
-            item
-            xs={12}
-            columnSpacing={1}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                display: "inline",
-              }}
-            >
-              Don&apos;t have an account?
-            </Typography>
-            <Link
-              href="/auth/register"
-              variant="body1"
-              sx={{
-                paddingLeft: "4px",
-                color: "#0D0934",
-              }}
-            >
-              Sign Up
-            </Link>
-          </Grid>
-        </Grid>
-      </Container>
+              <Grid item xs={12}>
+                <Divider light sx={{ my: 2 }}></Divider>
+              </Grid>
+
+              <Grid item xs={12} columnSpacing={1} sx={styles?.signUpWrapper}>
+                <Typography variant="body1">
+                  Don&apos;t have an account?{" "}
+                  <Link href="/auth/register" variant="body1" sx={styles?.link}>
+                    Sign Up
+                  </Link>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
     </>
   );
 };
