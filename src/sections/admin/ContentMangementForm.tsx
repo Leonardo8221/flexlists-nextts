@@ -48,6 +48,7 @@ const ContentManagementForm = ({
     if(isCreating)
     {
       let response = await contentManagementService.createContentManagement(contentManagement.name,currentContentManagement.ownerId);
+      console.log(response) 
       if (isSucc(response)) {
         contentManagement.id = (response.data as any).id;
         onAdd(contentManagement);

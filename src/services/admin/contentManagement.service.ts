@@ -1,8 +1,7 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
-import { AddTranslationKeyToContentManagementOutputDto } from 'src/models/ApiOutputModels'
+import { AddTranslationKeyToContentManagementOutputDto, GetTranslationKeysOfContentManagementOutputDto } from 'src/models/ApiOutputModels'
 import { TranslationKeyType } from 'src/enums/SharedEnums'
-import { GetContentManagementWithAccessKeysOutputDto } from 'src/models/ApiOutputModels'
 import { GetContentManagementTranslationTextsOutputDto } from 'src/models/ApiOutputModels'
 import { ContentManagementDto } from "src/models/ContentManagementDto";
 
@@ -13,7 +12,7 @@ export const contentManagementService = {
     getAllContentManagement,
     deleteContentManagement,
     addTranslationKeyToContentManagement,
-    getContentManagementWithAccessKeys,
+    getTranslationKeysOfContentManagement,
     deleteTranslationKeyFromContentManagement,
     getContentManagementTranslationTexts,
 };
@@ -45,8 +44,8 @@ async function addTranslationKeyToContentManagement(name:string,type:Translation
 
   return response.data;
 };
-async function getContentManagementWithAccessKeys(contentManagementId:number): Promise<FlexlistsError|FlexlistsSuccess<GetContentManagementWithAccessKeysOutputDto>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetContentManagementWithAccessKeysOutputDto>>('/api/contentManagement/getContentManagementWithAccessKeys'+`?contentManagementId=${contentManagementId}`)
+async function getTranslationKeysOfContentManagement(contentManagementId:number): Promise<FlexlistsError|FlexlistsSuccess<GetTranslationKeysOfContentManagementOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetTranslationKeysOfContentManagementOutputDto[]>>('/api/contentManagement/getTranslationKeysOfContentManagement'+`?contentManagementId=${contentManagementId}`)
   return response.data;
 };
 async function deleteTranslationKeyFromContentManagement(contentMangementId:number,translationKeyId:number): Promise<FlexlistsError|FlexlistsSuccess> {
@@ -58,3 +57,4 @@ async function getContentManagementTranslationTexts(contentManagementId:number,i
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetContentManagementTranslationTextsOutputDto[]>>('/api/contentManagement/getContentManagementTranslationTexts'+`?contentManagementId=${contentManagementId}&i18n=${i18n}`)
   return response.data;
 };
+

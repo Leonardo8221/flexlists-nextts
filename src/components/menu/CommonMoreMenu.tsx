@@ -55,20 +55,10 @@ export default function CommonMoreMenu({ onDelete,onEdit,editPermissionEnable,de
         <ListItemIcon>
           <Icon icon={editFill} width={24} height={24} />
         </ListItemIcon>
-        <ListItemText primary={getLocalizationValue('Edit')} primaryTypographyProps={{ variant: 'body2' }} />
+        <ListItemText primary={'Edit'} primaryTypographyProps={{ variant: 'body2' }} />
       
       </MenuItem>
     }
-    
-      {(deletePermissionEnable == undefined || deletePermissionEnable == true) &&
-      <MenuItem onClick={()=>handleDelete()} sx={{ color: 'text.secondary' }}>
-        <ListItemIcon>
-          <Icon icon={trash2Outline} width={24} height={24} />
-        </ListItemIcon>
-        <ListItemText primary={'Delete'} primaryTypographyProps={{ variant: 'body2' }} />
-      </MenuItem>
-      }
-  
     {
        (onOtherFunctions && onOtherFunctions.length > 0) &&
        (
@@ -87,6 +77,16 @@ export default function CommonMoreMenu({ onDelete,onEdit,editPermissionEnable,de
         })
        )
     }
+      {(deletePermissionEnable == undefined || deletePermissionEnable == true) &&
+      <MenuItem onClick={()=>handleDelete()} sx={{ color: 'text.secondary' }}>
+        <ListItemIcon>
+          <Icon icon={trash2Outline} width={24} height={24} />
+        </ListItemIcon>
+        <ListItemText primary={'Delete'} primaryTypographyProps={{ variant: 'body2' }} />
+      </MenuItem>
+      }
+  
+    
     </Menu>
   </>
     

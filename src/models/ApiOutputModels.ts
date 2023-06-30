@@ -122,14 +122,10 @@ export type AddUserToGroupOutputDto = {
 export type AddTranslationKeyToContentManagementOutputDto = {
     id:number
 }
-export type TranslationKeysGetContentManagementWithAccessKeysOutputDto = {
+export type GetTranslationKeysOfContentManagementOutputDto = {
     id:number
     name:string
     type:TranslationKeyType
-}
-export type GetContentManagementWithAccessKeysOutputDto = {
-    id:number
-    translationKeys:TranslationKeysGetContentManagementWithAccessKeysOutputDto[]
 }
 export type GetContentManagementTranslationTextsOutputDto = {
 }

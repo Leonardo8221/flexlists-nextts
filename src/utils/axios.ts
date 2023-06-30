@@ -15,6 +15,9 @@ axiosInstance.interceptors.response.use(
   (response) => {
     store.dispatch(setLoading(false))
     //console.log('response1')
+    if(response && response.data && response.data.code === 999){
+      response.data.message = 'Unknown Error, please try again.'
+    }
     return response
   },
   async (error) => {

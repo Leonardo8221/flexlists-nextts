@@ -16,6 +16,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import TranslationKeyForm from 'src/sections/admin/TranslationKeyForm';
 import { TranslationKeyDto } from 'src/models/TranslationKeyDto';
 import { TranslationKeyType } from 'src/enums/SharedEnums';
+import { translationKeyService } from 'src/services/admin/translationKey.service';
 
 type ContentBuilderProps = {
   authValidate: AuthValidate;
@@ -37,15 +38,16 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
   
 
   useEffect(() => {
-    async function fetchContentManagements() {
+    async function fetchData() {
       let response = await contentManagementService.getAllContentManagement()
       if(isSucc(response))
       {
         setContentManagements(response.data as ContentManagementDto[])
+        setFilteredContentManagements(response.data as ContentManagementDto[])
         setSelectedContentManagement(response.data.length > 0 ? response.data[0] : newContentManagement)
         if(response.data.length>0)
         {
-          let translationKeysResponse = await contentManagementService.getContentManagementWithAccessKeys(response.data[0].id)
+          let translationKeysResponse = await contentManagementService.getTranslationKeysOfContentManagement(response.data[0].id)
           if(isSucc(translationKeysResponse))
           {
             setTranslationKeys(translationKeysResponse.data as TranslationKeyDto[])
@@ -55,7 +57,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
     }
     if(router.isReady)
     {
-      fetchContentManagements()
+      fetchData()
     }
   },[router.isReady])
   const onSearchTextChange = (e:ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +65,15 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
     searchContentManagement(e.target.value)
   }
   const searchContentManagement = (search: string) => {
-    var newContentManagements = filter(contentManagements, (column) => {
-      return (search && column.name.includes(search)) || search === "";
+    var newContentManagements = filter(contentManagements, (contentManagement) => {
+      return (search && contentManagement.name.toLowerCase().includes(search.toLowerCase())) || search === "";
     });
     setFilteredContentManagements(newContentManagements);
   };
+  const refreshSearch = (newContentManagements:ContentManagementDto[]) => { 
+    setSearchText('')
+    setFilteredContentManagements(newContentManagements)
+  }
   const handleAddContentManagement = () => {
     let contentMangement = Object.assign({},newContentManagement)
     if(authValidate.user)
@@ -79,7 +85,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
   }
   const handleSelectContentMangement = async(contentManagement:ContentManagementDto) => {
     setSelectedContentManagement(contentManagement);
-    let translationKeysResponse = await contentManagementService.getContentManagementWithAccessKeys(contentManagement.id)
+    let translationKeysResponse = await contentManagementService.getTranslationKeysOfContentManagement(contentManagement.id)
     if(isSucc(translationKeysResponse))
     {
       setTranslationKeys(translationKeysResponse.data as TranslationKeyDto[])
@@ -96,6 +102,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
       {
         let newContentManagements = contentManagements.filter((contentManagement)=>contentManagement.id !== selectedContentManagement.id)
         setContentManagements(newContentManagements)
+        refreshSearch(newContentManagements)
         setSelectedContentManagement(newContentManagements.length > 0 ? newContentManagements[0] : newContentManagement)
       }
     }
@@ -104,6 +111,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
     let newContentManagements = [...contentManagements]
     newContentManagements.push(contentManagement)
     setContentManagements(newContentManagements)
+    refreshSearch(newContentManagements)
     setSelectedContentManagement(contentManagement)
   }
   const onUpdateContentManagement = (contentManagement:ContentManagementDto) => {
@@ -113,6 +121,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
     {
       newContentManagements[index] = contentManagement
       setContentManagements(newContentManagements)
+      refreshSearch(newContentManagements)
       setSelectedContentManagement(contentManagement)
     }
   }
@@ -244,7 +253,9 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
                     })
                 }
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
-                  <Button type='button' variant="contained" sx={{marginLeft:'5px'}} onClick={()=>{handleAddTranslationKey()}}>Add Key</Button>
+                 {selectedContentManagement && selectedContentManagement.id>0 && 
+                 <Button type='button' variant="contained" sx={{marginLeft:'5px'}} onClick={()=>{handleAddTranslationKey()}}>Add Key</Button>
+                 } 
                 </Stack>
              </Card>
           </Grid>
@@ -262,6 +273,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
         handleClose = {()=>setIsTranslationKeyFormOpen(false)}
         onAdd = {onAddTranslationKey}
         onUpdate = {onUpdateTranslationKey}
+        contentTranslationKeys={translationKeys}
         />
     {/* </Container> */}
     </MainLayout>

@@ -120,3 +120,11 @@ export type ViewChat = {
 }& {
     over: boolean
 }
+export type TranslationText = {
+    id:number
+    translationKey:string;
+    translationKeyId?:number
+    i18N:string
+    translation:string
+    ownerId:number
+}
