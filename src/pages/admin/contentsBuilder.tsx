@@ -151,14 +151,11 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
     setTranslationKeys(newTranslationKeys)
   }
   const handleDeleteTranslationKey = async(translationKeyId:number) => {
-    if(selectedTranslationKey.id)
+    let response = await contentManagementService.deleteTranslationKeyFromContentManagement(selectedContentManagement.id,translationKeyId)
+    if(isSucc(response))
     {
-      let response = await contentManagementService.deleteTranslationKeyFromContentManagement(selectedContentManagement.id,selectedTranslationKey.id)
-      if(isSucc(response))
-      {
-        let newTranslationKeys = translationKeys.filter((translationKey)=>translationKey.id !== translationKeyId)
-        setTranslationKeys(newTranslationKeys)
-      }
+      let newTranslationKeys = translationKeys.filter((translationKey)=>translationKey.id !== translationKeyId)
+      setTranslationKeys(newTranslationKeys)
     }
   }
   return (
@@ -267,7 +264,9 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
         onAdd = {onAddContentManagement}
         onUpdate = {onUpdateContentManagement}
        />
-        <TranslationKeyForm
+       {
+         isTranslationKeyFormOpen && 
+         <TranslationKeyForm
         currentTranslationKey={selectedTranslationKey}
         open = {isTranslationKeyFormOpen}
         handleClose = {()=>setIsTranslationKeyFormOpen(false)}
@@ -275,6 +274,8 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
         onUpdate = {onUpdateTranslationKey}
         contentTranslationKeys={translationKeys}
         />
+       }
+        
     {/* </Container> */}
     </MainLayout>
   );

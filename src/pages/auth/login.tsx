@@ -25,9 +25,10 @@ import { useRouter } from "next/router";
 import { authService } from "../../services/auth.service";
 import Iconify from "../../components/iconify";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
-import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
+import { PATH_ADMIN, PATH_AUTH, PATH_MAIN } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
+import { SystemRole } from "src/enums/SystemRole";
 
 interface LoginProps {
   message: any;
@@ -95,7 +96,23 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           message: "Login successful, going to your Dashboard!",
           type: "success",
         });
-        await router.push({ pathname: PATH_MAIN.views });
+        if(response.data.systemRole === SystemRole.User)
+        {
+          await router.push({ pathname: PATH_MAIN.views });
+        }
+        else
+        {
+          if(response.data.systemRole === SystemRole.ContentEditor)
+          {
+            await router.push({ pathname: PATH_ADMIN.contentsEditor });
+          }
+          else
+          {
+            await router.push({ pathname: PATH_ADMIN.contentsBuilder });
+          }
+          
+        }
+        
         return;
       }
       if (
