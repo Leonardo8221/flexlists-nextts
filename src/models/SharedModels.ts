@@ -1,4 +1,4 @@
-import { FieldType } from 'src/enums/SharedEnums'
+import { FieldType, TranslationKeyType } from 'src/enums/SharedEnums'
 import { Role } from 'src/enums/SharedEnums'
 import { ViewType } from 'src/enums/SharedEnums'
 import { ListCategory } from 'src/enums/SharedEnums'
@@ -124,6 +124,7 @@ export type TranslationText = {
     id:number
     translationKey:string;
     translationKeyId?:number
+    translationKeyType:TranslationKeyType,
     i18N:string
     translation:string
     ownerId:number

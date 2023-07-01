@@ -15,6 +15,8 @@ export const contentManagementService = {
     getTranslationKeysOfContentManagement,
     deleteTranslationKeyFromContentManagement,
     getContentManagementTranslationTexts,
+    uploadFile,
+    downloadFile
 };
 async function createContentManagement(name:string,ownerId:number,config?:any): Promise<FlexlistsError|FlexlistsSuccess<ContentManagementDto>> {
     var response = await axios.post<FlexlistsError|FlexlistsSuccess<ContentManagementDto>>(`/api/contentManagement/createContentManagement`, {name,ownerId,config})
@@ -55,6 +57,18 @@ async function deleteTranslationKeyFromContentManagement(contentMangementId:numb
 };
 async function getContentManagementTranslationTexts(contentManagementId:number,i18n:string): Promise<FlexlistsError|FlexlistsSuccess<GetContentManagementTranslationTextsOutputDto[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetContentManagementTranslationTextsOutputDto[]>>('/api/contentManagement/getContentManagementTranslationTexts'+`?contentManagementId=${contentManagementId}&i18n=${i18n}`)
+  return response.data;
+};
+async function uploadFile(formData:any): Promise<any> {
+  var response = await axios.post<any>(`/api/contentManagement/uploadFile`, formData,{
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }})
+
+  return response.data;
+};
+async function downloadFile(id:string): Promise<FlexlistsError|FlexlistsSuccess<any>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<any>>('/api/contentManagement/downloadFile'+`?id=${id}`)
   return response.data;
 };
 

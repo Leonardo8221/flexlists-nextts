@@ -138,6 +138,7 @@ const TranslationKeyForm = ({
                 id="free-solo-2-name"
                 fullWidth
                 disableClearable
+                inputValue={translationKey?.name}
                 onInputChange={(event, newInputValue) => {
                   handleNameChange(newInputValue)
                  
@@ -146,7 +147,6 @@ const TranslationKeyForm = ({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Translation Key ..."
                     InputProps={{
                       ...params.InputProps,
                       type: 'search',

@@ -6,14 +6,17 @@ import { connect } from 'react-redux';
 import { AuthValidate } from 'src/models/AuthValidate';
 import { ContentManagementDto } from 'src/models/ContentManagementDto';
 import { contentManagementService } from 'src/services/admin/contentManagement.service';
-import { isSucc } from 'src/models/ApiResponse';
+import { FlexlistsError, isSucc } from 'src/models/ApiResponse';
 import { useRouter } from 'next/router';
 import { filter } from 'lodash';
 import { TranslationText } from 'src/models/SharedModels';
 import { Language } from 'src/models/Language';
 import { languages } from 'src/utils/i18n';
 import { translationTextService } from 'src/services/admin/translationText.service';
-
+import { TranslationKeyType } from 'src/enums/SharedEnums';
+import WysiwygEditor from 'src/components/wysiwyg-editor/wysiwyg';
+import TurndownService from 'turndown';
+import {marked} from 'marked';
 type ContentEditorProps = {
   authValidate: AuthValidate;
 };
@@ -27,6 +30,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
   const [availableLanguages,setAvailableLanguages] = useState<Language[]>(languages)
   const [selectedLanguage,setSelectedLanguage] = useState<Language>(languages[0])
   const [successMessage,setSuccessMessage] = useState<string>('')
+  const [error,setError] = useState<string>('')
   useEffect(() => {
     async function fetchContentManagements() {
       let response = await contentManagementService.getAllContentManagement()
@@ -65,6 +69,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
   }
   const onLanguageChange = async(name:string) => {
     setSuccessMessage('')
+    setError('')
     if(!selectedContentManagement)
     {
       return
@@ -82,6 +87,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
   }
   const onTranslationTextChange = (e:ChangeEvent<HTMLInputElement|HTMLTextAreaElement>,translationText:TranslationText) => {
     setSuccessMessage('')
+    setError('')
     let newTranslationTexts = translationTexts.map(x=>{
       if(x.translationKeyId === translationText.translationKeyId)
       {
@@ -92,13 +98,92 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
     )
     setTranslationTexts(newTranslationTexts)
   }
+  const onTranslateHtmlChange = (newValue: string,translationText:TranslationText) => {
+    setSuccessMessage('')
+    setError('')
+    let newTranslationTexts = translationTexts.map(x=>{
+      if(x.translationKeyId === translationText.translationKeyId)
+      {
+        x.translation = newValue
+      }
+      return x
+    }
+    )
+    setTranslationTexts(newTranslationTexts)
+  };
+  const onTranslateMarkdownChange = (newValue: string,translationText:TranslationText) => {
+    setSuccessMessage('')
+    setError('')
+    let newTranslationTexts = translationTexts.map(x=>{
+      if(x.translationKeyId === translationText.translationKeyId)
+      {
+       
+        x.translation = newValue
+      }
+      return x
+    }
+    )
+    setTranslationTexts(newTranslationTexts)
+  };
+  const handleFileChange = async(event: React.ChangeEvent<HTMLInputElement>,translationText:TranslationText) => {
+    setSuccessMessage('')
+    setError('')
+    if (event.target.files && event.target.files.length > 0) {
+      await uploadFile(event.target.files[0],translationText);
+    }
+  };
+
+  const uploadFile = async(file: File,translationText:TranslationText) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    let response = await contentManagementService.uploadFile(formData)
+    if(response && response.fileId)
+    {
+      let newTranslationTexts = translationTexts.map(x=>{
+        if(x.translationKeyId === translationText.translationKeyId)
+        {
+          x.translation = response.fileId
+        }
+        return x
+      }
+      )
+      setTranslationTexts(newTranslationTexts)
+    }
+  };
+
+
   const onSubmit = async() => {
-    let response = await translationTextService.saveManyTranslationTexts(translationTexts)
+    const turndownService = new TurndownService();
+    let newTranslationTexts = translationTexts.map(x=>{
+      if(x.translationKeyType === TranslationKeyType.Markdown)
+      {
+        x.translation = turndownService.turndown(x.translation)
+      }
+      if(x.translationKeyType === TranslationKeyType.Image)
+      {
+        x.translation = x.translation.toString()
+      }
+      return x
+      }
+    )
+    let response = await translationTextService.saveManyTranslationTexts(newTranslationTexts)
     if(isSucc(response))
     {
       setSuccessMessage("Saved successfully")
     }
+    else
+    {
+      setError((response as FlexlistsError).message)
+    }
+
   }
+  const downloadFileUrl = (id:string) =>
+  {
+    return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/contentManagement/downloadFile?id=${id}`
+  }
+  const convertMarkdownToHtml = (markdown: string): string => {
+    return marked(markdown);
+  };
   return (
     <MainLayout>
        {/* <Container> */}
@@ -156,6 +241,9 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
                     <Box>
                       { successMessage && <Alert severity="success">{successMessage}</Alert>}
                     </Box>
+                    <Box>
+                      { error && <Alert severity="error">{error}</Alert>}
+                    </Box>
                  </Stack>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
                   <Grid container>
@@ -211,8 +299,56 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
                   {
                     translationTexts.map((translationText,index)=>{
                       return (
-                        <Stack direction={{ xs: 'column', md: 'row' }} spacing={5} key={index} style={{marginTop:10}}>
-                          <TextField fullWidth key={index} label={translationText.translationKey} value={translationText.translation} onChange={(e)=>{onTranslationTextChange(e,translationText)}} />
+                        <Stack key={index}>
+                        {
+                          translationText.translationKeyType === TranslationKeyType.Text &&
+                          <Stack key={index} direction={{ xs: 'column', md: 'row' }} spacing={5}  style={{marginTop:10}}>
+                            <TextField fullWidth key={`input - ${index}`} label={translationText.translationKey} value={translationText.translation} onChange={(e)=>{onTranslationTextChange(e,translationText)}} />
+                          </Stack>
+                        }
+                        {
+                          translationText.translationKeyType === TranslationKeyType.Image &&
+                          <Stack key={index} direction={{ xs: 'column', md: 'row' }} spacing={5} style={{marginTop:10}}>
+                            <Box
+                                  component="img"
+                                  sx={{
+                                    height: 233,
+                                    width: 350,
+                                    maxHeight: { xs: 233, md: 167 },
+                                    maxWidth: { xs: 350, md: 250 },
+                                  }}
+                                  alt="no image"
+                                  src={translationText.translation?downloadFileUrl(translationText.translation):''}
+                                />
+                                <Box>
+                                <input type="file" name='upload' onChange={(e)=>handleFileChange(e,translationText)} />
+                                </Box>
+                           </Stack>
+                        }
+                        {
+                          translationText.translationKeyType === TranslationKeyType.Html &&
+                          <Box>
+                            <Typography variant="subtitle2" gutterBottom>
+                              {translationText.translationKey}
+                            </Typography>
+                            <WysiwygEditor
+                              value={translationText.translation}
+                              setValue={(newValue) => onTranslateHtmlChange(newValue,translationText)}
+                            />
+                           </Box>
+                        }
+                        {
+                          translationText.translationKeyType === TranslationKeyType.Markdown &&
+                          <Box>
+                            <Typography variant="subtitle2" gutterBottom>
+                              {translationText.translationKey}
+                            </Typography>
+                            <WysiwygEditor
+                              value={convertMarkdownToHtml(translationText.translation)}
+                              setValue={(newValue) => onTranslateMarkdownChange(newValue,translationText)}
+                            />
+                           </Box>
+                        }
                         </Stack>
                       )
                     })

@@ -58,10 +58,12 @@ async function get<T>(url: string, params?: any) {
   }
 }
 
-async function post<T>(url: string, data?: any) {
+async function post<T>(url: string, data?: any,config?:any) {
   try {
-    return await axiosInstance.post<T>(url, data)
+    console.log(config)
+    return await axiosInstance.post<T>(url, data,config)
   } catch (e: any) {
+    console.log('tttttt')
     store.dispatch(setLoading(false))
     return { data: { code: e.code ?? 999, isSuccess: e.isSuccess, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
   }
