@@ -1,36 +1,15 @@
-import { TranslationKeyType } from "src/enums/SharedEnums";
-import { isSucc } from "src/models/ApiResponse";
 import { TranslationText } from "src/models/SharedModels";
-import { translationTextService } from "src/services/admin/translationText.service";
 import ReactMarkdown from "react-markdown";
 import { Box } from "@mui/material";
+import { getTranslations, t } from "src/utils/i18n";
+import { GetServerSideProps } from "next";
 
 type ContentTestProps = {
     };
-const  ContentTest = ({ data  }:ContentTestProps&{data:TranslationText[]})=>{
-    const downloadFileUrl = (id:string) =>
-    {
-        return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/contentManagement/downloadFile?id=${id}`
-    }
+const  ContentTest = ({ translation  }:ContentTestProps&{translation:TranslationText[]})=>{
+   
     const i18n = (key:string):string=>{
-        var translationText = data.find((item:any)=>item.translationKey==key)
-        let translation:string = ''
-        if(translationText){
-            switch(translationText.translationKeyType){
-                case TranslationKeyType.Text:
-                case TranslationKeyType.Html:
-                case TranslationKeyType.Markdown:
-                    translation = translationText.translation
-                    break
-                case TranslationKeyType.Image:
-                    translation = downloadFileUrl(translationText.translation)
-                    break
-                default:
-                    translation = translationText.translation
-                    break;
-        }
-        }
-        return translation
+       return t(key,translation)
         
     }
     return (
@@ -52,16 +31,9 @@ const  ContentTest = ({ data  }:ContentTestProps&{data:TranslationText[]})=>{
         </div>
     )
 }
-// // This gets called on every request
-export async function getServerSideProps() {
-    // Fetch translation data
-    const response = await translationTextService.getTranslationTexts('en-US')
-    let data :any = {}
-    if(isSucc(response)){
-         data = response.data;
-    }
-
-    // Pass data to the page via props
-    return { props: { data } }
+// This gets called on every request
+export const getServerSideProps:GetServerSideProps = async (context) => {
+    
+      return await getTranslations("landing page",context)
   }
 export default ContentTest;

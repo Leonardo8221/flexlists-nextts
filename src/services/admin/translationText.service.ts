@@ -14,7 +14,7 @@ async function saveManyTranslationTexts(translationTexts:TranslationText[]): Pro
 
   return response.data;
 };
-async function getTranslationTexts(i18n:string): Promise<FlexlistsError|FlexlistsSuccess<GetTranslationTextsOutputDto[]>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetTranslationTextsOutputDto[]>>('/api/translationText/getTranslationTexts'+`?i18n=${i18n}`)
+async function getTranslationTexts(i18n:string,contentManagementName?:string): Promise<FlexlistsError|FlexlistsSuccess<GetTranslationTextsOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetTranslationTextsOutputDto[]>>('/api/translationText/getTranslationTexts'+`?i18n=${i18n}&contentManagementName=${contentManagementName}`)
   return response.data;
 };

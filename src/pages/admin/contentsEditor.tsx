@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { Button, Box, Card, Grid, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography, MenuItem, ListItemIcon, Autocomplete, Alert } from '@mui/material';
-import MainLayout from 'src/layouts/amin/MainLayout';
+import MainLayout from 'src/layouts/admin/MainLayout';
 import Scrollbar from 'src/components/scrollbar';
 import { connect } from 'react-redux';
 import { AuthValidate } from 'src/models/AuthValidate';
@@ -38,6 +38,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
       {
         setContentManagements(response.data as ContentManagementDto[])
         setFilteredContentManagements(response.data as ContentManagementDto[])
+        setSelectedContentManagement(response.data[0])
         await loadTranslationTexts(response.data[0].id,languages[0].id)
       }
     }
@@ -67,22 +68,22 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
     setSelectedContentManagement(contentManagement);
     loadTranslationTexts(contentManagement.id,selectedLanguage.id)
   }
-  const onLanguageChange = async(name:string) => {
+  const onLanguageChange = async(languageId:string) => {
     setSuccessMessage('')
     setError('')
     if(!selectedContentManagement)
     {
       return
     }
-    let language = availableLanguages.find(x=>x.name === name)
+    let language = availableLanguages.find(x=>x.id === languageId)
     if(language)
     {
-      setSelectedLanguage(language)
       let response = await contentManagementService.getContentManagementTranslationTexts(selectedContentManagement.id,language.id)
       if(isSucc(response))
       {
-        setTranslationTexts(response.data as TranslationText[])
+        setTranslationTexts(response.data)
       }
+      setSelectedLanguage(language)
     }
   }
   const onTranslationTextChange = (e:ChangeEvent<HTMLInputElement|HTMLTextAreaElement>,translationText:TranslationText) => {
@@ -220,7 +221,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
                             {
                               filteredContentManagements.map((contentManagement,index)=>{
                                     return (
-                                    <ListItem disablePadding key={index} style={{backgroundColor: selectedContentManagement && selectedContentManagement.id === contentManagement.id?'blue':''}}>
+                                    <ListItem disablePadding key={index} style={{backgroundColor: selectedContentManagement && selectedContentManagement.id === contentManagement.id?'yellow':''}}>
                                         <ListItemButton onClick={()=>handleSelectContentMangement(contentManagement)}>
                                             <ListItemText>{contentManagement.name}</ListItemText>
                                         </ListItemButton>
@@ -297,7 +298,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
                 </Stack>
                 <Stack>
                   {
-                    translationTexts.map((translationText,index)=>{
+                    translationTexts && translationTexts.map((translationText,index)=>{
                       return (
                         <Stack key={index}>
                         {

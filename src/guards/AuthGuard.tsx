@@ -5,7 +5,7 @@ import { isSucc } from 'src/models/ApiResponse';
 import { PATH_MAIN } from 'src/routes/paths';
 import { setAuthValidate, setLoading } from 'src/redux/actions/adminAction';
 import { connect } from 'react-redux';
-import { getAuthValidatePayLoad } from 'src/utils/tokenUtils';
+import { getAuthValidatePayLoad } from 'src/utils/cookieUtils';
 
 // ----------------------------------------------------------------------
 
