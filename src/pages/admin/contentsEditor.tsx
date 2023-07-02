@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { Button, Box, Card, Grid, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography, MenuItem, ListItemIcon, Autocomplete, Alert } from '@mui/material';
-import MainLayout from 'src/layouts/amin/MainLayout';
+import MainLayout from 'src/layouts/admin/MainLayout';
 import Scrollbar from 'src/components/scrollbar';
 import { connect } from 'react-redux';
 import { AuthValidate } from 'src/models/AuthValidate';
