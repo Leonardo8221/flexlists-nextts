@@ -96,23 +96,16 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           message: "Login successful, going to your Dashboard!",
           type: "success",
         });
-        if(response.data.systemRole === SystemRole.User)
-        {
+        if (response.data.systemRole === SystemRole.User) {
           await router.push({ pathname: PATH_MAIN.views });
-        }
-        else
-        {
-          if(response.data.systemRole === SystemRole.ContentEditor)
-          {
+        } else {
+          if (response.data.systemRole === SystemRole.ContentEditor) {
             await router.push({ pathname: PATH_ADMIN.contentsEditor });
-          }
-          else
-          {
+          } else {
             await router.push({ pathname: PATH_ADMIN.contentsBuilder });
           }
-          
         }
-        
+
         return;
       }
       if (
@@ -203,19 +196,55 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
         display: { xs: "none", md: "block" },
       },
     },
+    circleEffect: {
+      width: 400,
+      height: 400,
+      borderRadius: 400,
+      background: "linear-gradient(#9bf8f4, #ffeda0, #fa9372)",
+      position: "absolute",
+      top: "40px",
+      left: { xs: "100px", md: "400px" },
+      opacity: 0.2,
+      zIndex: 1,
+      filter: "blur(100px)",
+    },
     rightBoxGrid: {
       py: 4,
-      px: { xs: 1, md: 4 },
+      px: { xs: 1, md: 8 },
       boxShadow: "none !important",
       marginTop: 0,
       overflow: "auto",
       zIndex: 2,
+    },
+    FormLogoWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: 2,
     },
     FormLogo: {
       width: 60,
       height: 45,
       objectFit: "contain",
       marginTop: "2px",
+    },
+
+    textField: {
+      "& .MuiInputBase-root": {
+        backgroundColor: "#fcfeff",
+        border: "none",
+        color: "#666",
+        boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
+      },
+
+      "& ::placeholder": {
+        color: "#ccc",
+      },
+
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          border: "none",
+        },
+      },
     },
 
     formActionsWrapper: {
@@ -286,15 +315,11 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
             />
           </Box>
           <Box sx={styles?.rightBox}>
+            <Box sx={styles?.circleEffect}></Box>
+
             <Grid container rowSpacing={4} sx={styles?.rightBoxGrid}>
               <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginBottom: 2,
-                  }}
-                >
+                <Box sx={styles?.FormLogoWrapper}>
                   <Link href="/">
                     <Box
                       component="img"
@@ -318,6 +343,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
 
               <Grid item xs={12}>
                 <TextField
+                  sx={styles?.textField}
                   fullWidth
                   placeholder="Email or Username"
                   type="text"
@@ -329,6 +355,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
 
               <Grid item xs={12}>
                 <TextField
+                  sx={styles?.textField}
                   fullWidth
                   placeholder="Password"
                   required
