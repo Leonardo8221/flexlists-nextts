@@ -18,7 +18,15 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
 
   return (
     <Box sx={{ minHeight: "400px" }}>
-      <ReactQuill style={styles} value={value} onChange={handleEditorChange} />
+      <ReactQuill 
+      style={styles}  
+      value={value} 
+      onChange={(newValue, delta, source) => {
+        if (source === 'user') {
+          handleEditorChange(newValue);
+        }
+      }} 
+      />
     </Box>
   );
 };

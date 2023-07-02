@@ -1,37 +1,27 @@
-import { setCookie , deleteCookie, getCookie} from "cookies-next";
-
-export function setCookieToken(token:string,req:any,res:any)
-{
-    setCookie("token", token, {
-        req,
-        res,
-      });
-}
-export function getCookieToken(req:any,res:any) : string
-{
-    return getCookie("token", {
-        req,
-        res,
-      }) as string;
-}
-export function setCookieRefreshToken(refreshToken:string,req:any,res:any)
-{
-    setCookie("refreshToken", refreshToken, {
-        req,
-        res,
-      });
-}
-export function getCookieRefreshToken(req:any,res:any) : string
-{
-    return getCookie("refreshToken", {
-        req,
-        res,
-      }) as string;
-}
-export function removeCookie(key:string,req:any,res:any)
-{
-    deleteCookie(key,{
-        req,
-        res,
-      });
+export function getCookieValue(cookieName: string): string | null {
+  const cookieString = document.cookie;
+  const cookieArray = cookieString.split(';');
+  for (let i = 0; i < cookieArray.length; i++) {
+    const cookie = cookieArray[i].trim();
+    if (cookie.startsWith(cookieName + '=')) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null;
+}   
+export function getAuthValidatePayLoad():any{
+  try{
+      const cookieValue = getCookieValue('authValidate');
+      
+      if(!cookieValue)
+      {
+          return {isUserValidated:false,isKeyValidated:false};
+      }
+      return JSON.parse(decodeURIComponent(cookieValue));
+  }
+  catch(e){   
+  }
+  return  {isUserValidated:false,isKeyValidated:false};;
+ 
+  
 }

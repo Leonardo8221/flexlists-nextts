@@ -47,8 +47,7 @@ const ContentManagementForm = ({
     }
     if(isCreating)
     {
-      let response = await contentManagementService.createContentManagement(contentManagement.name,currentContentManagement.ownerId);
-      console.log(response) 
+      let response = await contentManagementService.createContentManagement(contentManagement.name.trim(),currentContentManagement.ownerId);
       if (isSucc(response)) {
         contentManagement.id = (response.data as any).id;
         onAdd(contentManagement);
@@ -61,7 +60,7 @@ const ContentManagementForm = ({
     }
     else
     {
-      let response = await contentManagementService.updateContentManagement(contentManagement.id,contentManagement.name,currentContentManagement.ownerId);
+      let response = await contentManagementService.updateContentManagement(contentManagement.id,contentManagement.name.trim(),currentContentManagement.ownerId);
       if (isSucc(response)) {
         onUpdate(contentManagement);
         handleClose();
