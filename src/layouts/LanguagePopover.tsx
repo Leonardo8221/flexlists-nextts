@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, MenuItem, Stack, IconButton, Popover, ListItemIcon, ListItemText } from '@mui/material';
-import { languages } from 'src/utils/i18n';
 import {getLanguage, storeLanguage} from 'src/utils/localStorage';
 import { Language } from 'src/models/Language';
 import { use } from 'passport';
@@ -10,31 +9,43 @@ import { el } from 'date-fns/locale';
 import Cookies from 'js-cookie';
 import { LocalStorageConst } from 'src/constants/StorageConsts';
 import { useRouter } from 'next/router';
+import { connect } from 'react-redux';
+import { getLanguages } from 'src/redux/actions/adminAction';
 // ----------------------------------------------------------------------
-
-export default function LanguagePopover() {
+type LanguagePopoverProps = {
+  languages: Language[];
+  getLanguages: () => void;
+};
+export const LanguagePopover = ({languages,getLanguages }: LanguagePopoverProps) =>{
   const router = useRouter();
   const [open, setOpen] = useState(null);
   const [currentLanguage,setCurrentLanguage] = useState<Language>();
+  
   useEffect(() => {
-    var languageId = getLanguage();
-    let language : Language|undefined;
-    if (languageId && languageId != null) {
-      language = languages.find((x) => x.id === languageId);
-    }
-    if(language)
-    {
-      setCurrentLanguage(language);
-      Cookies.set(LocalStorageConst.Language, language.id);
-    }
-    else
-    {
-      setCurrentLanguage(languages[0]);
-      storeLanguage(languages[0].id);
-      Cookies.set(LocalStorageConst.Language, languages[0].id);
-    }
-    
+    getLanguages();
   }, []);
+  useEffect(() => {
+      if(languages && languages.length>0)
+      {
+        var languageId = getLanguage();
+        let language : Language|undefined;
+        if (languageId && languageId != null) {
+          language = languages.find((x) => x.id === languageId);
+        }
+        if(language)
+        {
+          setCurrentLanguage(language);
+          Cookies.set(LocalStorageConst.Language, language.id);
+        }
+        else
+        {
+          setCurrentLanguage(languages[0]);
+          storeLanguage(languages[0].id);
+          Cookies.set(LocalStorageConst.Language, languages[0].id);
+        }
+      }
+  }, [languages]);
+
   const handleOpen = (event:any) => {
     setOpen(event.currentTarget);
   };
@@ -104,3 +115,11 @@ export default function LanguagePopover() {
     </>
   );
 }
+const mapStateToProps = (state: any) => ({
+  languages: state.admin.languages
+});
+
+const mapDispatchToProps = {
+  getLanguages
+};
+export default connect(mapStateToProps, mapDispatchToProps)(LanguagePopover);

@@ -5,19 +5,7 @@ import { Language } from "src/models/Language";
 import { TranslationText } from "src/models/SharedModels";
 import { translationTextService } from "src/services/admin/translationText.service";
 
-export const languages : Language[] =[
-    {
-      "id": "en-US",
-      "name": "English - United States",
-      "icon": "/icons/ic_flag_us.svg"
-    },
-    {
-       "id": "zh-CN",
-       "name": "Chinese - China",
-       "icon": "/icons/ic_flag_cn.svg"
-    }
-]
-export const t = (key:string,transaltions:TranslationText[])=>
+export const getTranslation = (key:string,transaltions:TranslationText[])=>
 {
   let translation:string = key
         if(!transaltions || transaltions.length==0){    
@@ -46,21 +34,21 @@ export const getTranslations = async(pageName:string,context:any) : Promise<any>
     const { req } = context;
      const cookies = parse(req.headers.cookie || '');
     const language = cookies.language;
-    let translation : any[] = []
+    let translations : any[] = []
     try
     {
         
         const response = await translationTextService.getTranslationTexts(language??'en-Us',pageName);
         if(isSucc(response) && response.data && response.data.length>0){
-            translation = response.data;
+            translations = response.data;
         }
         // Pass data to the page via props
-        return { props: { translation } }
+        return { props: { translations } }
     }
     catch(error)
     {
         console.log(error)
-        return { props: { translation } }
+        return { props: { translations } }
     }
-    return { props: { translation } }
+    return { props: { translations } }
 }

@@ -29,7 +29,29 @@ any
     }
   };
 };
-
+export const getLanguages = (): ThunkAction<
+void,
+RootState,
+null,
+any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+        var state = store.getState();
+        if(state.admin.languages.length==0)
+        {
+          const response = await adminService.getLanguages()
+          if(isSucc(response) && response.data)
+          {
+            dispatch(setLanguages(response.data));
+          } 
+        }
+        
+    } catch (error) {
+     console.log(error)
+    }
+  };
+};
 export const setSearchTypes = (searchTypes: any) => ({
     type: 'SET_SEARCH_TYPES',
     payload: searchTypes
@@ -41,4 +63,8 @@ export const setLoading = (isLoading: boolean) => ({
 export const setAuthValidate = (authValidate: any) => ({  
   type: 'SET_AUTH_VALIDATE',  
   payload: authValidate 
+});
+export const setLanguages = (languages: any) => ({  
+  type: 'SET_LANGUAGES',  
+  payload: languages 
 });

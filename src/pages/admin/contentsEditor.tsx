@@ -11,7 +11,6 @@ import { useRouter } from 'next/router';
 import { filter } from 'lodash';
 import { TranslationText } from 'src/models/SharedModels';
 import { Language } from 'src/models/Language';
-import { languages } from 'src/utils/i18n';
 import { translationTextService } from 'src/services/admin/translationText.service';
 import { TranslationKeyType } from 'src/enums/SharedEnums';
 import WysiwygEditor from 'src/components/wysiwyg-editor/wysiwyg';
@@ -19,16 +18,16 @@ import TurndownService from 'turndown';
 import {marked} from 'marked';
 type ContentEditorProps = {
   authValidate: AuthValidate;
+  languages: Language[];
 };
-const ContentEditor = ({authValidate}:ContentEditorProps) => {
+const ContentEditor = ({authValidate,languages}:ContentEditorProps) => {
   const router = useRouter()
   const [searchText,setSearchText] = useState<string>('')
   const [contentManagements, setContentManagements] = useState<ContentManagementDto[]>([])
   const [filteredContentManagements, setFilteredContentManagements] = useState<ContentManagementDto[]>([]);
   const [selectedContentManagement, setSelectedContentManagement] = useState<ContentManagementDto>()
   const [translationTexts, setTranslationTexts] = useState<TranslationText[]>([])
-  const [availableLanguages,setAvailableLanguages] = useState<Language[]>(languages)
-  const [selectedLanguage,setSelectedLanguage] = useState<Language>(languages[0])
+  const [selectedLanguage,setSelectedLanguage] = useState<Language>()
   const [successMessage,setSuccessMessage] = useState<string>('')
   const [error,setError] = useState<string>('')
   useEffect(() => {
@@ -39,14 +38,15 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
         setContentManagements(response.data as ContentManagementDto[])
         setFilteredContentManagements(response.data as ContentManagementDto[])
         setSelectedContentManagement(response.data[0])
+        setSelectedLanguage(languages[0])
         await loadTranslationTexts(response.data[0].id,languages[0].id)
       }
     }
-    if(router.isReady)
+    if(router.isReady && languages && languages.length>0)
     {
       fetchContentManagements()
     }
-  },[router.isReady])
+  },[router.isReady,languages])
   const loadTranslationTexts = async(contentManagementId:number,languageId:string) => {
     let response = await contentManagementService.getContentManagementTranslationTexts(contentManagementId,languageId)
     if(isSucc(response))
@@ -66,7 +66,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
   };
   const handleSelectContentMangement = async(contentManagement:ContentManagementDto) => {
     setSelectedContentManagement(contentManagement);
-    loadTranslationTexts(contentManagement.id,selectedLanguage.id)
+    loadTranslationTexts(contentManagement.id,selectedLanguage?selectedLanguage.id:languages[0].id)
   }
   const onLanguageChange = async(languageId:string) => {
     setSuccessMessage('')
@@ -75,7 +75,7 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
     {
       return
     }
-    let language = availableLanguages.find(x=>x.id === languageId)
+    let language = languages.find(x=>x.id === languageId)
     if(language)
     {
       let response = await contentManagementService.getContentManagementTranslationTexts(selectedContentManagement.id,language.id)
@@ -249,42 +249,46 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
                   <Grid container>
                     <Grid item xs={3}>
-                    <Autocomplete
-                      id="language-select"
-                      sx={{ width: 300 }}
-                      options={availableLanguages}
-                      autoHighlight
-                      getOptionLabel={(option) => option.name}
-                      value={selectedLanguage}
-                      onChange={(event, value) => {
-                        if(value)
-                        {
-                          onLanguageChange(value.id)
-                        }
-                      }}
-                      renderOption={(props, option) => (
-                        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                          <img
-                            loading="lazy"
-                            width="20"
-                            src={option.icon}
-                            srcSet={`{option.icon} 2x`}
-                            alt=""
-                          />
-                          {option.name}
-                        </Box>
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Choose a Language"
-                          inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'new-password', // disable autocomplete and autofill
-                          }}
-                        />
-                      )}
-                    />
+                      {
+                        selectedLanguage &&
+                         <Autocomplete
+                         id="language-select"
+                         sx={{ width: 300 }}
+                         options={languages}
+                         autoHighlight
+                         getOptionLabel={(option) => option.name}
+                         value={selectedLanguage}
+                         onChange={(event, value) => {
+                           if(value)
+                           {
+                             onLanguageChange(value.id)
+                           }
+                         }}
+                         renderOption={(props, option) => (
+                           <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                             <img
+                               loading="lazy"
+                               width="20"
+                               src={option.icon}
+                               srcSet={`{option.icon} 2x`}
+                               alt=""
+                             />
+                             {option.name}
+                           </Box>
+                         )}
+                         renderInput={(params) => (
+                           <TextField
+                             {...params}
+                             label="Choose a Language"
+                             inputProps={{
+                               ...params.inputProps,
+                               autoComplete: 'new-password', // disable autocomplete and autofill
+                             }}
+                           />
+                         )}
+                       />
+                      }
+                    
                       
                     </Grid>
                     <Grid item xs={6}>
@@ -364,7 +368,8 @@ const ContentEditor = ({authValidate}:ContentEditorProps) => {
   );
 };
 const mapStateToProps = (state: any) => ({
-    authValidate:state.admin.authValidate
+    authValidate:state.admin.authValidate,
+    languages:state.admin.languages
 });
 
 const mapDispatchToProps = {
