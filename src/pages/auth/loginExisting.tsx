@@ -14,6 +14,7 @@ import {
   Box,
   Snackbar,
   AlertColor,
+  Divider,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -31,15 +32,37 @@ import {
   setMessage,
 } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
+import { styled } from "@mui/material/styles";
+
+const CustomTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiInputBase-root": {
+    backgroundColor: "#fcfeff",
+    border: "none",
+    color: "#666",
+    boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
+  },
+
+  "& ::placeholder": {
+    color: "#ccc",
+  },
+
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      border: "none",
+    },
+  },
+}));
 
 interface LoginProps {
   message: any;
+  styles?: any;
   legacyCredentials: LegacyCredentials;
   setMessage: (message: any) => void;
   setLegacyCredentials: (credentials: LegacyCredentials) => void;
 }
 
 const Login = ({
+  styles,
   message,
   legacyCredentials,
   setMessage,
@@ -131,19 +154,122 @@ const Login = ({
     setPassword(event.target.value);
   };
 
+  styles = {
+    body: {
+      background:
+        "linear-gradient(45deg, hsl(219deg 41% 13%) 0%, hsl(213deg 41% 19%) 50%, hsl(212deg 40% 24%) 100%)",
+      overflow: "hidden",
+    },
+    container: {
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: { xs: "column", md: "row" },
+      alignItems: "center",
+      justifyContent: "center",
+      px: { xs: 0, sm: 0, md: 0 },
+    },
+    leftBox: {
+      width: { xs: "100%", md: "50%" },
+      position: "relative",
+      minHeight: { md: "100vh" },
+      display: "flex",
+      alignItems: "center",
+      textAlign: { xs: "center", md: "left" },
+    },
+
+    leftBoxGrid: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      pr: { xs: 0, md: 4 },
+      py: { xs: 4, md: 0 },
+      zIndex: 5,
+    },
+    circleEffect: {
+      width: 400,
+      height: 400,
+      borderRadius: 400,
+      background: "linear-gradient(#9bf8f4, #ffeda0, #fa9372)",
+      position: "absolute",
+      top: "40px",
+      left: { xs: "100px", md: "400px" },
+      opacity: 0.4,
+      zIndex: 1,
+      filter: "blur(100px)",
+    },
+    logoWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      my: { xs: 2, md: 0 },
+      position: { xs: "relative", md: "absolute" },
+      top: { xs: 0, md: 48 },
+      left: 0,
+    },
+    logoImg: {
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+    },
+    link: {
+      color: theme.palette.palette_style.text.selected,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
+    },
+    rightBox: {
+      width: { xs: "100%", md: "50%" },
+      minHeight: { md: "100vh" },
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      textAlign: "center",
+      position: "relative",
+      backgroundColor: "#fff",
+      "&::after": {
+        position: "absolute",
+        content: '" "',
+        height: "100%",
+        width: "250px",
+        right: 0,
+        backgroundColor: "#fff",
+        transform: "translateX(250px)",
+        display: { xs: "none", md: "block" },
+      },
+    },
+    rightBoxGrid: {
+      py: 4,
+      px: { xs: 1, md: 4 },
+      boxShadow: "none !important",
+      marginTop: 0,
+      overflow: "auto",
+      zIndex: 2,
+    },
+    formActionsWrapper: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    checkbox: {
+      color: theme.palette.palette_style.primary.main,
+      "&.Mui-checked": { color: theme.palette.palette_style.primary.main },
+    },
+    forgotPassword: {
+      color: theme.palette.palette_style.primary.main,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
+    },
+    button: {
+      backgroundColor: theme.palette.palette_style.primary.main,
+      width: "100%",
+    },
+    signUpWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  };
+
   return (
     <>
-      <Box
-        component="img"
-        sx={{
-          height: "100%",
-          width: "100%",
-          position: "absolute",
-          zIndex: -1,
-        }}
-        alt="The house from the offer."
-        src="/assets/images/background.png"
-      />
       <Snackbar
         open={flash !== undefined}
         autoHideDuration={6000}
@@ -157,198 +283,181 @@ const Login = ({
           {flash?.message}
         </Alert>
       </Snackbar>
-      <Container
-        maxWidth="sm"
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Grid
-          container
-          rowSpacing={4}
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-            py: 4,
-            px: { xs: 1, md: 4 },
-            borderRadius: "4px",
-            boxShadow: "0 0 64px 0 rgba(0,0,0,0.1)",
-            backgroundColor: "white",
-            marginTop: 0,
-            maxHeight: "93vh",
-            overflow: "auto",
-          }}
-        >
-          <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginBottom: 2,
-              }}
-            >
-              <Link href="/">
-                <Box
-                  component="img"
-                  sx={{
-                    width: 60,
-                    height: 45,
-                    objectFit: "contain",
-                    marginTop: "2px",
-                  }}
-                  alt="Logo"
-                  src="/assets/logo_auth.png"
-                />
-              </Link>
-            </Box>
-            <Typography variant="h3" gutterBottom textAlign="center">
-              Sign in - Existing User
-            </Typography>
-            <Typography
-              variant="body1"
-              textAlign="center"
-              sx={{ color: "#666" }}
-            >
-              This is the sign in for existing Flexlists users; after logging
-              in, your lists will be migrated to the new system and you can
-              continue working. <br />
-              If you already logged in before in the new version, please Sign in
-              <Link href="/auth/login">here</Link>.
-            </Typography>
-          </Grid>
+      <Box sx={styles?.body}>
+        <Container maxWidth="xl" sx={styles?.container}>
+          <Box sx={styles?.leftBox}>
+            <Grid container sx={styles?.leftBoxGrid}>
+              <Box
+                sx={{
+                  ...styles?.circleEffect,
+                  ...{
+                    top: { xs: "100px", md: "820px" },
+                    left: { xs: "-100px", md: "0" },
+                    background: "#103783",
+                  },
+                }}
+              ></Box>
+              <Box sx={styles?.logoWrapper}>
+                <Link href="/">
+                  <Box
+                    component="img"
+                    sx={styles?.logoImg}
+                    alt="Logo"
+                    src="/assets/logo_dark.png"
+                  />
+                </Link>
+              </Box>
+              <Box
+                sx={{
+                  zIndex: 5,
+                }}
+              >
+                <Typography variant="body1" color={"white"}>
+                  This is the sign in for existing Flexlists users; after
+                  logging in, your lists will be migrated to the new system and
+                  you can continue working. <br />
+                  If you already logged in before in the new version, please
+                  Sign in{" "}
+                  <Link sx={styles?.link} href="/auth/login">
+                    here
+                  </Link>
+                  .
+                </Typography>
+                <br />
+                <br />
+                <Typography variant="body1" color={"white"}>
+                  If you need a lot of text you can add there and of course
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                  Necessitatibus quia error sunt aperiam voluptas illum aut, eum
+                  soluta, voluptate sint delectus. Animi omnis, reiciendis
+                  dolores inventore sit deleniti aliquid! Adipisci earum quidem
+                  iure exercitationem debitis amet modi dignissimos, sit
+                  quibusdam similique, odio labore repellat, facilis nobis
+                  aliquam. Quia nisi distinctio optio inventore dolorum
+                  excepturi debitis, exercitationem commodi? Dignissimos quia
+                  sit atque, odio nobis distinctio magnam sequi omnis veniam
+                  numquam quo, excepturi est eos aspernatur magni autem
+                  similique itaque ut quas labore explicabo! Saepe facilis
+                  laborum eveniet voluptas repellendus culpa libero, nulla ipsam
+                  consequuntur mollitia soluta, beatae optio neque veniam iure?
+                </Typography>
+              </Box>
+            </Grid>
+          </Box>
 
-          {/* <Grid
+          <Box sx={styles?.rightBox}>
+            <Box sx={styles?.circleEffect}></Box>
+            <Grid container rowSpacing={3} sx={styles?.rightBoxGrid}>
+              <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
+                <Typography variant="h3" gutterBottom color={"#141E30"}>
+                  Sign in - Existing User
+                </Typography>
+                <Typography variant="caption" color={"#666"}>
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Delectus, iure.
+                </Typography>
+              </Grid>
+
+              {/* <Grid
             item
             container
           >
             {error && <Alert severity="error">{error}</Alert>}
           </Grid> */}
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              placeholder="Current Flexlists Username"
-              type="text"
-              required
-              value={userName}
-              onChange={handleChangeEmail}
-            ></TextField>
-          </Grid>
+              <Grid item xs={12}>
+                <CustomTextField
+                  fullWidth
+                  placeholder="Current Flexlists Username"
+                  type="text"
+                  required
+                  value={userName}
+                  onChange={handleChangeEmail}
+                ></CustomTextField>
+              </Grid>
 
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              placeholder="Current Flexlists Password"
-              required
-              value={password}
-              onChange={handleChangePassword}
-              type={showPassword ? "text" : "password"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      <Iconify
-                        icon={
-                          showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
-                        }
-                      />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            ></TextField>
-          </Grid>
+              <Grid item xs={12}>
+                <CustomTextField
+                  fullWidth
+                  placeholder="Current Flexlists Password"
+                  required
+                  variant="outlined"
+                  value={password}
+                  onChange={handleChangePassword}
+                  type={showPassword ? "text" : "password"}
+                  inputProps={{
+                    color: theme.palette.palette_style.primary.main,
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          <Iconify
+                            icon={
+                              showPassword ? "eva:eye-fill" : "eva:eye-off-fill"
+                            }
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                ></CustomTextField>
+              </Grid>
 
-          <Grid item xs={6}>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    defaultChecked
-                    sx={{
-                      color: "#FFD232",
-                      "&.Mui-checked": { color: "#FFD232" },
-                    }}
+              <Grid item sx={styles?.formActionsWrapper} xs={12}>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked sx={styles?.checkbox} />}
+                    label="Remember me"
                   />
-                }
-                label="Remember me"
-              />
-            </FormGroup>
-          </Grid>
+                </FormGroup>
+                <Link
+                  href="/auth/forgotPassword"
+                  variant="body1"
+                  sx={styles?.forgotPassword}
+                >
+                  Forgot password?
+                </Link>
+              </Grid>
 
-          <Grid
-            item
-            xs={6}
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Link
-              href="/auth/forgotPassword"
-              variant="body1"
-              sx={{ color: "#0D0934" }}
-            >
-              Forgot password?
-            </Link>
-          </Grid>
+              <Grid item xs={12}>
+                <Button
+                  href="#"
+                  size="large"
+                  variant="contained"
+                  endIcon={<LoginIcon />}
+                  sx={styles?.button}
+                  onClick={handleSubmit}
+                >
+                  Sign in - Existing User
+                </Button>
+              </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              href="#"
-              size="large"
-              variant="contained"
-              endIcon={<LoginIcon />}
-              sx={{
-                width: "100%",
-                backgroundColor: "#FFD232",
-                color: "#0D0934",
-              }}
-              onClick={handleSubmit}
-            >
-              Sign in - Existing User
-            </Button>
-          </Grid>
+              {/* <SocialLogin /> */}
 
-          {/* <SocialLogin /> */}
+              <Grid item xs={12}>
+                <Divider light sx={{ my: 2 }}></Divider>
+              </Grid>
 
-          <Grid
-            item
-            xs={12}
-            columnSpacing={1}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                display: "inline",
-              }}
-            >
-              Don&apos;t have an account?
-            </Typography>
-            <Link
-              href="/auth/registerExisting"
-              variant="body1"
-              sx={{
-                paddingLeft: "4px",
-                color: "#0D0934",
-              }}
-            >
-              Sign Up
-            </Link>
-          </Grid>
-        </Grid>
-      </Container>
+              <Grid item xs={12} columnSpacing={1} sx={styles?.signUpWrapper}>
+                <Typography variant="body1">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/auth/registerExisting"
+                    variant="body1"
+                    sx={styles?.link}
+                  >
+                    Sign Up
+                  </Link>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
     </>
   );
 };
