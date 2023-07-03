@@ -2,14 +2,15 @@ import { styled, useTheme } from "@mui/material/styles";
 import { Box, Stack, AppBar, Toolbar, IconButton } from "@mui/material";
 import Logo from "../../../components/logo";
 import DarkLogo from "src/components/dark-logo/";
-import AccountPopover from "./AccountPopover";
-import NotificationsPopover from "./NotificationsPopover";
+import NotificationsPopover from "../../NotificationsPopover";
 import SearchBarContainer from "../../../components/search-bar/SearchBarContainer";
 import SearchBarMin from "../../../components/search-bar/SearchBarMin";
 import useResponsive from "../../../hooks/useResponsive";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { AuthValidate } from "src/models/AuthValidate";
+import AccountPopover from "src/layouts/AccountPopover";
+import LanguagePopover from "src/layouts/LanguagePopover";
 
 const HEADER_MOBILE = 48;
 const HEADER_DESKTOP = 48;
@@ -79,10 +80,11 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
             {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
-
+        
         {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
-
+       
         <Box sx={{ flexGrow: 1 }} />
+        <LanguagePopover />
         {authValidate && authValidate.isUserValidated && (
           <Stack
             direction="row"
@@ -92,6 +94,7 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
               sm: 1,
             }}
           >
+           
             <NotificationsPopover />
             <AccountPopover />
           </Stack>

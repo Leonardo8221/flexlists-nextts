@@ -1,13 +1,11 @@
-import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
 import { useState } from 'react';
-// @mui
 import {
   Box,
   List,
-  Badge,
+  // Badge,
   Button,
   Avatar,
   Tooltip,
@@ -20,13 +18,10 @@ import {
   ListItemAvatar,
   ListItemButton,
 } from '@mui/material';
-// utils
-import { fToNow } from '../../../utils/formatTime';
-// components
-import Iconify from '../../../components/iconify';
-import Scrollbar from '../../../components/scrollbar';
-
-// ----------------------------------------------------------------------
+import { useTheme } from '@mui/material/styles';
+import { fToNow } from '../utils/formatTime';
+import Iconify from '../components/iconify';
+import Scrollbar from '../components/scrollbar';
 
 const NOTIFICATIONS = [
   {
@@ -77,6 +72,8 @@ const NOTIFICATIONS = [
 ];
 
 export default function NotificationsPopover() {
+  const theme = useTheme();
+
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
@@ -102,11 +99,27 @@ export default function NotificationsPopover() {
 
   return (
     <>
-      <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
+      {/* <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
         <Badge badgeContent={totalUnRead} color="error">
           <Iconify icon="eva:bell-fill" />
         </Badge>
-      </IconButton>
+      </IconButton> */}
+
+      <Box
+        component="span"
+        className="svg-color"
+        sx={{
+          width: 22,
+          height: 20,
+          display: 'inline-block',
+          backgroundImage: `url(/assets/icons/header/${theme.palette.mode === 'light' ? 'notification' : 'notification_dark'}.svg)`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          cursor: 'pointer',
+          mr: 1
+        }}
+        onClick={handleOpen}
+      />
 
       <Popover
         open={Boolean(open)}

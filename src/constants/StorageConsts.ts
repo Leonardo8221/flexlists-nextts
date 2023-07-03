@@ -1,3 +1,3 @@
-export class LocalStorageConst {
-    public static readonly Token = "Token";
+export namespace LocalStorageConst {
+    export const Language = "language";
 }

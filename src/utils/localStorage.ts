@@ -1,10 +1,10 @@
 import { LocalStorageConst } from '../constants/StorageConsts';
-export function storeToken(token: string) {
-    localStorage.setItem(LocalStorageConst.Token, token);
+export function storeLanguage(language: string) {
+    localStorage.setItem(LocalStorageConst.Language, language);
 }
-export function getToken() {
-    return localStorage.getItem(LocalStorageConst.Token);
+export function getLanguage() {
+    return localStorage.getItem(LocalStorageConst.Language);
 }
-export function removeToken() {
-    return localStorage.removeItem(LocalStorageConst.Token);
+export function removeLanguage() {
+    return localStorage.removeItem(LocalStorageConst.Language);
 }

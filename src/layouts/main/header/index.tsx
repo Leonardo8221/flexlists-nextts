@@ -14,6 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import menuConfig from './MenuConfig';
+import LanguagePopover from 'src/layouts/LanguagePopover';
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -115,8 +116,9 @@ function Header() {
           >
             LOGO
           </Typography>
-          {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-          </Box> */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <LanguagePopover />
+          </Box>
           <Box sx={{ flexGrow: 1,justifyContent:'flex-end', display: { xs: 'none', md: 'flex' } }}>
             {menuConfig.map((menu) => (
               <NextLink key={menu.title} href = {menu.path} style={{ textDecoration: 'none' }}>

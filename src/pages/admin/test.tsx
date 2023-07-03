@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { Box } from "@mui/material";
 import { getTranslations, t } from "src/utils/i18n";
 import { GetServerSideProps } from "next";
+import LanguagePopover from "src/layouts/LanguagePopover";
 
 type ContentTestProps = {
     };
@@ -13,6 +14,10 @@ const  ContentTest = ({ translation  }:ContentTestProps&{translation:Translation
         
     }
     return (
+        <>
+        <div>
+            <LanguagePopover/>
+        </div>
         <div>
             <h1>{i18n('Welcome')}</h1>
             <div dangerouslySetInnerHTML={{ __html: i18n('Description') }} />
@@ -29,6 +34,8 @@ const  ContentTest = ({ translation  }:ContentTestProps&{translation:Translation
                 src={i18n('ImageUrl')}
             />
         </div>
+        </>
+        
     )
 }
 // This gets called on every request

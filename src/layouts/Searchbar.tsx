@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } from '@mui/material';
 // utils
-import { bgBlur } from '../../../utils/cssStyles';
+import { bgBlur } from '../utils/cssStyles';
 // component
-import Iconify from '../../../components/iconify';
-import customShadows from '../../../theme/customShadows';
+import Iconify from '../components/iconify';
+import customShadows from '../theme/customShadows';
 
 // ----------------------------------------------------------------------
 

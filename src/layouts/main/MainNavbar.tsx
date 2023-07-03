@@ -12,6 +12,7 @@ import MenuDesktop from './MenuDesktop';
 import navConfig from './MenuConfig';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import LanguagePopover from '../LanguagePopover';
 
 // ----------------------------------------------------------------------
 
@@ -108,6 +109,7 @@ export default function MainNavbar() {
             <Typography sx={{ ml: 1, color: 'text.secondary', cursor: 'pointer' }} onClick={() => gotoSignin()}>
               Sign in
             </Typography>
+            <LanguagePopover/>
           </MHidden>
 
           {/* <MHidden width="mdUp">
