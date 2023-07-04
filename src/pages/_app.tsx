@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import store from "../redux/store";
 import "../styles/globals.css";
 import LoadingPage from "./LoadingPage";
+import FlashMessage from "src/components/FlashMessage";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -18,6 +19,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Provider store={store}>
           <AuthGuard>
             <LoadingPage>
+              <FlashMessage />
               <Component {...pageProps} />
             </LoadingPage>
           </AuthGuard>

@@ -7,26 +7,26 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
-import { setMessage } from "src/redux/actions/authAction";
+import { setFlashMessage } from "src/redux/actions/authAction";
 type FlashMessageProps = {
-   message:FlashMessageModel|undefined;
-   setMessage: (message: FlashMessageModel|undefined) => void;
+   flashMessage:FlashMessageModel|undefined;
+   setFlashMessage: (message: FlashMessageModel|undefined) => void;
 };
-const FlashMessage = ({message,setMessage}:FlashMessageProps) => {
+const FlashMessage = ({flashMessage,setFlashMessage: setFlashMessage}:FlashMessageProps) => {
     const router = useRouter();
     const [flash, setFlash] = useState<FlashMessageModel| undefined>(undefined);
     const flashHandleClose = () => {
         setFlash(undefined)
-        setMessage(undefined)
+        setFlashMessage(undefined)
       };
     useEffect(() => {
         function checkMessage() {
-          if (message?.message) {
-            setFlash(message)
+          if (flashMessage?.message) {
+            setFlash(flashMessage)
           }
         }
         checkMessage()
-      }, [message, router.isReady])
+      }, [flashMessage, router.isReady])
       
     return flash && flash.message ?(
         
@@ -44,11 +44,11 @@ const FlashMessage = ({message,setMessage}:FlashMessageProps) => {
 }
  
 const mapStateToProps = (state: any) => ({
-    message: state.auth.message,
+    flashMessage: state.auth.flashMessage,
   });
   
   const mapDispatchToProps = {
-    setMessage,
+    setFlashMessage,
   };
   
   export default connect(mapStateToProps, mapDispatchToProps)(FlashMessage);

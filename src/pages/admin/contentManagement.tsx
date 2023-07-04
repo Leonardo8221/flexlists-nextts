@@ -1,32 +1,27 @@
 import {
-  Alert,
-    AlertColor,
-    Box, Button, Snackbar, Tab, Tabs,
+  Box, Button, Tab, Tabs,
   } from "@mui/material";
-  import React, { ChangeEvent, useEffect } from "react";
+  import React, { ChangeEvent } from "react";
   import { useState } from "react";
   import { connect } from "react-redux";
-  import saveAs from 'file-saver';
 import { exportContentManagement, importContentManagement } from "src/services/admin/contentManagement.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
-import { b64toBlob } from "src/utils/convertUtils";
-import { setMessage } from "src/redux/actions/authAction";
+import { setFlashMessage } from "src/redux/actions/authAction";
 import { useRouter } from "next/router";
 import MainLayout from "src/layouts/admin";
-import FlashMessage from "src/components/FlashMessage";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ContentsBuilder from "src/sections/contentManagement/contentsBuilder";
 import ContentsEditor from "src/sections/contentManagement/contentsEditor";
+import { b64toBlob } from "src/utils/convertUtils";
+import saveAs from "file-saver";
 
   type ContentMangementProps = {
-    message: any;
-    setMessage: (message:FlashMessageModel|undefined) => void;
+    setFlashMessage: (message:FlashMessageModel|undefined) => void;
   };
   
 const ContentManagement = ({
-  message,
-  setMessage
+  setFlashMessage
   }: ContentMangementProps) => {
     const router = useRouter()
     const [currentTab, setCurrentTab] = useState("Content Builder");
@@ -50,11 +45,11 @@ const ContentManagement = ({
       if(isSucc(response)){
           const blob =  b64toBlob(response.data, "application/json");
           saveAs(blob, `contentManagement.json`);
-          setMessage({message:"Exporting Content Management Successfully",type:"success"})
+          setFlashMessage({message:"Exporting Content Management Successfully",type:"success"})
       }
       else
       {
-        setMessage({message:(response as FlexlistsError).message,type:"error"})
+        setFlashMessage({message:(response as FlexlistsError).message,type:"error"})
       }
     }
   const handleImportContentManagement = async(e: ChangeEvent<HTMLInputElement>) =>
@@ -69,18 +64,17 @@ const ContentManagement = ({
         var response = await importContentManagement(formData);
         if(isSucc(response))
         {
-          setMessage({message:"Importing Content Management Successfully",type:"success"})
+          setFlashMessage({message:"Importing Content Management Successfully",type:"success"})
         }
         else
         {
-          setMessage({message:(response as FlexlistsError).message,type:"error"})
+          setFlashMessage({message:(response as FlexlistsError).message,type:"error"})
         }
     }
   }
 
     return (
         <MainLayout>
-          <FlashMessage />
         <Box>
          <Box sx={{float:'right', marginTop:2}}>
             <Button
@@ -126,11 +120,10 @@ const ContentManagement = ({
   };
  
   const mapStateToProps = (state: any) => ({
-    message: state.auth.message,
   });
   
   const mapDispatchToProps = {
-    setMessage,
+    setFlashMessage,
   };
   
   export default connect(mapStateToProps, mapDispatchToProps)(ContentManagement);
