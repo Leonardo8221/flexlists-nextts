@@ -36,7 +36,7 @@ export const PATH_AUTH_API = {
 }
 const ROOTS_ADMIN = "/admin";
 export const PATH_ADMIN = {
-  contentKeys: path(ROOTS_ADMIN, "/contentKeys"),
+  contentManagement: path(ROOTS_ADMIN, "/contentManagement"),
   contentsBuilder: path(ROOTS_ADMIN, "/contentsBuilder"),
   contentsEditor: path(ROOTS_ADMIN, "/contentsEditor")
 };
