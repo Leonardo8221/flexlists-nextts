@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { Icon } from "@iconify/react";
+
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import * as React from "react";
@@ -17,11 +18,17 @@ import {
   ListItem,
   ListSubheader,
   CardActionArea,
-  Button,
-  Menu,
-  MenuItem,
+  Typography,
+  Divider,
 } from "@mui/material";
 import { useRouter } from "next/router";
+import { light } from "@mui/material/styles/createPalette";
+// --------------------------------ICONS--------------------------------------
+
+import { OndemandVideo as TutorialsIcon } from "@mui/icons-material/";
+import { Topic as DocsIcon } from "@mui/icons-material/";
+import { CoPresent as WebinarsIcon } from "@mui/icons-material/";
+import { Newspaper as BlogIcon } from "@mui/icons-material/";
 
 // ----------------------------------------------------------------------
 
@@ -75,6 +82,7 @@ type MenuDesktopItemProps = {
   isOpen: boolean;
   onOpen: (value: any) => void;
   onClose: (value: any) => void;
+  styles?: any;
 };
 
 type ItemProps = {
@@ -92,6 +100,7 @@ function MenuDesktopItem({
   isOffset,
   onOpen,
   onClose,
+  styles,
 }: MenuDesktopItemProps) {
   const { title, path, children } = item;
   const isActive = pathname === path;
@@ -225,13 +234,42 @@ function MenuDesktopItem({
   }
 
   if (title === "Documentation") {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const openDropdown = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      setAnchorEl(event.currentTarget);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleOpen = () => {
+      setIsOpen(true);
     };
-    const handleCloseDropdown = () => {
-      setAnchorEl(null);
+
+    const handleClose = () => {
+      setIsOpen(false);
+    };
+    styles = {
+      docsWrapper: {
+        position: "absolute",
+        top: "96px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "white",
+        width: "50%",
+        color: "black",
+        display: "flex",
+        gap: 4,
+        padding: 2,
+        boxShadow: "0 12px 24px 0 rgba(0,0,0,.1)",
+      },
+      docsTitle: {
+        textTransform: "uppercase",
+        color: "#666",
+        letterSpacing: "2px",
+      },
+      docsLink: {
+        textDecoration: "none",
+        color: "#111",
+        py: 0.5,
+        "&:hover": {
+          opacity: 0.75,
+        },
+      },
     };
     return (
       <>
@@ -245,29 +283,116 @@ function MenuDesktopItem({
             //   ...(isOffset && { color: "text.primary" }),
             //   ...(isActive && { color: "primary.main" }),
           }}
-          onClick={handleClick}
+          onClick={handleOpen}
         >
           {title}
         </LinkStyle>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={openDropdown}
-          onClose={handleCloseDropdown}
-          MenuListProps={{
-            "aria-labelledby": "docs-btn",
-          }}
-        >
-          <MenuItem
-            component={"a"}
-            href="main/documentation"
-            onClick={handleCloseDropdown}
-          >
-            Profile
-          </MenuItem>
-          <MenuItem onClick={handleCloseDropdown}>My account</MenuItem>
-          <MenuItem onClick={handleCloseDropdown}>Logout</MenuItem>
-        </Menu>
+        {isOpen && (
+          <Box sx={styles?.docsWrapper} onClick={handleClose}>
+            <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <DocsIcon sx={{ color: "#903cde" }} />
+                <Typography variant="subtitle2" sx={styles?.docsTitle}>
+                  Docs
+                </Typography>
+              </Box>
+              <Divider light sx={{ my: 2 }}></Divider>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Adding new list
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting users
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting groups
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Key sharing
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Creating new view
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                View permissions
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Comments section
+              </Link>
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <TutorialsIcon sx={{ color: "#deb33c" }} />
+                <Typography variant="subtitle2" sx={styles?.docsTitle}>
+                  Tutorials
+                </Typography>
+              </Box>
+              <Divider light sx={{ my: 2 }}></Divider>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Adding new list
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting users
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting groups
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Key sharing
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                List sharing
+              </Link>
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <WebinarsIcon sx={{ color: "#3c8dde" }} />
+                <Typography variant="subtitle2" sx={styles?.docsTitle}>
+                  Webinars
+                </Typography>
+              </Box>
+              <Divider light sx={{ my: 2 }}></Divider>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Adding new list
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting users
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting groups
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Key sharing
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                List sharing
+              </Link>
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <BlogIcon sx={{ color: "#de3c3c" }} />
+                <Typography variant="subtitle2" sx={styles?.docsTitle}>
+                  Blogs
+                </Typography>
+              </Box>
+              <Divider light sx={{ my: 2 }}></Divider>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Adding new list
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting users
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Inviting groups
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                Key sharing
+              </Link>
+              <Link sx={styles?.docsLink} href="/documentation">
+                List sharing
+              </Link>
+            </Box>
+          </Box>
+        )}
       </>
     );
   }
