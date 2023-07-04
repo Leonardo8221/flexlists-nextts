@@ -1,5 +1,7 @@
+import { SystemRole } from "src/enums/SystemRole";
+
 export type AuthValidate = {
     isUserValidated: boolean;
     isKeyValidated: boolean;
-    user?: { userId: number, userName: string,firstName:string,lastName:string ;};
+    user?: { userId: number, userName: string,firstName:string,lastName:string ; systemRole: SystemRole};
 };

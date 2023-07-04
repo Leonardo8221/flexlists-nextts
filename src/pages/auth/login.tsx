@@ -25,7 +25,7 @@ import { useRouter } from "next/router";
 import { authService } from "../../services/auth.service";
 import Iconify from "../../components/iconify";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
-import { PATH_ADMIN, PATH_AUTH, PATH_MAIN } from "src/routes/paths";
+import { PATH_ADMIN, PATH_AUTH, PATH_MAIN, getRolePathDefault } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { SystemRole } from "src/enums/SystemRole";
@@ -96,11 +96,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           message: "Login successful, going to your Dashboard!",
           type: "success",
         });
-        if (response.data.systemRole === SystemRole.User) {
-          await router.push({ pathname: PATH_MAIN.views });
-        } else {
-          await router.push({ pathname: PATH_ADMIN.contentManagement });
-        }
+        await router.push({ pathname: getRolePathDefault(response.data.systemRole)});
 
         return;
       }
