@@ -1,34 +1,34 @@
-import { Icon } from '@iconify/react';
-import homeFill from '@iconify/icons-eva/home-fill';
-import fileFill from '@iconify/icons-eva/file-fill';
+import { Icon } from "@iconify/react";
+import homeFill from "@iconify/icons-eva/home-fill";
+import fileFill from "@iconify/icons-eva/file-fill";
 
 // ----------------------------------------------------------------------
 
 const ICON_SIZE = {
   width: 22,
-  height: 22
+  height: 22,
 };
 
 const menuConfig = [
   {
-    title: 'Product',
+    title: "Docs item 1",
     icon: <Icon icon={homeFill} {...ICON_SIZE} />,
-    path: '/product'
+    path: "/docs1",
   },
   {
-    title: 'Solutions',
+    title: "Docs item 2",
     icon: <Icon icon={fileFill} {...ICON_SIZE} />,
-    path: '/solutions'
+    path: "/docs2",
   },
   {
-    title: 'Pricing',
+    title: "Docs item 3",
     icon: <Icon icon={fileFill} {...ICON_SIZE} />,
-    path: '/pricing'
+    path: "/docs3",
   },
   {
-    title: 'Marketplace',
+    title: "Docs item 4",
     icon: <Icon icon={fileFill} {...ICON_SIZE} />,
-    path: '/marketplace'
+    path: "/docs4",
   },
 ];
 

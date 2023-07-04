@@ -1,27 +1,31 @@
-import { useMemo, useState } from 'react';
-import { CssBaseline, Box } from '@mui/material';
-import { ThemeProvider as MUIThemeProvider, createTheme, StyledEngineProvider } from '@mui/material/styles';
-import { palette_dark, palette_light } from './palette';
-import shadows from './shadows';
-import typography from './typography';
-import GlobalStyles from './globalStyles';
-import customShadows from './customShadows';
-import componentsOverride from './overrides';
-import { useRouter } from 'next/router';
+import { useMemo, useState } from "react";
+import { CssBaseline, Box } from "@mui/material";
+import {
+  ThemeProvider as MUIThemeProvider,
+  createTheme,
+  StyledEngineProvider,
+} from "@mui/material/styles";
+import { palette_dark, palette_light } from "./palette";
+import shadows from "./shadows";
+import typography from "./typography";
+import GlobalStyles from "./globalStyles";
+import customShadows from "./customShadows";
+import componentsOverride from "./overrides";
+import { useRouter } from "next/router";
 
 type ThemeProviderProps = {
-  children: any
+  children: any;
 };
 
-export default function ThemeProvider({ children }:ThemeProviderProps) {
-  const [mode, setMode] = useState('light');
+export default function ThemeProvider({ children }: ThemeProviderProps) {
+  const [mode, setMode] = useState("light");
   const router = useRouter();
 
-  const themeOptions : any = useMemo(
+  const themeOptions: any = useMemo(
     () => ({
       palette: {
         mode: mode,
-        palette_style: mode === 'light' ? palette_light: palette_dark
+        palette_style: mode === "light" ? palette_light : palette_dark,
       },
       shape: { borderRadius: 6 },
       typography,
@@ -32,7 +36,7 @@ export default function ThemeProvider({ children }:ThemeProviderProps) {
   );
 
   const handleMode = () => {
-    setMode(mode === 'dark' ? 'light' : 'dark');
+    setMode(mode === "dark" ? "light" : "dark");
   };
 
   const theme = createTheme(themeOptions);
@@ -43,7 +47,7 @@ export default function ThemeProvider({ children }:ThemeProviderProps) {
       <MUIThemeProvider theme={theme}>
         <CssBaseline />
         <GlobalStyles />
-        {router.pathname !== '/' && !router.pathname.includes('auth') && !router.pathname.includes('dashboard') && <Box
+        {/* {router.pathname !== '/' && !router.pathname.includes('auth') && !router.pathname.includes('dashboard') && <Box
           component="span"
           className="svg-color"
           sx={{
@@ -60,7 +64,7 @@ export default function ThemeProvider({ children }:ThemeProviderProps) {
             top: {xs: '12px', lg: '11px'}
           }}
           onClick={handleMode}
-        />}
+        />} */}
         {children}
       </MUIThemeProvider>
     </StyledEngineProvider>
