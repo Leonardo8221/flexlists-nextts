@@ -99,11 +99,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
         if (response.data.systemRole === SystemRole.User) {
           await router.push({ pathname: PATH_MAIN.views });
         } else {
-          if (response.data.systemRole === SystemRole.ContentEditor) {
-            await router.push({ pathname: PATH_ADMIN.contentsEditor });
-          } else {
-            await router.push({ pathname: PATH_ADMIN.contentsBuilder });
-          }
+          await router.push({ pathname: PATH_ADMIN.contentManagement });
         }
 
         return;

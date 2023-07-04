@@ -15,6 +15,9 @@ import { useRouter } from "next/router";
 import MainLayout from "src/layouts/admin";
 import FlashMessage from "src/components/FlashMessage";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
+import GroupsIcon from "@mui/icons-material/Groups";
+import ContentsBuilder from "src/sections/contentManagement/contentsBuilder";
+import ContentsEditor from "src/sections/contentManagement/contentsEditor";
 
   type ContentMangementProps = {
     message: any;
@@ -26,9 +29,18 @@ const ContentManagement = ({
   setMessage
   }: ContentMangementProps) => {
     const router = useRouter()
-    const [currentTab, setCurrentTab] = useState("Users");
+    const [currentTab, setCurrentTab] = useState("Content Builder");
     const tabs: any[] = [
-        
+      {
+        value: "Content Builder",
+        icon: <GroupsIcon />,
+        component: <ContentsBuilder  />,
+      },
+      {
+        value: "Content Editor",
+        icon: <GroupsIcon />,
+        component: <ContentsEditor  />,
+      },
     ];
     const changeTab = (value: any) => {
       setCurrentTab(value);

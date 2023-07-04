@@ -24,7 +24,8 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
     async function initialize() {
       const path = url.split('/')[1];
      
-      setAuthValidate(getAuthValidatePayLoad());
+      let authValidate = getAuthValidatePayLoad();
+      setAuthValidate(authValidate);
       if (path == 'auth' || path == '') {
         var isValidated: Boolean = false;
         try {

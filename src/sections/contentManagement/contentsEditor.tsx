@@ -1,6 +1,5 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import { Button, Box, Card, Grid, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography, MenuItem, ListItemIcon, Autocomplete, Alert } from '@mui/material';
-import MainLayout from 'src/layouts/admin/MainLayout';
 import Scrollbar from 'src/components/scrollbar';
 import { connect } from 'react-redux';
 import { AuthValidate } from 'src/models/AuthValidate';
@@ -186,7 +185,7 @@ const ContentEditor = ({authValidate,languages}:ContentEditorProps) => {
     return marked(markdown);
   };
   return (
-    <MainLayout>
+    <>
        {/* <Container> */}
        <Grid container spacing={2}>
           <Grid item xs={3}>
@@ -364,7 +363,7 @@ const ContentEditor = ({authValidate,languages}:ContentEditorProps) => {
           </Grid>
        </Grid>
     {/* </Container> */}
-    </MainLayout>
+    </>
   );
 };
 const mapStateToProps = (state: any) => ({

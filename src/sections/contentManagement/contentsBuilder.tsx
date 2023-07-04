@@ -1,6 +1,5 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import {  Box, Button, Card, Grid, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography } from '@mui/material';
-import MainLayout from 'src/layouts/admin/MainLayout';
 import Scrollbar from 'src/components/scrollbar';
 import ContentMangementForm from 'src/sections/admin/ContentMangementForm';
 import { connect } from 'react-redux';
@@ -16,7 +15,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import TranslationKeyForm from 'src/sections/admin/TranslationKeyForm';
 import { TranslationKeyDto } from 'src/models/TranslationKeyDto';
 import { TranslationKeyType } from 'src/enums/SharedEnums';
-import { translationKeyService } from 'src/services/admin/translationKey.service';
 
 type ContentBuilderProps = {
   authValidate: AuthValidate;
@@ -159,7 +157,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
     }
   }
   return (
-    <MainLayout>
+    <>
        {/* <Container> */}
        <Grid container spacing={2}>
           <Grid item xs={3}>
@@ -277,7 +275,7 @@ const ContentBuilder = ({authValidate}:ContentBuilderProps) => {
        }
         
     {/* </Container> */}
-    </MainLayout>
+    </>
   );
 };
 const mapStateToProps = (state: any) => ({
