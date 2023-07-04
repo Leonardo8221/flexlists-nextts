@@ -6,17 +6,15 @@ Snackbar
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setMessage } from "src/redux/actions/authAction";
 type FlashMessageProps = {
-   autoHideDuration?: number; 
-   vertical?: 'top' | 'bottom';
-   horizontal?: 'left' | 'center' | 'right';
-   message:{message:string,type:string};
-   setMessage: (message: {message:string,type:string}|undefined) => void;
+   message:FlashMessageModel|undefined;
+   setMessage: (message: FlashMessageModel|undefined) => void;
 };
-const FlashMessage = ({autoHideDuration,vertical,horizontal,message,setMessage}:FlashMessageProps) => {
+const FlashMessage = ({message,setMessage}:FlashMessageProps) => {
     const router = useRouter();
-    const [flash, setFlash] = useState<{ message: string; type: string } | undefined>(undefined);
+    const [flash, setFlash] = useState<FlashMessageModel| undefined>(undefined);
     const flashHandleClose = () => {
         setFlash(undefined)
         setMessage(undefined)
@@ -30,17 +28,19 @@ const FlashMessage = ({autoHideDuration,vertical,horizontal,message,setMessage}:
         checkMessage()
       }, [message, router.isReady])
       
-    return(
+    return flash && flash.message ?(
+        
         <Snackbar 
              open={flash !== undefined} 
-             anchorOrigin={{ vertical:vertical??'bottom', horizontal:horizontal??'left' }}
-             autoHideDuration={autoHideDuration??6000} 
+             anchorOrigin={{ vertical:flash?.vertical??'bottom', horizontal:flash?.horizontal??'left' }}
+             autoHideDuration={flash?.autoHideDuration??6000} 
              onClose={flashHandleClose}>
           <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
             {flash?.message}
           </Alert>
         </Snackbar>
-    )
+    ):
+    <></>
 }
  
 const mapStateToProps = (state: any) => ({

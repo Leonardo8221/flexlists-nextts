@@ -71,4 +71,17 @@ async function downloadFile(id:string): Promise<FlexlistsError|FlexlistsSuccess<
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<any>>('/api/contentManagement/downloadFile'+`?id=${id}`)
   return response.data;
 };
+export async function exportContentManagement(): Promise<FlexlistsError|FlexlistsSuccess<any>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<any>>('/api/contentManagement/exportContentManagement')
+  return response.data;
+};
+export async function importContentManagement(contentManagementImportExport:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/contentManagement/importContentManagement`, contentManagementImportExport,
+  {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  })
 
+  return response.data;
+};
