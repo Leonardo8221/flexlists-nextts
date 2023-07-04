@@ -32,7 +32,7 @@ const ContentEditor = ({authValidate,languages}:ContentEditorProps) => {
   useEffect(() => {
     async function fetchContentManagements() {
       let response = await contentManagementService.getAllContentManagement()
-      if(isSucc(response))
+      if(isSucc(response) && response.data.length>0)
       {
         setContentManagements(response.data as ContentManagementDto[])
         setFilteredContentManagements(response.data as ContentManagementDto[])
