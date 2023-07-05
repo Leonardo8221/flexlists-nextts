@@ -47,7 +47,15 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
-
+  //logout if user go to login page
+  useEffect(() => {
+    async function initialize() {
+       await authService.logout();
+    }
+    if (router.isReady) {
+      initialize();
+    }
+  },[router.isReady])
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
