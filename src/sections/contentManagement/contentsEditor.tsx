@@ -294,7 +294,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
           </Card>
         </Grid>
         <Grid item xs={9}>
-          <Card sx={{ p: 3, pt: 0, height: "80vh", overflowY: "auto" }}>
+          <Box sx={{ p: 3, pt: 0, height: "80vh", overflowY: "auto" }}>
             <Stack>
               <Box>
                 {successMessage && (
@@ -368,11 +368,25 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                 </Button>
               </Grid>
             </Grid>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <Box
+              sx={{
+                pt: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+              }}
+            >
               {translationTexts &&
                 translationTexts.map((translationText, index) => {
                   return (
-                    <Stack key={index}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                      }}
+                      key={index}
+                    >
                       {translationText.translationKeyType ===
                         TranslationKeyType.Text && (
                         <TextField
@@ -387,19 +401,17 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                       )}
                       {translationText.translationKeyType ===
                         TranslationKeyType.Image && (
-                        <Stack
-                          key={index}
-                          direction={{ xs: "column", md: "row" }}
-                          spacing={5}
-                        >
+                        <Box sx={{ display: "flex", flexDirection: "column" }}>
                           <Box
                             component="img"
-                            sx={{
-                              height: 233,
-                              width: 350,
-                              maxHeight: { xs: 233, md: 167 },
-                              maxWidth: { xs: 350, md: 250 },
-                            }}
+                            sx={
+                              {
+                                // height: 233,
+                                // width: 350,
+                                // maxHeight: { xs: 233, md: 167 },
+                                // maxWidth: { xs: 350, md: 250 },
+                              }
+                            }
                             alt="no-image"
                             src={
                               translationText.translation
@@ -416,11 +428,20 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                               }
                             />
                           </Box>
-                        </Stack>
+                        </Box>
                       )}
                       {translationText.translationKeyType ===
                         TranslationKeyType.Html && (
-                        <Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 1,
+                            "& .ql-editor": {
+                              height: "250px",
+                            },
+                          }}
+                        >
                           <Typography variant="subtitle2" gutterBottom>
                             {translationText.translationKey}
                           </Typography>
@@ -434,7 +455,16 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                       )}
                       {translationText.translationKeyType ===
                         TranslationKeyType.Markdown && (
-                        <Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 1,
+                            "& .ql-editor": {
+                              height: "250px",
+                            },
+                          }}
+                        >
                           <Typography variant="subtitle2" gutterBottom>
                             {translationText.translationKey}
                           </Typography>
@@ -451,11 +481,11 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                           />
                         </Box>
                       )}
-                    </Stack>
+                    </Box>
                   );
                 })}
             </Box>
-          </Card>
+          </Box>
         </Grid>
       </Grid>
       {/* </Container> */}
