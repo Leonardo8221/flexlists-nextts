@@ -12,19 +12,18 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { useRouter } from "next/router";
 import MainLayout from "src/layouts/admin";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
-import GroupsIcon from "@mui/icons-material/Groups";
 import ContentsBuilder from "src/sections/contentManagement/contentsBuilder";
 import ContentEditor from "src/sections/contentManagement/contentsEditor";
 import { Construction as BuilderIcon } from "@mui/icons-material/";
 import { EditNote as EditorIcon } from "@mui/icons-material/";
 import FlashMessage from "src/components/FlashMessage";
+import { b64toBlob } from "src/utils/convertUtils";
 
 type ContentMangementProps = {
-  message: any;
-  setMessage: (message: FlashMessageModel | undefined) => void;
+  setFlashMessage: (message: FlashMessageModel | undefined) => void;
 };
 
-const ContentManagement = ({ message, setMessage }: ContentMangementProps) => {
+const ContentManagement = ({ setFlashMessage }: ContentMangementProps) => {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState("Content Builder");
   const tabs: any[] = [
@@ -47,12 +46,12 @@ const ContentManagement = ({ message, setMessage }: ContentMangementProps) => {
     if (isSucc(response)) {
       const blob = b64toBlob(response.data, "application/json");
       saveAs(blob, `contentManagement.json`);
-      setMessage({
+      setFlashMessage({
         message: "Exporting Content Management Successfully",
         type: "success",
       });
     } else {
-      setMessage({
+      setFlashMessage({
         message: (response as FlexlistsError).message,
         type: "error",
       });
@@ -70,12 +69,12 @@ const ContentManagement = ({ message, setMessage }: ContentMangementProps) => {
       formData.append("file", file);
       var response = await importContentManagement(formData);
       if (isSucc(response)) {
-        setMessage({
+        setFlashMessage({
           message: "Importing Content Management Successfully",
           type: "success",
         });
       } else {
-        setMessage({
+        setFlashMessage({
           message: (response as FlexlistsError).message,
           type: "error",
         });
@@ -142,11 +141,10 @@ const ContentManagement = ({ message, setMessage }: ContentMangementProps) => {
 };
 
 const mapStateToProps = (state: any) => ({
-  message: state.auth.message,
 });
 
 const mapDispatchToProps = {
-  setMessage,
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContentManagement);
