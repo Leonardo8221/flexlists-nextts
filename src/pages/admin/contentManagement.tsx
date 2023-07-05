@@ -1,13 +1,20 @@
 import {
   Alert,
-    AlertColor,
-    Box, Button, Snackbar, Tab, Tabs,
-  } from "@mui/material";
-  import React, { ChangeEvent, useEffect } from "react";
-  import { useState } from "react";
-  import { connect } from "react-redux";
-  import saveAs from 'file-saver';
-import { exportContentManagement, importContentManagement } from "src/services/admin/contentManagement.service";
+  AlertColor,
+  Box,
+  Button,
+  Snackbar,
+  Tab,
+  Tabs,
+} from "@mui/material";
+import React, { ChangeEvent, useEffect } from "react";
+import { useState } from "react";
+import { connect } from "react-redux";
+import saveAs from "file-saver";
+import {
+  exportContentManagement,
+  importContentManagement,
+} from "src/services/admin/contentManagement.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { b64toBlob } from "src/utils/convertUtils";
 import { setMessage } from "src/redux/actions/authAction";
@@ -18,81 +25,101 @@ import { FlashMessageModel } from "src/models/FlashMessageModel";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ContentsBuilder from "src/sections/contentManagement/contentsBuilder";
 import ContentsEditor from "src/sections/contentManagement/contentsEditor";
+import { Construction as BuilderIcon } from "@mui/icons-material/";
+import { EditNote as EditorIcon } from "@mui/icons-material/";
 
-  type ContentMangementProps = {
-    message: any;
-    setMessage: (message:FlashMessageModel|undefined) => void;
+type ContentMangementProps = {
+  message: any;
+  setMessage: (message: FlashMessageModel | undefined) => void;
+};
+
+const ContentManagement = ({ message, setMessage }: ContentMangementProps) => {
+  const router = useRouter();
+  const [currentTab, setCurrentTab] = useState("Content Builder");
+  const tabs: any[] = [
+    {
+      value: "Content Builder",
+      icon: <BuilderIcon />,
+      component: <ContentsBuilder />,
+    },
+    {
+      value: "Content Editor",
+      icon: <EditorIcon />,
+      component: <ContentsEditor />,
+    },
+  ];
+  const changeTab = (value: any) => {
+    setCurrentTab(value);
   };
-  
-const ContentManagement = ({
-  message,
-  setMessage
-  }: ContentMangementProps) => {
-    const router = useRouter()
-    const [currentTab, setCurrentTab] = useState("Content Builder");
-    const tabs: any[] = [
-      {
-        value: "Content Builder",
-        icon: <GroupsIcon />,
-        component: <ContentsBuilder  />,
-      },
-      {
-        value: "Content Editor",
-        icon: <GroupsIcon />,
-        component: <ContentsEditor  />,
-      },
-    ];
-    const changeTab = (value: any) => {
-      setCurrentTab(value);
-    };
-    const exportContentManagementFile = async() => {
-      var response = await exportContentManagement();
-      if(isSucc(response)){
-          const blob =  b64toBlob(response.data, "application/json");
-          saveAs(blob, `contentManagement.json`);
-          setMessage({message:"Exporting Content Management Successfully",type:"success"})
-      }
-      else
-      {
-        setMessage({message:(response as FlexlistsError).message,type:"error"})
-      }
+  const exportContentManagementFile = async () => {
+    var response = await exportContentManagement();
+    if (isSucc(response)) {
+      const blob = b64toBlob(response.data, "application/json");
+      saveAs(blob, `contentManagement.json`);
+      setMessage({
+        message: "Exporting Content Management Successfully",
+        type: "success",
+      });
+    } else {
+      setMessage({
+        message: (response as FlexlistsError).message,
+        type: "error",
+      });
     }
-  const handleImportContentManagement = async(e: ChangeEvent<HTMLInputElement>) =>
-  {
+  };
+  const handleImportContentManagement = async (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
     if (!e.target.files) {
       return;
     }
     const file = e.target.files[0];
     if (file) {
       const formData = new FormData();
-        formData.append("file", file);
-        var response = await importContentManagement(formData);
-        if(isSucc(response))
-        {
-          setMessage({message:"Importing Content Management Successfully",type:"success"})
-        }
-        else
-        {
-          setMessage({message:(response as FlexlistsError).message,type:"error"})
-        }
+      formData.append("file", file);
+      var response = await importContentManagement(formData);
+      if (isSucc(response)) {
+        setMessage({
+          message: "Importing Content Management Successfully",
+          type: "success",
+        });
+      } else {
+        setMessage({
+          message: (response as FlexlistsError).message,
+          type: "error",
+        });
+      }
     }
-  }
+  };
 
-    return (
-        <MainLayout>
-          <FlashMessage />
-        <Box>
-         <Box sx={{float:'right', marginTop:2}}>
-            <Button
-                    component="label"
-                    variant="contained"
-                    sx={{ marginRight: "1rem" }}
-            >
-                 Import <input type="file" accept=".json" hidden onChange={handleImportContentManagement} />
-            </Button>
-            <Button variant="contained" onClick={()=>{exportContentManagementFile()}}>Export</Button>
-         </Box>
-         <Box borderBottom={"solid 1px"} borderColor={"divider"}>
+  return (
+    <MainLayout removeFooter={true}>
+      <FlashMessage />
+      <Box>
+        <Box sx={{ float: "right", marginTop: 2, mr: 2 }}>
+          <Button
+            component="label"
+            variant="contained"
+            sx={{ marginRight: "1rem" }}
+          >
+            Import{" "}
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleImportContentManagement}
+            />
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              exportContentManagementFile();
+            }}
+          >
+            Export
+          </Button>
+        </Box>
+        <Box borderBottom={"solid 1px"} borderColor={"divider"}>
           <Tabs
             value={currentTab}
             scrollButtons="auto"
@@ -115,22 +142,20 @@ const ContentManagement = ({
 
         <Box sx={{ mb: 5 }} />
         {tabs.map((tab) => {
-            const isMatched = tab.value === currentTab;
-            return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-          })}
-        </Box>
-        </MainLayout>
-       
-        
-    );
-  };
- 
-  const mapStateToProps = (state: any) => ({
-    message: state.auth.message,
-  });
-  
-  const mapDispatchToProps = {
-    setMessage,
-  };
-  
-  export default connect(mapStateToProps, mapDispatchToProps)(ContentManagement);
+          const isMatched = tab.value === currentTab;
+          return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+        })}
+      </Box>
+    </MainLayout>
+  );
+};
+
+const mapStateToProps = (state: any) => ({
+  message: state.auth.message,
+});
+
+const mapDispatchToProps = {
+  setMessage,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContentManagement);

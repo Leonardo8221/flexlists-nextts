@@ -2,7 +2,6 @@ import { useState, ReactNode, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Header from "./header";
 import Nav from "./nav";
-import Footer from "./footer";
 import { getAvailableFieldUiTypes } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
@@ -28,10 +27,10 @@ const Main = styled("div")(({ theme }) => ({
     paddingBottom: 0,
   },
   display: "flex",
-  height: "calc(100% - 40px)",
+  // height: "calc(100% - 40px)",
   overflow: "hidden",
   [theme.breakpoints.up("md")]: {
-    height: "calc(100vh - 40px)",
+    // height: "calc(100vh - 40px)",
   },
 }));
 
@@ -58,7 +57,7 @@ type MainLayoutProps = {
 const MainLayout = ({
   children,
   removeFooter = false,
-  disableOverflow = false
+  disableOverflow = false,
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
@@ -79,15 +78,11 @@ const MainLayout = ({
           {children}
         </Content>
       </Main>
-      
     </StyledRoot>
   );
 };
-const mapStateToProps = (state: any) => ({
-});
+const mapStateToProps = (state: any) => ({});
 
-const mapDispatchToProps = {
-
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);
