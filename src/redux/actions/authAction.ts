@@ -41,3 +41,7 @@ export const setMessage = (message: any) => ({
     type: 'SET_MESSAGE',
     payload: message
 });
+export const setFlashMessage = (message: any) => ({
+    type: 'SET_FLASH_MESSAGE',
+    payload: message
+});

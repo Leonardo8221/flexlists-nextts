@@ -1,12 +1,4 @@
-import {
-  Alert,
-  AlertColor,
-  Box,
-  Button,
-  Snackbar,
-  Tab,
-  Tabs,
-} from "@mui/material";
+import { Box, Button, Tab, Tabs } from "@mui/material";
 import React, { ChangeEvent, useEffect } from "react";
 import { useState } from "react";
 import { connect } from "react-redux";
@@ -16,17 +8,16 @@ import {
   importContentManagement,
 } from "src/services/admin/contentManagement.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
-import { b64toBlob } from "src/utils/convertUtils";
-import { setMessage } from "src/redux/actions/authAction";
+import { setFlashMessage } from "src/redux/actions/authAction";
 import { useRouter } from "next/router";
 import MainLayout from "src/layouts/admin";
-import FlashMessage from "src/components/FlashMessage";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ContentsBuilder from "src/sections/contentManagement/contentsBuilder";
-import ContentsEditor from "src/sections/contentManagement/contentsEditor";
+import ContentEditor from "src/sections/contentManagement/contentsEditor";
 import { Construction as BuilderIcon } from "@mui/icons-material/";
 import { EditNote as EditorIcon } from "@mui/icons-material/";
+import FlashMessage from "src/components/FlashMessage";
 
 type ContentMangementProps = {
   message: any;
@@ -45,7 +36,7 @@ const ContentManagement = ({ message, setMessage }: ContentMangementProps) => {
     {
       value: "Content Editor",
       icon: <EditorIcon />,
-      component: <ContentsEditor />,
+      component: <ContentEditor />,
     },
   ];
   const changeTab = (value: any) => {

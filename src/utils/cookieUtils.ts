@@ -1,3 +1,5 @@
+import { AuthValidate } from "src/models/AuthValidate";
+
 export function getCookieValue(cookieName: string): string | null {
   const cookieString = document.cookie;
   const cookieArray = cookieString.split(';');
@@ -9,7 +11,7 @@ export function getCookieValue(cookieName: string): string | null {
   }
   return null;
 }   
-export function getAuthValidatePayLoad():any{
+export function getAuthValidatePayLoad():AuthValidate{
   try{
       const cookieValue = getCookieValue('authValidate');
       

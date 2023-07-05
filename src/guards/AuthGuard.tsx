@@ -2,10 +2,12 @@ import { useState, ReactNode, useEffect } from 'react';
 import  { Router, useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
 import { isSucc } from 'src/models/ApiResponse';
-import { PATH_MAIN } from 'src/routes/paths';
+import { PATH_MAIN, getRolePathDefault } from 'src/routes/paths';
 import { setAuthValidate, setLoading } from 'src/redux/actions/adminAction';
 import { connect } from 'react-redux';
 import { getAuthValidatePayLoad } from 'src/utils/cookieUtils';
+import { getRole } from 'src/repositories/roleRepository';
+import { SystemRole } from 'src/enums/SystemRole';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +27,7 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
       const path = url.split('/')[1];
      
       let authValidate = getAuthValidatePayLoad();
+      console.log(authValidate)
       setAuthValidate(authValidate);
       if (path == 'auth' || path == '') {
         var isValidated: Boolean = false;
@@ -37,7 +40,7 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
         }
         if (isValidated) {
           await router.push({
-            pathname: PATH_MAIN.views
+            pathname: getRolePathDefault(authValidate?.user?.systemRole??SystemRole.User)
           });
         }
       }
