@@ -15,15 +15,23 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
   };
 
   return (
-    <ReactQuill
-      style={styles}
-      value={value}
-      onChange={(newValue, delta, source) => {
-        if (source === "user") {
-          handleEditorChange(newValue);
-        }
+    <Box
+      sx={{
+        "& .ql-editor": {
+          height: "250px",
+        },
       }}
-    />
+    >
+      <ReactQuill
+        // style={styles}
+        value={value}
+        onChange={(newValue, delta, source) => {
+          if (source === "user") {
+            handleEditorChange(newValue);
+          }
+        }}
+      />
+    </Box>
   );
 };
 

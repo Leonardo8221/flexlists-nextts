@@ -437,9 +437,6 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                             display: "flex",
                             flexDirection: "column",
                             gap: 1,
-                            "& .ql-editor": {
-                              height: "250px",
-                            },
                           }}
                         >
                           <Typography variant="subtitle2" gutterBottom>
@@ -460,9 +457,6 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                             display: "flex",
                             flexDirection: "column",
                             gap: 1,
-                            "& .ql-editor": {
-                              height: "250px",
-                            },
                           }}
                         >
                           <Typography variant="subtitle2" gutterBottom>
