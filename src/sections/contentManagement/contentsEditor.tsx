@@ -229,7 +229,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
       {/* <Container> */}
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <Card sx={{ p: 3, height: "80vh", overflowY: "scroll" }}>
+          <Card sx={{ p: 3, height: "80vh", overflowY: "auto" }}>
             <Box sx={{ width: "100%" }}>
               <TextField
                 key={"search bar"}
@@ -294,7 +294,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
           </Card>
         </Grid>
         <Grid item xs={9}>
-          <Card sx={{ p: 3, height: "80vh", overflowY: "scroll" }}>
+          <Card sx={{ p: 3, pt: 0, height: "80vh", overflowY: "auto" }}>
             <Stack>
               <Box>
                 {successMessage && (
@@ -303,7 +303,17 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
               </Box>
               <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
             </Stack>
-            <Grid container sx={{ mb: 3 }}>
+            <Grid
+              container
+              sx={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "white !important",
+                width: "100%",
+                zIndex: 999,
+                py: 2,
+              }}
+            >
               <Grid item xs={3}>
                 {selectedLanguage && (
                   <Autocomplete
@@ -365,21 +375,15 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                     <Stack key={index}>
                       {translationText.translationKeyType ===
                         TranslationKeyType.Text && (
-                        <Stack
-                          key={index}
-                          direction={{ xs: "column", md: "row" }}
-                          spacing={5}
-                        >
-                          <TextField
-                            fullWidth
-                            key={`input - ${index}`}
-                            label={translationText.translationKey}
-                            value={translationText.translation}
-                            onChange={(e) => {
-                              onTranslationTextChange(e, translationText);
-                            }}
-                          />
-                        </Stack>
+                        <TextField
+                          fullWidth
+                          key={`input - ${index}`}
+                          label={translationText.translationKey}
+                          value={translationText.translation}
+                          onChange={(e) => {
+                            onTranslationTextChange(e, translationText);
+                          }}
+                        />
                       )}
                       {translationText.translationKeyType ===
                         TranslationKeyType.Image && (

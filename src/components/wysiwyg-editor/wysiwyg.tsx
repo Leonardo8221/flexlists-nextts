@@ -17,7 +17,7 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
   };
 
   return (
-    <Box sx={{ minHeight: "400px" }}>
+    <Box sx={{ height: "300px" }}>
       <ReactQuill
         style={styles}
         value={value}
