@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const styles = {
-  height: "300px",
+  height: "100%",
 };
 type WysiwygEditorProps = {
   value: string;
@@ -18,14 +18,14 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
 
   return (
     <Box sx={{ minHeight: "400px" }}>
-      <ReactQuill 
-      style={styles}  
-      value={value} 
-      onChange={(newValue, delta, source) => {
-        if (source === 'user') {
-          handleEditorChange(newValue);
-        }
-      }} 
+      <ReactQuill
+        style={styles}
+        value={value}
+        onChange={(newValue, delta, source) => {
+          if (source === "user") {
+            handleEditorChange(newValue);
+          }
+        }}
       />
     </Box>
   );

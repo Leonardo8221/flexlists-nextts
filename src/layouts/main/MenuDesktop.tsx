@@ -101,15 +101,13 @@ function MenuDesktopItem({
 }: MenuDesktopItemProps) {
   const { title, path, children } = item;
   const isActive = pathname === path;
-  const [isOpen,setIsOpen] = useState(false);
-  const handleClose = () => 
-  {
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => {
     setIsOpen(false);
-  }
-  const handleOpen = () => 
-  {
+  };
+  const handleOpen = () => {
     setIsOpen(true);
-  }
+  };
   // if (children) {
   //   return (
   //     <div key={title}>
@@ -249,37 +247,31 @@ function MenuDesktopItem({
         ...(isOffset && { color: "text.primary" }),
         ...(isActive && { color: "primary.main" }),
       }}
-      
     >
-           <span onClick={(e)=>handleOpen()}>{title}</span>    
-          {
-            title === "Documentation" && 
-           
-              <Popover
-                open={isOpen}
-                anchorReference="anchorPosition"
-                onClose={handleClose}
-                anchorPosition={{ top: 90, left: 0 }}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                transformOrigin={{ vertical: "top", horizontal: "center" }}
-                PaperProps={{
-                  sx: {
-                    px: 3,
-                    pt: 5,
-                    pb: 3,
-                    right: 16,
-                    margin: "auto",
-                    minHeight: 500,
-                    maxWidth: 1280,
-                    borderRadius: 2,
-                    boxShadow: (theme) => theme.shadows[24],
-                  },
-                }}
-              >
-                <DocumentationMenu />
-              </Popover>
-           
-      }
+      <span onClick={(e) => handleOpen()}>{title}</span>
+      {title === "Documentation" && (
+        <Popover
+          open={isOpen}
+          anchorReference="anchorPosition"
+          onClose={handleClose}
+          anchorPosition={{ top: 96, left: 0 }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
+          PaperProps={{
+            sx: {
+              p: 3,
+              right: 16,
+              margin: "auto",
+              minHeight: 500,
+              maxWidth: 1280,
+              borderRadius: 2,
+              boxShadow: (theme) => theme.shadows[24],
+            },
+          }}
+        >
+          <DocumentationMenu />
+        </Popover>
+      )}
     </LinkStyle>
   );
 }
@@ -298,7 +290,7 @@ export default function MenuDesktop({
   const router = useRouter();
   const pathname = router.pathname;
   const [open, setOpen] = useState(false);
-  
+
   useEffect(() => {
     if (open) {
       handleClose();
