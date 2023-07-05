@@ -305,7 +305,7 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
           </Card>
         </Grid>
         <Grid item xs={9}>
-          <Card sx={{ p: 3, minHeight: "80vh" }}>
+          <Card sx={{ p: 3, pb: 0, height: "80vh", overflowY: "scroll" }}>
             {translationKeys &&
               translationKeys.length > 0 &&
               translationKeys.map((translationKey, index) => {
@@ -375,17 +375,16 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
                   </Stack>
                 );
               })}
-            {/* <Divider light sx={{ my: 2 }}></Divider> */}
             <Stack
               direction={{ xs: "column", md: "row" }}
               sx={{
                 justifyContent: "flex-end",
-                position: "absolute",
+                position: "sticky",
                 bottom: 0,
                 right: 0,
-                mb: 3,
-                pt: 3,
+                py: 2,
                 mr: 3,
+                backgroundColor: "white",
                 width: "100%",
                 borderTop: "1px solid",
                 borderColor: theme.palette.palette_style.grey[200],
