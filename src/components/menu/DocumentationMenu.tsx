@@ -1,50 +1,33 @@
-
 import * as React from "react";
 // material
-import {
-  Box,
-  Link,
-  Typography,
-  Divider,
-} from "@mui/material";
+import { Box, Link, Typography, Divider } from "@mui/material";
 import { OndemandVideo as TutorialsIcon } from "@mui/icons-material/";
 import { Topic as DocsIcon } from "@mui/icons-material/";
 import { CoPresent as WebinarsIcon } from "@mui/icons-material/";
 import { Newspaper as BlogIcon } from "@mui/icons-material/";
 const styles = {
-    docsWrapper: {
-      position: "absolute",
-      top: "96px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      backgroundColor: "white",
-      width: "50%",
-      color: "black",
-      display: "flex",
-      gap: 4,
-      padding: 2,
-      boxShadow: "0 12px 24px 0 rgba(0,0,0,.1)",
+  docsWrapper: {
+    display: "flex",
+    gap: 4,
+  },
+  docsTitle: {
+    textTransform: "uppercase",
+    color: "#666",
+    letterSpacing: "2px",
+  },
+  docsLink: {
+    textDecoration: "none",
+    color: "#111",
+    py: 0.5,
+    "&:hover": {
+      opacity: 0.75,
     },
-    docsTitle: {
-      textTransform: "uppercase",
-      color: "#666",
-      letterSpacing: "2px",
-    },
-    docsLink: {
-      textDecoration: "none",
-      color: "#111",
-      py: 0.5,
-      "&:hover": {
-        opacity: 0.75,
-      },
-    },
-  };
-type DocumentationMenuProps = {
-}
+  },
+};
+type DocumentationMenuProps = {};
 export default function DocumentationMenu({}: DocumentationMenuProps) {
-   
-   return (
-    <Box sx={styles?.docsWrapper} >
+  return (
+    <Box sx={styles?.docsWrapper}>
       <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <DocsIcon sx={{ color: "#903cde" }} />
@@ -52,7 +35,7 @@ export default function DocumentationMenu({}: DocumentationMenuProps) {
             Docs
           </Typography>
         </Box>
-         <Divider light sx={{ my: 2 }}></Divider>
+        <Divider light sx={{ my: 2 }}></Divider>
         <Link sx={styles?.docsLink} href="/documentation">
           Adding new list
         </Link>
@@ -148,5 +131,5 @@ export default function DocumentationMenu({}: DocumentationMenuProps) {
         </Link>
       </Box>
     </Box>
-  )
+  );
 }
