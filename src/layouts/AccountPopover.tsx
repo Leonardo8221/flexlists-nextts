@@ -10,9 +10,10 @@ import {
   IconButton,
   Popover,
 } from "@mui/material";
-import account from "../_mock/account";
 import { useRouter } from "next/router";
 import { authService } from "src/services/auth.service";
+import { connect } from "react-redux";
+import { AuthValidate } from "src/models/AuthValidate";
 
 const MENU_OPTIONS = [
   // {
@@ -24,8 +25,10 @@ const MENU_OPTIONS = [
     icon: "eva:settings-2-fill",
   },
 ];
-
-export default function AccountPopover() {
+type AccountPopoverProps = {
+  authValidate : AuthValidate
+}
+const AccountPopover = ({authValidate} : AccountPopoverProps) => {
   const [open, setOpen] = useState(null);
   const router = useRouter();
   const handleOpen = (event: any) => {
@@ -66,7 +69,7 @@ export default function AccountPopover() {
       >
         <Avatar
           sx={{ width: 30, height: 30 }}
-          src={account.photoURL}
+          src={'/assets/images/avatars/avatar_default.jpg'}
           alt="photoURL"
         />
       </IconButton>
@@ -92,10 +95,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+           {authValidate?.user?.firstName} {authValidate?.user?.lastName}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            {account.email}
+            {authValidate?.user?.email}
           </Typography>
         </Box>
 
@@ -118,3 +121,13 @@ export default function AccountPopover() {
     </>
   );
 }
+
+const mapStateToProps = (state: any) => ({
+  authValidate: state.admin.authValidate
+});
+
+const mapDispatchToProps = {
+  
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountPopover);
