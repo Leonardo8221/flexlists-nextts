@@ -1,10 +1,17 @@
 import axios from 'axios';
-import { de } from 'date-fns/locale';
 import { setLoading } from 'src/redux/actions/adminAction';
 import store from 'src/redux/store';
 import { PATH_AUTH, PATH_AUTH_API } from 'src/routes/paths';
 // ----------------------------------------------------------------------
-
+const ignore = [
+  PATH_AUTH_API.verifyToken,
+  PATH_AUTH_API.resendSignupEmail,
+  PATH_AUTH_API.verifySignup,
+  PATH_AUTH_API.verifyPasswordChange,
+  PATH_AUTH_API.forgotPassword,
+  PATH_AUTH_API.resetPassword,
+  PATH_AUTH_API.registerExisting
+]
 const axiosInstance = axios.create({ withCredentials: true, baseURL: process.env.NEXT_PUBLIC_FLEXLIST_API_URL });
 
 axiosInstance.interceptors.request.use(function (config) {
@@ -14,9 +21,17 @@ axiosInstance.interceptors.request.use(function (config) {
 axiosInstance.interceptors.response.use(
   (response) => {
     store.dispatch(setLoading(false))
-    //console.log('response1')
     if(response && response.data && response.data.code === 999){
       response.data.message = 'Unknown Error, please try again.'
+    }
+    if (
+      response && response.data && response.data.code=== 401 
+    ) {
+      const url = response?.config?.url;
+      if(url &&!ignore.some((path: string) => url.indexOf(path) > -1))
+      {
+        window.location.href = PATH_AUTH.login
+      }
     }
     return response
   },
@@ -24,17 +39,6 @@ axiosInstance.interceptors.response.use(
 
     const originalRequest = error.config
     store.dispatch(setLoading(false))
-
-    const ignore = [
-      PATH_AUTH_API.verifyToken,
-      PATH_AUTH_API.resendSignupEmail,
-      PATH_AUTH_API.verifySignup,
-      PATH_AUTH_API.verifyPasswordChange,
-      PATH_AUTH_API.forgotPassword,
-      PATH_AUTH_API.resetPassword,
-      PATH_AUTH_API.registerExisting
-    ]
-
     if (
       error.response.status === 401 &&
       !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1)

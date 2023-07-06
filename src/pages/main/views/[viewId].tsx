@@ -48,21 +48,21 @@ export  function ListDetail({currentView,getCurrentView,columns,fetchColumns,fet
       fetchRowsByPage(0,currentView.limit??25);
     }
   }, [router.isReady,currentView?.id]);
-  useEffect(() => {
-    if(router.query.viewId)
-    {
-      const handleRouteChange = (url:string) => {
-        router.reload();
-      };
+  // useEffect(() => {
+  //   if(router.query.viewId)
+  //   {
+  //     const handleRouteChange = (url:string) => {
+  //       router.reload();
+  //     };
   
-      router.events.on('routeChangeComplete', handleRouteChange);
+  //     router.events.on('routeChangeComplete', handleRouteChange);
   
-      return () => {
-        router.events.off('routeChangeComplete', handleRouteChange);
-      };
-    }
+  //     return () => {
+  //       router.events.off('routeChangeComplete', handleRouteChange);
+  //     };
+  //   }
    
-  }, [router.query.viewId]);
+  // }, [router.query.viewId]);
   return (
         currentView && columns && columns.length>0 ?
         (

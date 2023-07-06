@@ -106,6 +106,7 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
     var createViewResponse = await listViewService.createView(currentView.listId, viewName, viewType, config)
     if (isSucc(createViewResponse) && createViewResponse.data && createViewResponse.data.viewId) {
       await router.push(`${PATH_MAIN.views}/${createViewResponse.data.viewId}`);
+      router.reload();
       // setSteps(0);
       // setViewType(ViewType.List);
       closeModal();
