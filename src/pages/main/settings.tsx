@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Grid, Box } from "@mui/material";
-import VerticalTabs from "src/components/profile-settings/VerticalTabs";
+import VerticalTabs from "src/sections/settings/VerticalTabs";
 import MainLayout from "src/layouts/view/MainLayout";
 
 function Settings() {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
-import IconUploadButton from "src/components/groups/UploadButton";
+import IconUploadButton from "src/sections/groups/UploadButton";
 import { useRouter } from "next/router";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";

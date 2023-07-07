@@ -19,7 +19,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { SelectChangeEvent } from "@mui/material/Select";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import GroupMembers from "src/components/groups/groupMembers";
+import GroupMembers from "src/sections/groups/groupMembers";
 import ViewCard from "src/sections/@view/ViewCard";
 import { useRouter } from "next/router";
 import {

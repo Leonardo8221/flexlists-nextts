@@ -26,6 +26,7 @@ export const PATH_MAIN = {
   groups: path(ROOTS_MAIN, "/groups"),
   newGroup: path(ROOTS_MAIN, "/groups/newGroup"),
   migratedLists: path(ROOTS_MAIN, "/migrate"),
+  settings: path(ROOTS_MAIN, "/settings"),
 };
 export const PATH_AUTH_API = {
   verifyToken: path(ROOTS_AUTH, "/verifyToken"),

@@ -17,9 +17,10 @@ import {
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import UserListAccess from "src/components/list-access/UserListAccess";
+import UserListAccess from "src/sections/list-access/UserListAccess";
+import GroupListAccess from "src/sections/list-access/GroupListAccess";
 import { SelectChangeEvent } from "@mui/material/Select";
-import ManageKeys from "src/components/share-list/ManageKeys";
+import ManageKeys from "src/sections/share-list/ManageKeys";
 import { connect } from "react-redux";
 import { RoleLabel } from "src/enums/ShareEnumLabels";
 import { Role } from "src/enums/SharedEnums";
@@ -34,7 +35,6 @@ import { listViewService } from "src/services/listView.service";
 import { GetKeysForViewOutputDto, GetUserContactsOutputDto, GetUserGroupsOutputDto, GetViewGroupsOutputDto } from "src/models/ApiOutputModels";
 import { convertToInteger } from "src/utils/convertUtils";
 import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
-import GroupListAccess from "src/components/list-access/GroupListAccess";
 import { groupService } from "src/services/group.service";
 
 type ShareListProps = {

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Container, Box, Typography, Button, Grid } from "@mui/material";
 import MainLayout from "src/layouts/view/MainLayout";
-import GroupCard from "src/components/groups/groupCard";
+import GroupCard from "src/sections/groups/groupCard";
 import { GetUserGroupsOutputDto } from "src/models/ApiOutputModels";
 import { useRouter } from "next/router";
 import { fetchGroups } from "src/redux/actions/groupAction";

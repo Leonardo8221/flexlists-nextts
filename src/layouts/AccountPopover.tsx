@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { authService } from "src/services/auth.service";
 import { connect } from "react-redux";
 import { AuthValidate } from "src/models/AuthValidate";
+import { PATH_MAIN } from "src/routes/paths";
 
 const MENU_OPTIONS = [
   // {
@@ -23,6 +24,7 @@ const MENU_OPTIONS = [
   {
     label: "Settings",
     icon: "eva:settings-2-fill",
+    path: PATH_MAIN.settings
   },
 ];
 type AccountPopoverProps = {
@@ -35,8 +37,9 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const selectMenu = (path:string) => {
     setOpen(null);
+    router.push(path);
   };
 
   const logout = async () => {
@@ -77,7 +80,7 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
       <Popover
         open={Boolean(open)}
         anchorEl={open}
-        onClose={handleClose}
+        onClose={selectMenu}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{
@@ -106,7 +109,7 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={option.label} onClick={()=>selectMenu(option.path)}>
               {option.label}
             </MenuItem>
           ))}

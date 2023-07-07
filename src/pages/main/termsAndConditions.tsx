@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Container, Typography } from "@mui/material";
-import TermsTabs from "src/components/terms-and-conditions/TermsTabs";
+import TermsTabs from "src/sections/terms-and-conditions/TermsTabs";
 function TermsAndConditions() {
   return (
     <Container maxWidth="xl" sx={{ px: { xs: 0, md: 4 } }}>
