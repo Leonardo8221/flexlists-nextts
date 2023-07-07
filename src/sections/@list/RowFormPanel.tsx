@@ -30,7 +30,8 @@ import { filter } from 'lodash';
 import { ErrorConsts } from 'src/constants/errorConstants';
 import ChatForm from './chat/ChatForm';
 import { ChatType } from 'src/enums/ChatType';
-
+import { DatePicker } from '@mui/x-date-pickers';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 interface RowFormProps {
   currentView: ViewField;
   rowData: any;
@@ -163,6 +164,19 @@ const RowFormPanel = ({currentView, rowData, open, columns, comment, onClose, on
     }
     setValues({ ...values, [columnId]: date.toISOString() })
   }
+  const setTimeValue = (columnId:number,time : Dayjs|null) =>
+  {
+     if(time == null)
+    {
+      return;
+    }
+    setValues({ ...values, [columnId]: time })
+    // if(typeof time === 'string')
+    // {
+    //   setValues({ ...values, [columnId]: time })
+    //   return
+    // }
+  }
   const renderField = (column : ViewField) =>
   {
      switch (column.uiField) {
@@ -220,7 +234,6 @@ const RowFormPanel = ({currentView, rowData, open, columns, comment, onClose, on
         required={column.required}
         error={submit && column.required && !values[column.id]}
       />
-      case FieldUiTypeEnum.Date:
       case FieldUiTypeEnum.DateTime:
         return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
         <DateTimePicker
@@ -228,6 +241,30 @@ const RowFormPanel = ({currentView, rowData, open, columns, comment, onClose, on
             label={column.name}
             onChange={(x) => {
               setDateValue(column.id,x)
+            }
+            }
+            className={submit&& column.required && !values[column.id] ? 'Mui-error' : ''}
+          />
+      </LocalizationProvider>
+      case FieldUiTypeEnum.Date:
+        return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+        <DatePicker
+            value={dayjs(values[column.id])}
+            label={column.name}
+            onChange={(x) => {
+              setDateValue(column.id,x)
+            }
+            }
+            className={submit&& column.required && !values[column.id] ? 'Mui-error' : ''}
+          />
+      </LocalizationProvider>
+      case FieldUiTypeEnum.Time:
+        return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+        <TimePicker
+            value={dayjs(values[column.id])}
+            label={column.name}
+            onChange={(x) => {
+              setTimeValue(column.id,x)
             }
             }
             className={submit&& column.required && !values[column.id] ? 'Mui-error' : ''}

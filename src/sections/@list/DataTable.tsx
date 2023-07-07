@@ -156,7 +156,7 @@ const DataTable = ({
                     {cellValue}
                   </Box>
                 );
-              case FieldType.Date:
+              
               case FieldType.DateTime:
               case FieldType.Time:
                 return (
@@ -170,6 +170,20 @@ const DataTable = ({
                     }}
                   >
                     {new Date(cellValue).toLocaleString()}
+                  </Box>
+                );
+              case FieldType.Date:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {new Date(cellValue).toLocaleDateString()}
                   </Box>
                 );
               case FieldType.Text:

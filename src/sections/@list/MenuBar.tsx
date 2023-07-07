@@ -34,6 +34,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
   const handleMenu = async (id: string) => {
     // setSelectedViewId(value);
     await router.push(`${PATH_MAIN.views}/${id}`);
+    router.reload()
   };
   useEffect(() => {
     async function fetchData() {
