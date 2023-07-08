@@ -223,7 +223,7 @@ export default function TourView() {
           {HomeCards.map((card: any) => {
             return (
               <Grid item xs={12} sm={6} md={3} key={card.icon}>
-                <HomeCard icon={card.icon} title={card.title} description={card.description} button={card.button}></HomeCard>
+                <HomeCard icon={card.icon} title={card.title} description={card.description} button={card.button} link=''></HomeCard>
               </Grid>
             )
           })}

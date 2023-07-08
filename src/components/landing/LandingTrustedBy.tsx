@@ -84,9 +84,10 @@ export default function LandingTrustedBy() {
             pt: 0,
           }}
         >
-          {FeatureCards.map((card: any) => {
+          {FeatureCards.map((card: any,index:number) => {
             return (
               <FeatureCard
+                key = {index}
                 icon={card.icon}
                 title={card.title}
                 description={card.description}

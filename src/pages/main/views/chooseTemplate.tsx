@@ -63,7 +63,7 @@ interface ChooseTemplateProps {
   setMessage: (message: any) => void;
 }
 
-function chooseTemplate({ message, setMessage }: ChooseTemplateProps) {
+function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
   // error handling
   const router = useRouter();
   const [flash, setFlash] = useState<
@@ -202,4 +202,4 @@ const mapDispatchToProps = {
   setMessage,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(chooseTemplate);
+export default connect(mapStateToProps, mapDispatchToProps)(ChooseTemplate);

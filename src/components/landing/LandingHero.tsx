@@ -44,7 +44,7 @@ export default function LandingHero() {
             </Typography>
             <Typography variant="h5" sx={{ fontWeight: 400 }}>
               Dear Valued User, As a loyal user of our database product we want
-              to share some great news with you. We're thrilled to announce that
+              to share some great news with you. We&apos;re thrilled to announce that
               our team has been working tirelessly over the past 12 months on a
               significant update to the platform, which will soon be relaunched
               with cutting-edge features and improvements. Thanks to successful
