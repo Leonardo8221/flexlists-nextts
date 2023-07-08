@@ -263,6 +263,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
       opacity: 0.2,
       zIndex: 1,
       filter: "blur(100px)",
+      transform: "translate3d(0, 0, 0)"
     },
     rightBoxGrid: {
       py: 4,
@@ -407,21 +408,21 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
               {/* <Grid item container>
             {error && <Alert severity="error">{error}</Alert>}
           </Grid> */}
-          {
-            isReservedUserName && <Grid item xs={12}>
-            <Box>
-                <Typography
-                        variant="body2"
-                        component={"div"}
-                      >
-                        User name already existed in previous version. please pick another or 
-                        click <Link sx={styles?.link} href="/auth/loginExisting">
-                          Login
-                        </Link> to login to an existing account
-                      </Typography>
-                </Box>
-          </Grid>
-          }
+              {
+                isReservedUserName && <Grid item xs={12}>
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      component={"div"}
+                    >
+                      User name already existed in previous version. please pick another or
+                      click <Link sx={styles?.link} href="/auth/loginExisting">
+                        Login
+                      </Link> to login to an existing account
+                    </Typography>
+                  </Box>
+                </Grid>
+              }
               <Grid item container columnSpacing={2}>
                 <Grid item xs={6}>
                   <TextField

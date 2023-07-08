@@ -333,6 +333,7 @@ const Register = ({
       opacity: 0.2,
       zIndex: 1,
       filter: "blur(100px)",
+      transform: "translate3d(0, 0, 0)"
     },
     rightBoxGrid: {
       py: 4,
