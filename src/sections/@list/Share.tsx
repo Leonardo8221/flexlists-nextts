@@ -32,7 +32,12 @@ import { accountService } from "src/services/account.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { validateEmail } from "src/utils/validateUtils";
 import { listViewService } from "src/services/listView.service";
-import { GetKeysForViewOutputDto, GetUserContactsOutputDto, GetUserGroupsOutputDto, GetViewGroupsOutputDto } from "src/models/ApiOutputModels";
+import {
+  GetKeysForViewOutputDto,
+  GetUserContactsOutputDto,
+  GetUserGroupsOutputDto,
+  GetViewGroupsOutputDto,
+} from "src/models/ApiOutputModels";
 import { convertToInteger } from "src/utils/convertUtils";
 import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
 import { groupService } from "src/services/group.service";
@@ -42,8 +47,9 @@ type ShareListProps = {
   handleClose: () => void;
   users: any[];
   viewGroups: any[];
-  setViewUsers:(newUsers:any[])=>void
-  setViewGroups:(newViewGroups:GetViewGroupsOutputDto[])=>void
+  setViewUsers: (newUsers: any[]) => void;
+  setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
+  styles?: any;
 };
 
 const style = {
@@ -90,9 +96,9 @@ const ShareList = ({
   users,
   viewGroups,
   setViewUsers,
-  setViewGroups
+  setViewGroups,
+  styles,
 }: ShareListProps) => {
- 
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
   RoleLabel.forEach((value, key) => {
@@ -105,12 +111,20 @@ const ShareList = ({
     {
       value: "Users",
       icon: <PersonIcon />,
-      component: <ShareUsers users={users} roles={roles} setViewUsers= {setViewUsers} />,
+      component: (
+        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} />
+      ),
     },
     {
       value: "Groups",
       icon: <GroupsIcon />,
-      component: <ShareGroups viewGroups={viewGroups} roles={roles} setViewGroups={setViewGroups} />,
+      component: (
+        <ShareGroups
+          viewGroups={viewGroups}
+          roles={roles}
+          setViewGroups={setViewGroups}
+        />
+      ),
     },
     {
       value: "Keys",
@@ -122,6 +136,31 @@ const ShareList = ({
     setCurrentTab(value);
   };
 
+  styles = {
+    modal: {
+      position: "absolute" as "absolute",
+      padding: 2,
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: { xs: "80%", md: "50%" },
+      maxHeight: "80vh",
+      backgroundColor: "white",
+      border: "none",
+      borderRadius: "8px",
+      overflowY: "scroll",
+      display: "flex",
+      flexDirection: "column",
+    },
+    tab: {
+      minWidth: "fit-content",
+      flex: 1,
+    },
+    textField: {
+      height: "36px",
+    },
+  };
+
   return (
     <Modal
       open={open}
@@ -130,14 +169,14 @@ const ShareList = ({
       aria-describedby="modal-modal-description"
     >
       <Box
-        sx={style}
+        sx={styles?.modal}
         component={motion.div}
         variants={scaleUp}
         initial="hidden"
         animate="visible"
         exit="close"
       >
-        <Typography gutterBottom variant="h5" sx={{ my: 1 }}>
+        <Typography gutterBottom variant="h5">
           Share
         </Typography>
         <Box borderBottom={"solid 1px"} borderColor={"divider"}>
@@ -155,13 +194,11 @@ const ShareList = ({
                 label={tab.value}
                 icon={tab.icon}
                 value={tab.value}
-                sx={{ minWidth: "fit-content", flex: 1 }}
+                sx={styles?.tab}
               />
             ))}
           </Tabs>
         </Box>
-
-        <Box sx={{ mb: 5 }} />
 
         {shareTabs.map((tab) => {
           const isMatched = tab.value === currentTab;
@@ -174,91 +211,101 @@ const ShareList = ({
 type ShareUsersProps = {
   users: any[];
   roles: { name: string; label: string }[];
-  setViewUsers: (newUsers:any[])=>void
+  setViewUsers: (newUsers: any[]) => void;
+  styles?: any;
 };
-const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
+const ShareUsers = ({
+  users,
+  roles,
+  setViewUsers,
+  styles,
+}: ShareUsersProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
-  const [contacts,setContacts] = useState<GetUserContactsOutputDto[]>([])
-  const [invitedEmail,setInvitedEmail] = useState<any>('')
-  const [submit,setSubmit] = useState<boolean>(false)
+  const [contacts, setContacts] = useState<GetUserContactsOutputDto[]>([]);
+  const [invitedEmail, setInvitedEmail] = useState<any>("");
+  const [submit, setSubmit] = useState<boolean>(false);
   const [isEmailValid, setEmailValid] = useState(false);
   const [emailDirty, setEmailDirty] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [successMessage,setSuccessMessage] = useState<string>('')
-  useEffect(()=>{
-    async function fetchData ()
-    {
-       var contactsResponse = await accountService.getUserContacts();
-       if(isSucc(contactsResponse) && contactsResponse.data)
-       {
-         setContacts(contactsResponse.data);
-       }
+  const [error, setError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  useEffect(() => {
+    async function fetchData() {
+      var contactsResponse = await accountService.getUserContacts();
+      if (isSucc(contactsResponse) && contactsResponse.data) {
+        setContacts(contactsResponse.data);
+      }
     }
-    if(router.isReady)
-    {
-      fetchData()
+    if (router.isReady) {
+      fetchData();
     }
-  },[router.isReady])
-  const onSubmit = async() =>
-  {
-      if(!router.query.viewId)
-      {
-        setError('view id not exist')
-        return;
+  }, [router.isReady]);
+  const onSubmit = async () => {
+    if (!router.query.viewId) {
+      setError("view id not exist");
+      return;
+    }
+    if (!isEmailValid) return;
+    var existContact = contacts.find((x) => x.email === invitedEmail);
+    setSubmit(true);
+    if (existContact) {
+      let inviteToUserResponse = await listViewService.inviteUserToView(
+        convertToInteger(router.query.viewId),
+        existContact.userId,
+        role
+      );
+      if (isSucc(inviteToUserResponse)) {
+        setSuccessMessage(`Invite to ${invitedEmail} sent`);
+      } else {
+        setError((inviteToUserResponse as FlexlistsError).message);
       }
-      if(!isEmailValid)
-         return;
-      var existContact = contacts.find((x)=>x.email === invitedEmail );
-      setSubmit(true)
-      if(existContact)
-      {
-         let inviteToUserResponse = await listViewService.inviteUserToView(convertToInteger(router.query.viewId),existContact.userId,role)
-         if(isSucc(inviteToUserResponse))
-         {
-          setSuccessMessage(`Invite to ${invitedEmail} sent`)
-         }
-         else
-         {
-          setError((inviteToUserResponse as FlexlistsError).message)
-         }
+    } else {
+      let inviteToEmailResponse = await listViewService.inviteEmailToView(
+        convertToInteger(router.query.viewId),
+        invitedEmail,
+        role
+      );
+      console.log(inviteToEmailResponse);
+      if (isSucc(inviteToEmailResponse)) {
+        console.log("bbbb");
+        setSuccessMessage(`Invite to ${invitedEmail} sent`);
+      } else {
+        setError((inviteToEmailResponse as FlexlistsError).message);
       }
-      else
-      {
-        let inviteToEmailResponse = await listViewService.inviteEmailToView(convertToInteger(router.query.viewId),invitedEmail,role)
-        console.log(inviteToEmailResponse)
-        if(isSucc(inviteToEmailResponse))
-        {
-          console.log('bbbb')
-          setSuccessMessage(`Invite to ${invitedEmail} sent`)
-        }
-        else
-         {
-          setError((inviteToEmailResponse as FlexlistsError).message)
-         }
-      }
+    }
+  };
 
-  }
+  styles = {
+    textField: {
+      height: "36px",
+    },
+  };
   return (
     <>
-      <Typography variant="subtitle1" sx={{ mt: 1 }}>
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>
         Invite user
       </Typography>
+      <Divider></Divider>
+
+      <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Box>
-          {error && <Alert severity="error">{error}</Alert>}
-      </Box>
-      <Box>
-          {submit && successMessage && <Alert severity="success">{successMessage}</Alert>}
+        {submit && successMessage && (
+          <Alert severity="success">{successMessage}</Alert>
+        )}
       </Box>
       <Grid container spacing={2}>
-        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+        <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
           </FormLabel>
-          <Select value={role} onChange={handleSelectRoleChange}>
+          <Select
+            sx={styles?.textField}
+            value={role}
+            onChange={handleSelectRoleChange}
+          >
             {roles &&
               roles.map((role, index) => {
                 return (
@@ -269,23 +316,21 @@ const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
               })}
           </Select>
         </Grid>
-        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+        <Grid item xs={7} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Users</Typography>
           </FormLabel>
           <Autocomplete
-            freeSolo
+            sx={styles?.textField}
+            // freeSolo
             id="free-solo-2-demo"
             disableClearable
             onInputChange={(event, newInputValue) => {
               setInvitedEmail(newInputValue);
-              if(!validateEmail(newInputValue))
-              {
-                 setEmailValid(false)
-              }
-              else
-              {
-                setEmailValid(true)
+              if (!validateEmail(newInputValue)) {
+                setEmailValid(false);
+              } else {
+                setEmailValid(true);
               }
             }}
             options={contacts.map((option) => option.email)}
@@ -295,105 +340,121 @@ const ShareUsers = ({ users, roles,setViewUsers }: ShareUsersProps) => {
                 label="Invite contacts or invite by email ..."
                 InputProps={{
                   ...params.InputProps,
-                  type: 'search',
+                  type: "search",
                 }}
                 required
-                error={emailDirty && isEmailValid === false}                                        
+                error={emailDirty && isEmailValid === false}
                 onBlur={() => setEmailDirty(true)}
+                sx={styles?.textField}
               />
             )}
           />
-         
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={()=>onSubmit()}>
+          <Button variant="contained" fullWidth onClick={() => onSubmit()}>
             Invite
           </Button>
         </Grid>
       </Grid>
-      <UserListAccess users={users} roles={roles}/>
+      <UserListAccess users={users} roles={roles} />
     </>
   );
 };
 
-
 type ShareGroupsProps = {
   viewGroups: GetViewGroupsOutputDto[];
   roles: { name: string; label: string }[];
-  setViewGroups : (newViewGroups:GetViewGroupsOutputDto[]) =>void
+  setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
+  styles?: any;
 };
-const ShareGroups = ({ viewGroups, roles ,setViewGroups}: ShareGroupsProps) => {
+const ShareGroups = ({
+  viewGroups,
+  roles,
+  setViewGroups,
+  styles,
+}: ShareGroupsProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
-  const [submit,setSubmit] = useState<boolean>(false)
-  const [groups,setGroups] = useState<GetUserGroupsOutputDto[]>([])
-  const [currentGroup,setCurrentGroup] = useState<GetUserGroupsOutputDto|null>();
+  const [submit, setSubmit] = useState<boolean>(false);
+  const [groups, setGroups] = useState<GetUserGroupsOutputDto[]>([]);
+  const [currentGroup, setCurrentGroup] =
+    useState<GetUserGroupsOutputDto | null>();
   const [error, setError] = useState<string>("");
-  const [successMessage,setSuccessMessage] = useState<string>('')
-  useEffect(()=>{
-    async function fetchData()
-    {
-        var response = await groupService.getUserGroups();
-       
-        if(isSucc(response) && response.data)
-        {
-          setGroups(response.data)
-        }
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  useEffect(() => {
+    async function fetchData() {
+      var response = await groupService.getUserGroups();
+
+      if (isSucc(response) && response.data) {
+        setGroups(response.data);
+      }
     }
-    if(router.isReady)
-    {
-      fetchData()
+    if (router.isReady) {
+      fetchData();
     }
-  },[router.isReady])
+  }, [router.isReady]);
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
-  const onGroupChange = (newGroup : GetUserGroupsOutputDto|null) =>
-  {
-     setCurrentGroup(newGroup)
-  }
-  const onsubmit = async() =>
-  {
-     setSubmit(true)
-  
-     if(!currentGroup || !currentGroup.groupId)
-     {
-       setError("Group required")
-       setSuccessMessage("");
-       return;
-     }
-     var response = await listViewService.addTableViewToGroup(currentGroup.groupId,convertToInteger(router.query.viewId),role)
-     if(isSucc(response))
-     {
-        setError("");
-        setSuccessMessage("Group added sucessfully");
-        var newViewGroups : GetViewGroupsOutputDto[] = Object.assign([],viewGroups);
-        newViewGroups.push({groupId:currentGroup.groupId,name:currentGroup.name,role:role})
-        setViewGroups(newViewGroups);
-        setCurrentGroup(null)
-     }
-     else
-     {
-        setSuccessMessage("");
-       setError((response as FlexlistsError).message)
-     }
-  }
+  const onGroupChange = (newGroup: GetUserGroupsOutputDto | null) => {
+    setCurrentGroup(newGroup);
+  };
+  const onsubmit = async () => {
+    setSubmit(true);
+
+    if (!currentGroup || !currentGroup.groupId) {
+      setError("Group required");
+      setSuccessMessage("");
+      return;
+    }
+    var response = await listViewService.addTableViewToGroup(
+      currentGroup.groupId,
+      convertToInteger(router.query.viewId),
+      role
+    );
+    if (isSucc(response)) {
+      setError("");
+      setSuccessMessage("Group added sucessfully");
+      var newViewGroups: GetViewGroupsOutputDto[] = Object.assign(
+        [],
+        viewGroups
+      );
+      newViewGroups.push({
+        groupId: currentGroup.groupId,
+        name: currentGroup.name,
+        role: role,
+      });
+      setViewGroups(newViewGroups);
+      setCurrentGroup(null);
+    } else {
+      setSuccessMessage("");
+      setError((response as FlexlistsError).message);
+    }
+  };
+  styles = {
+    textField: {
+      height: "36px",
+    },
+  };
   return (
     <>
-      <Typography variant="subtitle1" sx={{ mt: 1 }}>
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>
         Invite group
       </Typography>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-        {/* <Box>
+      {/* <Box>
           {submit && successMessage && <Alert severity="success">{successMessage}</Alert>}
         </Box> */}
-      <Grid container spacing={2}>
-        
-        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+      <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
+        <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
           </FormLabel>
-          <Select value={role} onChange={handleSelectRoleChange}>
+          <Select
+            sx={styles?.textField}
+            value={role}
+            onChange={handleSelectRoleChange}
+          >
             {roles &&
               roles.map((role, index) => {
                 return (
@@ -404,34 +465,42 @@ const ShareGroups = ({ viewGroups, roles ,setViewGroups}: ShareGroupsProps) => {
               })}
           </Select>
         </Grid>
-        {
-          groups &&  <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
-          <FormLabel>
-            <Typography variant="body2">Groups</Typography>
-          </FormLabel>
-          <Autocomplete
-            id="combo-box-groups"
-            filterSelectedOptions={true}
-            options={groups.filter((x)=>!viewGroups.find((g)=>g.groupId===x.groupId))}
-            getOptionLabel={(option) => option.name}
-            fullWidth
-            value={currentGroup??null}
-            onChange={(event, newInputValue) => {
-              onGroupChange(newInputValue);
-            }}
-            sx={{ my: 1 }}
-            renderInput={(params) => <TextField {...params} label="Search groups"  />}
-          />
-        </Grid>
-        }
-       
+        {groups && (
+          <Grid item xs={7} sx={{ display: "flex", flexDirection: "column" }}>
+            <FormLabel>
+              <Typography variant="body2">Groups</Typography>
+            </FormLabel>
+            <Autocomplete
+              id="combo-box-groups"
+              filterSelectedOptions={true}
+              options={groups.filter(
+                (x) => !viewGroups.find((g) => g.groupId === x.groupId)
+              )}
+              getOptionLabel={(option) => option.name}
+              fullWidth
+              value={currentGroup ?? null}
+              onChange={(event, newInputValue) => {
+                onGroupChange(newInputValue);
+              }}
+              sx={styles?.textField}
+              renderInput={(params) => (
+                <TextField {...params} label="Search groups" />
+              )}
+            />
+          </Grid>
+        )}
+
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={()=>onsubmit()}>
+          <Button variant="contained" fullWidth onClick={() => onsubmit()}>
             Add Group
           </Button>
         </Grid>
       </Grid>
-      <GroupListAccess roles={roles} viewGroups={viewGroups} setViewGroups={setViewGroups} />
+      <GroupListAccess
+        roles={roles}
+        viewGroups={viewGroups}
+        setViewGroups={setViewGroups}
+      />
     </>
   );
 };
@@ -441,50 +510,59 @@ type ShareKeysProps = {
 const ShareKeys = ({ roles }: ShareKeysProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
-  const [keyName,setKeyName] = useState<string>('')
-  const [viewKeys,setViewKeys] = useState<GetKeysForViewOutputDto[]>([])
+  const [keyName, setKeyName] = useState<string>("");
+  const [viewKeys, setViewKeys] = useState<GetKeysForViewOutputDto[]>([]);
   const [error, setError] = useState<string>("");
-  const [submit,setSubmit] = useState<boolean>(false)
-  useEffect(()=>{
+  const [submit, setSubmit] = useState<boolean>(false);
+  useEffect(() => {
     async function fetchData() {
-       var response = await listViewService.getKeysForView(convertToInteger(router.query.viewId))
-       if(isSucc(response) && response.data)
-       {
-          setViewKeys(response.data)
-       }
+      var response = await listViewService.getKeysForView(
+        convertToInteger(router.query.viewId)
+      );
+      if (isSucc(response) && response.data) {
+        setViewKeys(response.data);
+      }
     }
-    if(router.isReady)
-    {
-      fetchData()
+    if (router.isReady) {
+      fetchData();
     }
-  },[router.isReady])
+  }, [router.isReady]);
   const onKeyNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyName(event.target.value)
+    setKeyName(event.target.value);
   };
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value as Role);
   };
-  const onSubmit = async() =>{
-      setSubmit(true)
-      var response = await listViewService.addKeyToView(convertToInteger(router.query.viewId),role,keyName);
-      if(isSucc(response))
-      {
-          var newViewKeys : GetKeysForViewOutputDto[] = Object.assign([],viewKeys)
-          newViewKeys.push({keyId:response.data.keyId,key:response.data.key,role:role,name:keyName})
-          setViewKeys(newViewKeys)
-      }
-      else
-      {
-          setError((response as FlexlistsError).message)
-      }
-  }
-  const onUpdateViewKeys = (newViewKeys:GetKeysForViewOutputDto[])=>
-  {
-     setViewKeys(newViewKeys)
-  }
+  const onSubmit = async () => {
+    setSubmit(true);
+    var response = await listViewService.addKeyToView(
+      convertToInteger(router.query.viewId),
+      role,
+      keyName
+    );
+    if (isSucc(response)) {
+      var newViewKeys: GetKeysForViewOutputDto[] = Object.assign([], viewKeys);
+      newViewKeys.push({
+        keyId: response.data.keyId,
+        key: response.data.key,
+        role: role,
+        name: keyName,
+      });
+      setViewKeys(newViewKeys);
+    } else {
+      setError((response as FlexlistsError).message);
+    }
+  };
+  const onUpdateViewKeys = (newViewKeys: GetKeysForViewOutputDto[]) => {
+    setViewKeys(newViewKeys);
+  };
   return (
     <>
-       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
+      <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>
+        Create keys
+      </Typography>
+      <Divider></Divider>
       <Grid container spacing={2}>
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
@@ -505,19 +583,32 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
           <FormLabel>
             <Typography variant="body2">Info</Typography>
           </FormLabel>
-          <TextField placeholder="Name of key..." value={keyName} onChange={onKeyNameChange}></TextField>
+          <TextField
+            placeholder="Name of key..."
+            value={keyName}
+            onChange={onKeyNameChange}
+          ></TextField>
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button variant="contained" fullWidth sx={{ height: "56px" }} onClick={()=>onSubmit()}>
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ height: "56px" }}
+            onClick={() => onSubmit()}
+          >
             Create Key
           </Button>
         </Grid>
       </Grid>
       <Divider sx={{ my: 3, mb: 2 }}></Divider>
-      <Typography gutterBottom variant="h5">
+      <Typography gutterBottom variant="subtitle1">
         All keys
       </Typography>
-      <ManageKeys viewKeys={viewKeys} roles={roles} onUpdateViewKeys={(newViewKeys)=>onUpdateViewKeys(newViewKeys)} />
+      <ManageKeys
+        viewKeys={viewKeys}
+        roles={roles}
+        onUpdateViewKeys={(newViewKeys) => onUpdateViewKeys(newViewKeys)}
+      />
     </>
   );
 };
@@ -528,7 +619,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setViewUsers,
-  setViewGroups
+  setViewGroups,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareList);

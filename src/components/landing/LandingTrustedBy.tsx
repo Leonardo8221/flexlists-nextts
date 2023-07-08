@@ -1,120 +1,99 @@
-
-import Slider from 'react-slick';
-import { motion } from 'framer-motion';
 // material
-import { useTheme, styled } from '@mui/material/styles';
-import { Box, Container, Typography } from '@mui/material';
-//
-import { varFadeInUp, MotionInView, varFadeIn } from 'src/components/animate';
-import { CarouselControlsArrowsBasic2 } from 'src/components/carousel/controls';
-import { useRef } from 'react';
+import { useTheme, styled } from "@mui/material/styles";
+import { Box, Container } from "@mui/material";
+import FeatureCard from "src/components/cards/Card";
+// ICONS
+import SearchIcon from "@mui/icons-material/Search";
+import TaskIcon from "@mui/icons-material/Task";
+import PublicIcon from "@mui/icons-material/Public";
+import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
+import SavingsIcon from "@mui/icons-material/Savings";
+import DataObjectIcon from "@mui/icons-material/DataObject";
+import TranslateIcon from "@mui/icons-material/Translate";
+import SpeedIcon from "@mui/icons-material/Speed";
 
-// ----------------------------------------------------------------------
-
-const RootStyle = styled('div')(({ theme }) => ({
-  backgroundColor: '#ffffff',
-  paddingTop: theme.spacing(5),
+const RootStyle = styled("div")(({ theme }) => ({
+  backgroundColor: "#fafafa",
+  minHeight: "80vh",
+  display: "grid",
+  placeContent: "center",
 }));
 
-const HeroImgStyle = styled(motion.img)(({ theme }) => ({
-  width: '80px',
-  margin: 'auto'
-}));
+const iconStyle = {
+  color: "#54A6FB",
+  fontSize: "32px",
+};
 
-// ----------------------------------------------------------------------
-
-const IMAGES = ['nike', 'google', 'deichmann', 'adidas', 'apple', 'cocacola', 'nike', 'google', 'deichmann', 'adidas', 'apple', 'cocacola'];
+const FeatureCards = [
+  {
+    icon: <SearchIcon sx={iconStyle} />,
+    title: "Fully Featured Search Function",
+    description: "Configurable filters, search by field...",
+  },
+  {
+    icon: <TaskIcon sx={iconStyle} />,
+    title: "Any File Format",
+    description:
+      "Store files in any format. Images, videos, documents PDFs etc",
+  },
+  {
+    icon: <PublicIcon sx={iconStyle} />,
+    title: "Pick your Region*",
+    description:
+      " *Paid accounts only. Default will be EU but you can pick US Asia etc.",
+  },
+  {
+    icon: <RecordVoiceOverIcon sx={iconStyle} />,
+    title: "User voice",
+    description:
+      "You vote on the development road map, and based on your input, developments will be prioritized",
+  },
+  {
+    icon: <SavingsIcon sx={iconStyle} />,
+    title: "Free or Paid Versions",
+    description:
+      "Three different levels of use. Free, Subscriber, or Enterprise - with your own private server. Click Here to see pricing details.",
+  },
+  {
+    icon: <DataObjectIcon sx={iconStyle} />,
+    title: "Ongoing development",
+    description:
+      "Flexlists will have continuous updates with a user-prioritized development road map.",
+  },
+  {
+    icon: <TranslateIcon sx={iconStyle} />,
+    title: "Fully Multilingual",
+    description: "Description",
+  },
+  {
+    icon: <SpeedIcon sx={iconStyle} />,
+    title: "FAST!!",
+    description: "All the while keeping the famous Flexlists speed.",
+  },
+];
 
 export default function LandingTrustedBy() {
-  const theme = useTheme();
-  const carouselRef = useRef<Slider>(null);
-
-  const settings = {
-    slidesToShow: 6,
-    centerMode: true,
-    arrows: false,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    centerPadding: '0 80px',
-    rtl: Boolean(theme.direction === 'rtl'),
-    responsive: [
-      {
-        breakpoint: 1279,
-        settings: { slidesToShow: 3 }
-      },
-      {
-        breakpoint: 959,
-        settings: { slidesToShow: 2 }
-      },
-      {
-        breakpoint: 600,
-        settings: { slidesToShow: 1 }
-      }
-    ]
-  };
-
-  const handlePrevious = () => {
-    carouselRef?.current?.slickPrev();
-  };
-
-  const handleNext = () => {
-    carouselRef?.current?.slickNext();
-  };
-
   return (
     <RootStyle>
-      <Container maxWidth="lg" sx={{ padding: '0px !important', overflow: 'hidden' }}>
-        <Box sx={{ mb: { xs: 8, md: 10 }, pl: { xs: 3 } }}>
-          <MotionInView variants={varFadeInUp}>
-            <Typography component="p" variant="overline" sx={{ mb: 2, color: 'text.primary' }}>
-              Trusted By
-            </Typography>
-          </MotionInView>
+      <Container maxWidth="xl">
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: { xs: 2, md: 3 },
+            pt: 0,
+          }}
+        >
+          {FeatureCards.map((card: any) => {
+            return (
+              <FeatureCard
+                icon={card.icon}
+                title={card.title}
+                description={card.description}
+              ></FeatureCard>
+            );
+          })}
         </Box>
-
-        <Box sx={{ position: 'relative' }}>
-          <Slider ref={carouselRef} {...settings}>
-            {IMAGES.map((img, index) => (
-              <MotionInView key={index} variants={varFadeIn} sx={{ textAlign: 'center' }}>
-                <HeroImgStyle alt={img} src={`/assets/home/${img}.png`} variants={varFadeInUp} />
-              </MotionInView>
-            ))}
-          </Slider>
-          <CarouselControlsArrowsBasic2
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            sx={{ transform: 'translateY(-64px)' }}
-          />
-        </Box>
-
-        {/* <Grid container spacing={isDesktop ? 10 : 5}>
-          {CARDS.map((card, index) => (
-            <Grid key={card.title} item xs={12} md={4}>
-              <MotionInView variants={varFadeInUp}>
-                <CardStyle className={index === 0 ? 'cardLeft' : index === 1 ? 'cardCenter' : ''}>
-                  <CardIconStyle
-                    src={card.icon}
-                    alt={card.title}
-                    sx={{
-                      ...(index === 0 && {
-                        filter: (theme) => shadowIcon(theme.palette.info.main)
-                      }),
-                      ...(index === 1 && {
-                        filter: (theme) => shadowIcon(theme.palette.error.main)
-                      })
-                    }}
-                  />
-                  <Typography variant="h5" paragraph>
-                    {card.title}
-                  </Typography>
-                  <Typography sx={{ color: isLight ? 'text.secondary' : 'common.white' }}>
-                    {card.description}
-                  </Typography>
-                </CardStyle>
-              </MotionInView>
-            </Grid>
-          ))}
-        </Grid> */}
       </Container>
     </RootStyle>
   );

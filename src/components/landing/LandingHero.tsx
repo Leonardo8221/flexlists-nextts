@@ -1,130 +1,11 @@
-import { motion } from "framer-motion";
-// material
-import { styled } from "@mui/material/styles";
-import { Button, Box, Container, Typography, Stack } from "@mui/material";
-//
-import {
-  varFadeIn,
-  varFadeInUp,
-  varWrapEnter,
-  varFadeInRight,
-} from "src/components/animate";
-import useOffSetTop from "src/hooks/useOffSetTop";
+import { Button, Box, Container, Typography, Grid, List } from "@mui/material";
 import { useRouter } from "next/router";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
 
-// ----------------------------------------------------------------------
-
-const RootStyle = styled(motion.div)(({ theme }) => ({
-  // opacity: 0,
-  position: "relative",
-  backgroundColor: "#EDF2F5",
-  [theme.breakpoints.up("md")]: {
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh",
-    display: "flex",
-    position: "fixed",
-    alignItems: "center",
-  },
-}));
-
-const ContentStyle = styled(motion.div)(({ theme }) => ({
-  zIndex: 11,
-  maxWidth: 520,
-  margin: "auto",
-  marginTop: "20%",
-  textAlign: "center",
-  position: "relative",
-  paddingTop: theme.spacing(15),
-  paddingBottom: theme.spacing(5),
-  [theme.breakpoints.up("md")]: {
-    paddingBottom: theme.spacing(15),
-    marginTop: "40%",
-    margin: "unset",
-    textAlign: "left",
-  },
-}));
-
-const HeroImgStyle = styled(motion.img)(({ theme }) => ({
-  top: 80,
-  right: 0,
-  zIndex: 10,
-  width: "75%",
-  margin: "auto",
-  position: "absolute",
-  [theme.breakpoints.up("xs")]: {
-    left: 0,
-  },
-  [theme.breakpoints.up("md")]: {
-    zIndex: 10,
-    top: 0,
-    right: 0,
-    left: "auto",
-    width: "37%",
-    margin: "auto",
-    position: "absolute",
-  },
-  [theme.breakpoints.up("lg")]: {
-    top: "35%",
-    right: "10%",
-    left: "auto",
-  },
-}));
-
-const HeroImgShadowStyle = styled(motion.img)(({ theme }) => ({
-  top: 250,
-  right: 0,
-  zIndex: 10,
-  width: "75%",
-  margin: "auto",
-  position: "absolute",
-  [theme.breakpoints.up("xs")]: {
-    left: 0,
-  },
-  [theme.breakpoints.up("md")]: {
-    top: 0,
-    right: 0,
-    left: "auto",
-    zIndex: 9,
-    width: "40%",
-    margin: "auto",
-    position: "absolute",
-  },
-  [theme.breakpoints.up("lg")]: {
-    top: "77%",
-    right: "8%",
-    left: "auto",
-  },
-}));
-
-const HeroOverlayStyle = styled(motion.img)(({ theme }) => ({
-  top: 0,
-  right: 0,
-  zIndex: 8,
-  width: "100%",
-  margin: "auto",
-  position: "absolute",
-  [theme.breakpoints.up("lg")]: {
-    width: "auto",
-    height: "90%",
-  },
-}));
-
-const ButtonStyle = styled(motion.div)(({ theme }) => ({
-  display: "flex",
-  margin: "auto !important",
-  marginTop: "24px !important",
-  [theme.breakpoints.up("md")]: {
-    margin: "0px !important",
-    marginTop: "24px !important",
-  },
-}));
-
-// ----------------------------------------------------------------------
+type ContentTestProps = {};
 
 export default function LandingHero() {
-  const isOffset = useOffSetTop(50);
   const router = useRouter();
   const gotoSignup = async () => {
     await router.push({
@@ -132,91 +13,192 @@ export default function LandingHero() {
     });
   };
   return (
-    <>
-      <RootStyle
-        initial="initial"
-        animate="animate"
-        variants={varWrapEnter}
+    <Box
+      sx={{
+        marginTop: { xs: "64px", md: "88px" },
+        minHeight: "calc(100vh - 144px)",
+      }}
+    >
+      <Box
         sx={{
-          opacity: 1,
-          ...(isOffset && {
-            opacity: { xs: 1, md: 0.5 },
-            transition: (theme) => theme.transitions.create("opacity"),
-          }),
+          background: "#fafafa",
         }}
       >
-        <HeroImgStyle
-          alt="overlay"
-          src="/assets/home/heroimg.png"
-          variants={varFadeInUp}
-        />
-        <HeroImgShadowStyle
-          alt="overlay"
-          src="/assets/home/heroimgshadow.png"
-          variants={varFadeInUp}
-        />
-
-        <HeroOverlayStyle
-          alt="hero"
-          src="/assets/home/bghero.png"
-          variants={varFadeIn}
-        />
-
-        <Container maxWidth="xl">
-          <ContentStyle>
-            <Stack spacing={3}>
-              <motion.div variants={varFadeInRight}>
-                <Typography
-                  variant="h2"
-                  sx={{ color: "text.primary", mt: { xs: 30, md: 0 } }}
-                >
-                  Manage your data in easy and flexible way.
-                </Typography>
-              </motion.div>
-
-              <motion.div variants={varFadeInRight}>
-                <Typography sx={{ color: "text.primary" }}>
-                  With FLEXlists you can create simple databases of anything you
-                  want, with every field you need..
-                </Typography>
-              </motion.div>
-
-              <motion.div variants={varFadeInRight}>
-                <Typography
-                  variant="caption"
+        <Container maxWidth="xl" sx={{ position: "relative" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              gap: 3,
+              py: { xs: 4, md: 16 },
+              textAlign: { xs: "center", md: "left" },
+            }}
+          >
+            {/* <Typography variant="h1">
+              Manage your data in easy and flexible way.
+            </Typography> */}
+            <Typography variant="h2">
+              Exciting News! Your Trusted Flexlists Product is About to Get a
+              Whole Lot Better!
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 400 }}>
+              Dear Valued User, As a loyal user of our database product we want
+              to share some great news with you. We're thrilled to announce that
+              our team has been working tirelessly over the past 12 months on a
+              significant update to the platform, which will soon be relaunched
+              with cutting-edge features and improvements. Thanks to successful
+              funding, we have been able to invest in the development of this{" "}
+              <strong>new version</strong> , incorporating{" "}
+              <strong>advanced technology</strong>{" "}
+              <strong>user-requested features</strong> and that will greatly
+              enhance your experience. In the upcoming days, you will hear more
+              about the official launch of this upgraded product. <br />
+              <br />
+              Please <strong>sign up</strong> for the product launch
+              information. Some of the fantastic new features in the updated
+              product include:
+            </Typography>
+            {/* <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}
+              >
+                <Typography variant="body1">&#9989; Tasks </Typography>
+                <Typography variant="body1">&#9989; Addresses </Typography>
+                <Typography variant="body1">&#9989; Todos </Typography>
+              </Box>
+              <Box
+                sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}
+              >
+                <Typography variant="body1">&#9989; Wishes </Typography>
+                <Typography variant="body1">&#9989; Movies </Typography>
+                <Typography variant="body1">&#9989; Books </Typography>
+                <Typography variant="body1">&#9989; Songs </Typography>
+              </Box>
+            </List> */}
+            <Box
+              sx={{
+                display: "flex",
+                gap: 3,
+                width: { xs: "100%", md: "600px" },
+                mt: { xs: 0, md: 4 },
+                mb: { xs: 4, md: 0 },
+              }}
+            >
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ flex: 1, fontSize: 16 }}
+                onClick={() => gotoSignup}
+              >
+                Sign up now
+              </Button>
+              <Button
+                size="large"
+                variant="text"
+                sx={{
+                  flex: 1,
+                  fontSize: 16,
+                  backgroundColor: "#111",
+                  color: "#fff",
+                  "&:hover": {
+                    color: "#111",
+                  },
+                }}
+              >
+                Try now{" "}
+                <DiscoverMoreIcon
                   sx={{
-                    mx: "auto",
-                    maxWidth: 630,
-                    color: (theme) =>
-                      theme.palette.mode === "light"
-                        ? "text.secondary"
-                        : "common.white",
+                    ml: 1,
+                    transform: "rotate(45deg)",
+                    transition: "transform ease .5s",
+                    ".MuiButton-text:hover &": {
+                      transform: "rotate(0)",
+                    },
                   }}
-                >
-                  Create lists of Tasks, Addresses, Todos, Songs, Books, Movies,
-                  Wishes and more! And what about a glossary, a project plan or
-                  bug tracking? It is all possible and easy!
-                </Typography>
-              </motion.div>
-
-              <ButtonStyle variants={varFadeInRight}>
-                <Button
-                  size="large"
-                  variant="contained"
-                  sx={{ px: { xs: "10px" } }}
-                  onClick={() => gotoSignup()}
-                >
-                  Sign up, it is free
-                </Button>
-                <Button size="large" variant="contained" sx={{ ml: "3px" }}>
-                  Request a demo
-                </Button>
-              </ButtonStyle>
-            </Stack>
-          </ContentStyle>
+                />
+              </Button>
+            </Box>
+          </Box>
         </Container>
-      </RootStyle>
-      <Box sx={{ height: { md: "100vh" } }} />
-    </>
+      </Box>
+      <Container
+        maxWidth="xl"
+        sx={{ position: "relative", minHeight: { xs: "30vh", md: "80vh" } }}
+      >
+        <Box
+          component="img"
+          alt="hero-img"
+          src="\assets\home\heroimg.png"
+          sx={{
+            boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
+            maxWidth: "100%",
+            maxHeight: "100%",
+            position: "absolute",
+            top: { xs: "-24px", md: "-64px" },
+            left: "50%",
+            transform: "translateX(-50%)",
+            borderRadius: 2,
+          }}
+        />
+      </Container>
+
+      {/* <Box
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          minHeight: 88,
+          backgroundColor: "#fafafa",
+          py: 4,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box
+              component="img"
+              alt="Logo"
+              src="\assets\home\nike.png"
+              height={64}
+              sx={{ opacity: 0.2 }}
+            />
+            <Box
+              component="img"
+              alt="Logo"
+              src="\assets\home\nike.png"
+              height={64}
+              sx={{ opacity: 0.2 }}
+            />
+            <Box
+              component="img"
+              alt="Logo"
+              src="\assets\home\nike.png"
+              height={64}
+              sx={{ opacity: 0.2 }}
+            />
+            <Box
+              component="img"
+              alt="Logo"
+              src="\assets\home\nike.png"
+              height={64}
+              sx={{ opacity: 0.2 }}
+            />
+            <Box
+              component="img"
+              alt="Logo"
+              src="\assets\home\nike.png"
+              height={64}
+              sx={{ opacity: 0.2 }}
+            />
+          </Box>
+        </Container>
+      </Box> */}
+    </Box>
   );
 }
