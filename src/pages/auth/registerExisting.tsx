@@ -64,6 +64,10 @@ const Register = ({
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
 
+  const [userNameDisabled, setUserNameDisabled] = useState<boolean>(false);
+  const [userEmailDisabled, setUserEmailDisabled] = useState<boolean>(false);
+  const [passwordDisabled, setPasswordDisabled] = useState<boolean>(false);
+
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
@@ -72,8 +76,15 @@ const Register = ({
     function checkCreds() {
       if (legacyCredentials?.username) {
         setUserName(legacyCredentials.username);
+        setUserNameDisabled(true);
         setUserEmail(legacyCredentials.email);
+        if (legacyCredentials.email) {
+          setUserEmailDisabled(true);
+        }
         setPassword(legacyCredentials.password);
+        if (legacyCredentials.password) {
+          setPasswordDisabled(true);
+        }
       }
     }
     checkCreds();
@@ -240,7 +251,7 @@ const Register = ({
 
       setError(
         (response as FlexlistsError)?.message ??
-          "Could not create account, please try again or contact support."
+        "Could not create account, please try again or contact support."
       );
     } catch (error) {
       setError(ErrorConsts.InternalServerError);
@@ -465,6 +476,7 @@ const Register = ({
                   required
                   value={userName}
                   onChange={handleChangeUserName}
+                  disabled={userNameDisabled}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -533,6 +545,7 @@ const Register = ({
                   required
                   value={userEmail}
                   onChange={handleEmailChange}
+                  disabled={userEmailDisabled}
                 ></TextField>
               </Grid>
 
@@ -545,6 +558,7 @@ const Register = ({
                   value={password}
                   onChange={handleChangePassword}
                   type={showPassword ? "text" : "password"}
+                  disabled={passwordDisabled}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">

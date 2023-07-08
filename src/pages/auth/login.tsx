@@ -50,12 +50,12 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
   //logout if user go to login page
   useEffect(() => {
     async function initialize() {
-       await authService.logout();
+      await authService.logout();
     }
     if (router.isReady) {
       initialize();
     }
-  },[router.isReady])
+  }, [router.isReady])
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -104,7 +104,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           message: "Login successful, going to your Dashboard!",
           type: "success",
         });
-        await router.push({ pathname: getRolePathDefault(response.data.systemRole)});
+        await router.push({ pathname: getRolePathDefault(response.data.systemRole) });
 
         return;
       }

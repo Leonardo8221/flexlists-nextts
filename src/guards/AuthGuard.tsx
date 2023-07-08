@@ -1,5 +1,5 @@
 import { useState, ReactNode, useEffect } from 'react';
-import  { Router, useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
 import { isSucc } from 'src/models/ApiResponse';
 import { PATH_MAIN, getRolePathDefault } from 'src/routes/paths';
@@ -15,13 +15,14 @@ type AuthGuardProps = {
   children: ReactNode;
   isLoading: boolean;
   setLoading: (isLoading: boolean) => void;
-  setAuthValidate:(authValidate:any)=>void;
+  setAuthValidate: (authValidate: any) => void;
 };
 
-export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: AuthGuardProps) {
+export function AuthGuard({ children, isLoading, setLoading, setAuthValidate }: AuthGuardProps) {
+
   const router = useRouter();
   const url = router.asPath;
- 
+
   useEffect(() => {
     async function initialize() {
       const path = url.split('/')[1];
@@ -38,7 +39,7 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
         }
         if (isValidated) {
           await router.push({
-            pathname: getRolePathDefault(authValidate?.user?.systemRole??SystemRole.User)
+            pathname: getRolePathDefault(authValidate?.user?.systemRole ?? SystemRole.User)
           });
         }
       }
@@ -50,9 +51,9 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
       //   }
       // }
 
-      
+
     }
-    
+
     initialize();
   }, [router, url]);
   useEffect(() => {
@@ -63,7 +64,7 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
     const stopLoading = () => {
       setLoading(false);
     };
-    
+
     Router.events.on('routeChangeStart', startLoading);
     Router.events.on('routeChangeComplete', stopLoading);
     Router.events.on('routeChangeError', stopLoading);
@@ -81,7 +82,7 @@ export function AuthGuard({ children,isLoading,setLoading,setAuthValidate }: Aut
 const mapStateToProps = (state: any) => ({
   isLoading: state.admin.isLoading
 });
-const mapDispatchToProps = { 
+const mapDispatchToProps = {
   setLoading,
   setAuthValidate
 };
