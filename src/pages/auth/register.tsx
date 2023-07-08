@@ -52,7 +52,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
-
+  const [isReservedUserName, setIsReservedUserName] = useState<boolean>(false)
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
@@ -97,6 +97,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
 
   const handleChangeUserName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
+    setIsReservedUserName(false);
   };
 
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,9 +162,19 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
       // this should already be fine coming from the backend, but this is just a lot clearer for
       // the actual flow
       if (isErr(response)) {
+        if ((response as FlexlistsError).code === 514) {
+          //UserNameAlreadyExists
+          setError("User name already taken. Please try another one.");
+          return;
+        }
+        if ((response as FlexlistsError).code === 515) {
+          //UserEmailAlreadyExists
+          setError("Email is already taken. Please try another one.");
+          return;
+        }
         if ((response as FlexlistsError).code === 511) {
           // ReservedUserName
-          setError("User name is already taken. Please try another one.");
+          setIsReservedUserName(true);
           return;
         }
       }
@@ -396,7 +407,21 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
               {/* <Grid item container>
             {error && <Alert severity="error">{error}</Alert>}
           </Grid> */}
-
+          {
+            isReservedUserName && <Grid item xs={12}>
+            <Box>
+                <Typography
+                        variant="body2"
+                        component={"div"}
+                      >
+                        User name already existed in previous version. please pick another or 
+                        click <Link sx={styles?.link} href="/auth/loginExisting">
+                          Login
+                        </Link> to login to an existing account
+                      </Typography>
+                </Box>
+          </Grid>
+          }
               <Grid item container columnSpacing={2}>
                 <Grid item xs={6}>
                   <TextField
