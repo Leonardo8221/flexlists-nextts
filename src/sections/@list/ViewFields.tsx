@@ -94,7 +94,7 @@ const ViewFields = ({
   const changeDetailsOnly = (index: number) => {
     setColumns(
       columns.map((column: any, i: number) => {
-        if (index === i) column.viewFieldDetailsyOnly = !column.viewFieldDetailsyOnly;
+        if (index === i) column.viewFieldDetailsOnly = !column.viewFieldDetailsOnly;
         return column;
       })
     );
