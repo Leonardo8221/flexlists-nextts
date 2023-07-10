@@ -186,12 +186,16 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
       case FieldUiTypeEnum.LongText:
         return <TextareaAutosize
           minRows={5}
-          aria-label="maximum height"
-          placeholder="Maximum 4 rows"
+          key={column.id}
+          name={`${column.id}`}
+          aria-label={column.name}
+          //label={column.name}
           value={values ? values[column.id] : ''}
           onChange={(e) => {
             setValues({ ...values, [column.id]: e.target.value })
           }}
+          required={column.required}
+        // error={submit && column.required && !values[column.id]}
         />
         return <TextField
           key={column.id}
@@ -204,6 +208,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
           }}
           value={values ? values[column.id] : ''}
           rows={4}
+          maxRows={Infinity}
           multiline={true}
           required={column.required}
           error={submit && column.required && !values[column.id]}
@@ -280,7 +285,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
             size="small"
             error={submit && column.required && !values[column.id]}
           >
-            {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.id} value={choice.id} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.label}</MenuItem>)}
+            {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.id} value={choice.id} sx={{ backgroundColor: choice.color?.bg ?? "white", color: choice.color?.fill ?? "black", '&:hover': { backgroundColor: choice.color?.bg ?? "white" } }}>{choice.label}</MenuItem>)}
           </Select>
         </FormControl>
       case FieldUiTypeEnum.Boolean:

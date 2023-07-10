@@ -156,7 +156,7 @@ const DataTable = ({
                     {cellValue}
                   </Box>
                 );
-              
+
               case FieldType.DateTime:
               case FieldType.Time:
                 return (
@@ -209,7 +209,7 @@ const DataTable = ({
                 );
                 if (choiceValue) {
                   choiceLabel = choiceValue.label;
-                  value_color = choiceValue.color;
+                  value_color = choiceValue.color ?? { bg: 'white', fill: 'black' };
                   font = choiceValue.font;
                 }
                 return (
