@@ -14,13 +14,13 @@ type LoadingPageProps = {
 export function LoadingPage({ children, isLoading }: LoadingPageProps) {
   return (
     <>
-      {/* <Backdrop
+      <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
       >
         <CircularProgress color="inherit" />
        
-      </Backdrop> */}
+      </Backdrop>
       {children}
     </>
   );
