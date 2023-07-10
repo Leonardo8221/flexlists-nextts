@@ -79,7 +79,7 @@ const Register = ({
         setUserNameDisabled(true);
         setUserEmail(legacyCredentials.email);
         if (legacyCredentials.email) {
-          setUserEmailDisabled(true);
+          //setUserEmailDisabled(true);
         }
         setPassword(legacyCredentials.password);
         if (legacyCredentials.password) {
