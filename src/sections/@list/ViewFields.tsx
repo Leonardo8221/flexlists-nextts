@@ -10,11 +10,11 @@ import Modal from "@mui/material/Modal";
 import ViewFieldForm from "./ViewFieldForm";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
-import { View,ViewFieldConfig } from "src/models/SharedModels";
+import { View, ViewFieldConfig } from "src/models/SharedModels";
 
 type ViewFieldsProps = {
   currentView: View;
-  setCurrentView:(view:View)=>void;
+  setCurrentView: (view: View) => void;
   columns: ViewField[];
   open: boolean;
   setColumns: (columns: any) => void;
@@ -91,6 +91,15 @@ const ViewFields = ({
     );
   };
 
+  const changeDetailsOnly = (index: number) => {
+    setColumns(
+      columns.map((column: any, i: number) => {
+        if (index === i) column.viewFieldDetailsyOnly = !column.viewFieldDetailsyOnly;
+        return column;
+      })
+    );
+  };
+
   const handleSearchColumns = (e: any) => {
     setSearchText(e.target.value);
     searchField(e.target.value);
@@ -108,31 +117,27 @@ const ViewFields = ({
       return (searchText && column.name.includes(searchText)) || searchText === "";
     });
     setFilterColumns(newFileteColumns);
-    let newView : View = Object.assign({},currentView);
-    let viewFieldConfig : ViewFieldConfig = {
-       id:field.id,
-       visible: field.viewFieldVisible,
-       color: field.viewFieldColor,
-       name: field.viewFieldName,
-       detailsOnly:field.viewFieldDetailsOnly,
-       ordering:field.viewFieldOrdering,
-       default: field.defaultValue
+    let newView: View = Object.assign({}, currentView);
+    let viewFieldConfig: ViewFieldConfig = {
+      id: field.id,
+      visible: field.viewFieldVisible,
+      color: field.viewFieldColor,
+      name: field.viewFieldName,
+      detailsOnly: field.viewFieldDetailsOnly,
+      ordering: field.viewFieldOrdering,
+      default: field.defaultValue
     }
-    if(newView.fields)
-    {
-       var currentViewFieldIndex = newView.fields.findIndex((x)=>x.id===viewFieldConfig.id);
-       if(currentViewFieldIndex>=0)
-       {
-          newView.fields[currentViewFieldIndex] = viewFieldConfig
-          console.log(newView.fields)
-       }
-       else
-       {
+    if (newView.fields) {
+      var currentViewFieldIndex = newView.fields.findIndex((x) => x.id === viewFieldConfig.id);
+      if (currentViewFieldIndex >= 0) {
+        newView.fields[currentViewFieldIndex] = viewFieldConfig
+        console.log(newView.fields)
+      }
+      else {
         newView.fields.push(viewFieldConfig)
-       }
+      }
     }
-    else
-    {
+    else {
       newView.fields = [viewFieldConfig]
     }
     console.log(newView);
@@ -280,6 +285,20 @@ const ViewFields = ({
                                 }}
                                 onChange={() => {
                                   changeVisible(index);
+                                }}
+                              />
+                              <Checkbox
+                                checked={column.viewFieldDetailsOnly}
+                                sx={{
+                                  color: "#CCCCCC",
+                                  "&.Mui-checked": {
+                                    color: "#54A6FB",
+                                  },
+                                  p: 0,
+                                  marginRight: 1,
+                                }}
+                                onChange={() => {
+                                  changeDetailsOnly(index);
                                 }}
                               />
                               <Box

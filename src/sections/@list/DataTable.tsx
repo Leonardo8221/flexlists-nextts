@@ -261,7 +261,18 @@ const DataTable = ({
 
   const columnsTable = useMemo<any>(() => {
     setUpdatingTable(true);
-    return getColumns(columns.filter((column: any) => column.viewFieldVisible && !column.detailsOnly));
+
+    const shouldShowField = (column: any) => {
+      return (column.viewFieldVisible === true || column.viewFieldVisible === undefined)
+        &&
+        (
+          (!column.detailsOnly && column.viewFieldDetailsOnly === undefined)
+          ||
+          (column.viewFieldDetailsOnly === false)
+        )
+    }
+
+    return getColumns(columns.filter((column: any) => shouldShowField(column)));
   }, [columns]);
 
   useEffect(() => {
