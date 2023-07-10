@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, TextField, Divider, Typography } from "@mui/material";
+import { Box, TextField, Divider, Typography, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
@@ -239,7 +239,42 @@ const ViewFields = ({
                 onClick={handleClose}
               />
             </Box>
+            <Box>
+              <Tooltip title="Field is visible">
+                <Box
+                  component="span"
+                  className="svg-color"
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    display: 'inline-block',
+                    bgcolor: theme.palette.palette_style.text.primary,
+                    //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/toolbar/visible.svg) no-repeat center / contain`,
+                    // marginLeft: { xs: 0.2, md: 1 },
+                    marginTop: '15px'
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title="Visible on detail page only">
 
+                <Box
+                  component="span"
+                  className="svg-color"
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    display: 'inline-block',
+                    bgcolor: theme.palette.palette_style.text.primary,
+                    //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/toolbar/detailsOnly.svg) no-repeat center / contain`,
+                    marginLeft: '20px',
+                    marginTop: '15px',
+
+                  }}
+                />
+              </Tooltip>
+            </Box>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="field_list">
                 {(provided: any) => (
