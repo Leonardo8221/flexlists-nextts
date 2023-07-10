@@ -45,6 +45,11 @@ interface RowFormProps {
 
 const actions = [
   {
+    title: 'Resize',
+    icon: 'menu/fullscreen',
+    action: 'resize'
+  },
+  {
     title: 'Clone',
     icon: 'menu/calendar',
     action: 'clone'
@@ -74,6 +79,8 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
   const [commentMode, setCommentMode] = useState(comment);
   const [windowHeight, setWindowHeight] = useState(0);
   const [error, setError] = useState<string>('');
+  const [panelWidth, setPanelWidth] = useState('500px');
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -137,6 +144,13 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
         return;
       }
 
+    } else if (action === 'resize') {
+      if (panelWidth.includes('%')) {
+        setPanelWidth('500px')
+      } else {
+        setPanelWidth('100%')
+      }
+      return
     }
     onSubmit(values, action);
     onClose();
@@ -327,7 +341,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
       onClose={handleCloseModal}
       PaperProps={{
         sx: {
-          width: { xs: '100%', lg: '500px' },
+          width: { xs: '100%', lg: panelWidth },
           border: 'none',
           height: `${windowHeight}px`,
           backgroundColor: theme.palette.palette_style.background.default,
