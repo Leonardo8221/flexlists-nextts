@@ -225,7 +225,8 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
             setValues({ ...values, [column.id]: e.target.value })
           }}
           value={values ? values[column.id] : ''}
-          rows={4}
+          // rows={4}
+          minRows={4}
           maxRows={Infinity}
           multiline={true}
           required={column.required}
