@@ -184,19 +184,37 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
           error={submit && column.required && !values[column.id]}
         />
       case FieldUiTypeEnum.LongText:
-        return <TextareaAutosize
-          minRows={5}
-          key={column.id}
-          name={`${column.id}`}
-          aria-label={column.name}
-          //label={column.name}
-          value={values ? values[column.id] : ''}
-          onChange={(e) => {
-            setValues({ ...values, [column.id]: e.target.value })
-          }}
-          required={column.required}
-        // error={submit && column.required && !values[column.id]}
-        />
+        // return (<>
+        //   <FormControl>
+        //     <InputLabel sx={{ top: '-50px' }}>{column.name}</InputLabel>
+        //     <TextareaAutosize
+        //       minRows={5}
+        //       key={column.id}
+        //       name={`${column.id}`}
+        //       aria-label={column.name}
+        //       //label={column.name}
+        //       value={values ? values[column.id] : ''}
+        //       onChange={(e) => {
+        //         setValues({ ...values, [column.id]: e.target.value })
+        //       }}
+        //       required={column.required}
+        //     // error={submit && column.required && !values[column.id]}
+        //     />
+        //   </FormControl>
+        // </>)
+        // return <TextareaAutosize
+        //   minRows={5}
+        //   key={column.id}
+        //   name={`${column.id}`}
+        //   aria-label={column.name}
+        //   //label={column.name}
+        //   value={values ? values[column.id] : ''}
+        //   onChange={(e) => {
+        //     setValues({ ...values, [column.id]: e.target.value })
+        //   }}
+        //   required={column.required}
+        // // error={submit && column.required && !values[column.id]}
+        // />
         return <TextField
           key={column.id}
           label={column.name}
