@@ -65,7 +65,7 @@ const DataTable = ({
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-
+  const [mode,setMode] = useState<'view'|'create'|'update'|'comment'>('view')
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -306,6 +306,7 @@ const DataTable = ({
 
   const handleNewRowPanel = () => {
     var newValues: any = {};
+    setMode("create");
     for (const column of filter(columns, (x) => !x.system)) {
       var defaultValue: any = "";
       switch (column.type) {
@@ -331,6 +332,7 @@ const DataTable = ({
   };
 
   const editRow = (row: any) => {
+    setMode("view");
     setSelectedRowData(rows[row.index]);
     setVisibleAddRowPanel(true);
   };
@@ -533,7 +535,7 @@ const DataTable = ({
         onSubmit={handleRowAction}
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
-        comment={false}
+        mode={mode}
       />
       {currentView && (
         <ListFields

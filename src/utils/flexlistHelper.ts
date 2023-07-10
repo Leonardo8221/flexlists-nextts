@@ -2,7 +2,6 @@ import { ViewField } from "src/models/ViewField";
 
 export const getDataColumnId = (fieldId : number,columns:ViewField[]) : string =>
 {
-    console.log(columns)
     var field = columns.find((x)=>x.id === fieldId);
     if(field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt'))
     {

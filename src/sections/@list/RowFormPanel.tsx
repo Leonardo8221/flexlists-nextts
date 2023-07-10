@@ -11,7 +11,8 @@ import {
   FormControlLabel,
   Checkbox,
   Alert,
-  TextareaAutosize
+  TextareaAutosize,
+  Typography
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Select from '@mui/material/Select';
@@ -33,12 +34,14 @@ import ChatForm from './chat/ChatForm';
 import { ChatType } from 'src/enums/ChatType';
 import { DatePicker } from '@mui/x-date-pickers';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { getDataColumnId } from 'src/utils/flexlistHelper';
+import { ChoiceModel } from 'src/models/ChoiceModel';
 interface RowFormProps {
   currentView: ViewField;
   rowData: any;
   columns: any[];
   open: boolean;
-  comment: boolean;
+  mode: 'view'|'create'|'update'|'comment';
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
 }
@@ -72,11 +75,11 @@ const actions = [
   }
 ];
 
-const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, onSubmit }: RowFormProps) => {
+const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSubmit }: RowFormProps) => {
   const theme = useTheme();
   const [values, setValues] = useState(rowData);
   const [submit, setSubmit] = useState(false);;
-  const [commentMode, setCommentMode] = useState(comment);
+  const [currentMode, setCurrentMode] = useState<'view'|'create'|'update'|'comment'>(mode);
   const [windowHeight, setWindowHeight] = useState(0);
   const [error, setError] = useState<string>('');
   const [panelWidth, setPanelWidth] = useState('500px');
@@ -89,7 +92,8 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
     setValues(rowData);
     setSubmit(false);
     setError('')
-  }, [open, rowData]);
+    setCurrentMode(mode)
+  }, [open, rowData, mode]);
 
   const handleSubmit = async () => {
     setSubmit(true);
@@ -178,10 +182,13 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
     //   return
     // }
   }
+  const handleEditRow = () => {
+    setCurrentMode('update');
+  };
   const renderField = (column: ViewField) => {
     switch (column.uiField) {
       case FieldUiTypeEnum.Text:
-        return <TextField
+        return currentMode !== 'view'? <TextField
           key={column.id}
           label={column.name}
           name={`${column.id}`}
@@ -196,7 +203,12 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
           // multiline={column.type === "textarea"}
           required={column.required}
           error={submit && column.required && !values[column.id]}
-        />
+        />: (
+          <div key={column.id}>
+            <Typography variant="subtitle1">{column.name}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values   ?  values[column.id]?.toString(): ''}</Typography>
+          </div>
+         )
       case FieldUiTypeEnum.LongText:
         // return (<>
         //   <FormControl>
@@ -229,7 +241,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
         //   required={column.required}
         // // error={submit && column.required && !values[column.id]}
         // />
-        return <TextField
+        return  currentMode !== 'view'? <TextField
           key={column.id}
           label={column.name}
           name={`${column.id}`}
@@ -245,7 +257,12 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
           multiline={true}
           required={column.required}
           error={submit && column.required && !values[column.id]}
-        />
+        />: (
+        <div key={column.id}>
+          <Typography variant="subtitle1">{column.name}</Typography>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values ? values[column.id] : ''}</Typography>
+        </div>
+       )
       case FieldUiTypeEnum.Integer:
       case FieldUiTypeEnum.Double:
       case FieldUiTypeEnum.Decimal:
@@ -253,7 +270,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
       //TODO : will use this for 
       case FieldUiTypeEnum.Percentage:
       case FieldUiTypeEnum.Money:
-        return <TextField
+        return currentMode !=='view'? <TextField
           key={column.id}
           label={column.name}
           name={`${column.id}`}
@@ -267,9 +284,14 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
           // multiline={column.type === "textarea"}
           required={column.required}
           error={submit && column.required && !values[column.id]}
-        />
+        />: (
+          <div key={column.id}>
+            <Typography variant="subtitle1">{column.name}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values ? values[getDataColumnId(column.id,columns)] : ''}</Typography>
+          </div>
+         )
       case FieldUiTypeEnum.DateTime:
-        return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+        return currentMode !=='view'? <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DateTimePicker
             value={dayjs(values[column.id])}
             label={column.name}
@@ -280,6 +302,12 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
             className={submit && column.required && !values[column.id] ? 'Mui-error' : ''}
           />
         </LocalizationProvider>
+        : (
+          <div key={column.id}>
+            <Typography variant="subtitle1">{column.name}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleString() : 'null'}</Typography>
+          </div>
+         )
       case FieldUiTypeEnum.Date:
         return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DatePicker
@@ -293,7 +321,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
           />
         </LocalizationProvider>
       case FieldUiTypeEnum.Time:
-        return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+        return currentMode !=='view' ? <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <TimePicker
             value={dayjs(values[column.id])}
             label={column.name}
@@ -304,35 +332,83 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
             className={submit && column.required && !values[column.id] ? 'Mui-error' : ''}
           />
         </LocalizationProvider>
+        : (
+          <div key={column.id}>
+            <Typography variant="subtitle1">{column.name}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleDateString() : 'null'}</Typography>
+          </div>
+         )
       case FieldUiTypeEnum.Choice:
-        return <FormControl key={column.id} required={column.required}>
-          <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
-          <Select
-            key={column.id}
-            label={column.name}
-            id={`${column.id}`}
-            value={values[column.id]}
-            onChange={(e) =>
-              setValues({ ...values, [column.id]: e.target.value })
+         if(currentMode !=='view'){
+            return <FormControl key={column.id} required={column.required}>
+            <InputLabel id={`${column.id}`} sx={{ top: '-5px' }}>{column.name}</InputLabel>
+            <Select
+              key={column.id}
+              label={column.name}
+              id={`${column.id}`}
+              value={values[column.id]}
+              onChange={(e) =>
+                setValues({ ...values, [column.id]: e.target.value })
+              }
+              size="small"
+              error={submit && column.required && !values[column.id]}
+            >
+              {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.id} value={choice.id} sx={{ backgroundColor: choice.color?.bg ?? "white", color: choice.color?.fill ?? "black", '&:hover': { backgroundColor: choice.color?.bg ?? "white" } }}>{choice.label}</MenuItem>)}
+            </Select>
+          </FormControl>
+         }
+          else{
+            let value_color = { bg: "#333", fill: "white" };
+            let font = "inherit";
+            let choiceLabel: string = "";
+            let choiceValue: ChoiceModel = column.config?.values?.find(
+              (x: any) => x.id === values[column.id]
+            );
+            if (choiceValue) {
+              choiceLabel = choiceValue.label;
+              value_color = choiceValue.color ?? { bg: 'white', fill: 'black' };
+              font = choiceValue.font;
             }
-            size="small"
-            error={submit && column.required && !values[column.id]}
-          >
-            {column?.config?.values && column.config.values.map((choice: any) => <MenuItem key={choice.id} value={choice.id} sx={{ backgroundColor: choice.color?.bg ?? "white", color: choice.color?.fill ?? "black", '&:hover': { backgroundColor: choice.color?.bg ?? "white" } }}>{choice.label}</MenuItem>)}
-          </Select>
-        </FormControl>
+            return (
+              <div key={column.id}>
+                <Typography variant="subtitle1">{column.name}</Typography>
+                <Box
+                  key={column.id}
+                  sx={{
+                    // textAlign: "center",
+                    bgcolor: value_color.bg,
+                    borderRadius: "20px",
+                    color: value_color.fill,
+                    fontFamily: font,
+                    // px: 1.5,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {choiceLabel}
+                </Box>
+            </div>
+              
+            );
+          }
       case FieldUiTypeEnum.Boolean:
-        return <FormControlLabel
+        return currentMode !=='view'? <FormControlLabel
           key={column.id}
           control={<Checkbox checked={values[column.id]} onChange={(e) => setValues({ ...values, [column.id]: e.target.checked })} />}
           label={column.name}
-        />
+        />: (
+          <div key={column.id}>
+            <Typography variant="subtitle1">{column.name}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values   ?  values[column.id]?.toString(): ''}</Typography>
+          </div>
+         )
       default:
         return <div key={column.id}></div>
     }
   }
   const handleCloseModal = () => {
-    setCommentMode(false);
+    setCurrentMode('view');
     onClose();
   }
   return (
@@ -349,7 +425,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
         },
       }}
     >
-      {commentMode ?
+      {currentMode =='comment' &&
         <Box sx={{ display: 'flex', width: '100%', px: { xs: 1, md: 3 }, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
           <Box
             component="span"
@@ -364,99 +440,141 @@ const RowFormPanel = ({ currentView, rowData, open, columns, comment, onClose, o
               cursor: 'pointer',
               marginRight: { xs: 1.5, md: 4 }
             }}
-            onClick={() => { setCommentMode(false); }}
+            onClick={() => { setCurrentMode('view'); }}
           />
-        </Box> :
-        rowData ?
-          <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', px: { xs: 1, md: 3 }, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
-            {actions.map((action: any) => (
-              <Box
-                key={action.title}
-                sx={{
-                  display: 'flex',
-                  cursor: 'pointer'
-                }}
-                onClick={() => { handleAction(action.action); }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center'
-                  }}
-                >
+        </Box> 
+       }
+       {
+         currentMode ==='create' && 
+         <DialogTitle textAlign="center" sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>Create New Row</DialogTitle>
+       }
+       {
+         (currentMode ==='update' || currentMode ==='view') && <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', px: { xs: 1, md: 3 }, marginTop: 4, paddingBottom: 2, borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
+                {actions.map((action: any) => (
                   <Box
+                    key={action.title}
                     sx={{
-                      fontSize: '16px',
-                      color: action.color || theme.palette.palette_style.text.primary
+                      display: 'flex',
+                      cursor: 'pointer'
                     }}
+                    onClick={() => { handleAction(action.action); }}
                   >
-                    {action.title}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          fontSize: '16px',
+                          color: action.color || theme.palette.palette_style.text.primary
+                        }}
+                      >
+                        {action.title}
+                      </Box>
+                    </Box>
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 18,
+                        height: 18,
+                        display: 'inline-block',
+                        bgcolor: action.color || theme.palette.palette_style.text.primary,
+                        mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                        WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                        marginLeft: { xs: 0.2, md: 1 },
+                        marginTop: 0.2
+                      }}
+                    />
                   </Box>
-                </Box>
-                <Box
-                  component="span"
-                  className="svg-color"
-                  sx={{
-                    width: 18,
-                    height: 18,
-                    display: 'inline-block',
-                    bgcolor: action.color || theme.palette.palette_style.text.primary,
-                    mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                    WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                    marginLeft: { xs: 0.2, md: 1 },
-                    marginTop: 0.2
-                  }}
-                />
+                ))}
               </Box>
-            ))}
-          </Box> :
-          <DialogTitle textAlign="center" sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>Create New Row</DialogTitle>
-      }
+       }
+       
       <DialogContent>
-        {!commentMode ? <form onSubmit={(e) => e.preventDefault()} id="new_row_form">
-          <Stack>
-            <Box>
-              {error && <Alert severity="error">{error}</Alert>}
-            </Box>
-          </Stack>
-          <Stack
-            sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
-              paddingTop: 2
-            }}
-          >
-            {values && filter(columns, (x) => !x.system).map((column: any) =>
-              renderField(column)
-            )}
-          </Stack>
-        </form> :
-          <ChatForm chatType={ChatType.RowData} id={rowData.id} />
+        {currentMode !=='comment' &&
+          <form onSubmit={(e) => e.preventDefault()} id="new_row_form">
+            <Stack>
+              <Box>
+                {error && <Alert severity="error">{error}</Alert>}
+              </Box>
+            </Stack>
+            <Stack
+              sx={{
+                width: '100%',
+                minWidth: { xs: '300px', sm: '360px', md: '400px' },
+                gap: '1.5rem',
+                paddingTop: 2
+              }}
+            >
+              {currentMode !=='view' && values && filter(columns, (x) => !x.system).map((column: any) =>
+                renderField(column)
+              )}
+               {currentMode ==='view' && values && columns.map((column: any) =>
+                renderField(column)
+              )}
+            </Stack>
+        </form> 
+        }
+        {
+          currentMode == 'comment' && <ChatForm chatType={ChatType.RowData} id={rowData.id} />
         }
       </DialogContent>
+
+
       <DialogActions sx={{ p: '1.25rem', borderTop: `1px solid ${theme.palette.palette_style.border.default}`, justifyContent: 'space-between' }}>
-        <Box
-          component="span"
-          className="svg-color"
-          sx={{
-            width: 16,
-            height: 16,
-            display: 'inline-block',
-            bgcolor: theme.palette.palette_style.text.primary,
-            mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-            WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-            cursor: 'pointer',
-            marginRight: { xs: 1.5, md: 4 }
-          }}
-          onClick={() => { setCommentMode(true); }}
-        />
+       {
+         (currentMode ==='update' || currentMode ==='view') && (
+            <Box
+            component="span"
+            className="svg-color"
+            sx={{
+              width: 16,
+              height: 16,
+              display: 'inline-block',
+              bgcolor: theme.palette.palette_style.text.primary,
+              mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
+              cursor: 'pointer',
+              marginRight: { xs: 1.5, md: 4 }
+            }}
+            onClick={() => { setCurrentMode('comment'); }}
+          />
+         )
+       }
+       {
+         (currentMode ==='create') && (
+            <Box
+            component="span"
+            className="svg-color"
+            sx={{
+              marginRight: { xs: 1.5, md: 4 }
+            }}
+           
+          />
+         )
+       }
+       
 
         <Box sx={{ display: 'flex' }}>
           <Button onClick={handleCloseModal}>Cancel</Button>
-          <Button color="secondary" onClick={handleSubmit} variant="contained" type="submit">
-            {rowData && rowData.id ? "Update Row" : "Create New Row"}
-          </Button>
+          {
+            (currentMode === 'update' || currentMode === 'create') && ( 
+              <Button color="secondary" onClick={handleSubmit} variant="contained" type="submit">
+                  {rowData && rowData.id ? "Update Row" : "Create New Row"}
+               </Button>
+            )
+          }
+          {
+            currentMode === 'view' && (
+              <Button color="secondary" onClick={handleEditRow} variant="contained" type="submit">
+              Edit
+              </Button>
+            )
+          }
+          
         </Box>
       </DialogActions>
     </Drawer>

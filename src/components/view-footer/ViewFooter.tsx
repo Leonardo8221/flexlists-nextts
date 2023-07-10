@@ -65,7 +65,7 @@ const ViewFooter = (props: Props) => {
         onSubmit={handleNewRow}
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
-        comment={false}
+        mode={'create'}
       />
     </Box>
   );

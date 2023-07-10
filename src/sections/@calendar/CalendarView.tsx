@@ -150,7 +150,7 @@ const CalendarView = ({currentView, columns, rows, setRows, open }: CalendarView
         onSubmit={handleNewRow}
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
-        comment={false}
+        mode={'update'}
       />
     </Box>
   );
