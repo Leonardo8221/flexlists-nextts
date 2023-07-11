@@ -34,7 +34,7 @@ import ChatForm from './chat/ChatForm';
 import { ChatType } from 'src/enums/ChatType';
 import { DatePicker } from '@mui/x-date-pickers';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { getDataColumnId } from 'src/utils/flexlistHelper';
+import { getChoiceField, getDataColumnId } from 'src/utils/flexlistHelper';
 import { ChoiceModel } from 'src/models/ChoiceModel';
 interface RowFormProps {
   currentView: ViewField;
@@ -358,17 +358,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
           </FormControl>
          }
           else{
-            let value_color = { bg: "#333", fill: "white" };
-            let font = "inherit";
-            let choiceLabel: string = "";
-            let choiceValue: ChoiceModel = column.config?.values?.find(
-              (x: any) => x.id === values[column.id]
-            );
-            if (choiceValue) {
-              choiceLabel = choiceValue.label;
-              value_color = choiceValue.color ?? { bg: 'white', fill: 'black' };
-              font = choiceValue.font;
-            }
+            const choice = getChoiceField(values[column.id], column);
             return (
               <div key={column.id}>
                 <Typography variant="subtitle1">{column.name}</Typography>
@@ -376,17 +366,17 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
                   key={column.id}
                   sx={{
                     // textAlign: "center",
-                    bgcolor: value_color.bg,
+                    bgcolor: choice?.color.bg,
                     borderRadius: "20px",
-                    color: value_color.fill,
-                    fontFamily: font,
+                    color: choice?.color.fill,
+                    fontFamily: choice?.font,
                     // px: 1.5,
                     overflow: "hidden",
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {choiceLabel}
+                  {choice?.label}
                 </Box>
             </div>
               

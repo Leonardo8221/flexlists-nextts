@@ -25,6 +25,7 @@ import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
 import { ChoiceModel } from "src/models/ChoiceModel";
+import { getChoiceField } from "src/utils/flexlistHelper";
 
 type DataTableProps = {
   tab: boolean;
@@ -119,22 +120,6 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
-          let value_color = { bg: "#333", fill: "white" };
-          let font = "inherit";
-          // dataColumns.forEach((item: any) => {
-          //   if (
-          //     item.type === FieldType.Choice &&
-          //     item.config &&
-          //     item.config.values
-          //   ) {
-          //     item.config.values.forEach((choice: any) => {
-          //       if (choice.name === renderedCellValue) {
-          //         value_color = choice.color;
-          //         font = choice.font;
-          //       }
-          //     });
-          //   }
-          // });
           function renderFieldData(columnType: FieldType, cellValue: any) {
             switch (columnType) {
               case FieldType.Integer:
@@ -201,33 +186,23 @@ const DataTable = ({
                   </Box>
                 );
               case FieldType.Choice:
-                let value_color = { bg: "#333", fill: "white" };
-                let font = "inherit";
-                let choiceLabel: string = "";
-                let choiceValue: ChoiceModel = dataColumn.config?.values?.find(
-                  (x: any) => x.id === cellValue
-                );
-                if (choiceValue) {
-                  choiceLabel = choiceValue.label;
-                  value_color = choiceValue.color ?? { bg: 'white', fill: 'black' };
-                  font = choiceValue.font;
-                }
+                const choice = getChoiceField(cellValue, dataColumn);
                 return (
                   <Box
                     key={row.id}
                     sx={{
                       textAlign: "center",
-                      bgcolor: value_color.bg,
+                      bgcolor: choice?.color?.bg,
                       borderRadius: "20px",
-                      color: value_color.fill,
-                      fontFamily: font,
+                      color: choice?.color?.fill,
+                      fontFamily: choice?.font,
                       px: 1.5,
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {choiceLabel}
+                    {choice?.label}
                   </Box>
                 );
               case FieldType.Boolean:

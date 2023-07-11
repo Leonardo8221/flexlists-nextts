@@ -140,8 +140,8 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
           size="small"
           sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
         >
-          {filter?.config.map((choice: any) => (
-            <MenuItem key={choice.name} value={choice.name} sx={{ backgroundColor: choice.color.bg, color: choice.color.fill, '&:hover': { backgroundColor: choice.color.bg } }}>{choice.name}</MenuItem>
+          {column?.config?.values.map((choice: any) => (
+            <MenuItem key={choice.id} value={choice.id} >{choice.label}</MenuItem>
           ))}
         </Select>)
         break;
@@ -239,7 +239,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
           {currentView.conditions.map((filter: any, index: number) =>{
              return isObject(filter) ? 
              (
-              <Box key={filter.column} sx={{ marginBottom: 1 }}>
+              <Box key={index} sx={{ marginBottom: 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Select
                     value={filter.left}
