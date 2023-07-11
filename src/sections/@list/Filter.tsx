@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import Guid from 'src/utils/guidHelper';
 
 type FilterProps = {
   currentView:View;
@@ -92,7 +93,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
      const columnType = column.type;
      let defaultConditionOperator : string = FilterOperator.eq;
      let conditionOperators :{key:string,value:string}[] = []
-     let defaultValue : any = undefined;
+     let defaultValue : any = '';
      let render : any = (<></>)
      switch (columnType) {
       case FieldType.Integer:
@@ -159,7 +160,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
         conditionOperators = booleanFilterOperators
         defaultValue = false
         render = (<Select
-          value={filter.right.toString()}
+          value={filter.right?.toString()}
           onChange={(e) => { handleFilters(index??0, 'right', e.target.value=="true"); }}
           size="small"
           sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
@@ -255,8 +256,9 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
                   >
                     {columns.map((column: any) => { 
                       var columnValue = (column.system && (column.name === 'createdAt'|| column.name === 'updatedAt'))? column.name:column.id
+                      
                       return (
-                      <MenuItem key={column.id} value={columnValue} sx={{ display: 'flex' }}>
+                      <MenuItem key={`${column.id}-${Guid.newGuid()}`} value={columnValue} sx={{ display: 'flex' }}>
                         <Box
                           component="span"
                           className="svg-color"
@@ -283,7 +285,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
                   >
                     {
                       getFilter(filter)[1].map((compare)=>{
-                         return (<MenuItem key={compare.key} value={compare.key}>{compare.value}</MenuItem>)
+                         return (<MenuItem key={`${compare.key}-${Guid.newGuid()}`}  value={compare.key}>{compare.value}</MenuItem>)
                       })
                     }
                   </Select>
