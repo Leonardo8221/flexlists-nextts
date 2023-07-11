@@ -15,7 +15,6 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Guid from 'src/utils/guidHelper';
 
 type FilterProps = {
   currentView:View;
@@ -258,7 +257,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
                       var columnValue = (column.system && (column.name === 'createdAt'|| column.name === 'updatedAt'))? column.name:column.id
                       
                       return (
-                      <MenuItem key={`${column.id}-${Guid.newGuid()}`} value={columnValue} sx={{ display: 'flex' }}>
+                      <MenuItem key={`${column.id}`} value={columnValue} sx={{ display: 'flex' }}>
                         <Box
                           component="span"
                           className="svg-color"
@@ -285,7 +284,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
                   >
                     {
                       getFilter(filter)[1].map((compare)=>{
-                         return (<MenuItem key={`${compare.key}-${Guid.newGuid()}`}  value={compare.key}>{compare.value}</MenuItem>)
+                         return (<MenuItem key={`${compare.key}`}  value={compare.key}>{compare.value}</MenuItem>)
                       })
                     }
                   </Select>
@@ -314,6 +313,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
              ):
              (
                   index?(<Select
+                  key={index}
                   value={filter}
                   onChange={(e) => { handleConditionOperationFilters(index, e.target.value); }}
                   size="small"
