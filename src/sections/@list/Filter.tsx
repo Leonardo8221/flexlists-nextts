@@ -81,7 +81,16 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
   };
   const removeFilter = (index: number) => {
     var newView : View = Object.assign({},currentView)
-    newView.conditions = currentView.conditions?.filter((filter: any, i: number) => (i !== index && (i !== index-1)))
+    newView.conditions = currentView.conditions?.filter((filter: any, i: number) => {
+      if(index === 0)
+      {
+        return (i !== index && (i !== index+1))
+      }
+      else
+      {
+        return (i !== index && (i !== index-1))
+      }
+    })
     setCurrentView(newView)
   };
   const getDate = (date:any)=>{
