@@ -60,7 +60,13 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
   const handleFilters = (index: number, key: string, value: any) => {
     var newView : View = Object.assign({},currentView)
     newView.conditions = currentView.conditions?.map((filter: any, i: number) => {
-      if (index === i) filter[key] = value;
+      if (index === i) 
+      {
+        filter[key] = value;
+        if(key === "left"){
+          filter['right'] = getFilter({left:value})[3]
+        }
+      }
       return filter;
     })
     setCurrentView(newView)
@@ -81,12 +87,13 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
   const getDate = (date:any)=>{
     return dayjs(date, "MM/DD/YYYY HH:mm:ss")
   }
-  const getFilter = (filter : any,index?:number) : [string,{key:string,value:string}[],any] =>{
-     var column = getColumn(filter.left);
-     var columnType = column.type;
-     var defaultConditionOperator : string = FilterOperator.eq;
-     var conditionOperators :{key:string,value:string}[] = []
-     var render : any = (<></>)
+  const getFilter = (filter : any,index?:number) : [string,{key:string,value:string}[],any,any] =>{
+     const column = getColumn(filter.left);
+     const columnType = column.type;
+     let defaultConditionOperator : string = FilterOperator.eq;
+     let conditionOperators :{key:string,value:string}[] = []
+     let defaultValue : any = undefined;
+     let render : any = (<></>)
      switch (columnType) {
       case FieldType.Integer:
       case FieldType.Float:
@@ -123,6 +130,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
       case FieldType.Text:
          defaultConditionOperator = stringFilterOperators[0].key
          conditionOperators = stringFilterOperators
+         defaultValue = ''
          render = (<TextField
           size="small"
           type={ 'text'}
@@ -134,6 +142,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
       case FieldType.Choice :
          defaultConditionOperator = choiceFilterOperators[0].key
          conditionOperators = choiceFilterOperators
+         defaultValue = column?.config?.values.length>0?column?.config?.values[0].id:''
          render = (<Select
           value={filter.right}
           onChange={(e) => { handleFilters(index??0, 'right', e.target.value); }}
@@ -148,6 +157,7 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
        case FieldType.Boolean:
         defaultConditionOperator = "false"
         conditionOperators = booleanFilterOperators
+        defaultValue = false
         render = (<Select
           value={filter.right.toString()}
           onChange={(e) => { handleFilters(index??0, 'right', e.target.value=="true"); }}
@@ -162,31 +172,26 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
       default:
         break;
      }
-     return [defaultConditionOperator,conditionOperators,render]
+     return [defaultConditionOperator,conditionOperators,render,defaultValue]
   }
   const addFilter = () => {
     let newView : View = Object.assign({},currentView);
+    let filter : FlatWhere = {
+      left : columns[0].id,
+      leftType : 'Field',
+      right:getFilter({left:columns[0].id})[3],
+      rightType:'SearchString',
+      cmp:getFilter({left:columns[0].id})[0]
+    } as FlatWhere
     if(newView.conditions && newView.conditions.length>0)
     {
       newView.conditions.push('And')
-      newView.conditions.push({
-        left : columns[0].id,
-        leftType : 'Field',
-        right:'',
-        rightType:'SearchString',
-        cmp:getFilter({left:columns[0].id})[0]
-      } as FlatWhere)
+      newView.conditions.push(filter)
     }
     else
     {
       newView.conditions = [
-        {
-          left : columns[0].id,
-          leftType : 'Field',
-          right:'',
-          rightType:'SearchString',
-          cmp:getFilter({left:columns[0].id})[0]
-        } as FlatWhere
+        filter
       ];
     }
     setCurrentView(newView)
