@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, TextField } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
@@ -9,12 +9,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import { BooleanFilterOperatorLabel, ChoiceFilterOperatorLabel, DateFilterOperatorLabel, NumberFilterOperatorLabel, StringFilterOperatorLabel } from 'src/enums/ShareEnumLabels';
 import { FlatWhere, View } from 'src/models/SharedModels';
-import { FieldType, FilterOperator } from 'src/enums/SharedEnums';
+import { FieldType, FieldUiTypeEnum, FilterOperator } from 'src/enums/SharedEnums';
 import { isObject } from 'src/utils/validateUtils';
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { isArray } from 'lodash';
 
 type FilterProps = {
   currentView:View;
@@ -62,8 +63,35 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
     newView.conditions = currentView.conditions?.map((filter: any, i: number) => {
       if (index === i) 
       {
-        filter[key] = value;
+        if(key==="cmp")
+        {
+          filter[key] = value;
+          if(value === FilterOperator.in || value === FilterOperator.nin)
+          {
+            filter['right'] = []
+          }
+        }
+        //set right value for filter
+        if(key==="right")
+        {
+          let column = getColumn(filter.left);
+          if(column.uiField !== FieldUiTypeEnum.Choice)
+          {
+            filter[key] = value;
+          }
+          else
+          {
+            if(isArray(value))
+            {
+              filter[key] = value.map((item:any)=>item.id)
+            }
+          }
+        }
+                
+        //if left field changed, reset right field
         if(key === "left"){
+          filter[key] = value;
+          filter['cmp'] = getFilter({left:value})[0]
           filter['right'] = getFilter({left:value})[3]
         }
       }
@@ -95,6 +123,15 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
   };
   const getDate = (date:any)=>{
     return dayjs(date, "MM/DD/YYYY HH:mm:ss")
+  }
+  const getChoiceValues = (filter:any) =>{
+    const column = getColumn(filter.left);
+    let choices : any[] = []
+    if(filter.right && filter.right.length>0 && column.type === FieldUiTypeEnum.Choice && column?.config?.values && column?.config?.values.length > 0)
+    {
+      choices = column?.config?.values.filter((x:any)=>filter.right?.includes(x.id))
+    }
+    return choices
   }
   const getFilter = (filter : any,index?:number) : [string,{key:string,value:string}[],any,any] =>{
      const column = getColumn(filter.left);
@@ -152,7 +189,8 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
          defaultConditionOperator = choiceFilterOperators[0].key
          conditionOperators = choiceFilterOperators
          defaultValue = column?.config?.values.length>0?column?.config?.values[0].id:''
-         render = (<Select
+         
+         render = (filter.cmp !== FilterOperator.in && filter.cmp !== FilterOperator.nin)? (<Select
           value={filter.right}
           onChange={(e) => { handleFilters(index??0, 'right', e.target.value); }}
           size="small"
@@ -161,7 +199,27 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
           {column?.config?.values.map((choice: any) => (
             <MenuItem key={choice.id} value={choice.id} >{choice.label}</MenuItem>
           ))}
-        </Select>)
+        </Select>) :
+        (<Autocomplete 
+          multiple
+          id='tags-choice'
+          size="small"
+          onChange={(event, newValue) => {
+            handleFilters(index??0, 'right', newValue);
+          }}
+          value={getChoiceValues(filter)}
+          options={column?.config?.values}
+          getOptionLabel={(option:any) => option?.label}
+          filterSelectedOptions
+          sx={{ width: {md: '168px'}, marginLeft: {xs: '8px', md: '30px'} }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="standard"
+              placeholder=""
+            />
+          )}
+        />)
         break;
        case FieldType.Boolean:
         defaultConditionOperator = "false"
