@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { GetServerSideProps } from "next";
 import LanguagePopover from "src/layouts/LanguagePopover";
+import WysiwygView from "src/components/wysiwyg/wysiwygView";
 
 type ContentTestProps = {
     };
@@ -20,7 +21,10 @@ const  ContentTest = ({ translations  }:ContentTestProps&{translations:Translati
         </div>
         <div>
             <h1>{t('Welcome')}</h1>
-            <div dangerouslySetInnerHTML={{ __html: t('Description') }} />
+            <WysiwygView
+              value={t('Description')}
+            />
+            {/* <div dangerouslySetInnerHTML={{ __html: t('Description') }} /> */}
             <ReactMarkdown>{t('DescriptionMarkdown')}</ReactMarkdown>
             <Box
                 component="img"

@@ -36,6 +36,10 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { getChoiceField, getDataColumnId } from 'src/utils/flexlistHelper';
 import { ChoiceModel } from 'src/models/ChoiceModel';
+import ReactMarkdown from 'react-markdown';
+import WysiwygEditor from 'src/components/wysiwyg/wysiwygEditor';
+import { marked } from 'marked';
+import TurndownService from 'turndown';
 interface RowFormProps {
   currentView: ViewField;
   rowData: any;
@@ -184,6 +188,9 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
   }
   const handleEditRow = () => {
     setCurrentMode('update');
+  };
+  const convertMarkdownToHtml = (markdown: string): string => {
+    return marked(markdown);
   };
   const renderField = (column: ViewField) => {
     switch (column.uiField) {
@@ -393,6 +400,37 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values   ?  values[column.id]?.toString(): ''}</Typography>
           </div>
          )
+      case FieldUiTypeEnum.Markdown:
+        return currentMode !=='view'? 
+        (<>
+        <Typography variant="subtitle2" gutterBottom>
+            {column.name}
+        </Typography>
+        <WysiwygEditor
+          value={convertMarkdownToHtml(
+            values[column.id]
+          )}
+          setValue={(newValue) =>
+            {
+              const turndownService = new TurndownService();
+              const markdown = turndownService.turndown(newValue);
+              setValues({ ...values, [column.id]: markdown })
+            }
+            
+          }
+        />
+        </>) :
+        ( <div key={column.id}>
+          <Typography variant="subtitle1">{column.name}</Typography>
+          <ReactMarkdown>{values[column.id]}</ReactMarkdown>
+        </div>)
+      case FieldUiTypeEnum.HTML:
+        return currentMode !=='view'? 
+        (<></>) :
+        (<div key={column.id}>
+          <Typography variant="subtitle1">{column.name}</Typography>
+          <div dangerouslySetInnerHTML={{ __html: values[column.id]?.toString() }} />
+        </div>)
       default:
         return <div key={column.id}></div>
     }

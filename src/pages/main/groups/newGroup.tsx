@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
-import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
+import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import IconUploadButton from "src/sections/groups/UploadButton";
 import { useRouter } from "next/router";

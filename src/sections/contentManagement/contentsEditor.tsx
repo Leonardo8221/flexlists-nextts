@@ -29,7 +29,7 @@ import { TranslationText } from "src/models/SharedModels";
 import { Language } from "src/models/Language";
 import { translationTextService } from "src/services/admin/translationText.service";
 import { TranslationKeyType } from "src/enums/SharedEnums";
-import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
+import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import TurndownService from "turndown";
 import { marked } from "marked";
 import { ThemeContext } from "@emotion/react";

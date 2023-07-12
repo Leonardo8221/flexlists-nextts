@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
-import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
+import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import {
   Box,
   Typography,

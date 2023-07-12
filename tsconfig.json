@@ -28,6 +28,6 @@
       "module": "commonjs"
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/wysiwyg-editor/wysiwyg.tsx", "src/components/wysiwyg-editor/wysiwyg.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/wysiwyg/wysiwygEditor.tsx", "src/components/wysiwyg/wysiwygEditor.jsx"],
   "exclude": ["node_modules"]
 }

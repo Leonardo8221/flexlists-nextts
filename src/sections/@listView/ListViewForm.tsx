@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, TextField, Modal, Typography, Grid, Button, Select, MenuItem, SelectChangeEvent, Alert } from "@mui/material";
 import AddViewCard from "src/components/add-view/AddViewCard";
-import WysiwygEditor from "src/components/wysiwyg-editor/wysiwyg";
+import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { FieldUIType, View } from "src/models/SharedModels";
 import { connect } from "react-redux";
 import { FieldType, FieldUiTypeEnum, ViewType } from "src/enums/SharedEnums";
