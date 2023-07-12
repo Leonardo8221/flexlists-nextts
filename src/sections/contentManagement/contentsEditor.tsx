@@ -33,6 +33,8 @@ import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import TurndownService from "turndown";
 import { marked } from "marked";
 import { ThemeContext } from "@emotion/react";
+import { markdownToHtml } from "src/utils/parserHelper";
+import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
 type ContentEditorProps = {
   authValidate: AuthValidate;
   languages: Language[];
@@ -201,9 +203,9 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
   const onSubmit = async () => {
     const turndownService = new TurndownService();
     let newTranslationTexts = translationTexts.map((x) => {
-      if (x.translationKeyType === TranslationKeyType.Markdown) {
-        x.translation = turndownService.turndown(x.translation);
-      }
+      // if (x.translationKeyType === TranslationKeyType.Markdown) {
+      //   x.translation = turndownService.turndown(x.translation);
+      // }
       if (x.translationKeyType === TranslationKeyType.Image) {
         x.translation = x.translation.toString();
       }
@@ -462,8 +464,17 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                           <Typography variant="subtitle2" gutterBottom>
                             {translationText.translationKey}
                           </Typography>
-                          <WysiwygEditor
-                            value={convertMarkdownToHtml(
+                          <MarkdownEditor
+                          markdown={translationText.translation}
+                          setMarkdown={(newValue) =>{
+                            onTranslateMarkdownChange(
+                              newValue,
+                              translationText
+                            )
+                          }}
+                           />
+                          {/* <WysiwygEditor
+                            value={markdownToHtml(
                               translationText.translation
                             )}
                             setValue={(newValue) =>
@@ -472,7 +483,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                                 translationText
                               )
                             }
-                          />
+                          /> */}
                         </Box>
                       )}
                     </Box>

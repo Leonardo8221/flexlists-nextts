@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { Box } from "@mui/material";
+import { htmlToMarkdown, markdownToHtml } from "src/utils/parserHelper";
 import { formats, modules } from "./wysiwygConfig";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const styles = {};
-type WysiwygEditorProps = {
-  value: string;
-  setValue: (editValue: string) => void;
+type MarkdownEditorProps = {
+  markdown: string;
+  setMarkdown: (editValue: string) => void;
 };
-const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
+const MarkdownEditor = ({ markdown: markdown, setMarkdown: setMarkdown }: MarkdownEditorProps) => {
+  const [value, setValue] = useState<string>(markdownToHtml(markdown || ""));
   const handleEditorChange = (newValue: string) => {
+    console.log(newValue);
     setValue(newValue);
+    setMarkdown(htmlToMarkdown(newValue));
   };
   
   return (
@@ -38,4 +42,4 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
   );
 };
 
-export default WysiwygEditor;
+export default MarkdownEditor;

@@ -40,6 +40,7 @@ import ReactMarkdown from 'react-markdown';
 import WysiwygEditor from 'src/components/wysiwyg/wysiwygEditor';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
+import MarkdownEditor from 'src/components/wysiwyg/markdownEditor';
 interface RowFormProps {
   currentView: ViewField;
   rowData: any;
@@ -406,15 +407,11 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
         <Typography variant="subtitle2" gutterBottom>
             {column.name}
         </Typography>
-        <WysiwygEditor
-          value={convertMarkdownToHtml(
-            values[column.id]
-          )}
-          setValue={(newValue) =>
+        <MarkdownEditor
+          markdown={values[column.id]}
+          setMarkdown={(newValue) =>
             {
-              const turndownService = new TurndownService();
-              const markdown = turndownService.turndown(newValue);
-              setValues({ ...values, [column.id]: markdown })
+              setValues({ ...values, [column.id]: newValue })
             }
             
           }
