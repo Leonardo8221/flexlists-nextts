@@ -6,6 +6,7 @@ import { GetServerSideProps } from "next";
 import LanguagePopover from "src/layouts/LanguagePopover";
 import WysiwygView from "src/components/wysiwyg/wysiwygView";
 import remarkGfm from 'remark-gfm'
+
 const markup = `
 # Manage your data in easy and flexible way.
 ## Exciting News! Your Trusted Flexlists Product is About to Get a Whole Lot Better!
@@ -28,7 +29,7 @@ const ContentTest = ({ translations }: ContentTestProps & { translations: Transl
     }
     return (
         <>
-            <div style={{ marginLeft: '100px' }}>
+            <div style={{ marginLeft: '100px' }} className="container">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{markup}</ReactMarkdown>
             </div>
             <div>
