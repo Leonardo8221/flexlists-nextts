@@ -9,7 +9,7 @@ import store from "../redux/store";
 import "../styles/globals.css";
 import LoadingPage from "./LoadingPage";
 import FlashMessage from "src/components/FlashMessage";
-
+import "./admin/test.css"
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider>
