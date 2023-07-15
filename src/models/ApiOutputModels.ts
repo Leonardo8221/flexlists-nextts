@@ -61,6 +61,9 @@ export type CreateViewOutputDto = {
     listId:number
     viewId:number
 }
+export type SearchViewsOutputDto = {
+    views:any[]
+}
 export type CheckInviteOutputDto = {
     viewId?:string
 }
@@ -91,11 +94,11 @@ export type GetUserContactsOutputDto = {
     email:string
 }
 export type GetProfileOutputDto = {
-    name:string
     firstName:string
     lastName:string
-    phonenumber?:string
-    avatar?:string
+    email:string
+    phoneNumber?:string
+    avatarUrl?:string
 }
 export type CreateUserGroupOutputDto = {
     groupId:number

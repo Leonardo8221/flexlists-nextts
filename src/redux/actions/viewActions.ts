@@ -117,7 +117,7 @@ export const fetchRows = (): ThunkAction<
     }
   };
 };
-export const fetchRowsByPage = (page?: number, limit?: number): ThunkAction<
+export const fetchRowsByPage = (page?: number, limit?: number,query?:string): ThunkAction<
   void,
   RootState,
   null,
@@ -131,7 +131,7 @@ export const fetchRowsByPage = (page?: number, limit?: number): ThunkAction<
         page,
         limit,
         state.view.currentView.order,
-        undefined,
+        query,
         state.view.currentView.conditions,
         true);
       if (isSucc(response) && response.data && response.data.content) {

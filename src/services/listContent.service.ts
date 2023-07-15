@@ -24,55 +24,55 @@ export const listContentService = {
     search,
 };
 
-async function createContent(listId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>> {
+export async function createContent(listId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>>(`/api/listContent/createContent`, {listId,content})
 
   return response.data;
 };
-async function updateContent(viewId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function updateContent(viewId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/updateContent`, {viewId,content})
 
   return response.data;
 };
-async function deleteContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function deleteContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listContent/deleteContent'+`?listId=${listId}&contentId=${contentId}`)
   return response.data;
 };
-async function getContents(listId:number,page?:number,limit?:number,order?:Sort[]): Promise<FlexlistsError|FlexlistsSuccess<GetContentsOutputDto>> {
+export async function getContents(listId:number,page?:number,limit?:number,order?:Sort[]): Promise<FlexlistsError|FlexlistsSuccess<GetContentsOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<GetContentsOutputDto>>(`/api/listContent/getContents`, {listId,page,limit,order})
 
   return response.data;
 };
-async function importContent(): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function importContent(): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/importContent`, )
 
   return response.data;
 };
-async function exportContent(listId:number,type:ExportTypes,includeHeader?:boolean,delimiter?:string,page?:number,limit?:number,allPages?:boolean,includeSubs?:boolean,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function exportContent(listId:number,type:ExportTypes,includeHeader?:boolean,delimiter?:string,page?:number,limit?:number,allPages?:boolean,includeSubs?:boolean,order?:Sort[],query?:Query): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/exportContent`, {listId,type,includeHeader,delimiter,page,limit,allPages,includeSubs,order,query})
 
   return response.data;
 };
-async function getContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess<GetContentOutputDto>> {
+export async function getContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess<GetContentOutputDto>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetContentOutputDto>>('/api/listContent/getContent'+`?listId=${listId}&contentId=${contentId}`)
   return response.data;
 };
-async function archiveContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function archiveContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/archiveContent`, {listId,contentId})
 
   return response.data;
 };
-async function unarchiveContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function unarchiveContent(listId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listContent/unarchiveContent`, {listId,contentId})
 
   return response.data;
 };
-async function searchContents(viewId:number,page?:number,limit?:number,order?:Sort[],query?:Query,conditions?:any,includeCount?:boolean): Promise<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>> {
+export async function searchContents(viewId:number,page?:number,limit?:number,order?:Sort[],query?:string,conditions?:any,includeCount?:boolean): Promise<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, {viewId,page,limit,order,query,conditions,includeCount})
 
   return response.data;
 };
-async function search(type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query,conditions?:any): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
+export async function search(type:SearchType,viewId?:number,page?:number,limit?:number,order?:Sort[],query?:Query,conditions?:any): Promise<FlexlistsError|FlexlistsSuccess<SearchOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<SearchOutputDto>>(`/api/listContent/search`, {type,viewId,page,limit,order,query,conditions})
 
   return response.data;

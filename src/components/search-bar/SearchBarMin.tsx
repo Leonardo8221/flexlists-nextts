@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Autocomplete, Box, MenuItem } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material/styles';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { connect } from "react-redux";
+import { type } from "os";
+import { useRouter } from "next/router";
+import { searchContents } from "src/services/listContent.service";
+import { isInteger } from "src/utils/validateUtils";
+import { convertToInteger } from "src/utils/convertUtils";
+import { isSucc } from "src/models/ApiResponse";
+import { fetchRowsByPage, setRows } from "src/redux/actions/viewActions";
+import { is } from "date-fns/locale";
+import { searchViews } from "src/services/listView.service";
+import { debounce, set } from "lodash";
+import { SearchTypeModel } from "src/models/SharedModels";
+import { PATH_MAIN } from "src/routes/paths";
 
 const StyledSearchBarMin = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -15,20 +26,69 @@ const StyledSearchBarMin = styled('div')(({ theme }) => ({
   },
 }));
 
-const top100Films = [
-  { label: 'Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet consectetur.', sub1: 'Current list', sub2: 'Description', icon: 'table/task.svg' },
-  { label: 'Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet consectetur.', sub1: 'Current list', sub2: 'Description', icon: 'table/task.svg' },
-  { label: 'Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet consectetur.', sub1: 'All', sub2: 'Account settings', icon: 'table/task.svg' }
-];
-
-export default function SearchBarMin() {
+type SearchBarMinProps = {
+  searchTypes: SearchTypeModel[];
+  fetchRowsByPage: (page?: number, limit?: number,query?:string) => void;
+}
+const SearchBarMin = ({searchTypes,fetchRowsByPage}:SearchBarMinProps)=> {
   const theme = useTheme();
-  const [listType, setListType] = useState('all');
+  const router = useRouter();
+  const [search, setSearch] = useState<string>('');
+  const [searchType,setSearchType] = useState<string>();
+  const [currentSearchTypes,setCurrentSearchTypes] = useState<SearchTypeModel[]>([]);
+  const [searchOptions,setSearchOptions] = useState<any[]>([]);
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setListType(event.target.value as string);
+  useEffect(() => {
+    if(router.isReady && searchTypes)
+    {
+      if(router.query.viewId)
+      {
+        setCurrentSearchTypes(searchTypes)
+        setSearchType('CurrentView')
+      }
+      else
+      {
+        setCurrentSearchTypes(searchTypes.filter((x)=>x.name !== 'CurrentView'))
+        setSearchType('AllViews')
+      }
+    }
+  },[router.isReady,searchTypes])
+ 
+  const handleSearchTypeChange = async(event: SelectChangeEvent) => {
+    const searchType = event.target.value as string;
+    setSearchType(searchType)
+    setSearch('')
+  }
+  const handleKeyPress = async(event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      fetchRowsByPage(0,25,search && search !== ''? search:undefined)
+    }
   };
+  
+  const fetchViews = async (searchTerm: string) => {
+    try {
+       let response = await searchViews(searchTerm);
+       if(isSucc(response) && response.data)
+       {
+          setSearchOptions(response.data.views)
+       }
+    } catch (error) {
+      console.error('Error fetching views:', error);
+    }
+  };
+  const debouncedFetchOptions = debounce(fetchViews, 1000);
 
+  const handleSearchViewInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = event.target.value;
+    debouncedFetchOptions(searchTerm);
+  };
+  const handleSelectView = async(view:any) => {
+    if(view && view.id)
+    {
+      await router.push({pathname: `${PATH_MAIN.views}/${view.id}`})
+      router.reload()
+    }
+  };
   return (
     <StyledSearchBarMin>
       <Box
@@ -39,98 +99,129 @@ export default function SearchBarMin() {
           width: { xs: '100%', sm: '85%', md: 500, lg: 800 }
         }}
       >
-        <Select
+        {
+          searchType && <Select
           id="lst_type"
-          value={listType}
-          onChange={handleChange}
+          value={searchType}
+          onChange={(e)=>handleSearchTypeChange(e)}
           size="small"
           sx={{ boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
-        >
-          <MenuItem value='all'>All</MenuItem>
-          <MenuItem value='current_list'>Current List</MenuItem>
-          <MenuItem value='current_view'>Current View</MenuItem>
-        </Select>
-        <Autocomplete
+          >
+            {
+              currentSearchTypes.map((x)=>{ 
+                  return <MenuItem key={x.name} value={x.name}>{x.text}</MenuItem>
+                }
+              )
+            }
+
+          </Select>
+        }
+        {
+          searchType === 'CurrentView' && <TextField
+          fullWidth
           size="small"
-          disablePortal
-          id="searchbar"
-          options={top100Films}
+          key={searchType}
+          value={search}
+          onChange={(e)=>setSearch(e.target.value)}
+          onKeyDown={(e)=>handleKeyPress(e)}
+          />
+        }
+        {
+          searchType === 'AllViews' && <Autocomplete
+          freeSolo
+          id="free-solo-2-name"
+          fullWidth
+          options={searchOptions}
+          getOptionLabel={(option) => option.name}
+          onChange={(event: any, newValue:any) => {
+            handleSelectView(newValue)
+          }}
           sx={{ width: '100%', height: 32, boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
-          renderInput={(params) => <TextField {...params} label="Search..." />}
-          renderOption={(props, option, { selected }) => (
-            <li {...props}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  alignItems: 'center',
-                  py: 1
-                }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex'
-                  }}
-                >
-                  <Box
-                    component="span"
-                    className="svg-color"
-                    sx={{
-                      width: 18,
-                      height: 18,
-                      display: 'inline-block',
-                      bgcolor: '#D3D3D3',
-                      mask: `url(/assets/icons/header/magnify.svg) no-repeat center / contain`,
-                      WebkitMask: `url(/assets/icons/header/magnify.svg) no-repeat center / contain`,
-                      mr: 1,
-                      mt: 0.4
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      width: { xs: '330px', sm: 150, md: 200, lg: 400 },
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {option.label}
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: {xs: 'none', md: 'flex'},
-                    backgroundColor: '#EDF2F5',
-                    color: '#666',
-                    borderRadius: '6px',
-                    border: '1px solid rgba(102, 102, 102, 0.1)',
-                    px: 1,
-                    py: 0.5
-                  }}
-                >
-                  <Box>{option.sub1} / </Box>
-                  <Box
-                    component="span"
-                    className="svg-color"
-                    sx={{
-                      width: 18,
-                      height: 18,
-                      display: 'inline-block',
-                      bgcolor: '#666',
-                      mask: `url(/assets/icons/${option.icon}) no-repeat center / contain`,
-                      WebkitMask: `url(/assets/icons/${option.icon}) no-repeat center / contain`,
-                      mx: 0.5,
-                      mt: 0.3
-                    }}
-                  />
-                  <Box>{option.sub2}</Box>
-                </Box>
-              </Box>
-            </li>
-          )}
+          renderInput={(params) => <TextField {...params} label="Search..." onChange={handleSearchViewInputChange} />}
+          // renderOption={(props, option, { selected }) => (
+          //   <li {...props}>
+          //     <Box
+          //       sx={{
+          //         display: 'flex',
+          //         justifyContent: 'space-between',
+          //         width: '100%',
+          //         alignItems: 'center',
+          //         py: 1
+          //       }}
+          //     >
+          //       <Box
+          //         sx={{
+          //           display: 'flex'
+          //         }}
+          //       >
+          //         <Box
+          //           component="span"
+          //           className="svg-color"
+          //           sx={{
+          //             width: 18,
+          //             height: 18,
+          //             display: 'inline-block',
+          //             bgcolor: '#D3D3D3',
+          //             mask: `url(/assets/icons/header/magnify.svg) no-repeat center / contain`,
+          //             WebkitMask: `url(/assets/icons/header/magnify.svg) no-repeat center / contain`,
+          //             mr: 1,
+          //             mt: 0.4
+          //           }}
+          //         />
+          //         <Box
+          //           sx={{
+          //             width: { xs: '330px', sm: 150, md: 200, lg: 400 },
+          //             overflow: 'hidden',
+          //             whiteSpace: 'nowrap',
+          //             textOverflow: 'ellipsis'
+          //           }}
+          //         >
+          //           {option.label}
+          //         </Box>
+          //       </Box>
+          //       <Box
+          //         sx={{
+          //           display: {xs: 'none', md: 'flex'},
+          //           backgroundColor: '#EDF2F5',
+          //           color: '#666',
+          //           borderRadius: '6px',
+          //           border: '1px solid rgba(102, 102, 102, 0.1)',
+          //           px: 1,
+          //           py: 0.5
+          //         }}
+          //       >
+          //         <Box>{option.sub1} / </Box>
+          //         <Box
+          //           component="span"
+          //           className="svg-color"
+          //           sx={{
+          //             width: 18,
+          //             height: 18,
+          //             display: 'inline-block',
+          //             bgcolor: '#666',
+          //             mask: `url(/assets/icons/${option.icon}) no-repeat center / contain`,
+          //             WebkitMask: `url(/assets/icons/${option.icon}) no-repeat center / contain`,
+          //             mx: 0.5,
+          //             mt: 0.3
+          //           }}
+          //         />
+          //         <Box>{option.sub2}</Box>
+          //       </Box>
+          //     </Box>
+          //   </li>
+          // )}
         />
-      </Box>
+        }
+        
+        </Box>
     </StyledSearchBarMin>
   );
 }
+const mapStateToProps = (state: any) => ({
+  searchTypes: state.admin.searchTypes
+});
+
+const mapDispatchToProps = {
+  fetchRowsByPage
+};
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBarMin);
