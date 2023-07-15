@@ -11,11 +11,11 @@ import { searchContents } from "src/services/listContent.service";
 import { isInteger } from "src/utils/validateUtils";
 import { convertToInteger } from "src/utils/convertUtils";
 import { isSucc } from "src/models/ApiResponse";
-import { fetchRowsByPage, setRows } from "src/redux/actions/viewActions";
+import { fetchRowsByPage, setCurrentView, setRows } from "src/redux/actions/viewActions";
 import { is } from "date-fns/locale";
 import { searchViews } from "src/services/listView.service";
 import { debounce, set } from "lodash";
-import { SearchTypeModel } from "src/models/SharedModels";
+import { SearchTypeModel, View } from "src/models/SharedModels";
 import { PATH_MAIN } from "src/routes/paths";
 
 const StyledSearchBarMin = styled('div')(({ theme }) => ({
@@ -27,13 +27,15 @@ const StyledSearchBarMin = styled('div')(({ theme }) => ({
 }));
 
 type SearchBarMinProps = {
+  currentView:View,
   searchTypes: SearchTypeModel[];
   fetchRowsByPage: (page?: number, limit?: number,query?:string) => void;
+  setCurrentView: (view:View) => void;
 }
-const SearchBarMin = ({searchTypes,fetchRowsByPage}:SearchBarMinProps)=> {
+const SearchBarMin = ({currentView,searchTypes,fetchRowsByPage,setCurrentView}:SearchBarMinProps)=> {
   const theme = useTheme();
   const router = useRouter();
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState<string|undefined>('');
   const [searchType,setSearchType] = useState<string>();
   const [currentSearchTypes,setCurrentSearchTypes] = useState<SearchTypeModel[]>([]);
   const [searchOptions,setSearchOptions] = useState<any[]>([]);
@@ -45,6 +47,8 @@ const SearchBarMin = ({searchTypes,fetchRowsByPage}:SearchBarMinProps)=> {
       {
         setCurrentSearchTypes(searchTypes)
         setSearchType('CurrentView')
+        // console.log('currentView',currentView)
+        // setSearch(currentView.query)
       }
       else
       {
@@ -61,7 +65,15 @@ const SearchBarMin = ({searchTypes,fetchRowsByPage}:SearchBarMinProps)=> {
   }
   const handleKeyPress = async(event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
-      fetchRowsByPage(0,25,search && search !== ''? search:undefined)
+      if(searchType === 'CurrentView')
+      {
+        let newView : View = Object.assign({},currentView)
+        newView.query = search;
+        newView.conditions = undefined
+        setCurrentView(newView)
+        fetchRowsByPage(0,25,search && search !== ''? search:undefined)
+      }
+      
     }
   };
   
@@ -76,7 +88,7 @@ const SearchBarMin = ({searchTypes,fetchRowsByPage}:SearchBarMinProps)=> {
       console.error('Error fetching views:', error);
     }
   };
-  const debouncedFetchOptions = debounce(fetchViews, 1000);
+  const debouncedFetchOptions = debounce(fetchViews, 500);
 
   const handleSearchViewInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value;
@@ -218,10 +230,12 @@ const SearchBarMin = ({searchTypes,fetchRowsByPage}:SearchBarMinProps)=> {
   );
 }
 const mapStateToProps = (state: any) => ({
-  searchTypes: state.admin.searchTypes
+  searchTypes: state.admin.searchTypes,
+  currentView : state.view.currentView
 });
 
 const mapDispatchToProps = {
-  fetchRowsByPage
+  fetchRowsByPage,
+  setCurrentView
 };
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBarMin);

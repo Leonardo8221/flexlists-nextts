@@ -76,7 +76,7 @@ export type View = {
     page?: number,
     limit?: number,
     order?: Sort[],
-    query?: Query,
+    query?: string,
     conditions?:FlatWhere[],
     description?: string
 }

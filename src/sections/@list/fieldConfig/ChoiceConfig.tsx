@@ -76,7 +76,7 @@ export default function ChoiceConfig ({
     // const [choices, setChoices] = useState<Choice[]>([]);
     const addChoice = () => {
         var choice : ChoiceModel = {
-          id: Guid.newGuid(),
+          id: `Choice ${choices.length + 1}`,
           label: `Choice ${choices.length + 1}`,
           color: colors[0],
           font: fonts[0],
@@ -94,9 +94,15 @@ export default function ChoiceConfig ({
       };
   
       const updateChoiceLabel = (index: number, label: string) => {
+        var existChoice = choices.find((choice, i) => choice.label === label);
+        if (existChoice) {
+          return;
+        }
         const newChoices = choices.map((choice, i) => {
-          if (index === i) choice.label = label;
-  
+          if (index === i) {
+            choice.id = label;
+            choice.label = label;
+          }
           return choice;
         });
   

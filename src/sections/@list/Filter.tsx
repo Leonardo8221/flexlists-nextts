@@ -264,6 +264,9 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
     setCurrentView(newView)
   };
   const onsubmit = async() =>{
+    let newView : View = Object.assign({},currentView);
+    newView.query = undefined;
+    setCurrentView(newView)
     fetchRows()
     handleClose()
   }
