@@ -47,8 +47,7 @@ const SearchBarMin = ({currentView,searchTypes,fetchRowsByPage,setCurrentView}:S
       {
         setCurrentSearchTypes(searchTypes)
         setSearchType('CurrentView')
-        // console.log('currentView',currentView)
-        // setSearch(currentView.query)
+        setSearch(currentView.query)
       }
       else
       {
@@ -57,6 +56,12 @@ const SearchBarMin = ({currentView,searchTypes,fetchRowsByPage,setCurrentView}:S
       }
     }
   },[router.isReady,searchTypes])
+  useEffect(() => {
+    if(router.query.viewId)
+    {
+      setSearch(currentView?.query??'')
+    }
+  },[currentView?.query])
  
   const handleSearchTypeChange = async(event: SelectChangeEvent) => {
     const searchType = event.target.value as string;
@@ -68,10 +73,10 @@ const SearchBarMin = ({currentView,searchTypes,fetchRowsByPage,setCurrentView}:S
       if(searchType === 'CurrentView')
       {
         let newView : View = Object.assign({},currentView)
-        newView.query = search;
+        newView.query = (search && search !== '')? search:undefined;
         newView.conditions = undefined
         setCurrentView(newView)
-        fetchRowsByPage(0,25,search && search !== ''? search:undefined)
+        fetchRowsByPage(0,25)
       }
       
     }

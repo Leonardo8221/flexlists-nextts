@@ -90,7 +90,6 @@ export const fetchRows = (): ThunkAction<
   return async (dispatch: Dispatch<any>) => {
     try {
       var state = store.getState();
-      console.log(state.view.currentView);
       const response = await listContentService.searchContents(
         state.view.currentView.id,
         state.view.currentView.page,
@@ -127,13 +126,12 @@ export const fetchRowsByPage = (page?: number, limit?: number,query?:string): Th
   return async (dispatch: Dispatch<any>) => {
     try {
       var state = store.getState();
-      console.log(state.view.currentView);
       const response = await listContentService.searchContents(
         state.view.currentView.id,
         page,
         limit,
         state.view.currentView.order,
-        query,
+        state.view.currentView.query,
         state.view.currentView.conditions,
         true);
       if (isSucc(response) && response.data && response.data.content) {

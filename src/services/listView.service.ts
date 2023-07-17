@@ -5,7 +5,6 @@ import { CreateViewOutputDto } from 'src/models/ApiOutputModels'
 import { ViewType } from 'src/enums/SharedEnums'
 import { ListCategory } from 'src/enums/SharedEnums'
 import { Sort } from 'src/models/SharedModels'
-import { Query } from 'src/models/SharedModels'
 import { View } from 'src/models/SharedModels'
 import { SearchViewsOutputDto } from 'src/models/ApiOutputModels'
 import { Role } from 'src/enums/SharedEnums'
@@ -44,7 +43,7 @@ export async function getViewUsers(viewId:number): Promise<FlexlistsError|Flexli
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>>('/api/listView/getViewUsers'+`?viewId=${viewId}`)
   return response.data;
 };
-export async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
+export async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:any,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>>(`/api/listView/createView`, {listId,name,type,config,template,category,page,limit,order,query,description,conditions,fields})
 
   return response.data;
@@ -54,7 +53,7 @@ export async function renameView(viewId:number,name:string,description?:string):
 
   return response.data;
 };
-export async function updateView(viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:Query,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function updateView(viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:any,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateView`, {viewId,name,type,config,page,limit,order,query,description,conditions,fields})
 
   return response.data;
