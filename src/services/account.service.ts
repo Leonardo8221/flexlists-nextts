@@ -10,20 +10,19 @@ export const accountService = {
     changePassword,
     changeEmail,
     validateEmailChange,
-    deleteUser,
 };
 
 export async function getUserContacts(): Promise<FlexlistsError|FlexlistsSuccess<GetUserContactsOutputDto[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetUserContactsOutputDto[]>>('/api/account/getUserContacts')
   return response.data;
 };
-export async function updateProfile(userId:number,name?:string,firstName?:string,lastName?:string,phonenumber?:string,avatar?:string): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/account/updateProfile`, {userId,name,firstName,lastName,phonenumber,avatar})
+export async function updateProfile(email:string,firstName:string,lastName:string,phoneNumber?:string,avatarUrl?:string): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/account/updateProfile`, {email,firstName,lastName,phoneNumber,avatarUrl})
 
   return response.data;
 };
-export async function getProfile(userId:number): Promise<FlexlistsError|FlexlistsSuccess<GetProfileOutputDto>> {
-  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetProfileOutputDto>>('/api/account/getProfile'+`?userId=${userId}`)
+export async function getProfile(): Promise<FlexlistsError|FlexlistsSuccess<GetProfileOutputDto>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetProfileOutputDto>>('/api/account/getProfile')
   return response.data;
 };
 export async function changePassword(oldPassword:string,newPassword:string): Promise<FlexlistsError|FlexlistsSuccess> {
@@ -38,11 +37,6 @@ export async function changeEmail(userId:number,email:string): Promise<Flexlists
 };
 export async function validateEmailChange(userId:number,token:string): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/account/validateEmailChange`, {userId,token})
-
-  return response.data;
-};
-export async function deleteUser(userId:number): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/account/deleteUser`+`?userId=${userId}`);
 
   return response.data;
 };

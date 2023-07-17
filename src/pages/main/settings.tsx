@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Grid, Box } from "@mui/material";
-import VerticalTabs from "src/sections/settings/VerticalTabs";
+import SettingTabs from "src/sections/settings/SettingTabs";
 import MainLayout from "src/layouts/view/MainLayout";
 
 function Settings() {
@@ -19,7 +19,7 @@ function Settings() {
         }}
         maxWidth="xl"
       >
-        <VerticalTabs />
+        <SettingTabs />
       </Container>
     </MainLayout>
   );

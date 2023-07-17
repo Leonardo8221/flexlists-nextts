@@ -5,9 +5,6 @@ import {
   Typography,
   Tabs,
   Tab,
-  Avatar,
-  Button,
-  TextField,
   Grid,
   MenuItem,
   FormControl,
@@ -16,14 +13,12 @@ import {
   Switch,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { SelectChangeEvent } from "@mui/material/Select";
 import ChangePassword from "./ChangePassword";
 // ICONS----------------------------------------------
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import GppGoodIcon from "@mui/icons-material/GppGood";
-import UploadIcon from "@mui/icons-material/Upload";
+import ProfileSetting from "./ProfileSetting";
 
 const ThemeChoiceImage = styled("img")(({ theme }) => ({
   width: 180,
@@ -36,10 +31,7 @@ const ThemeChoiceImage = styled("img")(({ theme }) => ({
     borderColor: "#54A6FB",
   },
 }));
-const AvatarImg = styled("img")(({ theme }) => ({
-  width: "100%",
-  height: "100%",
-}));
+
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -75,15 +67,10 @@ function a11yProps(index: number) {
   };
 }
 
-export default function VerticalTabs() {
+export default function SettingTabs() {
   const [value, setValue] = React.useState(0);
-  const [age, setAge] = React.useState("");
 
-  const handleDateChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
-  };
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
@@ -103,7 +90,7 @@ export default function VerticalTabs() {
         variant="scrollable"
         scrollButtons={false}
         value={value}
-        onChange={handleChange}
+        onChange={handleTabChange}
         aria-label="Vertical tabs example"
         sx={{
           borderRight: 1,
@@ -145,7 +132,7 @@ export default function VerticalTabs() {
             justifyContent: "flex-start",
           }}
         />
-        <Tab
+        {/* <Tab
           label="Notifications"
           {...a11yProps(3)}
           icon={<NotificationsIcon sx={{ mr: 1 }} />}
@@ -188,87 +175,12 @@ export default function VerticalTabs() {
             flexDirection: "row",
             justifyContent: "flex-start",
           }}
-        />
+        /> */}
       </Tabs>
       <TabPanel value={value} index={0}>
         <Typography variant="h4">Profile Settings</Typography>
         <Divider light sx={{ my: 4 }}></Divider>
-
-        <Box mt={4}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              sx={{
-                width: 128,
-                height: 128,
-                border: "solid 6px #fff",
-                boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
-                fontSize: 40,
-                position: "relative",
-                "&:hover .overlay": {
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  height: "100%",
-                  position: "absolute",
-                },
-              }}
-            >
-              {/* check out and CHANGE AVATAR v2 option */}
-              {/* <Box
-                className="overlay"
-                sx={{ display: "none", backgroundColor: "rgba(0,0,0,0.5)" }}
-              >
-                <UploadIcon />
-                <Typography variant="body2">Upload image</Typography>
-              </Box> */}
-              <AvatarImg src="/assets/images/avatars/avatar_12.jpg" />
-            </Avatar>
-            <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
-              <Button variant="contained">Change Avatar</Button>
-              <Button variant="outlined" sx={{ mt: 1 }}>
-                Delete Avatar
-              </Button>
-            </Box>
-          </Box>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item md={6}>
-              <Typography variant="subtitle2">First Name</Typography>
-              <TextField sx={{ width: "100%" }} defaultValue="First Name" />
-            </Grid>
-            <Grid item md={6}>
-              <Typography variant="subtitle2">Last Name</Typography>
-              <TextField sx={{ width: "100%" }} defaultValue="Last Name" />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2">Email</Typography>
-              <TextField
-                sx={{ width: "100%" }}
-                disabled
-                defaultValue="email@email.com"
-              />
-            </Grid>
-          </Grid>
-          <Grid container sx={{ mt: 2 }}>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2">Bio</Typography>
-              <TextField
-                sx={{ width: "100%" }}
-                multiline
-                rows={8}
-                defaultValue="Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, dolor!"
-              />
-            </Grid>
-          </Grid>
-          {/* remove disabled if user update profile info */}
-          <Button sx={{ mt: 2 }} disabled variant="contained">
-            Update Settings
-          </Button>
-        </Box>
+        <ProfileSetting />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Typography variant="h4">General Settings</Typography>

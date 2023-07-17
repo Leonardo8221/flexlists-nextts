@@ -26,3 +26,11 @@ export const getChoiceField = (fieldDataId:string,column:any) : {label:string,fo
     }
     return {label:choiceLabel,font:font,color:color};
 }
+export const getAvatarUrl = (avartarUrl?:string) : string =>
+{
+    if(!avartarUrl)
+    {
+        return '/assets/images/avatar_2.jpg';
+    }
+    return avartarUrl;
+}
