@@ -10,7 +10,8 @@ const ignore = [
   PATH_AUTH_API.verifyPasswordChange,
   PATH_AUTH_API.forgotPassword,
   PATH_AUTH_API.resetPassword,
-  PATH_AUTH_API.registerExisting
+  PATH_AUTH_API.registerExisting,
+  PATH_AUTH_API.loginExisting
 ]
 const axiosInstance = axios.create({ withCredentials: true, baseURL: process.env.NEXT_PUBLIC_FLEXLIST_API_URL });
 

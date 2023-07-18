@@ -36,6 +36,7 @@ export const PATH_AUTH_API = {
   resetPassword: path(ROOTS_AUTH, "/resetPassword"),
   registerExisting: path(ROOTS_AUTH, "/registerExisting"),
   forgotPassword: path(ROOTS_AUTH, "/forgotPassword"),
+  loginExisting: path(ROOTS_AUTH, "/loginExisting"),
 }
 const ROOTS_ADMIN = "/admin";
 export const PATH_ADMIN = {
