@@ -2,6 +2,7 @@ import { Button, Box, Container, Typography, Grid, List } from "@mui/material";
 import { useRouter } from "next/router";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
+import { motion } from "framer-motion";
 
 type ContentTestProps = {};
 
@@ -15,7 +16,7 @@ export default function LandingHero() {
   return (
     <Box
       sx={{
-        marginTop: { xs: "64px", md: "88px" },
+        // marginTop: { xs: "64px", md: "88px" },
         minHeight: "calc(100vh - 144px)",
       }}
     >
@@ -32,24 +33,37 @@ export default function LandingHero() {
               alignItems: "flex-end",
               gap: 3,
               py: { xs: 4, md: 16 },
+              px: 2,
               textAlign: { xs: "center", md: "left" },
             }}
           >
             {/* <Typography variant="h1">
               Manage your data in easy and flexible way.
             </Typography> */}
-            <Typography variant="h2">
+            <Typography
+              variant="h2"
+              component={motion.h2}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 1 }}
+            >
               Exciting News! Your Trusted Flexlists Product is About to Get a
               Whole Lot Better!
             </Typography>
-            <Typography variant="h5" sx={{ fontWeight: 400 }}>
+            <Typography
+              variant="body1"
+              component={motion.p}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2, duration: 1 }}
+            >
               Dear Valued User, As a loyal user of our database product we want
-              to share some great news with you. We&apos;re thrilled to announce that
-              our team has been working tirelessly over the past 12 months on a
-              significant update to the platform, which will soon be relaunched
-              with cutting-edge features and improvements. Thanks to successful
-              funding, we have been able to invest in the development of this{" "}
-              <strong>new version</strong> , incorporating{" "}
+              to share some great news with you. We&apos;re thrilled to announce
+              that our team has been working tirelessly over the past 12 months
+              on a significant update to the platform, which will soon be
+              relaunched with cutting-edge features and improvements. Thanks to
+              successful funding, we have been able to invest in the development
+              of this <strong>new version</strong> , incorporating{" "}
               <strong>advanced technology</strong>{" "}
               <strong>user-requested features</strong> and that will greatly
               enhance your experience. In the upcoming days, you will hear more
@@ -77,6 +91,10 @@ export default function LandingHero() {
               </Box>
             </List> */}
             <Box
+              component={motion.div}
+              initial={{ x: 100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 1, delay: 2.2 }}
               sx={{
                 display: "flex",
                 gap: 3,
@@ -125,6 +143,10 @@ export default function LandingHero() {
       <Container
         maxWidth="xl"
         sx={{ position: "relative", minHeight: { xs: "30vh", md: "80vh" } }}
+        component={motion.div}
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, delay: 2.2 }}
       >
         <Box
           component="img"
