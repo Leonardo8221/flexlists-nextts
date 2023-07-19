@@ -13,10 +13,17 @@ const ignore = [
   PATH_AUTH_API.registerExisting,
   PATH_AUTH_API.loginExisting
 ]
+const loadingIgnore = [
+  "/",
+]
 const axiosInstance = axios.create({ withCredentials: true, baseURL: process.env.NEXT_PUBLIC_FLEXLIST_API_URL });
 
 axiosInstance.interceptors.request.use(function (config) {
-  store.dispatch(setLoading(true))
+  if(!loadingIgnore.some((path: string) => window.location?.pathname===path))
+  {
+    store.dispatch(setLoading(true))
+  }
+  
   return config;
 });
 axiosInstance.interceptors.response.use(
