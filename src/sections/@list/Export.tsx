@@ -11,6 +11,8 @@ import { isSucc } from 'src/models/ApiResponse';
 import { getExportFileExtension, getExportMimeType } from 'src/utils/flexlistHelper';
 import { el } from 'date-fns/locale';
 import { set } from 'lodash';
+import { FlashMessageModel } from 'src/models/FlashMessageModel';
+import { setFlashMessage } from 'src/redux/actions/authAction';
 
 const exports_all = [
   {
@@ -118,9 +120,10 @@ type ExportProps = {
   open: boolean;
   handleClose: () => void;
   currentView:View;
+  setFlashMessage: (message: FlashMessageModel | undefined) => void
 };
 
-const Export = ({ open, handleClose,currentView }: ExportProps) => {
+const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [windowHeight, setWindowHeight] = useState(0);
@@ -144,9 +147,18 @@ const Export = ({ open, handleClose,currentView }: ExportProps) => {
     // Clean up the temporary URL
     URL.revokeObjectURL(url);
   }
-  const handleExport = async (exportType:ExportType) => {
+  const handleExport = async (exportType:ExportType,isExportAll :boolean=true) => {
     try {
-      const response = await exportViewData(exportType,currentView.id)
+      const response = await exportViewData(
+        exportType,
+        currentView.id,
+        isExportAll?undefined:currentView.page,
+        isExportAll?undefined:currentView.limit,
+        isExportAll?undefined:currentView.order,
+        isExportAll?undefined:currentView.query,
+        isExportAll?undefined:currentView.conditions,
+        ';'
+        )
       if(isSucc(response) && response.data)
       {
          // Create a Blob object from the JSON data
@@ -228,7 +240,7 @@ const Export = ({ open, handleClose,currentView }: ExportProps) => {
             <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}, gap: '30px', rowGap: '12px' }}>
               {exportAll.filter((x)=>x.isShow).map((item: any) => (
                 <Box key={item} 
-                onClick={()=>handleExport(item.name)} 
+                onClick={()=>handleExport(item.name,true)} 
                 sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
                   <Box
                     component="img"
@@ -245,7 +257,9 @@ const Export = ({ open, handleClose,currentView }: ExportProps) => {
             <Box sx={{ paddingTop: 2 }}>Current View:</Box>
             <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}, gap: '30px', rowGap: '12px' }}>
               {exportCurrentView.filter((x)=>x.isShow).map((item: any) => (
-                <Box key={item} sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
+                <Box key={item} 
+                onClick={()=>handleExport(item.name,false)} 
+                sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
                   <Box
                     component="img"
                     src={`/assets/icons/${item.icon}.svg`}
@@ -269,5 +283,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
+  setFlashMessage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Export);
