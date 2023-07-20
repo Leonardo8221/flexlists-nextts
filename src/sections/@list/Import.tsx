@@ -11,6 +11,9 @@ import { FlashMessageModel } from 'src/models/FlashMessageModel';
 import { setFlashMessage } from 'src/redux/actions/authAction';
 import { set } from 'lodash';
 import axios from 'src/utils/axios';
+import { fetchRowsByPage } from 'src/redux/actions/viewActions';
+import { getImportFileExtension } from 'src/utils/flexlistHelper';
+import path from 'path';
 
 const imports = [
   {
@@ -56,10 +59,11 @@ type ImportProps = {
   open: boolean;
   handleClose: () => void;
   currentView:View;
-  setFlashMessage: (message: FlashMessageModel | undefined) => void
+  setFlashMessage: (message: FlashMessageModel | undefined) => void;
+  fetchRowsByPage: (page?: number, limit?: number) => void;
 };
 
-const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: ImportProps) => {
+const ImportContent = ({ open, handleClose,currentView,setFlashMessage,fetchRowsByPage }: ImportProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [windowHeight, setWindowHeight] = useState(0);
@@ -85,11 +89,17 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
         setError('Please select file')
         return;
       }
+      if(path.extname(file.name).substring(1) !== getImportFileExtension(importType)) {
+        setError(`Please select ${importType} file`)
+        return;
+      }
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('viewId', currentView.id.toString());
       formData.append('importType', importType);
       formData.append('addMissingFields', addMissingFields.toString());
       formData.append('truncate', truncate.toString());
+      formData.append('delimiter', delimiter.toString());
       let response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/importViewData`, 
             formData,
               {
@@ -99,6 +109,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
               })
       if(response && isSucc(response.data) && response.data.data) {
         setFlashMessage({type:'success',message:'Import successfully'})
+        fetchRowsByPage(0,25);
         onClose();
       }
       else {
@@ -138,7 +149,13 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
   ) => {
     setError('');
     if (event.target.files && event.target.files.length > 0) {
+      if(path.extname(event.target.files[0].name).substring(1) === getImportFileExtension(importType)) { 
       setFile(event.target.files[0]);
+      }
+      else
+      {
+        setError(`Please select ${importType} file`)
+      }
     }
   };
   return (
@@ -199,7 +216,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
                     Choose File{" "}
                     <input
                       type="file"
-                      accept=".json"
+                      accept={`.${getImportFileExtension(importType)}`}
                       hidden
                       onChange={handleFileChange}
                     />
@@ -266,6 +283,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setFlashMessage
+  setFlashMessage,
+  fetchRowsByPage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ImportContent);

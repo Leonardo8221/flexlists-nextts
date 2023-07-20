@@ -1,4 +1,4 @@
-import { ExportType } from "src/enums/SharedEnums";
+import { ExportType, ImportType } from "src/enums/SharedEnums";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
 
@@ -72,4 +72,22 @@ export const getExportMimeType = (exportFile:ExportType) : string =>
             return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
     return 'application/json';
+}
+
+export const getImportFileExtension = (importFile:ImportType) : string =>
+{
+    switch(importFile)
+    {
+        case ImportType.CSV:
+            return 'csv';
+        case ImportType.JSON:
+            return 'json';
+        case ImportType.XML:
+            return 'xml';
+        case ImportType.YML:
+            return 'yml';
+        case ImportType.XLSX:
+            return 'xlsx';
+    }
+    return 'csv';
 }
