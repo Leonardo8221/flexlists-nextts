@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, MenuItem, Select, SelectChangeEvent,Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
 import Modal from '@mui/material/Modal';
@@ -9,8 +9,6 @@ import { connect } from 'react-redux';
 import { View } from 'src/models/SharedModels';
 import { isSucc } from 'src/models/ApiResponse';
 import { getExportFileExtension, getExportMimeType } from 'src/utils/flexlistHelper';
-import { el } from 'date-fns/locale';
-import { set } from 'lodash';
 import { FlashMessageModel } from 'src/models/FlashMessageModel';
 import { setFlashMessage } from 'src/redux/actions/authAction';
 
@@ -131,6 +129,10 @@ const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) 
   const [isExportCurrentViewShowMore, setIsExportCurrentViewShowMore] = useState(false);
   const [exportAll, setExportAll] = useState(exports_all);
   const [exportCurrentView, setExportCurrentView] = useState(exports_currentView);
+  const [screenMode, setScreenMode] = useState<'main'|'csv'>('main');
+  const [exportMode, setExportMode] = useState<'all'|'currentView'>('all');
+  const [delimiter, setDelimiter] = useState<string>(';')
+  const csvDelimiters :string[] = [';',',']; 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -148,6 +150,17 @@ const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) 
     URL.revokeObjectURL(url);
   }
   const handleExport = async (exportType:ExportType,isExportAll :boolean=true) => {
+    if(exportType === ExportType.CSV)
+    {
+      setExportMode(isExportAll?'all':'currentView');
+      setScreenMode('csv');
+    }
+    else
+    {
+      await exportContent(exportType,isExportAll);
+    }
+  }
+  const exportContent = async (exportType:ExportType,isExportAll :boolean=true,delimiter:string=';') => {
     try {
       const response = await exportViewData(
         exportType,
@@ -157,7 +170,7 @@ const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) 
         isExportAll?undefined:currentView.order,
         isExportAll?undefined:currentView.query,
         isExportAll?undefined:currentView.conditions,
-        ';'
+        delimiter
         )
       if(isSucc(response) && response.data)
       {
@@ -176,12 +189,12 @@ const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) 
       }
       else
       {
-        console.log(response);
+        setFlashMessage({type:'error',message:response.message})
       }
   
       
     } catch (error) {
-      console.error("Error downloading JSON file:", error);
+      setFlashMessage({type:'error',message:'unknown error'})
     }
   };
   const toggleExportAllShowMore = () => {
@@ -207,12 +220,29 @@ const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) 
     setIsExportCurrentViewShowMore(!isExportCurrentViewShowMore);
   };
 
- 
-
+  const onDelimiterChange = (event: SelectChangeEvent) => {
+    setDelimiter(event.target.value)
+  };
+  const onClose = () => { 
+    resetExportScreen();
+    handleClose();
+  }
+  const backMainScreen = () => {
+    resetExportScreen();
+  }
+  const resetExportScreen = () => {
+    setScreenMode('main');
+    setExportMode('all');
+    setDelimiter(';');
+    setExportAll(exports_all);
+    setExportCurrentView(exports_currentView);
+    setIsExportAllShowMore(false);
+    setIsExportCurrentViewShowMore(false);
+  }
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -231,47 +261,74 @@ const Export = ({ open, handleClose,currentView,setFlashMessage }: ExportProps) 
               WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
               cursor: 'pointer'
             }}
-            onClick={handleClose}
+            onClick={onClose}
           />
         </Box>
-        <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
-          <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
-            <Box sx={{ paddingTop: 2 }}>All data to:</Box>
-            <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}, gap: '30px', rowGap: '12px' }}>
-              {exportAll.filter((x)=>x.isShow).map((item: any) => (
-                <Box key={item} 
-                onClick={()=>handleExport(item.name,true)} 
-                sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
-                  <Box
-                    component="img"
-                    src={`/assets/icons/${item.icon}.svg`}
-                    sx={{ width: 18, height: 18, marginRight: 1, marginTop: 0.3 }}
-                  />
-                  <Box>{item.label}</Box>
-                </Box>
-              ))}
+        {
+          screenMode === 'main' ? (
+              <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
+            <Box sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>
+              <Box sx={{ paddingTop: 2 }}>All data to:</Box>
+              <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}, gap: '30px', rowGap: '12px' }}>
+                {exportAll.filter((x)=>x.isShow).map((item: any,index) => (
+                  <Box key={index} 
+                  onClick={()=>handleExport(item.name,true)} 
+                  sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
+                    <Box
+                      component="img"
+                      src={`/assets/icons/${item.icon}.svg`}
+                      sx={{ width: 18, height: 18, marginRight: 1, marginTop: 0.3 }}
+                    />
+                    <Box>{item.label}</Box>
+                  </Box>
+                ))}
+              </Box>
+              <Box sx={{ py: 2, cursor: 'pointer', textAlign: 'center', color: '#54A6FB' }} onClick={toggleExportAllShowMore}>{isExportAllShowMore?'View less options':'View more options'}</Box>
             </Box>
-            <Box sx={{ py: 2, cursor: 'pointer', textAlign: 'center', color: '#54A6FB' }} onClick={toggleExportAllShowMore}>{isExportAllShowMore?'View less options':'View more options'}</Box>
-          </Box>
-          <Box sx={{  }}>
-            <Box sx={{ paddingTop: 2 }}>Current View:</Box>
-            <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}, gap: '30px', rowGap: '12px' }}>
-              {exportCurrentView.filter((x)=>x.isShow).map((item: any) => (
-                <Box key={item} 
-                onClick={()=>handleExport(item.name,false)} 
-                sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
-                  <Box
-                    component="img"
-                    src={`/assets/icons/${item.icon}.svg`}
-                    sx={{ width: 18, height: 18, marginRight: 1, marginTop: 0.3 }}
-                  />
-                  <Box>{item.label}</Box>
-                </Box>
-              ))}
+            <Box sx={{  }}>
+              <Box sx={{ paddingTop: 2 }}>Current View:</Box>
+              <Box sx={{ py: 2, display: 'grid', gridTemplateColumns: {xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)'}, gap: '30px', rowGap: '12px' }}>
+                {exportCurrentView.filter((x)=>x.isShow).map((item: any,index) => (
+                  <Box key={index} 
+                  onClick={()=>handleExport(item.name,false)} 
+                  sx={{ display: 'flex', border: `1px solid ${theme.palette.palette_style.border.default}`, borderRadius: '5px', px: 2, py: 1, cursor: 'pointer' }}>
+                    <Box
+                      component="img"
+                      src={`/assets/icons/${item.icon}.svg`}
+                      sx={{ width: 18, height: 18, marginRight: 1, marginTop: 0.3 }}
+                    />
+                    <Box>{item.label}</Box>
+                  </Box>
+                ))}
+              </Box>
+              <Box sx={{ py: 2, cursor: 'pointer', textAlign: 'center', color: '#54A6FB' }} onClick={toggleExportCurrentViewShowMore}>{isExportCurrentViewShowMore?'View less options':'View more options'}</Box>
             </Box>
-            <Box sx={{ py: 2, cursor: 'pointer', textAlign: 'center', color: '#54A6FB' }} onClick={toggleExportCurrentViewShowMore}>{isExportCurrentViewShowMore?'View less options':'View more options'}</Box>
           </Box>
-        </Box>
+          ) :
+          (
+            <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
+               <Box sx={{marginBottom:5,marginTop:5}}>
+                    <Select
+                    fullWidth
+                    displayEmpty
+                    value={delimiter}
+                    onChange={onDelimiterChange}
+                    >
+                    {csvDelimiters.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+               </Box>
+               <Box>
+                <Button type='submit' variant='contained' onClick={()=> exportContent(ExportType.CSV,exportMode=='all',delimiter)} >Donwload</Button>
+                <Button onClick={()=>backMainScreen()}>Cancel</Button>
+               </Box>
+            </Box>
+          )
+        }
+        
       </Box>
       
     </Modal>
