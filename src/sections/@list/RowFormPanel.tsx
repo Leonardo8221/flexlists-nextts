@@ -423,7 +423,19 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
         </div>)
       case FieldUiTypeEnum.HTML:
         return currentMode !=='view'? 
-        (<></>) :
+        (<>
+          <Typography variant="subtitle2" gutterBottom>
+            {column.name}
+        </Typography>
+        <WysiwygEditor
+          value={values[column.id]}
+          setValue={(newValue) =>
+            {
+              setValues({ ...values, [column.id]: newValue })
+            }
+          }
+        />
+        </>) :
         (<div key={column.id}>
           <Typography variant="subtitle1">{column.name}</Typography>
           <div dangerouslySetInnerHTML={{ __html: values[column.id]?.toString() }} />
