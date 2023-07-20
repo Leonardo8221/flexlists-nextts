@@ -67,19 +67,20 @@ export enum SearchType {
     Site = 'Site',
     All = 'All',
 }
-export enum ImportTypes {
+export enum ImportType {
     CSV = 'CSV',
-    Excel = 'Excel',
     JSON = 'JSON',
-    YAML = 'YAML',
-    SQLite = 'SQLite',
+    XML = 'XML',
+    YML = 'YML',
+    XLSX = 'XLSX',
 }
-export enum ExportTypes {
+export enum ExportType {
     CSV = 'CSV',
-    Excel = 'Excel',
     JSON = 'JSON',
-    YAML = 'YAML',
-    SQLite = 'SQLite',
+    RSS = 'RSS',
+    XML = 'XML',
+    YML = 'YML',
+    XLSX = 'XLSX',
 }
 export enum ViewType {
     List = 'List',

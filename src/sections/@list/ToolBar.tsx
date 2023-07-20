@@ -124,7 +124,7 @@ const ToolbBar = ({ open, onOpen,currentView }: ToolbBarProps) => {
         key={'top-center'}
       />
       <Box sx={{ display: 'flex' }}>
-        <Box
+        {/* <Box
           sx={{
             display: 'flex',
             p: 1
@@ -133,7 +133,7 @@ const ToolbBar = ({ open, onOpen,currentView }: ToolbBarProps) => {
           {dos.map((toolbar) => (
             <ToolBarItem key={toolbar.title} toolbar={toolbar} />
           ))}
-        </Box>
+        </Box> */}
         {!isDesktop && <ViewUsersList />}
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>

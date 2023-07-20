@@ -14,6 +14,7 @@ import { GetViewGroupsOutputDto } from 'src/models/ApiOutputModels'
 import { AddTableViewToGroupOutputDto } from 'src/models/ApiOutputModels'
 import { AddKeyToViewOutputDto } from 'src/models/ApiOutputModels'
 import { GetKeysForViewOutputDto } from 'src/models/ApiOutputModels'
+import { ExportType } from 'src/enums/SharedEnums'
 
 export const listViewService = {
     getViewUsers,
@@ -37,6 +38,7 @@ export const listViewService = {
     addKeyToView,
     getKeysForView,
     deleteKeyFromView,
+    exportViewData,
 };
 
 export async function getViewUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>> {
@@ -133,6 +135,11 @@ export async function getKeysForView(viewId:number): Promise<FlexlistsError|Flex
 };
 export async function deleteKeyFromView(viewId:number,keyId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteKeyFromView`+`?viewId=${viewId}&keyId=${keyId}`);
+
+  return response.data;
+};
+export async function exportViewData(type:ExportType,viewId:number,page?:number,limit?:number,order?:Sort[],query?:string,conditions?:any,delimiter?:string): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/exportViewData`, {type,viewId,page,limit,order,query,conditions,delimiter})
 
   return response.data;
 };
