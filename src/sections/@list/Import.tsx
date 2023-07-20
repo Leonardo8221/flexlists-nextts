@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Box, MenuItem, Select, SelectChangeEvent,Button, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, MenuItem, Select, SelectChangeEvent,Button, FormControlLabel, Checkbox, Alert } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useResponsive from '../../hooks/useResponsive';
 import Modal from '@mui/material/Modal';
 import { ImportType } from 'src/enums/SharedEnums';
 import { connect } from 'react-redux';
 import { View } from 'src/models/SharedModels';
-import { isSucc } from 'src/models/ApiResponse';
+import { FlexlistsError, FlexlistsSuccess, isSucc } from 'src/models/ApiResponse';
 import { FlashMessageModel } from 'src/models/FlashMessageModel';
 import { setFlashMessage } from 'src/redux/actions/authAction';
+import { set } from 'lodash';
+import axios from 'src/utils/axios';
 
 const imports = [
   {
@@ -65,8 +67,10 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
   const [delimiter, setDelimiter] = useState<string>(';')
   const csvDelimiters :string[] = [';',',']; 
   const [importType,setImportType] = useState<ImportType>(ImportType.CSV);
-  const [addMissingFields,setAddMissingFields] = useState<boolean>(false);
+  const [addMissingFields,setAddMissingFields] = useState<boolean>(true);
   const [truncate,setTruncate] = useState<boolean>(false);
+  const [file,setFile] = useState<File>();
+  const [error,setError] = useState<string>('');
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -77,13 +81,36 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
   }
   const importContent = async () => {
     try {
-      
+      if(!file) {
+        setError('Please select file')
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('importType', importType);
+      formData.append('addMissingFields', addMissingFields.toString());
+      formData.append('truncate', truncate.toString());
+      let response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/importViewData`, 
+            formData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                }
+              })
+      if(response && isSucc(response.data) && response.data.data) {
+        setFlashMessage({type:'success',message:'Import successfully'})
+        onClose();
+      }
+      else {
+        setFlashMessage({type:'error',message:(response?.data as FlexlistsError)?.message})
+      }
     } catch (error) {
       setFlashMessage({type:'error',message:'unknown error'})
     }
   };
 
   const onDelimiterChange = (event: SelectChangeEvent) => {
+    setError('');
     setDelimiter(event.target.value)
   };
   const onClose = () => { 
@@ -94,14 +121,25 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
     resetImportScreen();
   }
   const resetImportScreen = () => {
+    setError('');
     setScreenMode('main');
     setDelimiter(';');
   }
   const onAddMissingFieldsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
     setAddMissingFields(event.target.checked);
   };
   const onTruncateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
     setTruncate(event.target.checked);
+  };
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setError('');
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    }
   };
   return (
     <Modal
@@ -151,6 +189,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
           ) :
           (
             <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: 'auto' }}>
+              <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
                <Box sx={{marginBottom:5,marginTop:5}}>
                <Button
                     component="label"
@@ -162,24 +201,28 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
                       type="file"
                       accept=".json"
                       hidden
-                      onChange={()=>{}}
+                      onChange={handleFileChange}
                     />
                   </Button>
+                  <div>Selected File: {file?.name}</div>
                </Box>
-               <Box sx={{marginBottom:5,marginTop:5}}>
-                    <Select
-                    fullWidth
-                    displayEmpty
-                    value={delimiter}
-                    onChange={onDelimiterChange}
-                    >
-                    {csvDelimiters.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-               </Box>
+               {
+                  importType === ImportType.CSV && <Box sx={{marginBottom:5,marginTop:5}}>
+                        <Select
+                        fullWidth
+                        displayEmpty
+                        value={delimiter}
+                        onChange={onDelimiterChange}
+                        >
+                        {csvDelimiters.map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                  </Box>
+               }
+               
                <Box sx={{marginBottom:5,marginTop:5}}>
                 <FormControlLabel
                     control={
@@ -201,7 +244,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage }: Import
                         name="required"
                       />
                     }
-                    label="Add Missing Fields"
+                    label="Truncate"
                   />
                </Box>
                <Box>
