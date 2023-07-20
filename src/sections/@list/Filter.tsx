@@ -74,7 +74,27 @@ const Filter = ({ currentView,columns, open,fetchRows,setCurrentView, handleClos
         //set right value for filter
         if(key==="right")
         {
-          filter[key] = value;
+          if(filter['cmp'] === FilterOperator.in || filter['cmp'] === FilterOperator.nin)
+          {
+            let column = getColumn(filter.left);
+            if(column.uiField !== FieldUiTypeEnum.Choice)
+            {
+              filter[key] = value;
+            }
+            else
+            {
+              if(isArray(value))
+              {
+                filter[key] = value.map((item:any)=>item.id)
+              }
+            }
+          }
+          else
+          {
+            filter[key] = value;
+          }
+          
+          
         }
                 
         //if left field changed, reset right field
