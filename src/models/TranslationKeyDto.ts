@@ -5,5 +5,6 @@ export type TranslationKeyDto = {
     name: string,
     type: TranslationKeyType,
     contentManagementId: number,
-    config?: any
+    config?: any,
+    reusable: boolean
 }

@@ -3,10 +3,17 @@ import { useRouter } from "next/router";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
 import { motion } from "framer-motion";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
 
-type ContentTestProps = {};
+type ContentProps = {
 
-export default function LandingHero() {
+};
+
+function LandingHero({ translations }: ContentProps & { translations: TranslationText[] }) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations)
+  }
   const router = useRouter();
   const gotoSignup = async () => {
     await router.push({
@@ -48,6 +55,7 @@ export default function LandingHero() {
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 1 }}
             >
+              {t("Existing Landing Hero Title")}
               Exciting News! Your Trusted Flexlists Product is About to Get a
               Whole Lot Better!
             </Typography>
@@ -58,6 +66,7 @@ export default function LandingHero() {
               whileInView={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
             >
+              {t("Existing Landing Hero Title")}
               Dear Valued User, As a loyal user of our database product we want
               to share some great news with you. We&apos;re thrilled to announce
               that our team has been working tirelessly over the past 12 months
@@ -225,3 +234,7 @@ export default function LandingHero() {
     </Box>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("existing landing hero", context)
+}
+export default LandingHero;
