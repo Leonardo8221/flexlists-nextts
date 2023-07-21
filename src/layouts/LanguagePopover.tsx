@@ -19,15 +19,29 @@ import { LocalStorageConst } from "src/constants/StorageConsts";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { getLanguages } from "src/redux/actions/adminAction";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+
 // ----------------------------------------------------------------------
 type LanguagePopoverProps = {
   languages: Language[];
   getLanguages: () => void;
+  translations?: TranslationText[];
+
 };
+
+
 export const LanguagePopover = ({
   languages,
   getLanguages,
+  translations
 }: LanguagePopoverProps) => {
+  const t = (key: string): string => {
+    if (!translations) {
+      return key
+    }
+    return getTranslation(key, translations)
+  }
   const router = useRouter();
   const [open, setOpen] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState<Language>();
@@ -118,12 +132,12 @@ export const LanguagePopover = ({
             >
               <Box
                 component="img"
-                alt={language.name}
+                alt={t(language.name)}
                 src={language.icon}
                 sx={{ width: 28, mr: 2 }}
               />
 
-              {language.name}
+              {t(language.name)}
             </MenuItem>
           ))}
         </Stack>

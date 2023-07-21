@@ -140,7 +140,7 @@ export default function MainNavbar({ translations }: ContentProps & { translatio
             >
               {t('Sign in')}
             </Typography>
-            <LanguagePopover />
+            <LanguagePopover translations={translations} />
           </MHidden>
 
           {/* <MHidden width="mdUp">
