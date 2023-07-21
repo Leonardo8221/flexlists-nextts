@@ -27,7 +27,7 @@ import { connect } from "react-redux";
 import { ViewField } from "src/models/ViewField";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { listContentService } from "src/services/listContent.service";
-import { isErr, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { filter } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
 import ChatForm from "./chat/ChatForm";
@@ -41,7 +41,15 @@ import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { marked } from "marked";
 import TurndownService from "turndown";
 import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
+// -----ICONS------
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import PrintIcon from "@mui/icons-material/Print";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 interface RowFormProps {
   currentView: ViewField;
@@ -51,32 +59,33 @@ interface RowFormProps {
   mode: "view" | "create" | "update" | "comment";
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
+  setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
 
 const actions = [
   {
     title: "Resize",
-    icon: "menu/fullscreen",
+    icon: <FullscreenIcon />,
     action: "resize",
   },
   {
     title: "Clone",
-    icon: "menu/calendar",
+    icon: <ContentCopyIcon />,
     action: "clone",
   },
   {
     title: "Archive",
-    icon: "menu/calendar",
+    icon: <ArchiveIcon />,
     action: "archive",
   },
   {
     title: "Print",
-    icon: "menu/calendar",
+    icon: <PrintIcon />,
     action: "print",
   },
   {
     title: "Delete",
-    icon: "footer/delete_list",
+    icon: <DeleteIcon />,
     action: "delete",
     color: "#c92929",
   },
@@ -90,6 +99,7 @@ const RowFormPanel = ({
   mode,
   onClose,
   onSubmit,
+  setFlashMessage
 }: RowFormProps) => {
   const theme = useTheme();
   const [values, setValues] = useState(rowData);
@@ -169,10 +179,11 @@ const RowFormPanel = ({
   };
 
   const handleAction = async (action: string) => {
+    let newValues = Object.assign({}, values);
     if (action === "delete") {
       var deleteContentResponse = await listContentService.deleteContent(
         currentView.listId,
-        values.id
+        newValues.id
       );
       if (isErr(deleteContentResponse)) {
         setError(ErrorConsts.InternalServerError);
@@ -186,7 +197,29 @@ const RowFormPanel = ({
       }
       return;
     }
-    onSubmit(values, action);
+    else if(action === 'clone')
+    {
+      var createRowResponse = await listContentService.createContent(
+        currentView.id,
+        newValues
+      );
+      if (
+        isSucc(createRowResponse) &&
+        createRowResponse.data &&
+        createRowResponse.data.content &&
+        createRowResponse.data.content.length > 0
+      ) {
+        newValues.id = createRowResponse.data.content[0].id;
+        newValues.createdAt = new Date().toISOString();
+        newValues.updatedAt = new Date().toISOString();
+      }
+      else
+      {
+         setFlashMessage({type:'error',message:(createRowResponse as FlexlistsError).message})
+         return;
+      }
+    }
+    onSubmit(newValues, action);
     onClose();
   };
 
@@ -358,35 +391,28 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
-                : "null"}
-            </Typography>
+            <Typography variant="subtitle1">{column.name}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleString() : ''}</Typography>
           </div>
         );
       case FieldUiTypeEnum.Date:
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
-            <DatePicker
-              value={dayjs(values[column.id])}
-              label={column.name}
-              onChange={(x) => {
-                setDateValue(column.id, x);
-              }}
-              className={
-                submit && column.required && !values[column.id]
-                  ? "Mui-error"
-                  : ""
-              }
-            />
-          </LocalizationProvider>
-        );
+        return currentMode !== "view" ? ( <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+          <DatePicker
+            value={dayjs(values[column.id])}
+            label={column.name}
+            onChange={(x) => {
+              setDateValue(column.id, x)
+            }
+            }
+            className={submit && column.required && !values[column.id] ? 'Mui-error' : ''}
+          />
+        </LocalizationProvider>):
+        (
+            <div key={column.id}>
+              <Typography variant="subtitle1">{column.name}</Typography>
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleDateString() : ''}</Typography>
+            </div>
+        )
       case FieldUiTypeEnum.Time:
         return currentMode !== "view" ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
@@ -651,33 +677,36 @@ const RowFormPanel = ({
                 sx={{
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Box
+                  component="span"
+                  className="svg-color"
                   sx={{
-                    fontSize: "16px",
+                    width: 24,
+                    height: 24,
+                    display: "grid",
+                    placeContent: "center",
+                    color:
+                      action.color || theme.palette.palette_style.text.primary,
+                    // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                    // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                    mr: { xs: 0.2, md: 0.5 },
+                  }}
+                >
+                  {action.icon}
+                </Box>
+                <Typography
+                  variant="body1"
+                  sx={{
                     color:
                       action.color || theme.palette.palette_style.text.primary,
                   }}
                 >
                   {action.title}
-                </Box>
+                </Typography>
               </Box>
-              <Box
-                component="span"
-                className="svg-color"
-                sx={{
-                  width: 18,
-                  height: 18,
-                  display: "inline-block",
-                  bgcolor:
-                    action.color || theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                  marginLeft: { xs: 0.2, md: 1 },
-                  marginTop: 0.2,
-                }}
-              />
             </Box>
           ))}
         </Box>
@@ -781,6 +810,8 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setFlashMessage
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(RowFormPanel);
