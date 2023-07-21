@@ -27,7 +27,7 @@ import { connect } from "react-redux";
 import { ViewField } from "src/models/ViewField";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { listContentService } from "src/services/listContent.service";
-import { isErr, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { filter } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
 import ChatForm from "./chat/ChatForm";
@@ -42,6 +42,8 @@ import { marked } from "marked";
 import TurndownService from "turndown";
 import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 interface RowFormProps {
   currentView: ViewField;
@@ -51,6 +53,7 @@ interface RowFormProps {
   mode: "view" | "create" | "update" | "comment";
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
+  setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
 
 const actions = [
@@ -90,6 +93,7 @@ const RowFormPanel = ({
   mode,
   onClose,
   onSubmit,
+  setFlashMessage
 }: RowFormProps) => {
   const theme = useTheme();
   const [values, setValues] = useState(rowData);
@@ -169,10 +173,11 @@ const RowFormPanel = ({
   };
 
   const handleAction = async (action: string) => {
+    let newValues = Object.assign({}, values);
     if (action === "delete") {
       var deleteContentResponse = await listContentService.deleteContent(
         currentView.listId,
-        values.id
+        newValues.id
       );
       if (isErr(deleteContentResponse)) {
         setError(ErrorConsts.InternalServerError);
@@ -186,7 +191,29 @@ const RowFormPanel = ({
       }
       return;
     }
-    onSubmit(values, action);
+    else if(action === 'clone')
+    {
+      var createRowResponse = await listContentService.createContent(
+        currentView.id,
+        newValues
+      );
+      if (
+        isSucc(createRowResponse) &&
+        createRowResponse.data &&
+        createRowResponse.data.content &&
+        createRowResponse.data.content.length > 0
+      ) {
+        newValues.id = createRowResponse.data.content[0].id;
+        newValues.createdAt = new Date().toISOString();
+        newValues.updatedAt = new Date().toISOString();
+      }
+      else
+      {
+         setFlashMessage({type:'error',message:(createRowResponse as FlexlistsError).message})
+         return;
+      }
+    }
+    onSubmit(newValues, action);
     onClose();
   };
 
@@ -774,6 +801,8 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setFlashMessage
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(RowFormPanel);
