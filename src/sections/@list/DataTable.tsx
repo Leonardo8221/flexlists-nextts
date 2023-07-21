@@ -66,7 +66,9 @@ const DataTable = ({
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-  const [mode,setMode] = useState<'view'|'create'|'update'|'comment'>('view')
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
+    "view"
+  );
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -116,7 +118,16 @@ const DataTable = ({
               />
             )}
 
-            <div>{column.columnDef.header}</div>
+            <Box
+              sx={{
+                minWidth: "100px",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {column.columnDef.header}
+            </Box>
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
@@ -216,7 +227,7 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue?.toString()==='true'?'yes':'no'}
+                    {cellValue?.toString() === "true" ? "yes" : "no"}
                   </Box>
                 );
               default:
@@ -238,14 +249,13 @@ const DataTable = ({
     setUpdatingTable(true);
 
     const shouldShowField = (column: any) => {
-      return (column.viewFieldVisible === true || column.viewFieldVisible === undefined)
-        &&
-        (
-          (!column.detailsOnly && column.viewFieldDetailsOnly === undefined)
-          ||
-          (column.viewFieldDetailsOnly === false)
-        )
-    }
+      return (
+        (column.viewFieldVisible === true ||
+          column.viewFieldVisible === undefined) &&
+        ((!column.detailsOnly && column.viewFieldDetailsOnly === undefined) ||
+          column.viewFieldDetailsOnly === false)
+      );
+    };
 
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
   }, [columns]);

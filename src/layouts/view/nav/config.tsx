@@ -21,26 +21,26 @@ const navConfig = [
   //   path: "/main/calendar",
   //   icon: "Projects",
   // },
-  {
-    title: "Apps",
-    path: "/",
-    icon: "Apps",
-  },
+  // {
+  //   title: "Apps",
+  //   path: "/",
+  //   icon: "Apps",
+  // },
   {
     title: "Groups",
     path: PATH_MAIN.groups,
     icon: "Groups",
   },
-  {
-    title: "Favorites",
-    path: "/",
-    icon: "Favourites",
-  },
-  {
-    title: "Information",
-    path: "/",
-    icon: "Info",
-  },
+  // {
+  //   title: "Favorites",
+  //   path: "/",
+  //   icon: "Favourites",
+  // },
+  // {
+  //   title: "Information",
+  //   path: "/",
+  //   icon: "Info",
+  // },
 ];
 
 export default navConfig;
