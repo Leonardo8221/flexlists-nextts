@@ -22,7 +22,7 @@ import { connect } from "react-redux";
 import { AuthValidate } from "src/models/AuthValidate";
 import { ContentManagementDto } from "src/models/ContentManagementDto";
 import { contentManagementService } from "src/services/admin/contentManagement.service";
-import { FlexlistsError, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { filter } from "lodash";
 import { TranslationText } from "src/models/SharedModels";
@@ -35,6 +35,7 @@ import { marked } from "marked";
 import { ThemeContext } from "@emotion/react";
 import { markdownToHtml } from "src/utils/parserHelper";
 import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
+
 type ContentEditorProps = {
   authValidate: AuthValidate;
   languages: Language[];
@@ -57,6 +58,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>();
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
+
   useEffect(() => {
     async function fetchContentManagements() {
       let response = await contentManagementService.getAllContentManagement();
@@ -72,6 +74,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
       fetchContentManagements();
     }
   }, [router.isReady, languages]);
+
   const loadTranslationTexts = async (
     contentManagementId: number,
     languageId: string
@@ -85,10 +88,12 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
       setTranslationTexts(response.data as TranslationText[]);
     }
   };
+
   const onSearchTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
     searchContentManagement(e.target.value);
   };
+
   const searchContentManagement = (search: string) => {
     var newContentManagements = filter(
       contentManagements,
@@ -174,6 +179,36 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
     });
     setTranslationTexts(newTranslationTexts);
   };
+
+  const onGenerateTranslate = async (translationText: TranslationText) => {
+
+    let newTranslationTexts = await Promise.all(translationTexts.map(async (x) => {
+      if (x.translationKeyId === translationText.translationKeyId) {
+        const _newValue = await translationTextService.translate(selectedLanguage!.name, x.translation)
+        if (isErr(_newValue)) {
+          setError(_newValue.message)
+          return x
+        }
+        x.translation = _newValue.data!
+      }
+      return x;
+    }));
+    setTranslationTexts(newTranslationTexts);
+  }
+  const onGenerateSuggest = async (translationText: TranslationText) => {
+    let newTranslationTexts = await Promise.all(translationTexts.map(async (x) => {
+      if (x.translationKeyId === translationText.translationKeyId) {
+        const _newValue = await translationTextService.suggest(selectedLanguage!.name, x.translation)
+        if (isErr(_newValue)) {
+          setError(_newValue.message)
+          return x
+        }
+        x.translation = _newValue.data!
+      }
+      return x;
+    }));
+    setTranslationTexts(newTranslationTexts);
+  }
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     translationText: TranslationText
@@ -264,13 +299,13 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                             style={{
                               color:
                                 selectedContentManagement &&
-                                selectedContentManagement.id ===
+                                  selectedContentManagement.id ===
                                   contentManagement.id
                                   ? theme.palette.palette_style.text.white
                                   : "",
                               backgroundColor:
                                 selectedContentManagement &&
-                                selectedContentManagement.id ===
+                                  selectedContentManagement.id ===
                                   contentManagement.id
                                   ? theme.palette.palette_style.text.selected
                                   : "",
@@ -391,89 +426,89 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                     >
                       {translationText.translationKeyType ===
                         TranslationKeyType.Text && (
-                        <TextField
-                          fullWidth
-                          key={`input - ${index}`}
-                          label={translationText.translationKey}
-                          value={translationText.translation}
-                          onChange={(e) => {
-                            onTranslationTextChange(e, translationText);
-                          }}
-                        />
-                      )}
+                          <TextField
+                            fullWidth
+                            key={`input - ${index}`}
+                            label={translationText.translationKey}
+                            value={translationText.translation}
+                            onChange={(e) => {
+                              onTranslationTextChange(e, translationText);
+                            }}
+                          />
+                        )}
                       {translationText.translationKeyType ===
                         TranslationKeyType.Image && (
-                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                          <Box
-                            component="img"
-                            sx={
-                              {
-                                // height: 233,
-                                // width: 350,
-                                // maxHeight: { xs: 233, md: 167 },
-                                // maxWidth: { xs: 350, md: 250 },
+                          <Box sx={{ display: "flex", flexDirection: "column" }}>
+                            <Box
+                              component="img"
+                              sx={
+                                {
+                                  // height: 233,
+                                  // width: 350,
+                                  // maxHeight: { xs: 233, md: 167 },
+                                  // maxWidth: { xs: 350, md: 250 },
+                                }
                               }
-                            }
-                            alt="no-image"
-                            src={
-                              translationText.translation
-                                ? downloadFileUrl(translationText.translation)
-                                : ""
-                            }
-                          />
-                          <Box>
-                            <input
-                              type="file"
-                              name="upload"
-                              onChange={(e) =>
-                                handleFileChange(e, translationText)
+                              alt="no-image"
+                              src={
+                                translationText.translation
+                                  ? downloadFileUrl(translationText.translation)
+                                  : ""
+                              }
+                            />
+                            <Box>
+                              <input
+                                type="file"
+                                name="upload"
+                                onChange={(e) =>
+                                  handleFileChange(e, translationText)
+                                }
+                              />
+                            </Box>
+                          </Box>
+                        )}
+                      {translationText.translationKeyType ===
+                        TranslationKeyType.Html && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 1,
+                            }}
+                          >
+                            <Typography variant="subtitle2" gutterBottom>
+                              {translationText.translationKey}
+                            </Typography>
+                            <WysiwygEditor
+                              value={translationText.translation}
+                              setValue={(newValue) =>
+                                onTranslateHtmlChange(newValue, translationText)
                               }
                             />
                           </Box>
-                        </Box>
-                      )}
-                      {translationText.translationKeyType ===
-                        TranslationKeyType.Html && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 1,
-                          }}
-                        >
-                          <Typography variant="subtitle2" gutterBottom>
-                            {translationText.translationKey}
-                          </Typography>
-                          <WysiwygEditor
-                            value={translationText.translation}
-                            setValue={(newValue) =>
-                              onTranslateHtmlChange(newValue, translationText)
-                            }
-                          />
-                        </Box>
-                      )}
+                        )}
                       {translationText.translationKeyType ===
                         TranslationKeyType.Markdown && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 1,
-                          }}
-                        >
-                          <Typography variant="subtitle2" gutterBottom>
-                            {translationText.translationKey}
-                          </Typography>
-                          <MarkdownEditor
-                          markdown={translationText.translation}
-                          setMarkdown={(newValue) =>{
-                            onTranslateMarkdownChange(
-                              newValue,
-                              translationText
-                            )
-                          }}
-                           />
-                          {/* <WysiwygEditor
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 1,
+                            }}
+                          >
+                            <Typography variant="subtitle2" gutterBottom>
+                              {translationText.translationKey}
+                            </Typography>
+                            <MarkdownEditor
+                              markdown={translationText.translation}
+                              setMarkdown={(newValue) => {
+                                onTranslateMarkdownChange(
+                                  newValue,
+                                  translationText
+                                )
+                              }}
+                            />
+                            {/* <WysiwygEditor
                             value={markdownToHtml(
                               translationText.translation
                             )}
@@ -484,9 +519,35 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                               )
                             }
                           /> */}
-                        </Box>
-                      )}
+                          </Box>
+                        )}
+                      <Box
+                        sx={{
+                          pt: 1,
+                          display: "flex",
+                          flexDirection: "row",
+                          gap: 1,
+                        }}
+                      >
+
+                        <Button
+                          variant="contained"
+
+                          onClick={async () => {
+                            await onGenerateTranslate(translationText)
+                          }}
+                        >Generate</Button>
+                        <Button
+                          variant="contained"
+
+                          onClick={async () => {
+                            await onGenerateSuggest(translationText)
+                          }}
+                        >Suggest</Button>
+                      </Box>
                     </Box>
+
+
                   );
                 })}
             </Box>
