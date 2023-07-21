@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
-import { Box, TextField, Modal, Typography, Grid, Button, Select, MenuItem, SelectChangeEvent, Alert } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Modal,
+  Typography,
+  Grid,
+  Button,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  Alert,
+} from "@mui/material";
 import AddViewCard from "src/components/add-view/AddViewCard";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { FieldUIType, View } from "src/models/SharedModels";
@@ -16,7 +27,6 @@ import { PATH_MAIN } from "src/routes/paths";
 import KanbanViewConfig from "./KanbanViewConfig";
 import CalendarViewConfig from "./CalendarViewConfig";
 
-
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -27,7 +37,7 @@ const style = {
   backgroundColor: "white",
   border: "none",
   boxShadow: 24,
-  overflow: "scroll"
+  overflow: "scroll",
 };
 
 const AddViewCards = [
@@ -51,7 +61,7 @@ const AddViewCards = [
   // },
   {
     type: ViewType.Gallery,
-    icon: "/assets/icons/tour/ic_bug.svg",
+    icon: "/assets/icons/GallerySVG.svg",
     title: "Gallery View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
@@ -62,7 +72,7 @@ const AddViewCards = [
   // },
   {
     type: ViewType.KanBan,
-    icon: "/assets/icons/tour/ic_bug.svg",
+    icon: "/assets/icons/KanbanSVG.svg",
     title: "Kanban View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
@@ -73,18 +83,24 @@ type ListViewFormProps = {
   columns: ViewField[];
   open: boolean;
   handleClose: () => void;
-  availableFieldUiTypes: FieldUIType[]
+  availableFieldUiTypes: FieldUIType[];
 };
 
-const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldUiTypes }: ListViewFormProps) => {
+const ListViewForm = ({
+  open,
+  handleClose,
+  currentView,
+  columns,
+  availableFieldUiTypes,
+}: ListViewFormProps) => {
   const router = useRouter();
   const [steps, setSteps] = useState(0);
-  const [viewType, setViewType] = useState<ViewType>(ViewType.List)
-  const [viewName, setViewName] = useState<string>('')
-  const [viewDescription, setViewDescription] = useState<string>('')
+  const [viewType, setViewType] = useState<ViewType>(ViewType.List);
+  const [viewName, setViewName] = useState<string>("");
+  const [viewDescription, setViewDescription] = useState<string>("");
   const [config, setConfig] = useState<any>({});
   const [submit, setSubmit] = useState(false);
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<string>("");
 
   const goPrevious = () => {
     setSteps(steps - 1);
@@ -96,79 +112,86 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
   const handleSubmit = async () => {
     setSubmit(true);
     if (!viewName) {
-      setError('Name required')
+      setError("Name required");
       return;
     }
 
     if (!validateConfig()) {
       return;
     }
-    var createViewResponse = await listViewService.createView(currentView.listId, viewName, viewType, config)
-    if (isSucc(createViewResponse) && createViewResponse.data && createViewResponse.data.viewId) {
+    var createViewResponse = await listViewService.createView(
+      currentView.listId,
+      viewName,
+      viewType,
+      config
+    );
+    if (
+      isSucc(createViewResponse) &&
+      createViewResponse.data &&
+      createViewResponse.data.viewId
+    ) {
       await router.push(`${PATH_MAIN.views}/${createViewResponse.data.viewId}`);
       router.reload();
       // setSteps(0);
       // setViewType(ViewType.List);
       closeModal();
+    } else {
+      setError(ErrorConsts.InternalServerError);
     }
-    else {
-      setError(ErrorConsts.InternalServerError)
-    }
-
-  }
+  };
   const validateConfig = (): boolean => {
     let isValidConfig: boolean = true;
     switch (viewType) {
       case ViewType.Calendar:
         if (!config) {
-          setError("Config invalid")
-          isValidConfig = false
+          setError("Config invalid");
+          isValidConfig = false;
         }
         if (!config.dateFieldId || config.dateFieldId === 0) {
-          setError("Date field required")
-          isValidConfig = false
+          setError("Date field required");
+          isValidConfig = false;
         }
         if (!config.titleId || config.titleId === 0) {
-          setError("Title field required")
-          isValidConfig = false
+          setError("Title field required");
+          isValidConfig = false;
         }
         break;
       case ViewType.KanBan:
         if (!config) {
-          setError("Config invalid")
-          isValidConfig = false
+          setError("Config invalid");
+          isValidConfig = false;
         }
         if (!config.boardColumnId || config.boardColumnId === 0) {
-          setError("Board field required")
-          isValidConfig = false
+          setError("Board field required");
+          isValidConfig = false;
         }
         if (!config.titleId || config.titleId === 0) {
-          setError("Title field required")
-          isValidConfig = false
+          setError("Title field required");
+          isValidConfig = false;
         }
       default:
         break;
     }
     return isValidConfig;
-  }
+  };
   const closeModal = () => {
     setSteps(0);
     handleClose();
-  }
+  };
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setViewName(event.target.value)
-  }
+    setViewName(event.target.value);
+  };
   const onDescriptionChange = (newValue: string) => {
-    setViewDescription(newValue)
-  }
+    setViewDescription(newValue);
+  };
   const onTypeSelect = (type: ViewType) => {
-    setViewType(type)
-    setSteps(1)
+    setViewType(type);
+    setSteps(1);
     //  reloadColumns(type)
-  }
+  };
   const updateConfig = (newConfig: any) => {
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   return (
     <>
@@ -180,15 +203,39 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
         sx={{ overflow: "scroll" }}
       >
         <Box sx={style}>
-          <Box sx={{ py: 2, px: 4, position: "sticky", top: "0", zIndex: "10", backgroundColor: "#fff", boxShadow: "0 2px 24px 0 rgba(0,0,0,0.05)", width: "100%" }}>
-            <Typography variant="h5">{steps === 0 ? "Choose View" : steps === 1 ? "View details" : "View Created"}</Typography>
+          <Box
+            sx={{
+              py: 2,
+              px: 4,
+              position: "sticky",
+              top: "0",
+              zIndex: "10",
+              backgroundColor: "#fff",
+              boxShadow: "0 2px 24px 0 rgba(0,0,0,0.05)",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h5">
+              {steps === 0
+                ? "Choose View"
+                : steps === 1
+                ? "View details"
+                : "View Created"}
+            </Typography>
           </Box>
 
-          {steps === 0 &&
+          {steps === 0 && (
             <Grid container spacing={3} sx={{ p: 4 }}>
               {AddViewCards.map((card: any) => {
                 return (
-                  <Grid item xs={12} sm={6} md={3} key={card.icon} onClick={() => onTypeSelect(card.type)} >
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    key={card.icon}
+                    onClick={() => onTypeSelect(card.type)}
+                  >
                     <AddViewCard
                       icon={card.icon}
                       title={card.title}
@@ -198,53 +245,90 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
                 );
               })}
             </Grid>
-          }
+          )}
 
-          {steps === 1 &&
+          {steps === 1 && (
             <Box sx={{ p: 4 }}>
               <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
               <Box sx={{ mb: 4 }}>
-                <Typography variant="subtitle2" gutterBottom>View Name</Typography>
-                <TextField fullWidth id="fullWidth" value={viewName} onChange={onNameChange} required error={submit && !viewName} />
+                <Typography variant="subtitle2" gutterBottom>
+                  View Name
+                </Typography>
+                <TextField
+                  fullWidth
+                  id="fullWidth"
+                  value={viewName}
+                  onChange={onNameChange}
+                  required
+                  error={submit && !viewName}
+                />
               </Box>
               <Box>
-                <Typography variant="subtitle2" gutterBottom>View Description</Typography>
-                <WysiwygEditor value={viewDescription} setValue={(newValue) => onDescriptionChange(newValue)} />
+                <Typography variant="subtitle2" gutterBottom>
+                  View Description
+                </Typography>
+                <WysiwygEditor
+                  value={viewDescription}
+                  setValue={(newValue) => onDescriptionChange(newValue)}
+                />
               </Box>
               <Box>
-                {
-                  currentView && viewType === ViewType.Calendar &&
+                {currentView && viewType === ViewType.Calendar && (
                   <CalendarViewConfig
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
                   />
-                }
-                 {
-                  currentView && viewType === ViewType.KanBan &&
+                )}
+                {currentView && viewType === ViewType.KanBan && (
                   <KanbanViewConfig
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
                   />
-                }
+                )}
               </Box>
             </Box>
+          )}
 
-          }
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: "center", px: 4, py: 2, background: "#fff", position: "sticky", width: "100%", bottom: "0" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              px: 4,
+              py: 2,
+              background: "#fff",
+              position: "sticky",
+              width: "100%",
+              bottom: "0",
+            }}
+          >
             <Box>
-              {steps === 0 ?
-                <Button variant="outlined" size="small" sx={{ display: "none" }} >Skip</Button> :
-                <Button variant="contained" size="small" onClick={goPrevious}>Previous</Button>
-              }
+              {steps === 0 ? (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ display: "none" }}
+                >
+                  Skip
+                </Button>
+              ) : (
+                <Button variant="contained" size="small" onClick={goPrevious}>
+                  Previous
+                </Button>
+              )}
             </Box>
             <Box>
-              {steps === 1 ?
-                <Button variant="outlined" size="small" onClick={handleSubmit} >Finish</Button> :
-                <Button variant="contained" size="small" onClick={goNext}>Next</Button>
-              }
+              {steps === 1 ? (
+                <Button variant="outlined" size="small" onClick={handleSubmit}>
+                  Finish
+                </Button>
+              ) : (
+                <Button variant="contained" size="small" onClick={goNext}>
+                  Next
+                </Button>
+              )}
             </Box>
           </Box>
         </Box>
@@ -255,9 +339,8 @@ const ListViewForm = ({ open, handleClose, currentView, columns, availableFieldU
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   columns: state.view.columns,
-  availableFieldUiTypes: state.view.availableFieldUiTypes
+  availableFieldUiTypes: state.view.availableFieldUiTypes,
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(ListViewForm);
