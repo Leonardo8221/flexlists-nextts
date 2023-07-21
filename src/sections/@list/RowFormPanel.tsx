@@ -398,7 +398,7 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
         />: (
           <div key={column.id}>
             <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values   ?  values[column.id]?.toString(): ''}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{(values && values[column.id]?.toString()=='true')  ?  'yes': 'no'}</Typography>
           </div>
          )
       case FieldUiTypeEnum.Markdown:
