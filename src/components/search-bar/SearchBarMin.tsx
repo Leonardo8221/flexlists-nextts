@@ -35,7 +35,7 @@ type SearchBarMinProps = {
 const SearchBarMin = ({currentView,searchTypes,fetchRowsByPage,setCurrentView}:SearchBarMinProps)=> {
   const theme = useTheme();
   const router = useRouter();
-  const [search, setSearch] = useState<string|undefined>('');
+  const [search, setSearch] = useState<string>('');
   const [searchType,setSearchType] = useState<string>();
   const [currentSearchTypes,setCurrentSearchTypes] = useState<SearchTypeModel[]>([]);
   const [searchOptions,setSearchOptions] = useState<any[]>([]);
@@ -47,7 +47,7 @@ const SearchBarMin = ({currentView,searchTypes,fetchRowsByPage,setCurrentView}:S
       {
         setCurrentSearchTypes(searchTypes)
         setSearchType('CurrentView')
-        setSearch(currentView.query)
+        setSearch(currentView.query??'')
       }
       else
       {

@@ -163,7 +163,7 @@ export default function ChoiceConfig ({
                 sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 1, position: 'relative' }}
               >
                 <Box sx={{ marginRight: 1 }}>
-                  <Box className='add_choice' sx={{ backgroundColor: choice.color.bg, width: '40px', height: '40px', borderRadius: '5px', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => { handleColorBar(index);  }}>
+                  <Box className='add_choice' sx={{ backgroundColor: choice?.color?.bg, width: '40px', height: '40px', borderRadius: '5px', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => { handleColorBar(index);  }}>
                     <Box
                       component="span"
                       className="svg-color add_choice"
@@ -171,7 +171,7 @@ export default function ChoiceConfig ({
                         width: 24,
                         height: 24,
                         display: 'inline-block',
-                        bgcolor: choice.color.fill,
+                        bgcolor: choice?.color?.fill,
                         mask: `url(/assets/icons/table/angle_down.svg) no-repeat center / contain`,
                         WebkitMask: `url(/assets/icons/table/angle_down.svg) no-repeat center / contain`
                       }}
@@ -200,7 +200,7 @@ export default function ChoiceConfig ({
                   defaultValue={choice.label}
                   placeholder="Choice name"
                   size="small"
-                  sx={{ backgroundColor: choice.color.bg, marginRight: 1, borderRadius: 1, width: 'calc(100% - 30px)', fontFamily: choice.font, input: { color: choice.color.fill } }}
+                  sx={{ backgroundColor: choice?.color?.bg, marginRight: 1, borderRadius: 1, width: 'calc(100% - 30px)', fontFamily: choice.font, input: { color: choice?.color?.fill } }}
                   onBlur={(e) => { updateChoiceLabel(index, e.target.value) }}
                   required
                 />

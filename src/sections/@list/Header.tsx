@@ -226,7 +226,7 @@ const Header = ({ currentView }: HeaderProps) => {
             setVisiblePanel(true);
           }}
         />
-        <Box
+        {/* <Box
           component="span"
           className="svg-color"
           sx={{
@@ -239,7 +239,7 @@ const Header = ({ currentView }: HeaderProps) => {
             cursor: "pointer",
             marginRight: { xs: 2, md: 4 },
           }}
-        />
+        /> */}
 
         {/* ---PUBLISH & SHARE delete if needed--- */}
 

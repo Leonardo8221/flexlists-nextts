@@ -1,3 +1,4 @@
+import { ExportType, ImportType } from "src/enums/SharedEnums";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
 
@@ -33,4 +34,60 @@ export const getAvatarUrl = (avartarUrl?:string) : string =>
         return '/assets/images/avatar_2.jpg';
     }
     return avartarUrl;
+}
+export const getExportFileExtension = (exportFile:ExportType) : string =>
+{
+    switch(exportFile)
+    {
+        case ExportType.CSV:
+            return 'csv';
+        case ExportType.JSON:
+            return 'json';
+        case ExportType.RSS:
+            return 'rss';
+        case ExportType.XML:
+            return 'xml';
+        case ExportType.YML:
+            return 'yml';
+        case ExportType.XLSX:
+            return 'xlsx';
+    }
+    return 'csv';
+}
+export const getExportMimeType = (exportFile:ExportType) : string =>
+{   
+    switch(exportFile)
+    {
+        case ExportType.CSV:
+            return 'text/csv';
+        case ExportType.JSON:
+            return 'application/json';
+        case ExportType.RSS:
+            return 'application/rss+xml';
+        case ExportType.XML:
+            return 'application/xml';
+        case ExportType.YML:
+            return 'application/x-yaml';
+        case ExportType.XLSX:
+            return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    }
+    return 'application/json';
+}
+
+export const getImportFileExtension = (importFile:ImportType) : string =>
+{
+    switch(importFile)
+    {
+        case ImportType.CSV:
+            return 'csv';
+        case ImportType.JSON:
+            return 'json';
+        case ImportType.XML:
+            return 'xml';
+        case ImportType.YML:
+            return 'yml';
+        case ImportType.XLSX:
+            return 'xlsx';
+    }
+    return 'csv';
 }

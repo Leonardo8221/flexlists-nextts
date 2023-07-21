@@ -165,6 +165,7 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
     setContentManagements(newContentManagements);
     refreshSearch(newContentManagements);
     setSelectedContentManagement(contentManagement);
+    setTranslationKeys([]);
   };
   const onUpdateContentManagement = (
     contentManagement: ContentManagementDto

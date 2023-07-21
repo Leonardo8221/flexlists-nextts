@@ -22,7 +22,7 @@ const markup = `
 type ContentTestProps = {
 };
 const ContentTest = ({ translations }: ContentTestProps & { translations: TranslationText[] }) => {
-
+    console.log(translations)
     const t = (key: string): string => {
         return getTranslation(key, translations)
 
@@ -62,7 +62,6 @@ const ContentTest = ({ translations }: ContentTestProps & { translations: Transl
 }
 // This gets called on every request
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
     return await getTranslations("landing page", context)
 }
 export default ContentTest;
