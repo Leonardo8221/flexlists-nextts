@@ -313,11 +313,11 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
         : (
           <div key={column.id}>
             <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleString() : 'null'}</Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleString() : ''}</Typography>
           </div>
          )
       case FieldUiTypeEnum.Date:
-        return <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+        return currentMode !=='view' ?  <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DatePicker
             value={dayjs(values[column.id])}
             label={column.name}
@@ -328,6 +328,13 @@ const RowFormPanel = ({ currentView, rowData, open, columns, mode, onClose, onSu
             className={submit && column.required && !values[column.id] ? 'Mui-error' : ''}
           />
         </LocalizationProvider>
+        :
+        (
+          <div key={column.id}>
+          <Typography variant="subtitle1">{column.name}</Typography>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{values && values[getDataColumnId(column.id,columns)]  ? new Date(values[getDataColumnId(column.id,columns)]).toLocaleDateString() : ''}</Typography>
+        </div>
+        )
       case FieldUiTypeEnum.Time:
         return currentMode !=='view' ? <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <TimePicker

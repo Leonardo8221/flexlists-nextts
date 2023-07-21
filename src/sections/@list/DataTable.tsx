@@ -143,7 +143,7 @@ const DataTable = ({
                 );
 
               case FieldType.DateTime:
-              case FieldType.Time:
+             
                 return (
                   <Box
                     key={row.id}
@@ -154,7 +154,7 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {new Date(cellValue).toLocaleString()}
+                    {cellValue && cellValue !=null ? new Date(cellValue).toLocaleString():''}
                   </Box>
                 );
               case FieldType.Date:
@@ -168,7 +168,21 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {new Date(cellValue).toLocaleDateString()}
+                    {cellValue && cellValue !=null ?new Date(cellValue).toLocaleDateString():''}
+                  </Box>
+                );
+              case FieldType.Time:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {cellValue && cellValue !=null ?new Date(cellValue).toLocaleString():''}
                   </Box>
                 );
               case FieldType.Text:
