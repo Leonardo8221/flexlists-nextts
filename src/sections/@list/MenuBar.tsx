@@ -114,9 +114,9 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
             marginRight: { xs: 5, md: "inherit" },
           }}
         >
-          {filterViews.map((view) => (
+          {filterViews.map((view,index) => (
             <MenuItem
-              key={view.type}
+              key={index}
               menu={view}
               setMenu={handleMenu}
               selected={selectedViewId === view.id}
