@@ -63,6 +63,7 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
     name: "",
     type: TranslationKeyType.Text,
     contentManagementId: 0,
+    reusable: false
   };
   const [selectedTranslationKey, setSelectedTranslationKey] =
     useState<TranslationKeyDto>(newTranslationKey);
@@ -237,7 +238,7 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
                 onChange={onSearchTextChange}
                 variant="standard"
                 sx={{ flex: 1 }}
-                // InputProps={{ sx: { height: "36px" } }}
+              // InputProps={{ sx: { height: "36px" } }}
               />
               <Button
                 type="button"
@@ -278,14 +279,14 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
                             </ListItemButton>
                             {selectedContentManagement &&
                               selectedContentManagement.id ==
-                                contentManagement.id && (
+                              contentManagement.id && (
                                 <CommonMoreMenu
                                   editPermissionEnable={false}
                                   deletePermissionEnable={true}
                                   onDelete={() =>
                                     handleDeleteContentManagement()
                                   }
-                                  onEdit={() => {}}
+                                  onEdit={() => { }}
                                   onOtherFunctions={[
                                     {
                                       name: "Rename",

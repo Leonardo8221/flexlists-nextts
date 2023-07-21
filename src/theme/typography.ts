@@ -1,3 +1,5 @@
+import "@fontsource/poppins"; // Defaults to weight 400
+
 // ----------------------------------------------------------------------
 
 export function remToPx(value: any) {

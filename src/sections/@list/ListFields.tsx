@@ -13,7 +13,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { connect } from "react-redux";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { fetchFields, setFields } from "src/redux/actions/listActions";
-import { Field, FieldUIType, FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import {
+  Field,
+  FieldUIType,
+  FlatWhere,
+  Query,
+  Sort,
+  View,
+} from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
 import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
 import { fieldService } from "src/services/field.service";
@@ -28,7 +35,7 @@ interface ListFieldsProps {
   fetchRows: () => void;
   setFields: (fields: Field[]) => void;
   fetchFields: (viewId: number) => void;
-  availableFieldUiTypes:FieldUIType[];
+  availableFieldUiTypes: FieldUIType[];
   open: boolean;
   onClose: () => void;
 }
@@ -42,7 +49,7 @@ const ListFields = ({
   onClose,
   fetchColumns,
   fetchRows,
-  availableFieldUiTypes
+  availableFieldUiTypes,
 }: ListFieldsProps) => {
   const theme = useTheme();
   const [fieldManagementMode, setFieldManagementMode] = useState<boolean>(true);
@@ -276,25 +283,23 @@ const ListFields = ({
                                     alignItems: "center",
                                   }}
                                 >
-                                  {
-                                    field.icon &&
+                                  {field.icon && (
                                     <Box
-                                    component="span"
-                                    className="svg-color"
-                                    sx={{
-                                      width: 15,
-                                      height: 15,
-                                      display: "inline-block",
-                                      bgcolor:
-                                        theme.palette.palette_style.text
-                                          .primary,
-                                      mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
-                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
-                                      marginRight: 1,
-                                    }}
-                                  />
-                                  }
-                                  
+                                      component="span"
+                                      className="svg-color"
+                                      sx={{
+                                        width: 15,
+                                        height: 15,
+                                        display: "inline-block",
+                                        bgcolor:
+                                          theme.palette.palette_style.text
+                                            .primary,
+                                        mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
+                                        WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
+                                      }}
+                                    />
+                                  )}
+
                                   <Box
                                     component={"span"}
                                     sx={{
@@ -303,6 +308,7 @@ const ListFields = ({
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       whiteSpace: "nowrap",
+                                      ml: 0.5,
                                     }}
                                   >
                                     {field.name}
@@ -419,7 +425,7 @@ const ListFields = ({
 const mapStateToProps = (state: any) => ({
   fields: state.list.fields,
   currentView: state.view.currentView,
-  availableFieldUiTypes : state.view.availableFieldUiTypes
+  availableFieldUiTypes: state.view.availableFieldUiTypes,
 });
 
 const mapDispatchToProps = {

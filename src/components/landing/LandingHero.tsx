@@ -3,10 +3,16 @@ import { useRouter } from "next/router";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
 import { motion } from "framer-motion";
+import { TranslationText } from "src/models/SharedModels";
 
-type ContentTestProps = {};
+type ContentProps = {
 
-export default function LandingHero() {
+};
+
+export default function LandingHero({ translations }: ContentProps & { translations: TranslationText[] }) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations)
+  }
   const router = useRouter();
   const gotoSignup = async () => {
     await router.push({
@@ -44,34 +50,21 @@ export default function LandingHero() {
               variant="h2"
               component={motion.h2}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 1 }}
             >
-              Exciting News! Your Trusted Flexlists Product is About to Get a
-              Whole Lot Better!
+              {t("Title")}
             </Typography>
             <Typography
               variant="body1"
               component={motion.p}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              whileInView={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
             >
-              Dear Valued User, As a loyal user of our database product we want
-              to share some great news with you. We&apos;re thrilled to announce
-              that our team has been working tirelessly over the past 12 months
-              on a significant update to the platform, which will soon be
-              relaunched with cutting-edge features and improvements. Thanks to
-              successful funding, we have been able to invest in the development
-              of this <strong>new version</strong> , incorporating{" "}
-              <strong>advanced technology</strong>{" "}
-              <strong>user-requested features</strong> and that will greatly
-              enhance your experience. In the upcoming days, you will hear more
-              about the official launch of this upgraded product. <br />
-              <br />
-              Please <strong>sign up</strong> for the product launch
-              information. Some of the fantastic new features in the updated
-              product include:
+              <span dangerouslySetInnerHTML={{ __html: t("Body") }} />
+
             </Typography>
             {/* <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Box
@@ -93,7 +86,7 @@ export default function LandingHero() {
             <Box
               component={motion.div}
               initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 2.2 }}
               sx={{
                 display: "flex",
@@ -109,7 +102,7 @@ export default function LandingHero() {
                 sx={{ flex: 1, fontSize: 16 }}
                 onClick={() => gotoSignup}
               >
-                Sign up now
+                {t('Sign up now')}
               </Button>
               <Button
                 size="large"
@@ -124,7 +117,7 @@ export default function LandingHero() {
                   },
                 }}
               >
-                Try now{" "}
+                {t('Try now')}
                 <DiscoverMoreIcon
                   sx={{
                     ml: 1,
@@ -145,11 +138,11 @@ export default function LandingHero() {
         sx={{ position: "relative", minHeight: { xs: "30vh", md: "80vh" } }}
         component={motion.div}
         initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 2.2 }}
       >
         <Box
-          component="img"
+          component={motion.img}
           alt="hero-img"
           src="\assets\home\heroimg.png"
           sx={{
