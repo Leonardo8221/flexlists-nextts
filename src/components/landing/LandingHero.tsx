@@ -44,7 +44,8 @@ export default function LandingHero() {
               variant="h2"
               component={motion.h2}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 1 }}
             >
               Exciting News! Your Trusted Flexlists Product is About to Get a
@@ -54,7 +55,7 @@ export default function LandingHero() {
               variant="body1"
               component={motion.p}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              whileInView={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
             >
               Dear Valued User, As a loyal user of our database product we want
@@ -93,7 +94,7 @@ export default function LandingHero() {
             <Box
               component={motion.div}
               initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 2.2 }}
               sx={{
                 display: "flex",
@@ -145,11 +146,11 @@ export default function LandingHero() {
         sx={{ position: "relative", minHeight: { xs: "30vh", md: "80vh" } }}
         component={motion.div}
         initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 2.2 }}
       >
         <Box
-          component="img"
+          component={motion.img}
           alt="hero-img"
           src="\assets\home\heroimg.png"
           sx={{

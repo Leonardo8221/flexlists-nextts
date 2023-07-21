@@ -69,7 +69,7 @@ export default function LandingWeHelpYou() {
                   Solutions
                 </Typography>
 
-                <Typography variant="h2" sx={{ mb: 3 }}>
+                <Typography variant="h3" sx={{ mb: 3 }}>
                   Mobile Version
                 </Typography>
 
@@ -139,7 +139,7 @@ export default function LandingWeHelpYou() {
                 Solutions
               </Typography>
 
-              <Typography variant="h2" sx={{ mb: 3 }}>
+              <Typography variant="h3" sx={{ mb: 3 }}>
                 Notifications
               </Typography>
 
@@ -207,7 +207,7 @@ export default function LandingWeHelpYou() {
                 Solutions
               </Typography>
 
-              <Typography variant="h2" sx={{ mb: 3 }}>
+              <Typography variant="h3" sx={{ mb: 3 }}>
                 All new field types
               </Typography>
 
