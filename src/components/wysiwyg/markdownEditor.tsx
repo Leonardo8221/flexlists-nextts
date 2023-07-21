@@ -11,19 +11,27 @@ type MarkdownEditorProps = {
   markdown: string;
   setMarkdown: (editValue: string) => void;
 };
-const MarkdownEditor = ({ markdown: markdown, setMarkdown: setMarkdown }: MarkdownEditorProps) => {
+const MarkdownEditor = ({
+  markdown: markdown,
+  setMarkdown: setMarkdown,
+}: MarkdownEditorProps) => {
   const [value, setValue] = useState<string>(markdownToHtml(markdown || ""));
   const handleEditorChange = (newValue: string) => {
     console.log(newValue);
     setValue(newValue);
     setMarkdown(htmlToMarkdown(newValue));
   };
-  
+
   return (
     <Box
       sx={{
         "& .ql-editor": {
           height: "250px",
+        },
+        "& .ql-toolbar.ql-snow": {
+          borderColor: "rgba(0,0,0,0.1)",
+          borderTopLeftRadius: "6px",
+          borderTopRightRadius: "6px",
         },
       }}
     >

@@ -216,7 +216,7 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue?.toString()}
+                    {cellValue?.toString()==='true'?'yes':'no'}
                   </Box>
                 );
               default:

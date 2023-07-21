@@ -17,6 +17,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@faker-js/faker": "^7.6.0",
+    "@fontsource/poppins": "^5.0.5",
     "@graphql-tools/merge": "^8.4.1",
     "@iconify/icons-eva": "^1.2.6",
     "@iconify/icons-ic": "^1.2.13",

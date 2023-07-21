@@ -51,7 +51,8 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
               variant="h2"
               component={motion.h2}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 1 }}
             >
               {t("Existing Landing Hero Title")}
@@ -62,7 +63,7 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
               variant="body1"
               component={motion.p}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              whileInView={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
             >
               {t("Existing Landing Hero Title")}
@@ -102,7 +103,7 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
             <Box
               component={motion.div}
               initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 2.2 }}
               sx={{
                 display: "flex",
@@ -154,11 +155,11 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
         sx={{ position: "relative", minHeight: { xs: "30vh", md: "80vh" } }}
         component={motion.div}
         initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        whileInView={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 2.2 }}
       >
         <Box
-          component="img"
+          component={motion.img}
           alt="hero-img"
           src="\assets\home\heroimg.png"
           sx={{

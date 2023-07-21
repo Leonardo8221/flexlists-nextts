@@ -25,11 +25,11 @@ import { connect } from "react-redux";
 interface FieldFormPanelProps {
   viewId: number;
   field: Field;
-  fieldUiTypes:FieldUIType[];
+  fieldUiTypes: FieldUIType[];
   onAdd: (field: Field) => void;
   onUpdate: (field: Field) => void;
   onDelete: (id: number) => void;
-  onClose: () => void
+  onClose: () => void;
 }
 const icons = [
   "angle_down",
@@ -84,21 +84,21 @@ const GroupHeader = styled("div")(({ theme }) => ({
 const GroupItems = styled("ul")({
   padding: 0,
 });
-export  function FieldFormPanel({
+export function FieldFormPanel({
   viewId,
   field,
   fieldUiTypes,
   onAdd,
   onUpdate,
   onDelete,
-  onClose
+  onClose,
 }: FieldFormPanelProps) {
   const theme = useTheme();
   const isCreating: boolean = !field.id || field.id == 0;
   const [currentField, setCurrentField] = useState<Field>(field);
-  const [currentFieldType, setCurrentFieldType] = useState<FieldUIType| undefined>(
-    fieldUiTypes.find((x)=>x.name === field.uiField)
-  );
+  const [currentFieldType, setCurrentFieldType] = useState<
+    FieldUIType | undefined
+  >(fieldUiTypes.find((x) => x.name === field.uiField));
   const [error, setError] = useState<string>("");
 
   const [submit, setSubmit] = useState(false);
@@ -114,15 +114,24 @@ export  function FieldFormPanel({
     setVisibleIconList(false);
     if (field) {
       setCurrentField(field);
-      setCurrentFieldType(fieldUiTypes.find((x)=>x.name === field.uiField))
+      setCurrentFieldType(fieldUiTypes.find((x) => x.name === field.uiField));
     }
   }, [field]);
 
   const handleSubmit = async () => {
     setSubmit(true);
     if (isCreating) {
-      var createFieldResponse = await fieldService.createUIField(viewId,currentField.name,currentField.uiField,currentField.required,currentField.detailsOnly,
-        currentField.description,currentField.config,currentField.icon,currentField.defaultValue);
+      var createFieldResponse = await fieldService.createUIField(
+        viewId,
+        currentField.name,
+        currentField.uiField,
+        currentField.required,
+        currentField.detailsOnly,
+        currentField.description,
+        currentField.config,
+        currentField.icon,
+        currentField.defaultValue
+      );
       if (isSucc(createFieldResponse) && createFieldResponse.data) {
         currentField.id = (
           createFieldResponse.data as CreateFieldOutputDto
@@ -167,21 +176,18 @@ export  function FieldFormPanel({
     setCurrentField(newField);
   };
 
-  const handleFieldTypeChange = (newTypeInput?: FieldUIType|null) => {
-    if(!newTypeInput)
-    {
+  const handleFieldTypeChange = (newTypeInput?: FieldUIType | null) => {
+    if (!newTypeInput) {
       return;
     }
     var newField = Object.assign({}, currentField);
-    if(newTypeInput.baseType)
-    {
+    if (newTypeInput.baseType) {
       newField.type = newTypeInput.baseType;
     }
-    if(newTypeInput.name)
-    {
-      newField.uiField = newTypeInput.name
+    if (newTypeInput.name) {
+      newField.uiField = newTypeInput.name;
     }
-   
+
     setCurrentFieldType(newTypeInput);
     setCurrentField(newField);
   };
