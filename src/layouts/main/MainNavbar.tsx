@@ -20,6 +20,8 @@ import navConfig from "./MenuConfig";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import LanguagePopover from "../LanguagePopover";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
 
 // ----------------------------------------------------------------------
 
@@ -65,8 +67,17 @@ const LogoTitleStyle = styled("span")(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
+type ContentProps = {
 
-export default function MainNavbar() {
+};
+
+export default function MainNavbar({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) {
+      return key
+    }
+    return getTranslation(key, translations)
+  }
   const isOffset = useOffSetTop(100);
   const router = useRouter();
   var pathname = router.pathname;
@@ -111,20 +122,23 @@ export default function MainNavbar() {
             <MenuDesktop
               isOffset={isOffset}
               isHome={isHome}
-              navConfig={navConfig}
+              navConfig={navConfig.map((item) =>
+                ({ ...item, title: t(item.title) })
+
+              )}
             />
 
             <Box sx={{ flexGrow: 1 }} />
 
             <Button variant="contained" onClick={() => gotoSignup()}>
-              Sign up, it is free
+              {t("Sign up, it's free")}
             </Button>
 
             <Typography
               sx={{ ml: 1, color: "text.secondary", cursor: "pointer" }}
               onClick={() => gotoSignin()}
             >
-              Sign in
+              {t('Sign in')}
             </Typography>
             <LanguagePopover />
           </MHidden>

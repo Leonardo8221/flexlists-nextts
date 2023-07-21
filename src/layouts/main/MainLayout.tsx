@@ -3,6 +3,7 @@ import { ReactNode, useState } from "react";
 import { styled } from "@mui/material/styles";
 //
 import MainNavbar from "./MainNavbar";
+import { TranslationText } from "src/models/SharedModels";
 
 // ----------------------------------------------------------------------
 
@@ -30,13 +31,14 @@ const Main = styled("div")(({ theme }) => ({
 // ----------------------------------------------------------------------
 type MainLayoutProps = {
   children: ReactNode;
+  translations?: TranslationText[];
 };
-export default function MainLayout({ children }: MainLayoutProps) {
+export default function MainLayout({ children, translations }: MainLayoutProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <StyledRoot>
-      <MainNavbar />
+      <MainNavbar translations={translations} />
       <Main>
         <div>{children}</div>
       </Main>

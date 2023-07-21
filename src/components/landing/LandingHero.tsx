@@ -3,14 +3,13 @@ import { useRouter } from "next/router";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
 import { motion } from "framer-motion";
-import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 
 type ContentProps = {
 
 };
 
-function LandingHero({ translations }: ContentProps & { translations: TranslationText[] }) {
+export default function LandingHero({ translations }: ContentProps & { translations: TranslationText[] }) {
   const t = (key: string): string => {
     return getTranslation(key, translations)
   }
@@ -55,9 +54,7 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 1 }}
             >
-              {t("Existing Landing Hero Title")}
-              Exciting News! Your Trusted Flexlists Product is About to Get a
-              Whole Lot Better!
+              {t("Title")}
             </Typography>
             <Typography
               variant="body1"
@@ -66,22 +63,8 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
               whileInView={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
             >
-              {t("Existing Landing Hero Title")}
-              Dear Valued User, As a loyal user of our database product we want
-              to share some great news with you. We&apos;re thrilled to announce
-              that our team has been working tirelessly over the past 12 months
-              on a significant update to the platform, which will soon be
-              relaunched with cutting-edge features and improvements. Thanks to
-              successful funding, we have been able to invest in the development
-              of this <strong>new version</strong> , incorporating{" "}
-              <strong>advanced technology</strong>{" "}
-              <strong>user-requested features</strong> and that will greatly
-              enhance your experience. In the upcoming days, you will hear more
-              about the official launch of this upgraded product. <br />
-              <br />
-              Please <strong>sign up</strong> for the product launch
-              information. Some of the fantastic new features in the updated
-              product include:
+              <span dangerouslySetInnerHTML={{ __html: t("Body") }} />
+
             </Typography>
             {/* <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Box
@@ -119,7 +102,7 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
                 sx={{ flex: 1, fontSize: 16 }}
                 onClick={() => gotoSignup}
               >
-                Sign up now
+                {t('Sign up now')}
               </Button>
               <Button
                 size="large"
@@ -134,7 +117,7 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
                   },
                 }}
               >
-                Try now{" "}
+                {t('Try now')}
                 <DiscoverMoreIcon
                   sx={{
                     ml: 1,
@@ -234,7 +217,3 @@ function LandingHero({ translations }: ContentProps & { translations: Translatio
     </Box>
   );
 }
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return await getTranslations("existing landing hero", context)
-}
-export default LandingHero;

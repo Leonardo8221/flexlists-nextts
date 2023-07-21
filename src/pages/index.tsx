@@ -11,6 +11,9 @@ import {
   LandingCTA,
 } from "src/components/landing";
 import MainLayout from "src/layouts/main/MainLayout";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
 
 // ----------------------------------------------------------------------
 
@@ -29,10 +32,18 @@ const ContentStyle = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
 }));
 
-export default function Home() {
+type ContentProps = {
+
+};
+
+function Home({ translations }: ContentProps & { translations: TranslationText[] }) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations)
+  }
+
   return (
-    <MainLayout>
-      <LandingHero />
+    <MainLayout translations={translations}>
+      <LandingHero translations={translations} />
       <LandingWeHelpYou />
       <LandingTrustedBy />
       <LandingQuickCreate />
@@ -41,3 +52,8 @@ export default function Home() {
     </MainLayout>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  return await getTranslations("existing landing page", context)
+}
+export default Home;

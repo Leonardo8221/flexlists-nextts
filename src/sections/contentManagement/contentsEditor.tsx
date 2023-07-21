@@ -184,7 +184,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
 
     let newTranslationTexts = await Promise.all(translationTexts.map(async (x) => {
       if (x.translationKeyId === translationText.translationKeyId) {
-        const _newValue = await translationTextService.translate(selectedLanguage!.name, x.translation)
+        const _newValue = await translationTextService.translate(selectedLanguage!.name, x.translation && x.translation.trim().length > 0 ? x.translation : x.translationKey)
         if (isErr(_newValue)) {
           setError(_newValue.message)
           return x
@@ -198,7 +198,7 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
   const onGenerateSuggest = async (translationText: TranslationText) => {
     let newTranslationTexts = await Promise.all(translationTexts.map(async (x) => {
       if (x.translationKeyId === translationText.translationKeyId) {
-        const _newValue = await translationTextService.suggest(selectedLanguage!.name, x.translation)
+        const _newValue = await translationTextService.suggest(selectedLanguage!.name, x.translation && x.translation.trim().length > 0 ? x.translation : x.translationKey)
         if (isErr(_newValue)) {
           setError(_newValue.message)
           return x
@@ -428,6 +428,8 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
                         TranslationKeyType.Text && (
                           <TextField
                             fullWidth
+                            multiline
+                            minRows={4}
                             key={`input - ${index}`}
                             label={translationText.translationKey}
                             value={translationText.translation}
