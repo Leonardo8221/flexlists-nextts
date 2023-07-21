@@ -41,7 +41,13 @@ import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { marked } from "marked";
 import TurndownService from "turndown";
 import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
+// -----ICONS------
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import PrintIcon from "@mui/icons-material/Print";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 
@@ -59,27 +65,27 @@ interface RowFormProps {
 const actions = [
   {
     title: "Resize",
-    icon: "menu/fullscreen",
+    icon: <FullscreenIcon />,
     action: "resize",
   },
   {
     title: "Clone",
-    icon: "menu/calendar",
+    icon: <ContentCopyIcon />,
     action: "clone",
   },
   {
     title: "Archive",
-    icon: "menu/calendar",
+    icon: <ArchiveIcon />,
     action: "archive",
   },
   {
     title: "Print",
-    icon: "menu/calendar",
+    icon: <PrintIcon />,
     action: "print",
   },
   {
     title: "Delete",
-    icon: "footer/delete_list",
+    icon: <DeleteIcon />,
     action: "delete",
     color: "#c92929",
   },
@@ -671,33 +677,36 @@ const RowFormPanel = ({
                 sx={{
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Box
+                  component="span"
+                  className="svg-color"
                   sx={{
-                    fontSize: "16px",
+                    width: 24,
+                    height: 24,
+                    display: "grid",
+                    placeContent: "center",
+                    color:
+                      action.color || theme.palette.palette_style.text.primary,
+                    // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                    // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                    mr: { xs: 0.2, md: 0.5 },
+                  }}
+                >
+                  {action.icon}
+                </Box>
+                <Typography
+                  variant="body1"
+                  sx={{
                     color:
                       action.color || theme.palette.palette_style.text.primary,
                   }}
                 >
                   {action.title}
-                </Box>
+                </Typography>
               </Box>
-              <Box
-                component="span"
-                className="svg-color"
-                sx={{
-                  width: 18,
-                  height: 18,
-                  display: "inline-block",
-                  bgcolor:
-                    action.color || theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                  marginLeft: { xs: 0.2, md: 1 },
-                  marginTop: 0.2,
-                }}
-              />
             </Box>
           ))}
         </Box>
