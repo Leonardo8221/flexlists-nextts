@@ -7,11 +7,21 @@ import { TranslationText } from "src/models/SharedModels";
 export const translationTextService = {
   saveManyTranslationTexts,
   getTranslationTexts,
+  translate,
+  suggest
 };
 
 async function saveManyTranslationTexts(translationTexts: TranslationText[]): Promise<FlexlistsError | FlexlistsSuccess<SaveManyTranslationTextsOutputDto[]>> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess<SaveManyTranslationTextsOutputDto[]>>(`/api/translationText/saveManyTranslationTexts`, { translationTexts })
 
+  return response.data;
+};
+async function translate(language: string, text: string): Promise<FlexlistsError | FlexlistsSuccess<string>> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess<string>>(`/api/translationText/translate`, { language, text })
+  return response.data;
+};
+async function suggest(language: string, text: string): Promise<FlexlistsError | FlexlistsSuccess<string>> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess<string>>(`/api/translationText/suggest`, { language, text })
   return response.data;
 };
 async function getTranslationTexts(i18n: string, contentManagementName?: string): Promise<FlexlistsError | FlexlistsSuccess<GetTranslationTextsOutputDto[]>> {
