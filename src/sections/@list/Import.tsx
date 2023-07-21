@@ -11,7 +11,7 @@ import { FlashMessageModel } from 'src/models/FlashMessageModel';
 import { setFlashMessage } from 'src/redux/actions/authAction';
 import { set } from 'lodash';
 import axios from 'src/utils/axios';
-import { fetchRowsByPage } from 'src/redux/actions/viewActions';
+import { fetchColumns, fetchRowsByPage } from 'src/redux/actions/viewActions';
 import { getImportFileExtension } from 'src/utils/flexlistHelper';
 import path from 'path';
 
@@ -60,10 +60,11 @@ type ImportProps = {
   handleClose: () => void;
   currentView:View;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
+  fetchColumns: (viewId:number) => void;
   fetchRowsByPage: (page?: number, limit?: number) => void;
 };
 
-const ImportContent = ({ open, handleClose,currentView,setFlashMessage,fetchRowsByPage }: ImportProps) => {
+const ImportContent = ({ open, handleClose,currentView,setFlashMessage,fetchRowsByPage ,fetchColumns}: ImportProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [windowHeight, setWindowHeight] = useState(0);
@@ -109,6 +110,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage,fetchRows
               })
       if(response && isSucc(response.data) && response.data.data) {
         setFlashMessage({type:'success',message:'Import successfully'})
+        fetchColumns(currentView.id)
         fetchRowsByPage(0,25);
         onClose();
       }
@@ -135,6 +137,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage,fetchRows
     setError('');
     setScreenMode('main');
     setDelimiter(';');
+    setFile(undefined);
   }
   const onAddMissingFieldsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
@@ -221,7 +224,7 @@ const ImportContent = ({ open, handleClose,currentView,setFlashMessage,fetchRows
                       onChange={handleFileChange}
                     />
                   </Button>
-                  <div>Selected File: {file?.name}</div>
+                  <span>{file?.name}</span>
                </Box>
                {
                   importType === ImportType.CSV && <Box sx={{marginBottom:5,marginTop:5}}>
@@ -284,6 +287,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setFlashMessage,
-  fetchRowsByPage
+  fetchRowsByPage,
+  fetchColumns
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ImportContent);
