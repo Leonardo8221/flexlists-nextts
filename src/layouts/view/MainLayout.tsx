@@ -64,7 +64,7 @@ const MainLayout = ({
   disableOverflow = false,
   getAvailableFieldUiTypes,
   getSearchTypes,
-  currentView
+  currentView,
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
@@ -85,8 +85,7 @@ const MainLayout = ({
           {children}
         </Content>
       </Main>
-      {removeFooter == false && currentView && <Footer />}
-      
+      {removeFooter == true && currentView && <Footer />}
     </StyledRoot>
   );
 };

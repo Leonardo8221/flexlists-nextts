@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Fab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -26,6 +26,7 @@ import { filter } from "lodash";
 import ListFields from "./ListFields";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { getChoiceField } from "src/utils/flexlistHelper";
+import AddIcon from "@mui/icons-material/Add";
 
 type DataTableProps = {
   tab: boolean;
@@ -488,7 +489,8 @@ const DataTable = ({
           height: 40,
           left: 0,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
+          alignItems: "center",
           backgroundColor: {
             xs: theme.palette.palette_style.background.default,
             md: "transparent",
@@ -496,7 +498,24 @@ const DataTable = ({
           flexDirection: "inherit",
         }}
       >
-        <AddRowButton modalHandle={handleNewRowPanel} />
+        <Fab
+          onClick={handleNewRowPanel}
+          sx={{
+            position: "absolute",
+            top: -80,
+            left: 80,
+            backgroundColor: theme.palette.palette_style.primary.main,
+            color: theme.palette.palette_style.text.white,
+            "&:hover": {
+              backgroundColor: theme.palette.palette_style.primary.dark,
+            },
+          }}
+          variant="extended"
+        >
+          <AddIcon />
+          Add new row
+        </Fab>
+        {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
         <Box sx={{ display: "flex" }}>
           <Box sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}>
             Row per page
