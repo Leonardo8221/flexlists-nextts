@@ -219,6 +219,27 @@ const RowFormPanel = ({
          return;
       }
     }
+    else if(action === 'archive')
+    {
+      var archiveField = columns.find(
+        (x) => x.system && x.name === "___archived"
+      );
+      if (archiveField) {
+        newValues[archiveField.id] = true;
+      }
+      var updateRowRespone = await listContentService.updateContent(
+        currentView.id,
+        newValues
+      );
+      if (isSucc(updateRowRespone)) {
+        onSubmit(newValues, "update");
+        onClose();
+        return;
+      } else {
+        setFlashMessage({type:'error',message:(updateRowRespone as FlexlistsError).message})
+        return;
+      }
+    }
     onSubmit(newValues, action);
     onClose();
   };
@@ -530,7 +551,7 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {values ? values[column.id]?.toString() : ""}
+              {(values && values[column.id]?.toString()==='true')? "yes" : "no"}
             </Typography>
           </div>
         );

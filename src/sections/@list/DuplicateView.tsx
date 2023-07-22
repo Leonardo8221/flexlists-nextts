@@ -49,10 +49,13 @@ const DuplicateView = ({ open, handleClose, currentView }: DuplicateViewProps) =
       currentView.category, currentView.page, currentView.limit, currentView.order, currentView.query, description, currentView.conditions, currentView.fields)
     if (isSucc(response) && response.data && response.data.viewId) {
       await router.push(`${PATH_MAIN.views}/${response.data.viewId}`)
+      router.reload();
+      handleClose()
     }
     else {
       setError(response.message)
     }
+
   }
   return (
     <CentralModal open={open} handleClose={handleClose}>
