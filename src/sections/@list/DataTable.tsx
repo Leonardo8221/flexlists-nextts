@@ -362,7 +362,7 @@ const DataTable = ({
     <Box
       sx={{
         width: { xs: "100vw", lg: "100%" },
-        overFlow: "auto",
+        overFlow: "scroll",
       }}
       id="datatable_wrap"
     >
@@ -415,7 +415,7 @@ const DataTable = ({
               WebkitOverflowScrolling: "touch",
               height: {
                 xs: `${windowHeight - (!tab ? 255 : 301)}px`,
-                lg: "calc(100vh - 204px)",
+                lg: "calc(100vh - 188px)",
               },
               width: { lg: "100vw" },
               minHeight: "300px",
@@ -501,7 +501,7 @@ const DataTable = ({
       )}
       <Stack
         sx={{
-          position: "fixed",
+          position: "absolute",
           bottom: 0,
           width: "100%",
           py: 0.5,

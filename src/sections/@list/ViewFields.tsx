@@ -11,6 +11,8 @@ import ViewFieldForm from "./ViewFieldForm";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import { View, ViewFieldConfig } from "src/models/SharedModels";
+import AddColumnButton from "src/components/add-button/AddColumnButton";
+import ListFields from "./ListFields";
 
 type ViewFieldsProps = {
   currentView: View;
@@ -94,7 +96,8 @@ const ViewFields = ({
   const changeDetailsOnly = (index: number) => {
     setColumns(
       columns.map((column: any, i: number) => {
-        if (index === i) column.viewFieldDetailsOnly = !column.viewFieldDetailsOnly;
+        if (index === i)
+          column.viewFieldDetailsOnly = !column.viewFieldDetailsOnly;
         return column;
       })
     );
@@ -111,10 +114,12 @@ const ViewFields = ({
   const updateField = (field: ViewField) => {
     var newColumns = columns.map((x) => {
       return x.id === field.id ? field : x;
-    })
+    });
     setColumns(newColumns);
     var newFileteColumns = filter(newColumns, (column) => {
-      return (searchText && column.name.includes(searchText)) || searchText === "";
+      return (
+        (searchText && column.name.includes(searchText)) || searchText === ""
+      );
     });
     setFilterColumns(newFileteColumns);
     let newView: View = Object.assign({}, currentView);
@@ -125,23 +130,23 @@ const ViewFields = ({
       name: field.viewFieldName,
       detailsOnly: field.viewFieldDetailsOnly,
       ordering: field.viewFieldOrdering,
-      default: field.defaultValue
-    }
+      default: field.defaultValue,
+    };
     if (newView.fields) {
-      var currentViewFieldIndex = newView.fields.findIndex((x) => x.id === viewFieldConfig.id);
+      var currentViewFieldIndex = newView.fields.findIndex(
+        (x) => x.id === viewFieldConfig.id
+      );
       if (currentViewFieldIndex >= 0) {
-        newView.fields[currentViewFieldIndex] = viewFieldConfig
-        console.log(newView.fields)
+        newView.fields[currentViewFieldIndex] = viewFieldConfig;
+        console.log(newView.fields);
+      } else {
+        newView.fields.push(viewFieldConfig);
       }
-      else {
-        newView.fields.push(viewFieldConfig)
-      }
-    }
-    else {
-      newView.fields = [viewFieldConfig]
+    } else {
+      newView.fields = [viewFieldConfig];
     }
     console.log(newView);
-    setCurrentView(newView)
+    setCurrentView(newView);
   };
   const handleCloseModal = () => {
     setFieldListMode(true);
@@ -159,6 +164,15 @@ const ViewFields = ({
     borderRadius: "5px",
     border: "none",
   };
+
+  const handleOpenFieldManagementPanel = () => {
+    setVisibleFieldManagementPanel(true);
+  };
+  const handleCloseFieldManagementPanel = () => {
+    setVisibleFieldManagementPanel(false);
+  };
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
+    useState(false);
 
   return (
     <Modal
@@ -205,6 +219,14 @@ const ViewFields = ({
 
         {fieldListMode ? (
           <>
+            {currentView && (
+              <ListFields
+                open={visibleFieldManagementPanel}
+                onClose={() => handleCloseFieldManagementPanel()}
+              />
+            )}
+            <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
+
             <Box
               sx={{
                 borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
@@ -247,30 +269,28 @@ const ViewFields = ({
                   sx={{
                     width: 18,
                     height: 18,
-                    display: 'inline-block',
+                    display: "inline-block",
                     bgcolor: theme.palette.palette_style.text.primary,
                     //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
                     WebkitMask: `url(/assets/icons/toolbar/visible.svg) no-repeat center / contain`,
                     // marginLeft: { xs: 0.2, md: 1 },
-                    marginTop: '15px'
+                    marginTop: "15px",
                   }}
                 />
               </Tooltip>
               <Tooltip title="Visible on detail page only">
-
                 <Box
                   component="span"
                   className="svg-color"
                   sx={{
                     width: 18,
                     height: 18,
-                    display: 'inline-block',
+                    display: "inline-block",
                     bgcolor: theme.palette.palette_style.text.primary,
                     //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
                     WebkitMask: `url(/assets/icons/toolbar/detailsOnly.svg) no-repeat center / contain`,
-                    marginLeft: '20px',
-                    marginTop: '15px',
-
+                    marginLeft: "20px",
+                    marginTop: "15px",
                   }}
                 />
               </Tooltip>
@@ -441,7 +461,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setColumns,
-  setCurrentView
+  setCurrentView,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewFields);

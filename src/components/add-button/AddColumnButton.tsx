@@ -1,31 +1,37 @@
-import { useTheme } from '@mui/material/styles';
-import {
-  Box
-} from '@mui/material';
+import { useTheme } from "@mui/material/styles";
+import { Box, Button } from "@mui/material";
+import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 
 interface Props {
   modalHandle: (value: boolean) => void;
 }
-  
-export default function AddColumnButton ({
-  modalHandle
-}: Props) {
+
+export default function AddColumnButton({ modalHandle }: Props) {
   const theme = useTheme();
-  
+
   return (
     <Box
       component="span"
+      onClick={() => modalHandle(true)}
       className="svg-color"
       sx={{
         width: 18,
         height: 18,
-        display: 'inline-block',
+        display: "inline-block",
         bgcolor: theme.palette.palette_style.text.primary,
         mask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
         WebkitMask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
-        cursor: 'pointer'
+        cursor: "pointer",
       }}
-      onClick={() => modalHandle(true)}
     />
+    // <Button
+    //   onClick={() => modalHandle(true)}
+    //   fullWidth
+    //   size="large"
+    //   variant="contained"
+    // >
+    //   <ViewWeekOutlinedIcon sx={{ mr: 1 }} />
+    //   Edit Fields
+    // </Button>
   );
-};
+}
