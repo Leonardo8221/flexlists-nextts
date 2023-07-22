@@ -226,7 +226,12 @@ const ViewFields = ({
               />
             )}
             <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
-
+            <Divider
+              light
+              sx={{
+                my: 2,
+              }}
+            />
             <Box
               sx={{
                 borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
