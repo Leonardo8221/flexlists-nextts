@@ -167,295 +167,295 @@ const ViewFields = ({
 
   const handleOpenFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(true);
+    handleCloseModal();
   };
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
-    useState(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =  useState<boolean>(false);
 
   return (
-    <Modal
-      open={open}
-      onClose={handleCloseModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style} id="fields_wrap">
-        {!fieldListMode ? (
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-              }}
-            >
+    <>
+      <Modal
+        open={open}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} id="fields_wrap">
+          {!fieldListMode ? (
+            <>
               <Box
-                component="span"
-                className="svg-color"
                 sx={{
-                  width: 18,
-                  height: 18,
-                  display: "inline-block",
-                  bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
-                  cursor: "pointer",
+                  display: "flex",
+                  width: "100%",
                 }}
-                onClick={() => {
-                  setFieldListMode(true);
+              >
+                <Box
+                  component="span"
+                  className="svg-color"
+                  sx={{
+                    width: 18,
+                    height: 18,
+                    display: "inline-block",
+                    bgcolor: theme.palette.palette_style.text.primary,
+                    mask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/arrow_back.svg) no-repeat center / contain`,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setFieldListMode(true);
+                  }}
+                />
+              </Box>
+              <Divider
+                sx={{
+                  my: 2,
                 }}
               />
-            </Box>
-            <Divider
-              sx={{
-                my: 2,
-              }}
-            />
-          </>
-        ) : (
-          <></>
-        )}
+            </>
+          ) : (
+            <></>
+          )}
 
-        {fieldListMode ? (
-          <>
-            {currentView && (
-              <ListFields
-                open={visibleFieldManagementPanel}
-                onClose={() => handleCloseFieldManagementPanel()}
-              />
-            )}
-            <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
-            <Divider
-              light
-              sx={{
-                my: 2,
-              }}
-            />
-            <Box
-              sx={{
-                borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-                paddingBottom: 1,
-                paddingTop: 0,
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-              id="search_column_list"
-            >
-              <TextField
-                label="Search a field"
-                size="small"
-                type="text"
-                onChange={handleSearchColumns}
-                value={searchText}
-                sx={{ border: "none" }}
+          {fieldListMode ? (
+            <>
+              <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
+              <Divider
+                light
+                sx={{
+                  my: 2,
+                }}
               />
               <Box
-                component="span"
-                className="svg-color add_choice"
                 sx={{
-                  width: 18,
-                  height: 18,
-                  display: "inline-block",
-                  bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-                  cursor: "pointer",
-                  marginTop: 1,
+                  borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                  paddingBottom: 1,
+                  paddingTop: 0,
+                  display: "flex",
+                  justifyContent: "space-between",
                 }}
-                onClick={handleClose}
-              />
-            </Box>
-            <Box>
-              <Tooltip title="Field is visible">
+                id="search_column_list"
+              >
+                <TextField
+                  label="Search a field"
+                  size="small"
+                  type="text"
+                  onChange={handleSearchColumns}
+                  value={searchText}
+                  sx={{ border: "none" }}
+                />
                 <Box
                   component="span"
-                  className="svg-color"
+                  className="svg-color add_choice"
                   sx={{
                     width: 18,
                     height: 18,
                     display: "inline-block",
                     bgcolor: theme.palette.palette_style.text.primary,
-                    //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                    WebkitMask: `url(/assets/icons/toolbar/visible.svg) no-repeat center / contain`,
-                    // marginLeft: { xs: 0.2, md: 1 },
-                    marginTop: "15px",
+                    mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                    cursor: "pointer",
+                    marginTop: 1,
                   }}
+                  onClick={handleClose}
                 />
-              </Tooltip>
-              <Tooltip title="Visible on detail page only">
-                <Box
-                  component="span"
-                  className="svg-color"
-                  sx={{
-                    width: 18,
-                    height: 18,
-                    display: "inline-block",
-                    bgcolor: theme.palette.palette_style.text.primary,
-                    //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                    WebkitMask: `url(/assets/icons/toolbar/detailsOnly.svg) no-repeat center / contain`,
-                    marginLeft: "20px",
-                    marginTop: "15px",
-                  }}
-                />
-              </Tooltip>
-            </Box>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="field_list">
-                {(provided: any) => (
+              </Box>
+              <Box>
+                <Tooltip title="Field is visible">
                   <Box
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
+                    component="span"
+                    className="svg-color"
                     sx={{
-                      borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-                      py: 2,
-                      maxHeight: `${window.innerHeight - 140}px`,
-                      overflow: "auto",
-                      minHeight: "360px",
+                      width: 18,
+                      height: 18,
+                      display: "inline-block",
+                      bgcolor: theme.palette.palette_style.text.primary,
+                      //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                      WebkitMask: `url(/assets/icons/toolbar/visible.svg) no-repeat center / contain`,
+                      // marginLeft: { xs: 0.2, md: 1 },
+                      marginTop: "15px",
                     }}
-                  >
-                    {filterColumns.map((column: any, index: number) => (
-                      <Draggable
-                        key={`${column.id}`}
-                        draggableId={`${column.id}`}
-                        index={index}
-                      >
-                        {(provided: any) => (
-                          <Box
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              cursor: "pointer",
-                              py: 1,
-                            }}
-                          >
-                            <Box flexGrow={2} sx={{ display: "flex" }}>
-                              <Checkbox
-                                checked={column.viewFieldVisible}
-                                sx={{
-                                  color: "#CCCCCC",
-                                  "&.Mui-checked": {
-                                    color: "#54A6FB",
-                                  },
-                                  p: 0,
-                                  marginRight: 1,
-                                }}
-                                onChange={() => {
-                                  changeVisible(index);
-                                }}
-                              />
-                              <Checkbox
-                                checked={column.viewFieldDetailsOnly}
-                                sx={{
-                                  color: "#CCCCCC",
-                                  "&.Mui-checked": {
-                                    color: "#54A6FB",
-                                  },
-                                  p: 0,
-                                  marginRight: 1,
-                                }}
-                                onChange={() => {
-                                  changeDetailsOnly(index);
-                                }}
-                              />
+                  />
+                </Tooltip>
+                <Tooltip title="Visible on detail page only">
+                  <Box
+                    component="span"
+                    className="svg-color"
+                    sx={{
+                      width: 18,
+                      height: 18,
+                      display: "inline-block",
+                      bgcolor: theme.palette.palette_style.text.primary,
+                      //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                      WebkitMask: `url(/assets/icons/toolbar/detailsOnly.svg) no-repeat center / contain`,
+                      marginLeft: "20px",
+                      marginTop: "15px",
+                    }}
+                  />
+                </Tooltip>
+              </Box>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="field_list">
+                  {(provided: any) => (
+                    <Box
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      sx={{
+                        borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                        py: 2,
+                        maxHeight: `${window.innerHeight - 140}px`,
+                        overflow: "auto",
+                        minHeight: "360px",
+                      }}
+                    >
+                      {filterColumns.map((column: any, index: number) => (
+                        <Draggable
+                          key={`${column.id}`}
+                          draggableId={`${column.id}`}
+                          index={index}
+                        >
+                          {(provided: any) => (
+                            <Box
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                cursor: "pointer",
+                                py: 1,
+                              }}
+                            >
+                              <Box flexGrow={2} sx={{ display: "flex" }}>
+                                <Checkbox
+                                  checked={column.viewFieldVisible}
+                                  sx={{
+                                    color: "#CCCCCC",
+                                    "&.Mui-checked": {
+                                      color: "#54A6FB",
+                                    },
+                                    p: 0,
+                                    marginRight: 1,
+                                  }}
+                                  onChange={() => {
+                                    changeVisible(index);
+                                  }}
+                                />
+                                <Checkbox
+                                  checked={column.viewFieldDetailsOnly}
+                                  sx={{
+                                    color: "#CCCCCC",
+                                    "&.Mui-checked": {
+                                      color: "#54A6FB",
+                                    },
+                                    p: 0,
+                                    marginRight: 1,
+                                  }}
+                                  onChange={() => {
+                                    changeDetailsOnly(index);
+                                  }}
+                                />
+                                <Box
+                                  component="span"
+                                  className="svg-color"
+                                  sx={{
+                                    width: 15,
+                                    height: 15,
+                                    display: "inline-block",
+                                    bgcolor:
+                                      theme.palette.palette_style.text.primary,
+                                    mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                    WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                    marginRight: 1,
+                                    marginTop: 0.5,
+                                  }}
+                                />
+                                <Box
+                                  sx={{ cursor: "pointer" }}
+                                  flexGrow={2}
+                                  onClick={() => handleSelectField(column)}
+                                >
+                                  {column.viewFieldName}
+                                </Box>
+                              </Box>
                               <Box
                                 component="span"
                                 className="svg-color"
                                 sx={{
-                                  width: 15,
-                                  height: 15,
+                                  width: 14,
+                                  height: 14,
                                   display: "inline-block",
                                   bgcolor:
                                     theme.palette.palette_style.text.primary,
-                                  mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                                  WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                                  marginRight: 1,
-                                  marginTop: 0.5,
+                                  mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
+                                  WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
                                 }}
                               />
-                              <Box
-                                sx={{ cursor: "pointer" }}
-                                flexGrow={2}
-                                onClick={() => handleSelectField(column)}
-                              >
-                                {column.viewFieldName}
-                              </Box>
                             </Box>
-                            <Box
-                              component="span"
-                              className="svg-color"
-                              sx={{
-                                width: 14,
-                                height: 14,
-                                display: "inline-block",
-                                bgcolor:
-                                  theme.palette.palette_style.text.primary,
-                                mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
-                                WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
-                              }}
-                            />
-                          </Box>
-                        )}
-                      </Draggable>
-                    ))}
-                  </Box>
-                )}
-              </Droppable>
-            </DragDropContext>
-            <Box
-              sx={{
-                paddingTop: 2,
-                textAlign: "center",
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: "8px",
-              }}
-            >
+                          )}
+                        </Draggable>
+                      ))}
+                    </Box>
+                  )}
+                </Droppable>
+              </DragDropContext>
               <Box
                 sx={{
-                  py: 1,
-                  border: `1px solid ${theme.palette.palette_style.border.default}`,
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  handleVisible(true);
+                  paddingTop: 2,
+                  textAlign: "center",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  gap: "8px",
                 }}
               >
-                Show all
+                <Box
+                  sx={{
+                    py: 1,
+                    border: `1px solid ${theme.palette.palette_style.border.default}`,
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleVisible(true);
+                  }}
+                >
+                  Show all
+                </Box>
+                <Box
+                  sx={{
+                    py: 1,
+                    border: `1px solid ${theme.palette.palette_style.border.default}`,
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleVisible(false);
+                  }}
+                >
+                  Hide all
+                </Box>
               </Box>
-              <Box
-                sx={{
-                  py: 1,
-                  border: `1px solid ${theme.palette.palette_style.border.default}`,
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  handleVisible(false);
-                }}
-              >
-                Hide all
-              </Box>
-            </Box>
-          </>
-        ) : (
-          <>
-            {selectedField && (
-              <ViewFieldForm
-                currentView={currentView}
-                field={selectedField}
-                onUpdate={(field) => updateField(field)}
-                onClose={() => setFieldListMode(true)}
-              />
-            )}
-          </>
-        )}
-      </Box>
-    </Modal>
+            </>
+          ) : (
+            <>
+              {selectedField && (
+                <ViewFieldForm
+                  currentView={currentView}
+                  field={selectedField}
+                  onUpdate={(field) => updateField(field)}
+                  onClose={() => setFieldListMode(true)}
+                />
+              )}
+            </>
+          )}
+        </Box>
+      </Modal>
+    <ListFields
+    open={visibleFieldManagementPanel}
+    onClose={() => handleCloseFieldManagementPanel()}
+  />
+  </>
   );
 };
 
