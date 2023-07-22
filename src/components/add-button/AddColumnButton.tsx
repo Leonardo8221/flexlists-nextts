@@ -10,28 +10,28 @@ export default function AddColumnButton({ modalHandle }: Props) {
   const theme = useTheme();
 
   return (
-    <Box
-      component="span"
-      onClick={() => modalHandle(true)}
-      className="svg-color"
-      sx={{
-        width: 18,
-        height: 18,
-        display: "inline-block",
-        bgcolor: theme.palette.palette_style.text.primary,
-        mask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
-        WebkitMask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
-        cursor: "pointer",
-      }}
-    />
-    // <Button
+    // <Box
+    //   component="span"
     //   onClick={() => modalHandle(true)}
-    //   fullWidth
-    //   size="large"
-    //   variant="contained"
-    // >
-    //   <ViewWeekOutlinedIcon sx={{ mr: 1 }} />
-    //   Edit Fields
-    // </Button>
+    //   className="svg-color"
+    //   sx={{
+    //     width: 18,
+    //     height: 18,
+    //     display: "inline-block",
+    //     bgcolor: theme.palette.palette_style.text.primary,
+    //     mask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
+    //     WebkitMask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
+    //     cursor: "pointer",
+    //   }}
+    // />
+    <Button
+      onClick={() => modalHandle(true)}
+      fullWidth
+      size="large"
+      variant="contained"
+    >
+      <ViewWeekOutlinedIcon sx={{ mr: 1 }} />
+      Edit Fields
+    </Button>
   );
 }

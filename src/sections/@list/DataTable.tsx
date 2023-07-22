@@ -385,7 +385,7 @@ const DataTable = ({
           }}
         />
       )}
-      <Box
+      {/* <Box
         sx={{
           position: "absolute",
           right: 0,
@@ -402,7 +402,7 @@ const DataTable = ({
         }}
       >
         <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
-      </Box>
+      </Box> */}
       {!updatingTable && (
         <MaterialReactTable
           tableInstanceRef={tableInstanceRef}
