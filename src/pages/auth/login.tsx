@@ -25,7 +25,12 @@ import { useRouter } from "next/router";
 import { authService } from "../../services/auth.service";
 import Iconify from "../../components/iconify";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
-import { PATH_ADMIN, PATH_AUTH, PATH_MAIN, getRolePathDefault } from "src/routes/paths";
+import {
+  PATH_ADMIN,
+  PATH_AUTH,
+  PATH_MAIN,
+  getRolePathDefault,
+} from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { SystemRole } from "src/enums/SystemRole";
@@ -55,7 +60,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
     if (router.isReady) {
       initialize();
     }
-  }, [router.isReady])
+  }, [router.isReady]);
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -104,7 +109,9 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           message: "Login successful, going to your Dashboard!",
           type: "success",
         });
-        await router.push({ pathname: getRolePathDefault(response.data.systemRole) });
+        await router.push({
+          pathname: getRolePathDefault(response.data.systemRole),
+        });
 
         return;
       }
@@ -168,6 +175,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
       textAlign: { xs: "center", md: "left" },
       color: theme.palette.palette_style.text.white,
       py: { xs: 4, md: 0 },
+      px: { xs: 0, md: 4 },
     },
 
     loginIllustration: {
@@ -207,7 +215,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
       opacity: 0.2,
       zIndex: 1,
       filter: "blur(100px)",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0)",
     },
     rightBoxGrid: {
       py: 4,

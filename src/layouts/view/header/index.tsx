@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { AuthValidate } from "src/models/AuthValidate";
 import AccountPopover from "src/layouts/AccountPopover";
 import LanguagePopover from "src/layouts/LanguagePopover";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const HEADER_MOBILE = 48;
 const HEADER_DESKTOP = 48;
@@ -47,13 +48,26 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
   return (
     <StyledRoot>
       <StyledToolbar>
-        <IconButton
+        <Box onClick={onOpenNav} sx={{ cursor: "pointer" }}>
+          <MenuIcon
+            sx={{
+              color: theme.palette.palette_style.primary.main,
+            }}
+          />
+        </Box>
+
+        {/* <IconButton
           onClick={onOpenNav}
           sx={{
             mr: { md: 1 },
             color: theme.palette.palette_style.text.primary,
           }}
         >
+          <MenuIcon
+            sx={{
+              color: theme.palette.palette_style.primary.main,
+            }}
+          />
           <Box
             component="span"
             className="svg-color"
@@ -66,7 +80,7 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
               WebkitMask: `url(/assets/icons/navbar/menu.svg) no-repeat center / contain`,
             }}
           />
-        </IconButton>
+        </IconButton> */}
 
         <Link style={{ display: "flex" }} href="/">
           <Box
@@ -80,9 +94,9 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
             {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
-        
+
         {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
-       
+
         <Box sx={{ flexGrow: 1 }} />
         <LanguagePopover />
         {authValidate && authValidate.isUserValidated && (
@@ -94,7 +108,6 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
               sm: 1,
             }}
           >
-           
             <NotificationsPopover />
             <AccountPopover />
           </Stack>

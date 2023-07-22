@@ -412,6 +412,7 @@ const DataTable = ({
           muiTableContainerProps={{
             sx: {
               scrollBehavior: "smooth !important",
+              WebkitOverflowScrolling: "touch",
               height: {
                 xs: `${windowHeight - (!tab ? 255 : 301)}px`,
                 lg: "calc(100vh - 204px)",
@@ -508,7 +509,7 @@ const DataTable = ({
           height: 40,
           left: 0,
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
           alignItems: "center",
           backgroundColor: {
             xs: theme.palette.palette_style.background.default,
@@ -520,15 +521,16 @@ const DataTable = ({
         <Fab
           onClick={handleNewRowPanel}
           sx={{
-            position: "absolute",
-            top: -80,
-            left: 80,
+            // position: "absolute",
+            // top: -80,
+            // left: 80,
             backgroundColor: theme.palette.palette_style.primary.main,
             color: theme.palette.palette_style.text.white,
-            opacity: 0.2,
+            // opacity: 0.2,
+            height: 32,
             "&:hover": {
               backgroundColor: theme.palette.palette_style.primary.dark,
-              opacity: 1,
+              // opacity: 1,
             },
           }}
           variant="extended"

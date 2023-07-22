@@ -36,11 +36,11 @@ const navConfig = [
   //   path: "/",
   //   icon: "Favourites",
   // },
-  // {
-  //   title: "Information",
-  //   path: "/",
-  //   icon: "Info",
-  // },
+  {
+    title: "Information",
+    path: "/",
+    icon: "Info",
+  },
 ];
 
 export default navConfig;
