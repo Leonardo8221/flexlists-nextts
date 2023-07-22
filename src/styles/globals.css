@@ -119,14 +119,15 @@ body {
   position: relative;
   margin: 0;
   padding: 0;
+  -webkit-overflow-scrolling: touch;
 }
 * {
   overscroll-behavior: none !important;
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 3px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {

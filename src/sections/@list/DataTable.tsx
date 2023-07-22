@@ -155,7 +155,6 @@ const DataTable = ({
                 );
 
               case FieldType.DateTime:
-             
                 return (
                   <Box
                     key={row.id}
@@ -166,7 +165,9 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue && cellValue !=null ? new Date(cellValue).toLocaleString():''}
+                    {cellValue && cellValue != null
+                      ? new Date(cellValue).toLocaleString()
+                      : ""}
                   </Box>
                 );
               case FieldType.Date:
@@ -180,7 +181,9 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue && cellValue !=null ?new Date(cellValue).toLocaleDateString():''}
+                    {cellValue && cellValue != null
+                      ? new Date(cellValue).toLocaleDateString()
+                      : ""}
                   </Box>
                 );
               case FieldType.Time:
@@ -194,7 +197,9 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue && cellValue !=null ?new Date(cellValue).toLocaleString():''}
+                    {cellValue && cellValue != null
+                      ? new Date(cellValue).toLocaleString()
+                      : ""}
                   </Box>
                 );
               case FieldType.Text:
@@ -520,8 +525,10 @@ const DataTable = ({
             left: 80,
             backgroundColor: theme.palette.palette_style.primary.main,
             color: theme.palette.palette_style.text.white,
+            opacity: 0.2,
             "&:hover": {
               backgroundColor: theme.palette.palette_style.primary.dark,
+              opacity: 1,
             },
           }}
           variant="extended"
