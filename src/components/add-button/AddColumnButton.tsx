@@ -1,6 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { Box, Button } from "@mui/material";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
+import AddIcon from "@mui/icons-material/Add";
 
 interface Props {
   modalHandle: (value: boolean) => void;
@@ -30,7 +31,7 @@ export default function AddColumnButton({ modalHandle }: Props) {
       size="large"
       variant="contained"
     >
-      <ViewWeekOutlinedIcon sx={{ mr: 1 }} />
+      <AddIcon sx={{ mr: 1 }} />
       Edit Fields
     </Button>
   );
