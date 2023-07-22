@@ -420,7 +420,7 @@ const DataTable = ({
               width: { lg: "100vw" },
               minHeight: "300px",
               "& .MuiTableHead-root": {
-                width: "calc(100% - 40px)",
+                width: "100%",
               },
               "& .MuiTableRow-root": {
                 boxShadow: "none",
