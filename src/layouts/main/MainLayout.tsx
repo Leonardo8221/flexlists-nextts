@@ -18,7 +18,9 @@ const StyledRoot = styled("div")({
 
 const Main = styled("div")(({ theme }) => ({
   flexGrow: 1,
-  overflow: "scroll",
+  // overflow: "scroll",
+  overflowX: "hidden",
+  WebkitOverflowScrolling: "touch",
   minHeight: "100%",
   // paddingTop: APP_BAR_MOBILE + 24,
   // paddingBottom: theme.spacing(10),
@@ -33,7 +35,10 @@ type MainLayoutProps = {
   children: ReactNode;
   translations?: TranslationText[];
 };
-export default function MainLayout({ children, translations }: MainLayoutProps) {
+export default function MainLayout({
+  children,
+  translations,
+}: MainLayoutProps) {
   const [open, setOpen] = useState(false);
 
   return (
