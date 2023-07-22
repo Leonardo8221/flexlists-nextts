@@ -26,6 +26,11 @@ export const getTranslation = (key: string, transaltions: TranslationText[]) => 
                 break;
         }
     }
+
+    if (translation.trim().length === 0) {
+        return key
+    }
+
     return translation
 }
 export const getTranslations = async (pageName: string, context: any): Promise<any> => {

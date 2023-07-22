@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { getLanguages } from "src/redux/actions/adminAction";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
+//import US from 'country-flag-icons/3x2/US.svg'
 
 // ----------------------------------------------------------------------
 type LanguagePopoverProps = {
@@ -99,7 +100,7 @@ export const LanguagePopover = ({
             style,
           }}
         >
-          <img src={currentLanguage.icon} alt={currentLanguage.name} />
+          <img src={currentLanguage.icon} style={{ width: 28 }} alt={currentLanguage.name} />
         </IconButton>
       )}
 
@@ -130,6 +131,7 @@ export const LanguagePopover = ({
               selected={language.id === languages[0].id}
               onClick={() => handleLanguageChange(language.id)}
             >
+
               <Box
                 component="img"
                 alt={t(language.name)}
