@@ -1,5 +1,32 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## For the Flexlists backend; 
+
+- install docker, docker-compose 
+- add to the .env file in this repository: 
+
+```
+NEXT_PUBLIC_FLEXLIST_API_URL=http://localhost:8080
+NEXT_PUBLIC_FLEXLIST_CLIENT_URL=http://localhost:8080
+```
+
+- start this repository in dev mode 
+
+```
+yarn dev
+```
+
+- run
+
+```
+docker-compose -f ./docker-compose.dev.frontendbackend.yml up -d
+```
+
+- go to http://localhost:8080
+
+
+
+
 ## Getting Started
 
 First, run the development server:
