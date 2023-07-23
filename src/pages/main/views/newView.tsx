@@ -23,13 +23,15 @@ import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
+import { createCoreView } from "src/services/listView.service";
 
 interface NewListProps {
   message: any;
   setMessage: (message: any) => void;
+  viewTemplate:any
 }
 
-function NewList({ message, setMessage }: NewListProps) {
+function NewList({ message, setMessage,viewTemplate }: NewListProps) {
   const router = useRouter();
   var categories: { key: string; name: string }[] = [];
   Object.keys(ListCategory).forEach((x) => {
@@ -83,12 +85,27 @@ function NewList({ message, setMessage }: NewListProps) {
     setCurrentList(newList);
   };
   const handleSubmit = async () => {
-    var createListResponse = await listService.createList(
-      currentList.name,
-      currentList.description,
-      currentList.category as ListCategory,
-      ViewType.List
-    );
+    if (!currentList.name) {
+      setError("Name is required");
+      return;
+    }
+    let createListResponse : any;
+    if(!viewTemplate || !viewTemplate.id|| viewTemplate.id == 0){
+      console.log("create list")
+      createListResponse= await listService.createList(
+        currentList.name,
+        currentList.description,
+        currentList.category as ListCategory,
+        ViewType.List
+      );
+    }
+    else{
+      createListResponse= await createCoreView(
+        viewTemplate.id,
+        currentList.name,
+        currentList.description,
+      )
+    }
     if (
       isSucc(createListResponse) &&
       createListResponse.data &&
@@ -143,7 +160,9 @@ function NewList({ message, setMessage }: NewListProps) {
               setValue={(newValue) => onDescriptionChange(newValue)}
             />
           </Box>
-          <Box sx={{ mb: 4 }}>
+          {
+            (!viewTemplate || !viewTemplate.id|| viewTemplate.id == 0) &&
+            <Box>
             <Typography variant="subtitle2" gutterBottom>
               Category
             </Typography>
@@ -160,9 +179,11 @@ function NewList({ message, setMessage }: NewListProps) {
               ))}
             </Select>
           </Box>
+          }
+          
           <Button
             variant="contained"
-            sx={{ width: { xs: "100%", md: "auto" } }}
+            sx={{ width: { xs: "100%", md: "auto" },mt:4 }}
             type="submit"
             onClick={() => handleSubmit()}
           >
@@ -182,6 +203,7 @@ function NewList({ message, setMessage }: NewListProps) {
 
 const mapStateToProps = (state: any) => ({
   message: state.view.message,
+  viewTemplate:state.view.viewTemplate
 });
 
 const mapDispatchToProps = {

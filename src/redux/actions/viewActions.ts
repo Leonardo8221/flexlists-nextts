@@ -235,3 +235,7 @@ export const setMessage = (message: any) => ({
   type: 'SET_MESSAGE',
   payload: message
 });
+export const setViewTemplate = (viewTemplate: any) => ({
+  type: 'SET_VIEW_TEMPLATE',
+  payload: viewTemplate
+});

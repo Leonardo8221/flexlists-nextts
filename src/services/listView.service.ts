@@ -15,6 +15,8 @@ import { AddTableViewToGroupOutputDto } from 'src/models/ApiOutputModels'
 import { AddKeyToViewOutputDto } from 'src/models/ApiOutputModels'
 import { GetKeysForViewOutputDto } from 'src/models/ApiOutputModels'
 import { ExportType } from 'src/enums/SharedEnums'
+import { GetViewTemplatesOutputDto } from 'src/models/ApiOutputModels'
+import { CreateCoreViewOutputDto } from 'src/models/ApiOutputModels'
 
 export const listViewService = {
     getViewUsers,
@@ -39,23 +41,25 @@ export const listViewService = {
     getKeysForView,
     deleteKeyFromView,
     exportViewData,
+    getViewTemplates,
+    createCoreView,
 };
 
 export async function getViewUsers(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetViewUsersOutputDto[]>>('/api/listView/getViewUsers'+`?viewId=${viewId}`)
   return response.data;
 };
-export async function createView(listId:number,name:string,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:any,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
+export async function createView(listId:number,name:any,type:ViewType,config:any,template?:boolean,category?:ListCategory,page?:number,limit?:number,order?:Sort[],query?:any,description?:any,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateViewOutputDto>>(`/api/listView/createView`, {listId,name,type,config,template,category,page,limit,order,query,description,conditions,fields})
 
   return response.data;
 };
-export async function renameView(viewId:number,name:string,description?:string): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function renameView(viewId:number,name:any,description?:any): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/renameView`, {viewId,name,description})
 
   return response.data;
 };
-export async function updateView(viewId:number,name:string,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:any,description?:string,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function updateView(viewId:number,name:any,type:ViewType,config?:any,page?:number,limit?:number,order?:Sort[],query?:any,description?:any,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateView`, {viewId,name,type,config,page,limit,order,query,description,conditions,fields})
 
   return response.data;
@@ -64,7 +68,7 @@ export async function getViews(baseViewId?:number,oneViewId?:number,page?:number
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getViews'+`?baseViewId=${baseViewId}&oneViewId=${oneViewId}&page=${page}&limit=${limit}`)
   return response.data;
 };
-export async function searchViews(searchText?:string,page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<SearchViewsOutputDto>> {
+export async function searchViews(searchText?:any,page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<SearchViewsOutputDto>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<SearchViewsOutputDto>>('/api/listView/searchViews'+`?searchText=${searchText}&page=${page}&limit=${limit}`)
   return response.data;
 };
@@ -82,7 +86,7 @@ export async function inviteUserToView(viewId:number,userId:number,role:Role): P
 
   return response.data;
 };
-export async function inviteEmailToView(viewId:number,email:string,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function inviteEmailToView(viewId:number,email:any,role:Role): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/inviteEmailToView`, {viewId,email,role})
 
   return response.data;
@@ -97,11 +101,11 @@ export async function deleteUserFromView(viewId:number,userId:number): Promise<F
 
   return response.data;
 };
-export async function checkInvite(uuid:string): Promise<FlexlistsError|FlexlistsSuccess<CheckInviteOutputDto>> {
+export async function checkInvite(uuid:any): Promise<FlexlistsError|FlexlistsSuccess<CheckInviteOutputDto>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<CheckInviteOutputDto>>('/api/listView/checkInvite'+`?uuid=${uuid}`)
   return response.data;
 };
-export async function acceptInvite(uuid:string): Promise<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>> {
+export async function acceptInvite(uuid:any): Promise<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<AcceptInviteOutputDto>>('/api/listView/acceptInvite'+`?uuid=${uuid}`)
   return response.data;
 };
@@ -124,7 +128,7 @@ export async function deleteTableViewFromGroup(groupId:number,tableViewId:number
 
   return response.data;
 };
-export async function addKeyToView(viewId:number,role:Role,name?:string): Promise<FlexlistsError|FlexlistsSuccess<AddKeyToViewOutputDto>> {
+export async function addKeyToView(viewId:number,role:Role,name?:any): Promise<FlexlistsError|FlexlistsSuccess<AddKeyToViewOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<AddKeyToViewOutputDto>>(`/api/listView/addKeyToView`, {viewId,role,name})
 
   return response.data;
@@ -138,8 +142,17 @@ export async function deleteKeyFromView(viewId:number,keyId:number): Promise<Fle
 
   return response.data;
 };
-export async function exportViewData(type:ExportType,viewId:number,page?:number,limit?:number,order?:Sort[],query?:string,conditions?:any,delimiter?:string): Promise<FlexlistsError|FlexlistsSuccess> {
+export async function exportViewData(type:ExportType,viewId:number,page?:number,limit?:number,order?:Sort[],query?:any,conditions?:any,delimiter?:any): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/exportViewData`, {type,viewId,page,limit,order,query,conditions,delimiter})
+
+  return response.data;
+};
+export async function getViewTemplates(category?:any,searchName?:any): Promise<FlexlistsError|FlexlistsSuccess<GetViewTemplatesOutputDto[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetViewTemplatesOutputDto[]>>('/api/listView/getViewTemplates'+`?category=${category}&searchName=${searchName}`)
+  return response.data;
+};
+export async function createCoreView(viewId:number,name:any,description?:any): Promise<FlexlistsError|FlexlistsSuccess<CreateCoreViewOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateCoreViewOutputDto>>(`/api/listView/createCoreView`, {viewId,name,description})
 
   return response.data;
 };

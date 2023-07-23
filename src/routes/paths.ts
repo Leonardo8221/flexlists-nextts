@@ -22,7 +22,8 @@ export const PATH_AUTH = {
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {
   views: path(ROOTS_MAIN, "/views"),
-  newView: path(ROOTS_MAIN, "/views/chooseTemplate"),
+  chooseTemplate: path(ROOTS_MAIN, "/views/chooseTemplate"),
+  newView: path(ROOTS_MAIN, "/views/newView"),
   groups: path(ROOTS_MAIN, "/groups"),
   newGroup: path(ROOTS_MAIN, "/groups/newGroup"),
   migratedLists: path(ROOTS_MAIN, "/migrate"),

@@ -8,6 +8,13 @@ import {
   Snackbar,
   Alert,
   AlertColor,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import HomeCard from "src/sections/@tour/HomeCard";
 import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
@@ -16,8 +23,14 @@ import MainLayout from "src/layouts/view/MainLayout";
 import { motion } from "framer-motion";
 import AddIcon from "@mui/icons-material/Add";
 import { connect } from "react-redux";
-import { setMessage } from "src/redux/actions/viewActions";
+import { setMessage, setViewTemplate } from "src/redux/actions/viewActions";
 import { useRouter } from "next/router";
+import { ListCategoryLabel } from "src/enums/ShareEnumLabels";
+import { getViewTemplates } from "src/services/listView.service";
+import { isSucc } from "src/models/ApiResponse";
+import { template } from "lodash";
+import ViewTemplateCard from "src/sections/@listView/ViewTemplateCard";
+import { PATH_MAIN } from "src/routes/paths";
 
 const HomeCards = [
   {
@@ -61,15 +74,30 @@ const HomeCards = [
 interface ChooseTemplateProps {
   message: any;
   setMessage: (message: any) => void;
+  setViewTemplate: (viewTemplate: any) => void;
 }
 
-function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
+function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateProps) {
   // error handling
   const router = useRouter();
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
-
+  const [categories,setCategories] = useState<{key:string,value:string}[]>([{key:"all",value:"All"}].concat(
+    Array.from(ListCategoryLabel,function(item){
+      return {key:item[0],value:item[1]}
+    })
+  ));
+  const [currentCategory,setCurrentCategory] = useState<string>("all");
+  const [searchTemplateText,setSearchTemplateText] = useState<string>("");
+  const [templates,setTemplates] = useState<{id:number,name:string,icon:string,description:string}[]>([]);
+  const scratchTemplate = 
+  {
+    id:0,
+    icon: "/assets/icons/tour/add-icon.svg",
+    name: "New List",
+    description: "Crreate from scratch"
+  }
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -78,7 +106,17 @@ function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
     }
     checkMessage();
   }, [message]);
-
+  useEffect(()=>{
+    async function fetchTemplates() {
+       let response = await getViewTemplates('','')
+       if(isSucc(response)){
+         setTemplates([scratchTemplate].concat(response.data))
+       }  
+    }
+    if(router.isReady){
+      fetchTemplates();
+    }
+  },[router.isReady])
   const flashHandleClose = () => {
     setFlash(undefined);
     setMessage(null);
@@ -90,7 +128,18 @@ function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
   }
-
+  const handleCategoryChange = async(event: SelectChangeEvent) => {
+    setCurrentCategory(event.target.value as string);
+    setSearchTemplateText("");
+    let response = await getViewTemplates(event.target.value as string)
+    if(isSucc(response)){
+      setTemplates(response.data)
+    }
+  }
+  const handleSelectViewTemplate = (template:any) => {
+    setViewTemplate(template)
+    router.push({pathname:`${PATH_MAIN.newView}`})
+  }
   return (
     <MainLayout removeFooter={true}>
       <Container
@@ -133,8 +182,49 @@ function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
             flexDirection: { xs: "column-reverse", md: "row" },
           }}
         >
-          <CategoriesSelect />
-          <PlainSearchBar />
+          <Box
+            sx={{
+              minWidth: { xs: "100%", md: 300 },
+              mr: { xs: 0, md: 2 },
+              mt: { xs: 3, md: 0 },
+            }}
+          >
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">All categories</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="All categories"
+                value={currentCategory}
+                onChange={handleCategoryChange}
+              >
+                {categories.map((category,index)=>{
+                  return <MenuItem key={index} value={category.key}>{category.value}</MenuItem>
+                }
+                )}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box>
+            {
+              <Autocomplete
+              id="combo-box-view-templates"
+              onChange={(event, newValue) => {
+                if(newValue){
+                  setViewTemplate(newValue)
+                  router.push({pathname:`${PATH_MAIN.newView}`})
+                }
+              }}
+              options={templates}
+              getOptionLabel={(option) => option.name}
+              // value={selectedTemplate}
+              filterSelectedOptions
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="Templates" />}
+            />
+            }
+          
+          </Box>
         </Box>
         <Grid container spacing={3} sx={{ my: 0 }}>
           {/* <Grid item xs={12} sm={6} md={2}>
@@ -175,16 +265,15 @@ function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
               />
             </Card>
           </Grid> */}
-          {HomeCards.map((card: any) => {
+          {templates.map((template: any) => {
             return (
-              <Grid item xs={6} md={4} xl={2} key={card.icon}>
-                <HomeCard
-                  icon={card.icon}
-                  title={card.title}
-                  description={card.description}
-                  button={card.button}
-                  link={card.link}
-                ></HomeCard>
+              <Grid item xs={6} md={4} xl={2} key={template.icon}>
+                <ViewTemplateCard
+                  icon={template.icon??'/assets/icons/tour/add-icon.svg'}
+                  title={template.name}
+                  description={template.description}
+                  onSelect={()=>handleSelectViewTemplate(template)}
+                ></ViewTemplateCard>
               </Grid>
             );
           })}
@@ -196,10 +285,12 @@ function ChooseTemplate({ message, setMessage }: ChooseTemplateProps) {
 
 const mapStateToProps = (state: any) => ({
   message: state.view.message,
+  viewTemplate:state.view.viewTemplate
 });
 
 const mapDispatchToProps = {
   setMessage,
+  setViewTemplate
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChooseTemplate);

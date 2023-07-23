@@ -88,7 +88,7 @@ function Views({ message, setMessage }: ViewsProps) {
       }
       else {
         setMessage({ message: "No views yet, click a template to create your first one!", type: "success" })
-        await router.push(PATH_MAIN.newView);
+        await router.push(PATH_MAIN.chooseTemplate);
 
       }
     }
@@ -152,7 +152,7 @@ function Views({ message, setMessage }: ViewsProps) {
     setMaskProperty(maskProperties[steps + 1]);
   };
   const createNewView = async () => {
-    await router.push(PATH_MAIN.newView);
+    await router.push(PATH_MAIN.chooseTemplate);
   };
 
   const MaskedBackground = styled("div")(({ theme }) => ({

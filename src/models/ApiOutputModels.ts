@@ -4,15 +4,15 @@ export type CreateListOutputDto = {
     listId:number
 }
 export type PublishListOutputDto = {
-    code:string
+    code:any
 }
 export type AddAccessToListOutputDto = {
     keyId:number
-    key:string
+    key:any
 }
 export type GetKeysOutputDto = {
     keyId:number
-    key:string
+    key:any
     role:Role
 }
 export type CreateUIFieldOutputDto = {
@@ -33,7 +33,7 @@ export type CreateContentOutputDto = {
 }
 export type GetContentsOutputDto = {
     listId:number
-    count:string
+    count:any
     content:any[]
 }
 export type GetContentOutputDto = {
@@ -53,8 +53,8 @@ export type SearchOutputDto = {
 }
 export type GetViewUsersOutputDto = {
     userId:number
-    name:string
-    email:string
+    name:any
+    email:any
     role:Role
 }
 export type CreateViewOutputDto = {
@@ -65,14 +65,14 @@ export type SearchViewsOutputDto = {
     views:any[]
 }
 export type CheckInviteOutputDto = {
-    viewId?:string
+    viewId?:any
 }
 export type AcceptInviteOutputDto = {
-    viewId?:string
+    viewId?:any
 }
 export type GetViewGroupsOutputDto = {
     groupId:number
-    name:string
+    name:any
     role:Role
 }
 export type AddTableViewToGroupOutputDto = {
@@ -80,44 +80,53 @@ export type AddTableViewToGroupOutputDto = {
 }
 export type AddKeyToViewOutputDto = {
     keyId:number
-    key:string
+    key:any
 }
 export type GetKeysForViewOutputDto = {
     keyId:number
-    key:string
+    key:any
     role:Role
-    name?:string
+    name?:any
+}
+export type GetViewTemplatesOutputDto = {
+    id:number
+    name:any
+    icon:any
+}
+export type CreateCoreViewOutputDto = {
+    listId:number
+    viewId:number
 }
 export type GetUserContactsOutputDto = {
     userId:number
-    name:string
-    email:string
+    name:any
+    email:any
 }
 export type GetProfileOutputDto = {
-    firstName:string
-    lastName:string
-    email:string
-    phoneNumber?:string
-    avatarUrl?:string
+    firstName:any
+    lastName:any
+    email:any
+    phoneNumber?:any
+    avatarUrl?:any
 }
 export type CreateUserGroupOutputDto = {
     groupId:number
 }
 export type GetUserGroupsOutputDto = {
     groupId:number
-    name:string
-    description?:string
+    name:any
+    description?:any
 }
 export type GetGroupViewsOutputDto = {
     tableViewId:number
-    tableViewName:string
-    role:string
+    tableViewName:any
+    role:any
 }
 export type GetGroupUsersOutputDto = {
     userId:number
-    userName:string
-    firstName:string
-    lastName:string
+    userName:any
+    firstName:any
+    lastName:any
 }
 export type AddUserToGroupOutputDto = {
     groupUserId:number
@@ -127,7 +136,7 @@ export type AddTranslationKeyToContentManagementOutputDto = {
 }
 export type GetTranslationKeysOfContentManagementOutputDto = {
     id:number
-    name:string
+    name:any
     type:TranslationKeyType
 }
 export type GetContentManagementTranslationTextsOutputDto = {
@@ -136,7 +145,7 @@ export type SaveManyTranslationTextsOutputDto = {
 }
 export type GetTranslationTextsOutputDto = {
     id:number
-    translationKey:string
-    i18N:string
-    translation?:string
+    translationKey:any
+    i18N:any
+    translation?:any
 }

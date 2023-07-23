@@ -3,7 +3,7 @@ import { PATH_MAIN } from "src/routes/paths";
 const navConfig = [
   {
     title: "Create new view",
-    path: PATH_MAIN.newView,
+    path: PATH_MAIN.chooseTemplate,
     icon: "Favourites_plus",
   },
   // {
