@@ -3,6 +3,7 @@ import { useTheme } from "@mui/material/styles";
 import { Card, Typography, CardHeader, CardContent, Box } from "@mui/material";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import WysiwygView from "src/components/wysiwyg/wysiwygView";
 
 const CardIconStyle = styled("img")(({ theme }) => ({
   width: 40,
@@ -57,7 +58,10 @@ export default function ViewTemplateCard({
             p: 0,
           }}
         >
-          <Typography
+           <WysiwygView
+                value={description}
+            />
+          {/* <Typography
             variant="caption"
             sx={{
               whiteSpace: "nowrap",
@@ -68,8 +72,8 @@ export default function ViewTemplateCard({
                   : "common.white",
             }}
           >
-            {description}
-          </Typography>
+           {description}
+          </Typography> */}
         </CardContent>
       </Card>
     </Box>

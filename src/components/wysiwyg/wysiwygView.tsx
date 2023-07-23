@@ -8,7 +8,7 @@ const quillStyles = `
   }
 `;
 type WysiwygViewProps = {
-  value: string;
+  value?: string;
 };
 const WysiwygView = ({ value }: WysiwygViewProps) => {
   

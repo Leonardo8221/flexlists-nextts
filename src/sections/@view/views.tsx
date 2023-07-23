@@ -11,21 +11,6 @@ import { listViewService } from "src/services/listView.service";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 
-const ViewCards = [
-  {
-    bgImage: "/assets/home/heroimg.png",
-    viewName: "View Name",
-    viewDesc:
-      "View description - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis, fugiat!",
-  },
-  {
-    bgImage: "/assets/home/heroimg.png",
-    viewName: "View Name 2",
-    viewDesc:
-      "View description 2 - Lorem ipsum dolor sit amet consectetur, adipisicing elitasas. Officiis, fugiat!",
-  },
-];
-
 interface ViewsProps {
   message: any;
   setMessage: (message: any) => void;

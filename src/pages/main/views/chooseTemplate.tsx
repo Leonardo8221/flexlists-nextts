@@ -16,60 +16,15 @@ import {
   Autocomplete,
   TextField,
 } from "@mui/material";
-import HomeCard from "src/sections/@tour/HomeCard";
-import PlainSearchBar from "src/components/search-bar/PlainSearchBar";
-import CategoriesSelect from "src/components/categories/categories";
 import MainLayout from "src/layouts/view/MainLayout";
-import { motion } from "framer-motion";
-import AddIcon from "@mui/icons-material/Add";
 import { connect } from "react-redux";
 import { setMessage, setViewTemplate } from "src/redux/actions/viewActions";
 import { useRouter } from "next/router";
 import { ListCategoryLabel } from "src/enums/ShareEnumLabels";
 import { getViewTemplates } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
-import { template } from "lodash";
 import ViewTemplateCard from "src/sections/@listView/ViewTemplateCard";
 import { PATH_MAIN } from "src/routes/paths";
-
-const HomeCards = [
-  {
-    icon: "/assets/icons/tour/add-icon.svg",
-    title: "New List",
-    description: "Crreate from scratch",
-    button: "Create",
-    link: "/main/views/newView",
-  },
-  {
-    icon: "/assets/icons/tour/ic_tick.svg",
-    title: "Todo list",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-    link: "/main/views/newView",
-  },
-  {
-    icon: "/assets/icons/tour/ic_music.svg",
-    title: "Music playlist",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-    link: "/main/views/newView",
-  },
-  {
-    icon: "/assets/icons/tour/ic_project_m.svg",
-    title: "Project",
-    description:
-      "Lorem ipsum dolor sit amet consectetur.eweffasfsafdasasdasfsddscyasdfasfasfasdfasdasdsadasda",
-    button: "Use template",
-    link: "/main/views/newView",
-  },
-  {
-    icon: "/assets/icons/tour/ic_bug.svg",
-    title: "Bug fixing",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-    button: "Use template",
-    link: "/main/views/newView",
-  },
-];
 
 interface ChooseTemplateProps {
   message: any;
@@ -88,9 +43,6 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
       return {key:item[0],value:item[1]}
     })
   ));
-  const [currentCategory,setCurrentCategory] = useState<string>("all");
-  const [searchTemplateText,setSearchTemplateText] = useState<string>("");
-  const [templates,setTemplates] = useState<{id:number,name:string,icon:string,description:string}[]>([]);
   const scratchTemplate = 
   {
     id:0,
@@ -98,6 +50,10 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
     name: "New List",
     description: "Crreate from scratch"
   }
+  const [currentCategory,setCurrentCategory] = useState<string>("all");
+  const [searchTemplateText,setSearchTemplateText] = useState<string>("");
+  const [templates,setTemplates] = useState<{id:number,name:string,icon:string,description:string}[]>([scratchTemplate]);
+  
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -131,9 +87,11 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
   const handleCategoryChange = async(event: SelectChangeEvent) => {
     setCurrentCategory(event.target.value as string);
     setSearchTemplateText("");
-    let response = await getViewTemplates(event.target.value as string)
+    let category = event.target.value as string;
+    let response = await getViewTemplates(category==='all'?'':category,'')
     if(isSucc(response)){
-      setTemplates(response.data)
+  
+      setTemplates([scratchTemplate].concat(response.data))
     }
   }
   const handleSelectViewTemplate = (template:any) => {
