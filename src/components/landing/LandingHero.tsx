@@ -58,13 +58,13 @@ export default function LandingHero({ translations }: ContentProps & { translati
             </Typography>
             <Typography
               variant="body1"
-              component={motion.p}
+              component={motion.span}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 1 }}
+              dangerouslySetInnerHTML={{ __html: t("Body") }}
             >
-              <span dangerouslySetInnerHTML={{ __html: t("Body") }} />
-
+              {/* <span dangerouslySetInnerHTML={{ __html: t("Body") }} /> */}
             </Typography>
             {/* <List sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Box
