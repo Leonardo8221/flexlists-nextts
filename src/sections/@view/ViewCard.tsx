@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
+import WysiwygView from "src/components/wysiwyg/wysiwygView";
 
 const CardImage = styled("img")(({ theme }) => ({
   height: 140,
@@ -48,7 +49,10 @@ export default function ViewCard({
         <Typography gutterBottom variant="h6" component="div">
           {viewName}
         </Typography>
-        <Typography
+        <WysiwygView
+                value={viewDesc}
+            />
+        {/* <Typography
           sx={{
             maxHeight: 64,
             overflow: "hidden",
@@ -60,7 +64,7 @@ export default function ViewCard({
           component={"div"}
         >
           {viewDesc}
-        </Typography>
+        </Typography> */}
       </CardContent>
       {/* <CardActions sx={{ px: 3, py: 2 }}>
         <Button variant="contained" size="small">

@@ -87,7 +87,8 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
   const handleCategoryChange = async(event: SelectChangeEvent) => {
     setCurrentCategory(event.target.value as string);
     setSearchTemplateText("");
-    let response = await getViewTemplates(event.target.value as string)
+    let category = event.target.value as string;
+    let response = await getViewTemplates(category==='all'?'':category,'')
     if(isSucc(response)){
   
       setTemplates([scratchTemplate].concat(response.data))
