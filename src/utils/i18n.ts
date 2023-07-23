@@ -39,9 +39,7 @@ export const getTranslations = async (pageName: string, context: any): Promise<a
     const language = cookies.language;
     let translations: any[] = []
     try {
-        console.log('anything happening here?')
         const response = await translationTextService.getTranslationTexts(language ?? 'en-Us', pageName);
-        console.log(response)
         if (isSucc(response) && response.data && response.data.length > 0) {
             translations = response.data;
         }
