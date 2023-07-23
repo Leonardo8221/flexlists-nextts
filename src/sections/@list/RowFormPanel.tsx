@@ -197,8 +197,7 @@ const RowFormPanel = ({
       }
       return;
     }
-    else if(action === 'clone')
-    {
+    else if (action === 'clone') {
       var createRowResponse = await listContentService.createContent(
         currentView.id,
         newValues
@@ -213,14 +212,12 @@ const RowFormPanel = ({
         newValues.createdAt = new Date().toISOString();
         newValues.updatedAt = new Date().toISOString();
       }
-      else
-      {
-         setFlashMessage({type:'error',message:(createRowResponse as FlexlistsError).message})
-         return;
+      else {
+        setFlashMessage({ type: 'error', message: (createRowResponse as FlexlistsError).message })
+        return;
       }
     }
-    else if(action === 'archive')
-    {
+    else if (action === 'archive') {
       var archiveField = columns.find(
         (x) => x.system && x.name === "___archived"
       );
@@ -236,7 +233,7 @@ const RowFormPanel = ({
         onClose();
         return;
       } else {
-        setFlashMessage({type:'error',message:(updateRowRespone as FlexlistsError).message})
+        setFlashMessage({ type: 'error', message: (updateRowRespone as FlexlistsError).message })
         return;
       }
     }
@@ -416,8 +413,8 @@ const RowFormPanel = ({
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
+                  values[getDataColumnId(column.id, columns)]
+                ).toLocaleString()
                 : ""}
             </Typography>
           </div>
@@ -444,8 +441,8 @@ const RowFormPanel = ({
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                  values[getDataColumnId(column.id, columns)]
+                ).toLocaleDateString()
                 : ""}
             </Typography>
           </div>
@@ -474,8 +471,8 @@ const RowFormPanel = ({
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                  values[getDataColumnId(column.id, columns)]
+                ).toLocaleDateString()
                 : "null"}
             </Typography>
           </div>
@@ -567,7 +564,7 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {(values && values[column.id]?.toString()==='true')? "yes" : "no"}
+              {(values && values[column.id]?.toString() === 'true') ? "yes" : "no"}
             </Typography>
           </div>
         );
