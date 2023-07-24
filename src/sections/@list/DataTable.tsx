@@ -584,7 +584,7 @@ const DataTable = ({
           }}
         >
           <Box sx={{ display: "flex" }}>
-            {hasPermission(currentView.role, 'Add') && <Fab
+            {hasPermission(currentView.role, 'Create') && <Fab
               onClick={handleNewRowPanel}
               sx={{
                 // position: "absolute",
