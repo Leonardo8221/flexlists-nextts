@@ -1,14 +1,12 @@
 import { useState } from "react";
-import {
-  Box, Snackbar
-} from '@mui/material';
-import ToolBarItem from '../../components/toolbar';
-import { useTheme } from '@mui/material/styles';
-import useResponsive from '../../hooks/useResponsive';
-import Collapse from '@mui/material/Collapse';
-import ViewUsersList from './UserList';
-import ActionItem from '../../components/toolbar/ActionItem';
-import { connect } from 'react-redux';
+import { Box, Snackbar } from "@mui/material";
+import ToolBarItem from "../../components/toolbar";
+import { useTheme } from "@mui/material/styles";
+import useResponsive from "../../hooks/useResponsive";
+import Collapse from "@mui/material/Collapse";
+import ViewUsersList from "./UserList";
+import ActionItem from "../../components/toolbar/ActionItem";
+import { connect } from "react-redux";
 import Filter from "./Filter";
 import Sort from "./Sort";
 import Import from "./Import";
@@ -19,112 +17,124 @@ import { View } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
 
 type ToolbBarProps = {
-  open: boolean,
+  open: boolean;
   onOpen: (action: boolean) => void;
-  currentView:View;
+  currentView: View;
 };
 
 const dos = [
   {
-    title: 'Undo',
-    icon: 'toolbar/undo',
+    title: "Undo",
+    icon: "toolbar/undo",
     active: true,
-    leftIcon: true
+    leftIcon: true,
   },
   {
-    title: 'Redo',
-    icon: 'toolbar/redo',
+    title: "Redo",
+    icon: "toolbar/redo",
     active: false,
-    leftIcon: false
-  }
+    leftIcon: false,
+  },
 ];
 
 const actions = [
   {
-    title: 'Filter',
-    icon: 'toolbar/filter',
+    title: "Filter",
+    icon: "toolbar/filter",
     active: true,
-    leftIcon: true
+    leftIcon: true,
   },
   {
-    title: 'Sort',
-    icon: 'toolbar/sort',
+    title: "Sort",
+    icon: "toolbar/sort",
     active: true,
-    leftIcon: true
+    leftIcon: true,
   },
   {
-    title: 'Fields',
-    icon: 'toolbar/fields',
+    title: "Fields",
+    icon: "toolbar/fields",
     active: true,
-    leftIcon: true
+    leftIcon: true,
   },
   {
-    title: 'Import',
-    icon: 'toolbar/import',
+    title: "Import",
+    icon: "toolbar/import",
     active: true,
-    leftIcon: true
+    leftIcon: true,
   },
   {
-    title: 'Export',
-    icon: 'toolbar/export',
+    title: "Export",
+    icon: "toolbar/export",
     active: true,
-    leftIcon: true
+    leftIcon: true,
   },
   {
-    title: 'Save',
-    icon: 'toolbar/save',
+    title: "Save",
+    icon: "toolbar/save",
     active: true,
-    leftIcon: true
-  }
+    leftIcon: true,
+  },
 ];
 
-const ToolbBar = ({ open, onOpen,currentView }: ToolbBarProps) => {
+const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
   const theme = useTheme();
-  const isDesktop = useResponsive('up', 'lg');
+  const isDesktop = useResponsive("up", "lg");
   const [visibleFilter, setVisibleFilter] = useState(false);
   const [visibleSort, setVisibleSort] = useState(false);
   const [visibleImport, setVisibleImport] = useState(false);
   const [visibleExport, setVisibleExport] = useState(false);
   const [visibleFields, setVisibleFields] = useState(false);
-  const [isSaveViewModalOpen,setIsSaveViewModalOpen] = useState<boolean>(false)
-  const [saveViewMessage,setSaveViewMessage] = useState<string>('')
-  const saveView = async()=>
-  {
-     var response = await listViewService.updateView(currentView.id,currentView.name,currentView.type,currentView.config,
-      currentView.page,currentView.limit,currentView.order,currentView.query,currentView.description,currentView.conditions,
-      currentView.fields)
-    if(isSucc(response))
-    {
-       setSaveViewMessage("Save view successfully")
-    }
-    else
-    {
-      setSaveViewMessage("Save view fail")
+  const [isSaveViewModalOpen, setIsSaveViewModalOpen] =
+    useState<boolean>(false);
+  const [saveViewMessage, setSaveViewMessage] = useState<string>("");
+  const saveView = async () => {
+    var response = await listViewService.updateView(
+      currentView.id,
+      currentView.name,
+      currentView.type,
+      currentView.config,
+      currentView.page,
+      currentView.limit,
+      currentView.order,
+      currentView.query,
+      currentView.description,
+      currentView.conditions,
+      currentView.fields
+    );
+    if (isSucc(response)) {
+      setSaveViewMessage("Save view successfully");
+    } else {
+      setSaveViewMessage("Save view fail");
     }
     setIsSaveViewModalOpen(true);
-  }
+  };
   return (
     <Box
       sx={{
-        display: {lg: 'flex'},
-        py: 0.5,
-        borderBottom: {xs: `1px solid ${theme.palette.palette_style.border.default}`, lg: 'none'},
-        position: 'relative',
-        zIndex: 2,
+        display: "flex",
+        alignItems: "center",
+        borderBottom: {
+          xs: `1px solid ${theme.palette.palette_style.border.default}`,
+          lg: "none",
+        },
+        position: "relative",
+        // zIndex: 2,
         backgroundColor: theme.palette.palette_style.background.default,
-        justifyContent: {xs: 'space-between', md: 'inherit'}
+        justifyContent: { xs: "space-between", md: "inherit" },
+        height: "32px",
+        width: "100%",
       }}
     >
-       <Snackbar
-        anchorOrigin={{  vertical: 'top', horizontal: 'center', }}
+      <Snackbar
+        // anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={isSaveViewModalOpen}
         autoHideDuration={5000}
-        onClose={()=>setIsSaveViewModalOpen(false)}
+        onClose={() => setIsSaveViewModalOpen(false)}
         message={saveViewMessage}
-        key={'top-center'}
+        key={"top-center"}
       />
-      <Box sx={{ display: 'flex' }}>
-        {/* <Box
+      {/* <Box sx={{ display: "flex" }}> */}
+      {/* <Box
           sx={{
             display: 'flex',
             p: 1
@@ -134,72 +144,139 @@ const ToolbBar = ({ open, onOpen,currentView }: ToolbBarProps) => {
             <ToolBarItem key={toolbar.title} toolbar={toolbar} />
           ))}
         </Box> */}
-        {!isDesktop && <ViewUsersList />}
-      </Box>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      {/* {!isDesktop && <ViewUsersList />} */}
+      {/* </Box> */}
+      {/* <Collapse in={open} timeout="auto" unmountOnExit> */}
+      <Box
+        sx={{
+          overflowY: "hidden",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: { xs: "space-between", md: "center" },
+          // paddingTop: 1.2,
+          px: { xs: 1, md: "inherit" },
+          // width: {xs: '100vw', md: '100%'},
+          overflow: { xs: "auto", md: "inherit" },
+          borderTop: {
+            // xs: `1px solid ${theme.palette.palette_style.border.default}`,
+            md: "none",
+          },
+        }}
+      >
         <Box
           sx={{
-            display: 'flex',
-            paddingTop: 1.2,
-            px: {xs: 1, md: 'inherit'},
-            // width: {xs: '100vw', md: '100%'},
-            overflow: {xs: 'auto', md: 'inherit'},
-            borderTop: {xs: `1px solid ${theme.palette.palette_style.border.default}`, md: 'none'}
+            position: "relative",
+            marginRight: 2,
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[0]} onClick={() => { setVisibleFilter(!visibleFilter); }} />
-            <Filter open={visibleFilter} handleClose={() => { setVisibleFilter(false); }} />
-          </Box>
-          <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[1]} onClick={() => { setVisibleSort(!visibleSort); }} />
-            <Sort open={visibleSort} handleClose={() => { setVisibleSort(false); }} />
-          </Box>
-          <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[2]} onClick={() => { setVisibleFields(!visibleFields); }} />
-            <ViewFields open={visibleFields} handleClose={() => { setVisibleFields(false); }} />
-          </Box>
-          <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[3]} onClick={() => { setVisibleImport(!visibleImport); }} />
-            <Import open={visibleImport} handleClose={() => { setVisibleImport(false); }} />
-          </Box>
-          <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[4]} onClick={() => { setVisibleExport(!visibleExport); }} />
-            <Export open={visibleExport} handleClose={() => { setVisibleExport(false); }} />
-          </Box>
-          <Box sx={{ position: 'relative', marginRight: 2 }}>
-            <ActionItem toolbar={actions[5]} onClick={()=>saveView()} />
-          </Box>
+          <ActionItem
+            toolbar={actions[0]}
+            onClick={() => {
+              setVisibleFilter(!visibleFilter);
+            }}
+          />
+          <Filter
+            open={visibleFilter}
+            handleClose={() => {
+              setVisibleFilter(false);
+            }}
+          />
         </Box>
-      </Collapse>
-      {!isDesktop && <Box
-        sx={{ position: 'absolute', right: '10px', top: '12px' }}
-        onClick={ () => { onOpen(!open); } }
-        >
+        <Box sx={{ position: "relative", marginRight: 2 }}>
+          <ActionItem
+            toolbar={actions[1]}
+            onClick={() => {
+              setVisibleSort(!visibleSort);
+            }}
+          />
+          <Sort
+            open={visibleSort}
+            handleClose={() => {
+              setVisibleSort(false);
+            }}
+          />
+        </Box>
+        <Box sx={{ position: "relative", marginRight: 2 }}>
+          <ActionItem
+            toolbar={actions[2]}
+            onClick={() => {
+              setVisibleFields(!visibleFields);
+            }}
+          />
+          <ViewFields
+            open={visibleFields}
+            handleClose={() => {
+              setVisibleFields(false);
+            }}
+          />
+        </Box>
+        <Box sx={{ position: "relative", marginRight: 2 }}>
+          <ActionItem
+            toolbar={actions[3]}
+            onClick={() => {
+              setVisibleImport(!visibleImport);
+            }}
+          />
+          <Import
+            open={visibleImport}
+            handleClose={() => {
+              setVisibleImport(false);
+            }}
+          />
+        </Box>
+        <Box sx={{ position: "relative", marginRight: 2 }}>
+          <ActionItem
+            toolbar={actions[4]}
+            onClick={() => {
+              setVisibleExport(!visibleExport);
+            }}
+          />
+          <Export
+            open={visibleExport}
+            handleClose={() => {
+              setVisibleExport(false);
+            }}
+          />
+        </Box>
+        <Box sx={{ position: "relative", marginRight: 2 }}>
+          <ActionItem toolbar={actions[5]} onClick={() => saveView()} />
+        </Box>
+      </Box>
+      {/* </Collapse> */}
+      {/* {!isDesktop && (
         <Box
-          component="span"
-          className="svg-color"
-          sx={{
-            width: 24,
-            height: 24,
-            display: 'inline-block',
-            bgcolor: theme.palette.palette_style.text.primary,
-            mask: `url(/assets/icons/angle_down.svg) no-repeat center / contain`,
-            WebkitMask: `url(/assets/icons/angle_down.svg) no-repeat center / contain`,
-            transform: open ? 'rotate(180deg)' : 'inherit',
-            transition: 'transform 0.3s'
+          sx={{ position: "absolute", right: "10px", top: "12px" }}
+          onClick={() => {
+            onOpen(!open);
           }}
-        />
-      </Box>}
+        >
+          <Box
+            component="span"
+            className="svg-color"
+            sx={{
+              width: 24,
+              height: 24,
+              display: "inline-block",
+              bgcolor: theme.palette.palette_style.text.primary,
+              mask: `url(/assets/icons/angle_down.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/angle_down.svg) no-repeat center / contain`,
+              transform: open ? "rotate(180deg)" : "inherit",
+              transition: "transform 0.3s",
+            }}
+          />
+        </Box>
+      )} */}
     </Box>
   );
 };
 
 const mapStateToProps = (state: any) => ({
-  currentView: state.view.currentView
+  currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToolbBar);
