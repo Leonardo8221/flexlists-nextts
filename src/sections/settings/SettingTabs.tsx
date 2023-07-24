@@ -110,7 +110,7 @@ export default function SettingTabs() {
             justifyContent: "flex-start",
           }}
         />
-        <Tab
+        {/* <Tab
           label="General"
           {...a11yProps(1)}
           icon={<SettingsIcon sx={{ mr: 1 }} />}
@@ -120,7 +120,7 @@ export default function SettingTabs() {
             flexDirection: "row",
             justifyContent: "flex-start",
           }}
-        />
+        /> */}
         <Tab
           label="Security"
           {...a11yProps(2)}
