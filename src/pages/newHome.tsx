@@ -1,5 +1,6 @@
 // material
 import { styled } from "@mui/material/styles";
+import { GetServerSideProps } from "next";
 // components
 // import Page from '../../components/Page';
 import {
@@ -11,6 +12,8 @@ import {
   LandingCTA,
 } from "src/components/landing";
 import MainLayout from "src/layouts/main/MainLayout";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations } from "src/utils/i18n";
 
 // ----------------------------------------------------------------------
 
@@ -28,11 +31,13 @@ const ContentStyle = styled("div")(({ theme }) => ({
   position: "relative",
   backgroundColor: theme.palette.background.default,
 }));
+type ContentProps = {
 
-export default function Home() {
+};
+export default function Home({ translations }: ContentProps & { translations: TranslationText[] }) {
   return (
     <MainLayout>
-      <LandingHero />
+      <LandingHero translations={translations} />
       <LandingWeHelpYou />
       <LandingTrustedBy />
       <LandingQuickCreate />
@@ -40,4 +45,9 @@ export default function Home() {
       <LandingCTA />
     </MainLayout>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  return await getTranslations("new landing page", context)
 }
