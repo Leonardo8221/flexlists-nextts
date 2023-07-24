@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   Box,
+  Link,
   Alert,
   Snackbar,
   AlertColor,
@@ -18,6 +19,7 @@ import { useRouter } from "next/router";
 import { PATH_AUTH } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
+import { useTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   components: {
@@ -38,45 +40,45 @@ const theme = createTheme({
   },
 });
 
-
 interface VerifyEmailProps {
   message: any;
   setMessage: (message: any) => void;
+  styles?: any;
 }
 
-const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
-
+const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [canSubmit, setCanSubmit] = React.useState(false);
   const [token, setToken] = React.useState<string>("      ");
   const router = useRouter();
-  const [flash, setFlash] = React.useState<{ message: string, type: string } | undefined>(undefined);
-  const [email, setEmail] = React.useState<string>('');
+  const [flash, setFlash] = React.useState<
+    { message: string; type: string } | undefined
+  >(undefined);
+  const [email, setEmail] = React.useState<string>("");
+  const theme = useTheme();
 
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
-
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
 
   useEffect(() => {
     function routerCheck() {
       if (router.query.email) {
-        setEmail(router.query.email as string)
+        setEmail(router.query.email as string);
       }
-
     }
-    routerCheck()
-  })
+    routerCheck();
+  });
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -85,11 +87,10 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
     const inputValue = event.target.value;
     const input = inputRefs.current[index];
     if (isNaN(parseInt(inputValue))) {
-      input!.value = ''
-      return
+      input!.value = "";
+      return;
     }
     if (inputValue.length <= 1) {
-
       if (input) {
         input.value = inputValue;
         if (inputValue.length === 1) {
@@ -109,58 +110,78 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
         input.value = inputValue.charAt(0);
       }
     }
-    let _token = token.toString()
-    // set the _token[index] to inputValue 
-    _token = _token.substring(0, index) + (input?.value && input.value.length > 0 ? input.value : ' ') + _token.substring(index + 1);
-    setToken(_token)
-    setCanSubmit(_token.split('').filter((x) => x !== ' ').length === 6 && email.length > 0)
+    let _token = token.toString();
+    // set the _token[index] to inputValue
+    _token =
+      _token.substring(0, index) +
+      (input?.value && input.value.length > 0 ? input.value : " ") +
+      _token.substring(index + 1);
+    setToken(_token);
+    setCanSubmit(
+      _token.split("").filter((x) => x !== " ").length === 6 && email.length > 0
+    );
   };
 
   const emptyInput = () => {
     for (let i = 0; i < 6; i++) {
-
       const input = inputRefs.current[i];
-      input!.value = ''
+      input!.value = "";
     }
-    setToken('      ')
-    inputRefs.current[0]?.focus()
-  }
+    setToken("      ");
+    inputRefs.current[0]?.focus();
+  };
 
   const handleSubmit = async () => {
-
     try {
-      setCanSubmit(false)
-      let verifyResponse = await authService.verifySignup(token, email)
-      if (isSucc(verifyResponse) && verifyResponse.data && verifyResponse.data.isValidated) {
-        setMessage({ message: 'Your account has been activated, please login!', type: 'success' })
-        await router.push({ pathname: PATH_AUTH.login, query: { email: email } });
+      setCanSubmit(false);
+      let verifyResponse = await authService.verifySignup(token, email);
+      if (
+        isSucc(verifyResponse) &&
+        verifyResponse.data &&
+        verifyResponse.data.isValidated
+      ) {
+        setMessage({
+          message: "Your account has been activated, please login!",
+          type: "success",
+        });
+        await router.push({
+          pathname: PATH_AUTH.login,
+          query: { email: email },
+        });
         return;
-      }
-      else {
-        emptyInput()
-        setFlashMessage('Verification failed, invalid code. Please request a new code.', 'error')
-        await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: email } });
+      } else {
+        emptyInput();
+        setFlashMessage(
+          "Verification failed, invalid code. Please request a new code.",
+          "error"
+        );
+        await router.push({
+          pathname: PATH_AUTH.resendEmailVerification,
+          query: { email: email },
+        });
         return;
         // emptyInput()
         // setFlashMessage('Verification failed, invalid code.')
       }
-    }
-    catch (err) {
-      emptyInput()
-      setFlashMessage('Verification failed, invalid code. Please request a new code.', 'error')
-      await router.push({ pathname: PATH_AUTH.resendEmailVerification, query: { email: email } });
+    } catch (err) {
+      emptyInput();
+      setFlashMessage(
+        "Verification failed, invalid code. Please request a new code.",
+        "error"
+      );
+      await router.push({
+        pathname: PATH_AUTH.resendEmailVerification,
+        query: { email: email },
+      });
       return;
       // emptyInput()
       // setFlashMessage('Verification failed, invalid code.')
     }
-  }
+  };
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Backspace") {
-
       const currentInput = event.target as HTMLInputElement;
-
-
 
       if (currentInput.value.length === 0) {
         const currentIndex = inputRefs.current.findIndex(
@@ -175,41 +196,80 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
         const index = inputRefs.current.findIndex(
           (ref) => ref === currentInput
         );
-        let _token = token.toString()
-        // set the _token[index] to inputValue 
-        _token = _token.substring(0, index) + ' ' + _token.substring(index + 1);
-        setToken(_token)
-        setCanSubmit(_token.split('').filter((x) => x !== ' ').length === 6 && email.length > 0)
-        return
+        let _token = token.toString();
+        // set the _token[index] to inputValue
+        _token = _token.substring(0, index) + " " + _token.substring(index + 1);
+        setToken(_token);
+        setCanSubmit(
+          _token.split("").filter((x) => x !== " ").length === 6 &&
+            email.length > 0
+        );
+        return;
       }
-
     }
 
-
-
-    setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6 && email.length > 0)
-
+    setCanSubmit(
+      token.split("").filter((x) => x !== " ").length === 6 && email.length > 0
+    );
   };
 
   const handleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
+
+  styles = {
+    body: {
+      background:
+        "linear-gradient(45deg, hsl(219deg 41% 13%) 0%, hsl(213deg 41% 19%) 50%, hsl(212deg 40% 24%) 100%)",
+      overflow: "hidden",
+    },
+    container: {
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: { xs: "column", md: "row" },
+      alignItems: "center",
+      justifyContent: "center",
+      px: { xs: 0, sm: 0, md: 0 },
+    },
+    FormLogoWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: 2,
+    },
+    FormLogo: {
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+      marginTop: "2px",
+    },
+
+    textField: {
+      "& .MuiInputBase-root": {
+        backgroundColor: "#fcfeff",
+        border: "none",
+        color: "#666",
+        boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
+      },
+
+      "& ::placeholder": {
+        color: "#ccc",
+      },
+
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          border: "none",
+        },
+      },
+    },
+    button: {
+      backgroundColor: theme.palette.palette_style.primary.main,
+      width: "100%",
+    },
+  };
 
   return (
-    <>
-
-      <Box
-        component="img"
-        sx={{
-          height: "100%",
-          width: "100%",
-          position: "absolute",
-          zIndex: -1,
-        }}
-        alt="The house from the offer."
-        src="/assets/images/background.png"
-      />
+    <Box sx={styles?.body}>
       <Container
         maxWidth="sm"
         sx={{
@@ -219,7 +279,6 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
           justifyContent: "center",
         }}
       >
-
         <Grid
           container
           rowSpacing={3}
@@ -236,9 +295,21 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
             backgroundColor: "white",
           }}
         >
+          <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
+            <Box sx={styles?.FormLogoWrapper}>
+              <Link href="/">
+                <Box
+                  component="img"
+                  sx={styles?.FormLogo}
+                  alt="Logo"
+                  src="/assets/logo.png"
+                />
+              </Link>
+            </Box>
+          </Grid>
           <Grid item xs={12}>
-            <Typography variant="h4">
-              Email with verification code sent.{" "}
+            <Typography variant="h4" gutterBottom>
+              Email with verification code sent.
             </Typography>
             <Typography variant="body1">
               Please insert code from email below.
@@ -252,11 +323,15 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               type="email"
               required
               value={email}
+              sx={styles?.textField}
               onChange={(event) => {
-                setEmail(event.target.value)
-                setCanSubmit(token.split('').filter((x) => x !== ' ').length === 6 && event.target.value.length > 0)
+                setEmail(event.target.value);
+                setCanSubmit(
+                  token.split("").filter((x) => x !== " ").length === 6 &&
+                    event.target.value.length > 0
+                );
               }}
-            ></TextField>
+            />
           </Grid>
 
           <Grid item xs={12} xl={12}>
@@ -269,6 +344,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                   inputRef={(ref) => (inputRefs.current[0] = ref)}
                   onChange={(event: any) => handleInputChange(event, 0)}
                   onKeyDown={handleInputKeyDown}
+                  sx={{ ...{ border: "1px solid #eee" }, ...styles?.textField }}
                   inputProps={{
                     maxLength: 1,
                     type: "text",
@@ -279,6 +355,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                   inputRef={(ref) => (inputRefs.current[1] = ref)}
                   onChange={(event: any) => handleInputChange(event, 1)}
                   onKeyDown={handleInputKeyDown}
+                  sx={{ ...{ border: "1px solid #eee" }, ...styles?.textField }}
                   inputProps={{
                     maxLength: 1,
                     type: "text",
@@ -289,6 +366,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                   inputRef={(ref) => (inputRefs.current[2] = ref)}
                   onChange={(event: any) => handleInputChange(event, 2)}
                   onKeyDown={handleInputKeyDown}
+                  sx={{ ...{ border: "1px solid #eee" }, ...styles?.textField }}
                   inputProps={{
                     maxLength: 1,
                     type: "text",
@@ -299,6 +377,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                   inputRef={(ref) => (inputRefs.current[3] = ref)}
                   onChange={(event: any) => handleInputChange(event, 3)}
                   onKeyDown={handleInputKeyDown}
+                  sx={{ ...{ border: "1px solid #eee" }, ...styles?.textField }}
                   inputProps={{
                     maxLength: 1,
                     type: "text",
@@ -309,6 +388,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                   inputRef={(ref) => (inputRefs.current[4] = ref)}
                   onChange={(event: any) => handleInputChange(event, 4)}
                   onKeyDown={handleInputKeyDown}
+                  sx={{ ...{ border: "1px solid #eee" }, ...styles?.textField }}
                   inputProps={{
                     maxLength: 1,
                     type: "text",
@@ -319,6 +399,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
                   inputRef={(ref) => (inputRefs.current[5] = ref)}
                   onChange={(event: any) => handleInputChange(event, 5)}
                   onKeyDown={handleInputKeyDown}
+                  sx={{ ...{ border: "1px solid #eee" }, ...styles?.textField }}
                   inputProps={{
                     maxLength: 1,
                     type: "text",
@@ -335,25 +416,28 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               size="large"
               variant="contained"
               disabled={!canSubmit}
-              sx={{
-                width: "100%",
-                backgroundColor: "#FFD232",
-                color: "#0D0934",
-                textTransform: "uppercase",
-              }}
+              sx={styles?.button}
               onClick={() => handleSubmit()}
             >
               Submit
             </Button>
-            <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={handleClose}>
-              <Alert onClose={handleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+            <Snackbar
+              open={flash !== undefined}
+              autoHideDuration={6000}
+              onClose={handleClose}
+            >
+              <Alert
+                onClose={handleClose}
+                severity={flash?.type as AlertColor}
+                sx={{ width: "100%" }}
+              >
                 {flash?.message}
               </Alert>
             </Snackbar>
           </Grid>
         </Grid>
-      </Container >
-    </>
+      </Container>
+    </Box>
   );
 };
 
@@ -362,8 +446,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmail);
-

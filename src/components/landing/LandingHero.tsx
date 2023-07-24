@@ -5,14 +5,14 @@ import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
 import { motion } from "framer-motion";
 import { TranslationText } from "src/models/SharedModels";
 
-type ContentProps = {
+type ContentProps = {};
 
-};
-
-export default function LandingHero({ translations }: ContentProps & { translations: TranslationText[] }) {
+export default function LandingHero({
+  translations,
+}: ContentProps & { translations: TranslationText[] }) {
   const t = (key: string): string => {
-    return getTranslation(key, translations)
-  }
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const gotoSignup = async () => {
     await router.push({
@@ -102,7 +102,7 @@ export default function LandingHero({ translations }: ContentProps & { translati
                 sx={{ flex: 1, fontSize: 16 }}
                 onClick={() => gotoSignup}
               >
-                {t('Sign up now')}
+                {t("Sign up now")}
               </Button>
               <Button
                 size="large"
@@ -117,7 +117,7 @@ export default function LandingHero({ translations }: ContentProps & { translati
                   },
                 }}
               >
-                {t('Try now')}
+                {t("Try now")}
                 <DiscoverMoreIcon
                   sx={{
                     ml: 1,

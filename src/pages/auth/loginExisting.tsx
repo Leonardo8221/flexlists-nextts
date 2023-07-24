@@ -85,7 +85,7 @@ const Login = ({
     if (router.isReady) {
       initialize();
     }
-  }, [router.isReady])
+  }, [router.isReady]);
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -180,8 +180,10 @@ const Login = ({
       position: "relative",
       minHeight: { md: "100vh" },
       display: "flex",
+      justifyContent: "center",
       alignItems: "center",
       textAlign: { xs: "center", md: "left" },
+      px: { xs: 0, md: 4 },
     },
 
     leftBoxGrid: {
@@ -203,7 +205,7 @@ const Login = ({
       opacity: 0.4,
       zIndex: 1,
       filter: "blur(100px)",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0)",
     },
     logoWrapper: {
       display: "flex",
@@ -250,6 +252,17 @@ const Login = ({
       marginTop: 0,
       overflow: "auto",
       zIndex: 2,
+    },
+    FormLogoWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: 2,
+    },
+    FormLogo: {
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+      marginTop: "2px",
     },
     formActionsWrapper: {
       display: "flex",
@@ -305,7 +318,7 @@ const Login = ({
                   },
                 }}
               ></Box>
-              <Box sx={styles?.logoWrapper}>
+              {/* <Box sx={styles?.logoWrapper}>
                 <Link href="/">
                   <Box
                     component="img"
@@ -314,7 +327,7 @@ const Login = ({
                     src="/assets/logo_dark.png"
                   />
                 </Link>
-              </Box>
+              </Box> */}
               <Box
                 sx={{
                   zIndex: 5,
@@ -357,6 +370,16 @@ const Login = ({
             <Box sx={styles?.circleEffect}></Box>
             <Grid container rowSpacing={3} sx={styles?.rightBoxGrid}>
               <Grid item xs={12} sx={{ paddingTop: "0 !important" }}>
+                <Box sx={styles?.FormLogoWrapper}>
+                  <Link href="/">
+                    <Box
+                      component="img"
+                      sx={styles?.FormLogo}
+                      alt="Logo"
+                      src="/assets/logo.png"
+                    />
+                  </Link>
+                </Box>
                 <Typography variant="h3" gutterBottom color={"#141E30"}>
                   Sign in - Existing User
                 </Typography>
