@@ -32,7 +32,7 @@ const ContentStyle = styled("div")(({ theme }) => ({
 export default function Home() {
   return (
     <MainLayout>
-      <LandingHero />
+      <LandingHero translations={[]} />
       <LandingWeHelpYou />
       <LandingTrustedBy />
       <LandingQuickCreate />
