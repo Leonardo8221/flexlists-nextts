@@ -15,7 +15,6 @@ export default function LandingHero({
   };
   const router = useRouter();
   const gotoSignup = async () => {
-
     await router.push({
       pathname: "/auth/register",
     });

@@ -392,33 +392,34 @@ const DataTable = ({
     setVisibleFieldManagementPanel(false);
   };
   return (
-    <Box
-      sx={{
-        width: { xs: "100vw", lg: "100%" },
-        overFlow: "scroll",
-      }}
-      id="datatable_wrap"
-    >
-      {tableInstanceRef.current && showColumnFilters && (
-        <MRT_ToggleFiltersButton
-          table={tableInstanceRef.current}
-          sx={{
-            position: "absolute",
-            zIndex: 3,
-            top: isDesktop ? "195px" : tab ? "303px" : "257px",
-            left: { xs: 0, md: "100px" },
-            backgroundColor:
-              theme.palette.palette_style.background.table_header_footer,
-            borderRadius: 0,
-            paddingLeft: "15px",
-            "&:hover": {
+    <>
+      <Box
+        sx={{
+          width: { xs: "100vw", lg: "100%" },
+          overFlow: "scroll",
+        }}
+        id="datatable_wrap"
+      >
+        {tableInstanceRef.current && showColumnFilters && (
+          <MRT_ToggleFiltersButton
+            table={tableInstanceRef.current}
+            sx={{
+              position: "absolute",
+              zIndex: 3,
+              top: isDesktop ? "195px" : tab ? "303px" : "257px",
+              left: { xs: 0, md: "100px" },
               backgroundColor:
                 theme.palette.palette_style.background.table_header_footer,
-            },
-          }}
-        />
-      )}
-      {/* <Box
+              borderRadius: 0,
+              paddingLeft: "15px",
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.palette_style.background.table_header_footer,
+              },
+            }}
+          />
+        )}
+        {/* <Box
         sx={{
           position: "absolute",
           right: 0,
@@ -436,250 +437,253 @@ const DataTable = ({
       >
         <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
       </Box> */}
-      {!updatingTable && (
-        <MaterialReactTable
-          tableInstanceRef={tableInstanceRef}
-          columns={columnsTable}
-          data={rows}
-          enableStickyHeader={true}
-          muiTableContainerProps={{
-            sx: {
-              scrollBehavior: "smooth !important",
-              WebkitOverflowScrolling: "touch",
-              height: {
-                xs: `${windowHeight - (!tab ? 255 : 301)}px`,
-                lg: "calc(100vh - 188px)",
-              },
-              width: { lg: "100vw" },
-              minHeight: "300px",
-              "& .MuiTableHead-root": {
-                width: "100%",
-              },
-              "& .MuiTableRow-root": {
-                boxShadow: "none",
-              },
-            },
-          }}
-          enableRowSelection={true}
-          enableTopToolbar={false}
-          enableBottomToolbar={false}
-          enablePagination={true}
-          enableColumnResizing
-          // enableRowNumbers
-          enableRowVirtualization
-          // enableMultiRowSelection={false}
-          muiSelectCheckboxProps={{
-            color: "secondary",
-          }}
-          muiTableBodyRowProps={({ row }: any) => ({
-            onClick: () => {
-              editRow(row);
-            },
-            sx: { cursor: "pointer" },
-          })}
-          onPaginationChange={setPagination}
-          state={{ pagination, rowSelection, showColumnFilters }}
-          onRowSelectionChange={setRowSelection}
-          onShowColumnFiltersChange={(updater: any) => {
-            setShowColumnFilters((prev) =>
-              updater instanceof Function ? updater(prev) : updater
-            );
-            queueMicrotask(rerender);
-          }}
-          muiTableHeadCellProps={{
-            sx: (theme: any) => ({
-              color: theme.palette.palette_style.text.primary,
-              backgroundColor:
-                theme.palette.palette_style.background.table_header_footer,
-              py: 0.7,
-              height: showColumnFilters ? 84 : 40,
-              borderColor: theme.palette.palette_style.border.default,
-            }),
-          }}
-          muiTableFooterCellProps={{
-            sx: (theme: any) => ({
-              color: theme.palette.palette_style.text.primary,
-              backgroundColor:
-                theme.palette.palette_style.background.table_header_footer,
-              p: 0,
-            }),
-          }}
-          muiTableBodyCellProps={{
-            sx: (theme: any) => ({
-              color: theme.palette.palette_style.text.primary,
-              backgroundColor:
-                theme.palette.palette_style.background.table_body,
-              py: 0,
-              height: 32,
-            }),
-          }}
-          muiBottomToolbarProps={{
-            sx: () => ({
-              height: "55px",
-              backgroundColor:
-                theme.palette.palette_style.background.table_header_footer,
-            }),
-          }}
-          muiTableHeadCellFilterTextFieldProps={{
-            sx: {
-              color: theme.palette.palette_style.text.primary,
-              backgroundColor:
-                theme.palette.palette_style.background.table_header_footer,
-              px: 1,
-              height: 40,
-              marginTop: "12px",
-            },
-          }}
-        />
-      )}
-      <Stack
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          width: "100%",
-          py: 0.5,
-          px: 1,
-          height: 40,
-          left: 0,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: {
-            xs: theme.palette.palette_style.background.default,
-            md: "transparent",
-          },
-          flexDirection: "inherit",
-        }}
-      >
-        <Box sx={{ display: "flex" }}>
-          <Fab
-            onClick={handleNewRowPanel}
-            sx={{
-              // position: "absolute",
-              // top: -80,
-              // left: 80,
-              backgroundColor: theme.palette.palette_style.primary.main,
-              color: theme.palette.palette_style.text.white,
-              // opacity: 0.2,
-              height: 32,
-              "&:hover": {
-                backgroundColor: theme.palette.palette_style.primary.dark,
-                // opacity: 1,
+        {!updatingTable && (
+          <MaterialReactTable
+            tableInstanceRef={tableInstanceRef}
+            columns={columnsTable}
+            data={rows}
+            enableStickyHeader={true}
+            muiTableContainerProps={{
+              sx: {
+                scrollBehavior: "smooth !important",
+                WebkitOverflowScrolling: "touch",
+                height: {
+                  xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+                  lg: "calc(100vh - 188px)",
+                },
+                width: { lg: "100vw" },
+                minHeight: "300px",
+                "& .MuiTableHead-root": {
+                  width: "100%",
+                },
+                "& .MuiTableRow-root": {
+                  boxShadow: "none",
+                },
               },
             }}
-            variant="extended"
-          >
-            <AddIcon />
-            Add new row
-          </Fab>
-          <Box
-            sx={{
-              display: "flex",
-              // width: "100%",
-              justifyContent: "space-between",
-              px: { xs: 1, md: 3 },
-              // marginTop: 4,
-              // paddingBottom: 2,
-              borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-              gap: 2,
+            enableRowSelection={true}
+            enableTopToolbar={false}
+            enableBottomToolbar={false}
+            enablePagination={true}
+            enableColumnResizing
+            // enableRowNumbers
+            enableRowVirtualization
+            // enableMultiRowSelection={false}
+            muiSelectCheckboxProps={{
+              color: "secondary",
             }}
-          >
-            {actions.map((action: any) => (
-              <Box
-                key={action.title}
-                sx={{
-                  display: "flex",
-                  cursor: "pointer",
-                }}
+            muiTableBodyRowProps={({ row }: any) => ({
+              onClick: () => {
+                editRow(row);
+              },
+              sx: { cursor: "pointer" },
+            })}
+            onPaginationChange={setPagination}
+            state={{ pagination, rowSelection, showColumnFilters }}
+            onRowSelectionChange={setRowSelection}
+            onShowColumnFiltersChange={(updater: any) => {
+              setShowColumnFilters((prev) =>
+                updater instanceof Function ? updater(prev) : updater
+              );
+              queueMicrotask(rerender);
+            }}
+            muiTableHeadCellProps={{
+              sx: (theme: any) => ({
+                color: theme.palette.palette_style.text.primary,
+                backgroundColor:
+                  theme.palette.palette_style.background.table_header_footer,
+                py: 0.7,
+                height: showColumnFilters ? 84 : 40,
+                borderColor: theme.palette.palette_style.border.default,
+              }),
+            }}
+            muiTableFooterCellProps={{
+              sx: (theme: any) => ({
+                color: theme.palette.palette_style.text.primary,
+                backgroundColor:
+                  theme.palette.palette_style.background.table_header_footer,
+                p: 0,
+              }),
+            }}
+            muiTableBodyCellProps={{
+              sx: (theme: any) => ({
+                color: theme.palette.palette_style.text.primary,
+                backgroundColor:
+                  theme.palette.palette_style.background.table_body,
+                py: 0,
+                height: 32,
+              }),
+            }}
+            muiBottomToolbarProps={{
+              sx: () => ({
+                height: "55px",
+                backgroundColor:
+                  theme.palette.palette_style.background.table_header_footer,
+              }),
+            }}
+            muiTableHeadCellFilterTextFieldProps={{
+              sx: {
+                color: theme.palette.palette_style.text.primary,
+                backgroundColor:
+                  theme.palette.palette_style.background.table_header_footer,
+                px: 1,
+                height: 40,
+                marginTop: "12px",
+              },
+            }}
+          />
+        )}
+        <Stack
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            width: "100%",
+            py: 0.5,
+            px: 1,
+            height: 40,
+            left: 0,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: {
+              xs: theme.palette.palette_style.background.default,
+              md: "transparent",
+            },
+            flexDirection: "inherit",
+          }}
+        >
+          <Box sx={{ display: "flex" }}>
+            <Fab
+              onClick={handleNewRowPanel}
+              sx={{
+                // position: "absolute",
+                // top: -80,
+                // left: 80,
+                backgroundColor: theme.palette.palette_style.primary.main,
+                color: theme.palette.palette_style.text.white,
+                // opacity: 0.2,
+                height: 32,
+                "&:hover": {
+                  backgroundColor: theme.palette.palette_style.primary.dark,
+                  // opacity: 1,
+                },
+              }}
+              variant="extended"
+            >
+              <AddIcon />
+              Add new row
+            </Fab>
+            <Box
+              sx={{
+                display: "flex",
+                // width: "100%",
+                justifyContent: "space-between",
+                px: { xs: 1, md: 3 },
+                // marginTop: 4,
+                // paddingBottom: 2,
+                borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                gap: 2,
+              }}
+            >
+              {rowSelection && Object.keys(rowSelection).length > 0 && actions.map((action: any) => (
+                <Box
+                  key={action.title}
+                  sx={{
+                    display: "flex",
+                    cursor: "pointer",
+                  }}
                 // onClick={() => {
                 //   handleAction(action.action);
                 // }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
                 >
                   <Box
-                    component="span"
-                    className="svg-color"
                     sx={{
-                      width: 24,
-                      height: 24,
-                      display: "grid",
-                      placeContent: "center",
-                      color:
-                        action.color ||
-                        theme.palette.palette_style.text.primary,
-                      // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                      // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                      mr: { xs: 0.2, md: 0.5 },
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    {action.icon}
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        display: "grid",
+                        placeContent: "center",
+                        color:
+                          action.color ||
+                          theme.palette.palette_style.text.primary,
+                        // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                        // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                        mr: { xs: 0.2, md: 0.5 },
+                      }}
+                    >
+                      {action.icon}
+                    </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        color:
+                          action.color ||
+                          theme.palette.palette_style.text.primary,
+                      }}
+                    >
+                      {action.title}
+                    </Typography>
                   </Box>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      color:
-                        action.color ||
-                        theme.palette.palette_style.text.primary,
-                    }}
-                  >
-                    {action.title}
-                  </Typography>
                 </Box>
-              </Box>
-            ))}
+              ))}
+            </Box>
           </Box>
-        </Box>
 
-        {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
-        <Box sx={{ display: "flex" }}>
-          <Box sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}>
-            Row per page
+          {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
+          <Box sx={{ display: "flex" }}>
+            <Box sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}>
+              Row per page
+            </Box>
+            <Select
+              id="per_page"
+              value={pagination.pageSize.toString()}
+              onChange={handleChangeRowsPerPage}
+              size="small"
+              sx={{
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": { border: 0 },
+                fontSize: "14px",
+              }}
+            >
+              <MenuItem value="5">5</MenuItem>
+              <MenuItem value="10">10</MenuItem>
+              <MenuItem value="25">25</MenuItem>
+              <MenuItem value="50">50</MenuItem>
+              <MenuItem value="100">100</MenuItem>
+            </Select>
+            <Pagination
+              count={Math.ceil(count / pagination.pageSize)}
+              page={pagination.pageIndex + 1}
+              onChange={handleChange}
+            />
           </Box>
-          <Select
-            id="per_page"
-            value={pagination.pageSize.toString()}
-            onChange={handleChangeRowsPerPage}
-            size="small"
-            sx={{
-              boxShadow: "none",
-              ".MuiOutlinedInput-notchedOutline": { border: 0 },
-              fontSize: "14px",
-            }}
-          >
-            <MenuItem value="5">5</MenuItem>
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="25">25</MenuItem>
-            <MenuItem value="50">50</MenuItem>
-            <MenuItem value="100">100</MenuItem>
-          </Select>
-          <Pagination
-            count={Math.ceil(count / pagination.pageSize)}
-            page={pagination.pageIndex + 1}
-            onChange={handleChange}
-          />
-        </Box>
-      </Stack>
-      <RowFormPanel
-        rowData={selectedRowData}
-        columns={columns}
-        onSubmit={handleRowAction}
-        open={visibleAddRowPanel}
-        onClose={() => setVisibleAddRowPanel(false)}
-        mode={mode}
-      />
-      {currentView && (
-        <ListFields
-          open={visibleFieldManagementPanel}
-          onClose={() => handleCloseFieldManagementPanel()}
+        </Stack>
+
+        <RowFormPanel
+          rowData={selectedRowData}
+          columns={columns}
+          onSubmit={handleRowAction}
+          open={visibleAddRowPanel}
+          onClose={() => setVisibleAddRowPanel(false)}
+          mode={mode}
         />
-      )}
-    </Box>
+        {currentView && (
+          <ListFields
+            open={visibleFieldManagementPanel}
+            onClose={() => handleCloseFieldManagementPanel()}
+          />
+        )}
+
+      </Box>
+    </>
   );
 };
 
