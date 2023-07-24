@@ -15,6 +15,7 @@ export default function LandingHero({
   };
   const router = useRouter();
   const gotoSignup = async () => {
+
     await router.push({
       pathname: "/auth/register",
     });
@@ -100,7 +101,7 @@ export default function LandingHero({
                 size="large"
                 variant="contained"
                 sx={{ flex: 1, fontSize: 16 }}
-                onClick={() => gotoSignup}
+                onClick={async () => await gotoSignup()}
               >
                 {t("Sign up now")}
               </Button>
