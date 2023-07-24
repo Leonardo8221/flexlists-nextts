@@ -148,7 +148,7 @@ const Header = ({ currentView }: HeaderProps) => {
           >
             {currentView?.name}
           </Typography>
-          {hasPermission(currentView.role, 'All') && <CDropdown id="list_action" className="list_action">
+          {hasPermission(currentView?.role, 'All') && <CDropdown id="list_action" className="list_action">
             <CDropdownToggle
               color="secondary"
               style={{ paddingTop: 0, display: "flex" }}
@@ -212,7 +212,7 @@ const Header = ({ currentView }: HeaderProps) => {
             gap: 2,
           }}
         >
-          <ViewUsersList />
+          {hasPermission(currentView?.role, 'All') && <ViewUsersList />}
           <Box
             component="span"
             className="svg-color"

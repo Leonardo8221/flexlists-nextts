@@ -99,26 +99,26 @@ const RowFormPanel = ({
       title: "Clone",
       icon: <ContentCopyIcon />,
       action: "clone",
-      allowed: hasPermission(currentView.role, 'Update')
+      allowed: hasPermission(currentView?.role, 'Update')
     },
     {
       title: "Archive",
       icon: <ArchiveIcon />,
       action: "archive",
-      allowed: hasPermission(currentView.role, 'Update')
+      allowed: hasPermission(currentView?.role, 'Update')
     },
     {
       title: "Print",
       icon: <PrintIcon />,
       action: "print",
-      allowed: hasPermission(currentView.role, 'Read')
+      allowed: hasPermission(currentView?.role, 'Read')
     },
     {
       title: "Delete",
       icon: <DeleteIcon />,
       action: "delete",
       color: "#c92929",
-      allowed: hasPermission(currentView.role, 'Delete')
+      allowed: hasPermission(currentView?.role, 'Delete')
     },
   ];
 
@@ -837,7 +837,7 @@ const RowFormPanel = ({
               {rowData && rowData.id ? "Update Row" : "Create New Row"}
             </Button>
           )}
-          {hasPermission(currentView.role, 'Update') && currentMode === "view" && (
+          {hasPermission(currentView?.role, 'Update') && currentMode === "view" && (
             <Button
               color="primary"
               onClick={handleEditRow}
