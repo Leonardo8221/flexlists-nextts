@@ -232,7 +232,7 @@ const ListFields = ({
                       minHeight: "360px",
                     }}
                   >
-                    {filter(fields, (x) => !x.system).map(
+                    {filter(fields, (x) => (x.system !== true || x.name !=='id')).map(
                       (field: any, index: number) => (
                         <Draggable
                           key={field.id}
@@ -346,7 +346,9 @@ const ListFields = ({
                                       Edit
                                     </Typography>
                                   </Box>
-                                  <Box
+                                  {
+                                    field.system !== true ?
+                                    <Box
                                     sx={{
                                       display: "flex",
                                       gap: 1,
@@ -370,7 +372,21 @@ const ListFields = ({
                                     >
                                       Delete
                                     </Typography>
-                                  </Box>
+                                  </Box> :
+                                   <Box
+                                   sx={{
+                                     display: "flex",
+                                     gap: 0,
+                                     alignItems: "center",
+                                     cursor: "pointer",
+                                     color: "#eb2027",
+                                     fontWeight: 500,
+                                     ml: 10
+                                   }}
+                                 >
+                                 </Box>
+                                  }
+                                  
                                 </Box>
                               </Box>
                             </Box>

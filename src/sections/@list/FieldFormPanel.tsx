@@ -270,6 +270,7 @@ export function FieldFormPanel({
           value={currentField.name}
           onChange={onNameChange}
           required
+          disabled={!isCreating && field.system}
           error={submit && !currentField.name}
         />
         <TextField
@@ -278,6 +279,7 @@ export function FieldFormPanel({
           size="small"
           value={currentField.description}
           onChange={onDescriptionChange}
+          disabled={!isCreating && field.system}
         />
         <FormControl sx={{ marginTop: 2 }} required>
           <Autocomplete
@@ -286,6 +288,7 @@ export function FieldFormPanel({
             options={fieldUiTypes}
             groupBy={(option) => option.group}
             getOptionLabel={(option) => option.name}
+            disabled={!isCreating && field.system}
             fullWidth
             // inputValue={currentField.type}
             value={currentFieldType}
@@ -314,6 +317,7 @@ export function FieldFormPanel({
                 checked={currentField.required}
                 onChange={onRequiredChange}
                 name="required"
+                disabled={!isCreating && field.system}
               />
             }
             label="Required"
@@ -342,6 +346,7 @@ export function FieldFormPanel({
             }}
             required
             InputLabelProps={{ shrink: currentField.icon !== "" }}
+            disabled={!isCreating && field.system}
             // error={submit && !currentField.icon}
           />
           {visibleIconList && (
