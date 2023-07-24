@@ -251,7 +251,7 @@ const Register = ({
 
       setError(
         (response as FlexlistsError)?.message ??
-        "Could not create account, please try again or contact support."
+          "Could not create account, please try again or contact support."
       );
     } catch (error) {
       setError(ErrorConsts.InternalServerError);
@@ -296,6 +296,7 @@ const Register = ({
       textAlign: { xs: "center", md: "left" },
       color: theme.palette.palette_style.text.white,
       py: { xs: 4, md: 0 },
+      px: { xs: 0, md: 4 },
     },
     loginIllustration: {
       width: 250,
@@ -333,7 +334,7 @@ const Register = ({
       opacity: 0.2,
       zIndex: 1,
       filter: "blur(100px)",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0)",
     },
     rightBoxGrid: {
       py: 4,

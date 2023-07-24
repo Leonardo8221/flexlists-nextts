@@ -52,7 +52,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
-  const [isReservedUserName, setIsReservedUserName] = useState<boolean>(false)
+  const [isReservedUserName, setIsReservedUserName] = useState<boolean>(false);
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
@@ -223,6 +223,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
       textAlign: { xs: "center", md: "left" },
       color: theme.palette.palette_style.text.white,
       py: { xs: 4, md: 0 },
+      px: { xs: 0, md: 4 },
     },
 
     loginIllustration: {
@@ -263,7 +264,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
       opacity: 0.2,
       zIndex: 1,
       filter: "blur(100px)",
-      transform: "translate3d(0, 0, 0)"
+      transform: "translate3d(0, 0, 0)",
     },
     rightBoxGrid: {
       py: 4,
@@ -408,21 +409,20 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
               {/* <Grid item container>
             {error && <Alert severity="error">{error}</Alert>}
           </Grid> */}
-              {
-                isReservedUserName && <Grid item xs={12}>
+              {isReservedUserName && (
+                <Grid item xs={12}>
                   <Box>
-                    <Typography
-                      variant="body2"
-                      component={"div"}
-                    >
-                      User name already existed in previous version. please pick another or
-                      click <Link sx={styles?.link} href="/auth/loginExisting">
+                    <Typography variant="body2" component={"div"}>
+                      User name already existed in previous version. please pick
+                      another or click{" "}
+                      <Link sx={styles?.link} href="/auth/loginExisting">
                         Login
-                      </Link> to login to an existing account
+                      </Link>{" "}
+                      to login to an existing account
                     </Typography>
                   </Box>
                 </Grid>
-              }
+              )}
               <Grid item container columnSpacing={2}>
                 <Grid item xs={6}>
                   <TextField
