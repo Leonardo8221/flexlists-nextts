@@ -48,7 +48,6 @@ axiosInstance.interceptors.response.use(
     return response
   },
   async (error) => {
-    console.log('aaaa')
     const originalRequest = error.config
     if (!onServer) store.dispatch(setLoading(false))
     if(!onServer && 
@@ -68,7 +67,6 @@ axiosInstance.interceptors.response.use(
       return await Promise.reject(error)
     }
 
-    console.log('error', error.response.data)
     return await Promise.resolve(error.response)
     //return Promise.reject((error.response && error.response.data) || 'Something went wrong')
   }
