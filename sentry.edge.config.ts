@@ -5,8 +5,11 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
+const sentryDsn = {
   dsn: "nope",
+}
+if (sentryDsn.dsn !== 'nope') Sentry.init({
+  dsn: sentryDsn.dsn,
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,

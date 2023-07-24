@@ -28,13 +28,13 @@ axiosInstance.interceptors.request.use(function (config) {
   return config;
 });
 axiosInstance.interceptors.response.use(
-  (response) => {
+  async (response) => {
     if (!onServer) store.dispatch(setLoading(false))
     if (response && response.data && response.data.code === 999) {
       response.data.message = 'Unknown Error, please try again.'
     }
     if (!onServer && response && response.data && response.data.code === 401) {
-      const url = response?.config?.url;  
+      const url = response?.config?.url;
       if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
         window.location.href = PATH_AUTH.login
       }
@@ -43,6 +43,7 @@ axiosInstance.interceptors.response.use(
       const url = response?.config?.url;
       if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
         window.location.href = "/500"
+        return response
       }
     }
     return response
@@ -50,12 +51,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
     if (!onServer) store.dispatch(setLoading(false))
-    if(!onServer && 
-         (!error.response ||
-          (error.response.status === 500 &&!ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1))
-        )
-      ) 
-    {
+    if (!onServer &&
+      (!error.response ||
+        (error.response.status === 500 && !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1))
+      )
+    ) {
+
       window.location.href = '/500'
       return await Promise.reject(error)
     }
@@ -77,6 +78,7 @@ async function get<T>(url: string, params?: any) {
     return await axiosInstance.get<T>(url, { params })
   } catch (e: any) {
     if (!onServer) store.dispatch(setLoading(false))
+    console.log(e)
     return { data: { code: e.code ?? 999, isSuccess: e.isSuccess ?? false, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
   }
 }
@@ -86,6 +88,7 @@ async function post<T>(url: string, data?: any, config?: any) {
     return await axiosInstance.post<T>(url, data, config)
   } catch (e: any) {
     if (!onServer) store.dispatch(setLoading(false))
+    console.log(e)
     return { data: { code: e.code ?? 999, isSuccess: e.isSuccess ?? false, message: e.message ?? 'Unknown Error, please try again.', data: e.data ?? e } }
   }
 }

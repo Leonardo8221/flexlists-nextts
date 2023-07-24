@@ -3,9 +3,11 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
-console.log(process.env);
-Sentry.init({
+const sentryDsn = {
   dsn: "nope",
+}
+if (sentryDsn.dsn !== 'nope') Sentry.init({
+  dsn: sentryDsn.dsn,
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,
