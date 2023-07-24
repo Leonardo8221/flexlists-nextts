@@ -38,3 +38,6 @@ local.env
 .env
 # Sentry Auth Token
 .sentryclirc
+sentry.client.config.ts
+sentry.edge.config.ts
+sentry.server.config.ts
