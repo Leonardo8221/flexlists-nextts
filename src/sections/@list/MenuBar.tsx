@@ -15,14 +15,12 @@ type MenuBarProps = {
   currentView: View;
 };
 
-
-
 export function MenuBar({ search, currentView }: MenuBarProps) {
   const [selectedViewId, setSelectedViewId] = useState(0);
   const [viewsSearchBar, setViewsSearchBar] = useState(false);
   const [viewsSearch, setViewsSearch] = useState("");
   const [views, setViews] = useState<View[]>([]);
-  const [filterViews, setFilerViews] = useState<View[]>([])
+  const [filterViews, setFilerViews] = useState<View[]>([]);
   const theme = useTheme();
 
   const router = useRouter();
@@ -34,14 +32,14 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
   const handleMenu = async (id: string) => {
     // setSelectedViewId(value);
     await router.push(`${PATH_MAIN.views}/${id}`);
-    router.reload()
+    router.reload();
   };
   useEffect(() => {
     async function fetchData() {
       var response = await listViewService.getViews(currentView.id);
       if (isSucc(response) && response.data && response.data.length > 0) {
         setViews(response.data);
-        setFilerViews(response.data)
+        setFilerViews(response.data);
       }
     }
     if (currentView) {
@@ -50,7 +48,9 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
   }, [currentView]);
   const handleViewsSearch = (e: any) => {
     setViewsSearch(e.target.value);
-    setFilerViews(views.filter((view) => view.name.toLowerCase().includes(e.target.value)));
+    setFilerViews(
+      views.filter((view) => view.name.toLowerCase().includes(e.target.value))
+    );
   };
 
   const [open, setOpen] = useState(false);
@@ -114,7 +114,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
             marginRight: { xs: 5, md: "inherit" },
           }}
         >
-          {filterViews.map((view,index) => (
+          {filterViews.map((view, index) => (
             <MenuItem
               key={index}
               menu={view}
@@ -187,8 +187,7 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(MenuBar);
 type MenuItemProps = {
   menu: View;
@@ -202,29 +201,29 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
   const [isOver, setIsOver] = useState(false);
 
   const getIcon = (type: string): string => {
-    let icon = 'menu/checklist'
+    let icon = "menu/checklist";
     switch (type) {
       case ViewType.List:
-        return "menu/checklist"
+        return "menu/checklist";
       case ViewType.Calendar:
-        return "menu/calendar"
+        return "menu/calendar";
       case ViewType.Gallery:
-        return "menu/gallery"
+        return "menu/gallery";
       case ViewType.KanBan:
-        return "menu/kanban"
+        return "menu/kanban";
       // case ViewType.G:
       //   return "menu/gantt"
       case ViewType.Map:
-        return "menu/map"
+        return "menu/map";
       case ViewType.TimeLine:
-        return "menu/timeline"
+        return "menu/timeline";
       // case ViewType.:
       //   return "menu/chart"
       default:
         break;
     }
-    return icon
-  }
+    return icon;
+  };
   return (
     <Box
       sx={{
@@ -232,6 +231,7 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
         display: "flex",
         py: 0.5,
         px: { xs: 1, lg: 2 },
+        overflow: "hidden",
       }}
       onClick={() => {
         setMenu(id.toString());
@@ -254,15 +254,23 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
             isOver || selected
               ? theme.palette.palette_style.text.selected
               : theme.palette.palette_style.text.primary,
-          mask: `url(/assets/icons/${getIcon(type)}.svg) no-repeat center / contain`,
-          WebkitMask: `url(/assets/icons/${getIcon(type)}.svg) no-repeat center / contain`,
+          mask: `url(/assets/icons/${getIcon(
+            type
+          )}.svg) no-repeat center / contain`,
+          WebkitMask: `url(/assets/icons/${getIcon(
+            type
+          )}.svg) no-repeat center / contain`,
           marginRight: 1,
           marginTop: 0.2,
         }}
       />
-      <Box
+      <Typography
+        variant="body1"
         sx={{
-          fontSize: "16px",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          maxWidth: { xs: 88, md: 256 },
           color:
             isOver || selected
               ? theme.palette.palette_style.text.selected
@@ -270,7 +278,7 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
         }}
       >
         {name}
-      </Box>
+      </Typography>
     </Box>
   );
 }

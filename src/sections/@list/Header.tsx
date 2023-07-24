@@ -101,132 +101,133 @@ const Header = ({ currentView }: HeaderProps) => {
       sx={{
         display: "flex",
         justifyContent: "space-between",
+        flexDirection: { xs: "column", md: "row" },
+        gap: 2,
         borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
         px: { xs: 0.5, lg: 2 },
         py: { xs: 1, lg: 0 },
         width: "100%",
+        alignItems: "center",
       }}
     >
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
         }}
       >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+          <Box
+            component="span"
+            className="svg-color"
+            sx={{
+              width: { xs: 20, md: 22 },
+              height: { xs: 20, md: 22 },
+              bgcolor: isFavorite ? "#FFD789" : "#666",
+              mask: `url(/assets/icons/star.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/star.svg) no-repeat center / contain`,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setIsFavorite(!isFavorite);
+            }}
+          />
+          <Typography
+            variant="body1"
+            sx={{
+              marginLeft: { xs: 0.3, md: 1 },
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              maxWidth: { xs: 160, lg: 88, xl: 256 },
+            }}
+          >
+            {currentView?.name}
+          </Typography>
+          <CDropdown id="list_action" className="list_action">
+            <CDropdownToggle
+              color="secondary"
+              style={{ paddingTop: 0, display: "flex" }}
+            >
+              <Box
+                component="span"
+                className="svg-color"
+                sx={{
+                  width: { xs: 12, lg: 16 },
+                  height: { xs: 12, lg: 16 },
+                  display: "inline-block",
+                  bgcolor: "#16385C",
+                  mask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
+                  marginLeft: { xs: 0.5, lg: 1 },
+                  cursor: "pointer",
+                  transform: "rotate(90deg)",
+                }}
+              />
+            </CDropdownToggle>
+            <CDropdownMenu>
+              <CDropdownItem
+                href="#"
+                key={"rename_list"}
+                onClick={() => handleOpenRenameModal()}
+              >
+                Rename View
+              </CDropdownItem>
+              <CDropdownItem
+                href="#"
+                key={"duplicate_list"}
+                onClick={() => handleOpenDuplicateModal()}
+              >
+                Duplicate View
+              </CDropdownItem>
+              <CDropdownItem
+                href="#"
+                key={"delete_list"}
+                onClick={() => handleOpenDeleteModal()}
+              >
+                Delete View
+              </CDropdownItem>
+              <CDropdownItem
+                href="#"
+                key={"archive_list"}
+                onClick={() => handleOpenArchiveModal()}
+              >
+                Archive View
+              </CDropdownItem>
+            </CDropdownMenu>
+          </CDropdown>
+        </Box>
+        <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
+          <ToolBar open={open} onOpen={setOpen} />
+        </Box>
         <Box
-          component="span"
-          className="svg-color"
           sx={{
-            width: { xs: 20, md: 23 },
-            height: { xs: 20, md: 23 },
             display: "flex",
             alignItems: "center",
-            bgcolor: isFavorite ? "#FFD789" : "#666",
-            mask: `url(/assets/icons/star.svg) no-repeat center / contain`,
-            WebkitMask: `url(/assets/icons/star.svg) no-repeat center / contain`,
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            setIsFavorite(!isFavorite);
-          }}
-        />
-        <Box
-          sx={{
-            fontSize: { xs: "16px", lg: "18px" },
-            fontWeight: "600",
-            lineHeight: "1.2",
-            marginLeft: { xs: 0.3, md: 1 },
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            maxWidth: { xs: 160, lg: 88, xl: 256 },
+            justifyContent: "space-around",
+            gap: 2,
           }}
         >
-          {currentView?.name}
-        </Box>
-        <CDropdown id="list_action" className="list_action">
-          <CDropdownToggle
-            color="secondary"
-            style={{ paddingTop: 0, display: "flex" }}
-          >
-            <Box
-              component="span"
-              className="svg-color"
-              sx={{
-                width: { xs: 12, lg: 16 },
-                height: { xs: 12, lg: 16 },
-                display: "inline-block",
-                bgcolor: "#16385C",
-                mask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
-                WebkitMask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
-                marginLeft: { xs: 0.5, lg: 1 },
-                cursor: "pointer",
-                transform: "rotate(90deg)",
-              }}
-            />
-          </CDropdownToggle>
-          <CDropdownMenu>
-            <CDropdownItem
-              href="#"
-              key={"rename_list"}
-              onClick={() => handleOpenRenameModal()}
-            >
-              Rename View
-            </CDropdownItem>
-            <CDropdownItem
-              href="#"
-              key={"duplicate_list"}
-              onClick={() => handleOpenDuplicateModal()}
-            >
-              Duplicate View
-            </CDropdownItem>
-            <CDropdownItem
-              href="#"
-              key={"delete_list"}
-              onClick={() => handleOpenDeleteModal()}
-            >
-              Delete View
-            </CDropdownItem>
-            <CDropdownItem
-              href="#"
-              key={"archive_list"}
-              onClick={() => handleOpenArchiveModal()}
-            >
-              Archive View
-            </CDropdownItem>
-          </CDropdownMenu>
-        </CDropdown>
-      </Box>
-      <Box sx={{ display: { xs: "none", lg: "block" } }}>
-        <ToolBar open={open} onOpen={setOpen} />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <Box sx={{ width: "fit-content", mr: { xs: 2 } }}>
-          {isDesktop && <ViewUsersList />}
-        </Box>
-        <Box
-          component="span"
-          className="svg-color"
-          sx={{
-            width: { xs: 18, md: 22 },
-            height: { xs: 18, md: 22 },
-            display: "inline-block",
-            bgcolor: theme.palette.palette_style.text.primary,
-            mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-            WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-            cursor: "pointer",
-            marginRight: { xs: 2, md: 4 },
-          }}
-          onClick={() => {
-            setVisiblePanel(true);
-          }}
-        />
-        {/* <Box
+          <ViewUsersList />
+          <Box
+            component="span"
+            className="svg-color"
+            sx={{
+              width: { xs: 20, md: 22 },
+              height: { xs: 20, md: 22 },
+              display: "inline-block",
+              bgcolor: theme.palette.palette_style.text.primary,
+              mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setVisiblePanel(true);
+            }}
+          />
+          {/* <Box
           component="span"
           className="svg-color"
           sx={{
@@ -241,75 +242,77 @@ const Header = ({ currentView }: HeaderProps) => {
           }}
         /> */}
 
-        {/* ---PUBLISH & SHARE delete if needed--- */}
+          {/* ---PUBLISH & SHARE delete if needed--- */}
 
-        <Box
-          zIndex={10}
-          sx={{
-            position: "relative",
-            cursor: "pointer",
-            m: 0,
-            p: 0,
-          }}
-          onClick={handleBoxClick}
-        >
           <Box
+            zIndex={10}
             sx={{
-              display: { xs: showIcons ? "none" : "block", md: "flex" },
-              position: { xs: "absolute", md: "relative" },
-              top: "100%",
-              right: "0",
-              width: "min-content",
-              flexDirection: { xs: "column", md: "row" },
-              alignItems: { xs: "flex-start", md: "center" },
-              p: { xs: 1 },
-              boxShadow: { xs: "0 0 24px 0 rgba(24,24,24,.2)", md: "none" },
+              position: "relative",
+              cursor: "pointer",
+              m: 0,
+              p: 0,
+              width: "auto",
             }}
+            onClick={handleBoxClick}
           >
-            <Button
-              onClick={handleOpenPublish}
+            <Box
               sx={{
-                mt: { xs: 1, md: 0 },
-                mr: { xs: 0, md: 2 },
-                color: theme.palette.palette_style.text.white,
+                display: { xs: showIcons ? "block" : "none", md: "flex" },
+                position: { xs: "absolute", md: "relative" },
+                top: "100%",
+                right: "0",
+                width: "min-content",
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: { xs: "flex-start", md: "center" },
+                p: { xs: 1 },
+                boxShadow: { xs: "0 0 24px 0 rgba(24,24,24,.2)", md: "none" },
+                background: theme.palette.palette_style.background.paper,
               }}
-              size="small"
-              variant="contained"
-              startIcon={<Iconify icon={"eva:paper-plane-fill"} />}
             >
-              Publish
-            </Button>
-            <Button
-              onClick={handleOpenShare}
-              sx={{ mt: { xs: 1, md: 0 } }}
-              size="small"
-              color="primary"
-              variant="text"
-              startIcon={<Iconify icon={"eva:share-outline"} />}
+              <Button
+                onClick={handleOpenPublish}
+                sx={{
+                  mt: { xs: 1, md: 0 },
+                  mr: { xs: 0, md: 2 },
+                  color: theme.palette.palette_style.text.white,
+                }}
+                size="small"
+                variant="contained"
+                startIcon={<Iconify icon={"eva:paper-plane-fill"} />}
+              >
+                Publish
+              </Button>
+              <Button
+                onClick={handleOpenShare}
+                sx={{ mt: { xs: 1, md: 0 } }}
+                size="small"
+                color="primary"
+                variant="text"
+                startIcon={<Iconify icon={"eva:share-outline"} />}
+              >
+                Share
+              </Button>
+            </Box>
+            <Box
+              sx={{
+                display: { xs: "flex", md: "none" },
+                alignItems: "center",
+                justifyContent: "center",
+                mr: 1,
+                bg: "primary.main",
+              }}
             >
-              Share
-            </Button>
+              <Iconify
+                sx={{ width: 20, height: 20 }}
+                icon={"material-symbols:share-outline"}
+                color="#666"
+              />
+            </Box>
           </Box>
-          <Box
-            sx={{
-              display: { xs: "flex", md: "none" },
-              alignItems: "center",
-              justifyContent: "center",
-              mr: 1,
-              bg: "primary.main",
-            }}
-          >
-            <Iconify
-              sx={{ width: 18, height: 18 }}
-              icon={"material-symbols:share-outline"}
-              color="#666"
-            />
-          </Box>
-        </Box>
 
-        {/* ---PUBLISH & SHARE delete if needed--- */}
+          {/* ---PUBLISH & SHARE delete if needed--- */}
 
-        {/* <Box sx={{ display: { xs: "none", md: "none" } }}>
+          {/* <Box sx={{ display: { xs: "none", md: "none" } }}>
           <Button
             size="small"
             color="primary"
@@ -334,6 +337,11 @@ const Header = ({ currentView }: HeaderProps) => {
             Share
           </Button>
         </Box> */}
+        </Box>
+      </Box>
+
+      <Box sx={{ display: { md: "none", width: "100%" } }}>
+        <ToolBar open={open} onOpen={setOpen} />
       </Box>
       <ChatFormPanel
         chatType={ChatType.View}
