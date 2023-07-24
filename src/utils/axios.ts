@@ -33,20 +33,33 @@ axiosInstance.interceptors.response.use(
     if (response && response.data && response.data.code === 999) {
       response.data.message = 'Unknown Error, please try again.'
     }
-    if (
-      !onServer && response && response.data && response.data.code === 401
-    ) {
-      const url = response?.config?.url;
+    if (!onServer && response && response.data && response.data.code === 401) {
+      const url = response?.config?.url;  
       if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
         window.location.href = PATH_AUTH.login
+      }
+    }
+    if (!onServer && response && response.data && response.data.code === 500) {
+      const url = response?.config?.url;
+      if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
+        window.location.href = "/500"
       }
     }
     return response
   },
   async (error) => {
-
+    console.log('aaaa')
     const originalRequest = error.config
     if (!onServer) store.dispatch(setLoading(false))
+    if(!onServer && 
+         (!error.response ||
+          (error.response.status === 500 &&!ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1))
+        )
+      ) 
+    {
+      window.location.href = '/500'
+      return await Promise.reject(error)
+    }
     if (
       !onServer && error.response.status === 401 &&
       !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1)
