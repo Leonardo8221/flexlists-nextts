@@ -13,28 +13,30 @@ interface ListPageProps {
 
 function ListPage({ message, setMessage }: ListPageProps) {
   const theme = useTheme();
-  // error handling 
-  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+  // error handling
+  const [flash, setFlash] = useState<
+    { message: string; type: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message])
+    checkMessage();
+  }, [message]);
 
   const flashHandleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
   function setError(message: string) {
     setFlashMessage(message);
   }
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
+  function setFlashMessage(message: string, type: string = "error") {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
   }
 
   return (
@@ -47,8 +49,16 @@ function ListPage({ message, setMessage }: ListPageProps) {
           overflow: "hidden",
         }}
       >
-        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={flashHandleClose}>
-          <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+        <Snackbar
+          open={flash !== undefined}
+          autoHideDuration={6000}
+          onClose={flashHandleClose}
+        >
+          <Alert
+            onClose={flashHandleClose}
+            severity={flash?.type as AlertColor}
+            sx={{ width: "100%" }}
+          >
             {flash?.message}
           </Alert>
         </Snackbar>
@@ -58,14 +68,11 @@ function ListPage({ message, setMessage }: ListPageProps) {
   );
 }
 const mapStateToProps = (state: any) => ({
-
   message: state.view.message,
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListPage);
-
-

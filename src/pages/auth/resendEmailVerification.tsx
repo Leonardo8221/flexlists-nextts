@@ -9,7 +9,9 @@ import {
   Snackbar,
   Alert,
   AlertColor,
+  Link,
 } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
@@ -19,14 +21,16 @@ import { PATH_AUTH } from "src/routes/paths";
 interface VerifyEmailProps {
   message: any;
   setMessage: (message: any) => void;
+  styles?: any;
 }
 
-const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
+const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
   const router = useRouter();
   const [flash, setFlash] = React.useState<
     { message: string; type: string } | undefined
   >(undefined);
   const [email, setEmail] = React.useState<string>("");
+  const theme = useTheme();
 
   useEffect(() => {
     function checkMessage() {
@@ -86,20 +90,57 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
       }
     }
   };
+  styles = {
+    body: {
+      background:
+        "linear-gradient(45deg, hsl(219deg 41% 13%) 0%, hsl(213deg 41% 19%) 50%, hsl(212deg 40% 24%) 100%)",
+      overflow: "hidden",
+    },
+    container: {
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: { xs: "column", md: "row" },
+      alignItems: "center",
+      justifyContent: "center",
+      px: { xs: 0, sm: 0, md: 0 },
+    },
+    FormLogoWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      marginBottom: 2,
+    },
+    FormLogo: {
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+      marginTop: "2px",
+    },
+    textField: {
+      "& .MuiInputBase-root": {
+        backgroundColor: "#fcfeff",
+        border: "none",
+        color: "#666",
+        boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
+      },
+
+      "& ::placeholder": {
+        color: "#ccc",
+      },
+
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          border: "none",
+        },
+      },
+    },
+    button: {
+      backgroundColor: theme.palette.palette_style.primary.main,
+      width: "100%",
+    },
+  };
 
   return (
-    <>
-      <Box
-        component="img"
-        sx={{
-          height: "100%",
-          width: "100%",
-          position: "absolute",
-          zIndex: -1,
-        }}
-        alt="The house from the offer."
-        src="/assets/images/background.png"
-      />
+    <Box sx={styles?.body}>
       <Snackbar
         open={flash !== undefined}
         autoHideDuration={6000}
@@ -126,9 +167,6 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
           container
           rowSpacing={3}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
             textAlign: "center",
             width: "100%",
             py: 4,
@@ -139,6 +177,16 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
           }}
         >
           <Grid item xs={12}>
+            <Box sx={styles?.FormLogoWrapper}>
+              <Link href="/">
+                <Box
+                  component="img"
+                  sx={styles?.FormLogo}
+                  alt="Logo"
+                  src="/assets/logo.png"
+                />
+              </Link>
+            </Box>
             <Typography variant="h4" gutterBottom>
               Oops something went wrong.
             </Typography>
@@ -153,6 +201,7 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               type="email"
               required
               value={email}
+              sx={styles?.textField}
               disabled
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -166,19 +215,14 @@ const VerifyEmail = ({ message, setMessage }: VerifyEmailProps) => {
               size="large"
               variant="contained"
               onClick={() => handleResend()}
-              sx={{
-                width: "100%",
-                backgroundColor: "#FFD232",
-                color: "#0D0934",
-                textTransform: "uppercase",
-              }}
+              sx={styles?.button}
             >
               Send me code
             </Button>
           </Grid>
         </Grid>
       </Container>
-    </>
+    </Box>
   );
 };
 

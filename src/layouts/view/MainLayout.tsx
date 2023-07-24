@@ -24,15 +24,17 @@ const Main = styled("div")(({ theme }) => ({
   flexGrow: 1,
   paddingTop: APP_BAR_MOBILE,
   paddingBottom: 0,
-  [theme.breakpoints.up("lg")]: {
-    paddingTop: APP_BAR_DESKTOP,
-    paddingBottom: 0,
-  },
   display: "flex",
   height: "calc(100% - 40px)",
   overflow: "hidden",
   [theme.breakpoints.up("md")]: {
     height: "calc(100vh - 40px)",
+    overflow: "hidden",
+  },
+  [theme.breakpoints.up("lg")]: {
+    paddingTop: APP_BAR_DESKTOP,
+    paddingBottom: 0,
+    overflow: "hidden",
   },
 }));
 
