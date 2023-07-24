@@ -30,43 +30,43 @@ axiosInstance.interceptors.request.use(function (config) {
 axiosInstance.interceptors.response.use(
   async (response) => {
     if (!onServer) store.dispatch(setLoading(false))
-    if (response && response.data && response.data.code === 999) {
-      response.data.message = 'Unknown Error, please try again.'
-    }
-    if (!onServer && response && response.data && response.data.code === 401) {
-      const url = response?.config?.url;
-      if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
-        window.location.href = PATH_AUTH.login
-      }
-    }
-    if (!onServer && response && response.data && response.data.code === 500) {
-      const url = response?.config?.url;
-      if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
-        window.location.href = "/500"
-        return response
-      }
-    }
+    // if (response && response.data && response.data.code === 999) {
+    //   response.data.message = 'Unknown Error, please try again.'
+    // }
+    // if (!onServer && response && response.data && response.data.code === 401) {
+    //   const url = response?.config?.url;
+    //   if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
+    //     window.location.href = PATH_AUTH.login
+    //   }
+    // }
+    // if (!onServer && response && response.data && response.data.code === 500) {
+    //   const url = response?.config?.url;
+    //   if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
+    //     window.location.href = "/500"
+    //     return response
+    //   }
+    // }
     return response
   },
   async (error) => {
     const originalRequest = error.config
     if (!onServer) store.dispatch(setLoading(false))
-    if (!onServer &&
-      (!error.response ||
-        (error.response.status === 500 && !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1))
-      )
-    ) {
+    // if (!onServer &&
+    //   (!error.response ||
+    //     (error.response.status === 500 && !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1))
+    //   )
+    // ) {
 
-      window.location.href = '/500'
-      return await Promise.reject(error)
-    }
-    if (
-      !onServer && error.response.status === 401 &&
-      !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1)
-    ) {
-      window.location.href = PATH_AUTH.login//'/auth/login';
-      return await Promise.reject(error)
-    }
+    //   window.location.href = '/500'
+    //   return await Promise.reject(error)
+    // }
+    // if (
+    //   !onServer && error.response.status === 401 &&
+    //   !ignore.some((path: string) => originalRequest.url?.indexOf(path) > -1)
+    // ) {
+    //   window.location.href = PATH_AUTH.login//'/auth/login';
+    //   return await Promise.reject(error)
+    // }
 
     return await Promise.resolve(error.response)
     //return Promise.reject((error.response && error.response.data) || 'Something went wrong')

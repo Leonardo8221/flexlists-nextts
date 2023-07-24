@@ -36,6 +36,7 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+import { hasPermission } from "src/utils/permissionHelper";
 
 const actions = [
   {
@@ -103,6 +104,36 @@ const DataTable = ({
   const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
     "view"
   );
+
+  const actions = [
+    {
+      title: "Clone",
+      icon: <ContentCopyIcon />,
+      action: "clone",
+      allowed: hasPermission(currentView.role, 'Update'),
+    },
+    {
+      title: "Archive",
+      icon: <ArchiveIcon />,
+      action: "archive",
+      allowed: hasPermission(currentView.role, 'Update'),
+    },
+    {
+      title: "Print",
+      icon: <PrintIcon />,
+      action: "print",
+      allowed: hasPermission(currentView.role, 'Read'),
+    },
+    {
+      title: "Delete",
+      icon: <DeleteIcon />,
+      action: "delete",
+      color: "#c92929",
+      allowed: hasPermission(currentView.role, 'Delete'),
+    },
+  ];
+
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -553,7 +584,7 @@ const DataTable = ({
           }}
         >
           <Box sx={{ display: "flex" }}>
-            <Fab
+            {hasPermission(currentView.role, 'Add') && <Fab
               onClick={handleNewRowPanel}
               sx={{
                 // position: "absolute",
@@ -572,7 +603,7 @@ const DataTable = ({
             >
               <AddIcon />
               Add new row
-            </Fab>
+            </Fab>}
             <Box
               sx={{
                 display: "flex",
@@ -586,6 +617,7 @@ const DataTable = ({
               }}
             >
               {rowSelection && Object.keys(rowSelection).length > 0 && actions.map((action: any) => (
+                action.allowed &&
                 <Box
                   key={action.title}
                   sx={{

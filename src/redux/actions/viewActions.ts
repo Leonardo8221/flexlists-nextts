@@ -7,6 +7,7 @@ import { fieldService } from 'src/services/field.service';
 import { listContentService } from 'src/services/listContent.service'
 import { FieldUIType } from 'src/models/SharedModels'
 import { adminService } from 'src/services/admin.service';
+import { hasPermission } from 'src/utils/permissionHelper';
 // Define the actions
 export const getAvailableFieldUiTypes = (): ThunkAction<
   void,
@@ -117,7 +118,7 @@ export const fetchRows = (): ThunkAction<
     }
   };
 };
-export const fetchRowsByPage = (page?: number, limit?: number,query?:string): ThunkAction<
+export const fetchRowsByPage = (page?: number, limit?: number, query?: string): ThunkAction<
   void,
   RootState,
   null,
@@ -208,14 +209,21 @@ export const getViewUserGroups = (viewId: number): ThunkAction<
   any
 > => {
   return async (dispatch: Dispatch<any>) => {
-    try {
-      var respone = await listViewService.getViewGroups(viewId)
-      if (isSucc(respone) && respone.data) {
-        dispatch(setViewGroups(respone.data))
+    var state = store.getState();
+    if (hasPermission(state.view.currentView.role, 'All')) {
+      try {
+
+
+        var respone = await listViewService.getViewGroups(viewId)
+        if (isSucc(respone) && respone.data) {
+          dispatch(setViewGroups(respone.data))
+        } else {
+          //console.log('getViewGroups', respone)
+        }
       }
-    }
-    catch (error) {
-      console.log(error)
+      catch (error) {
+        console.log('getViewGroups', error)
+      }
     }
   };
 };

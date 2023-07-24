@@ -23,6 +23,8 @@ import DeleteView from "./DeleteView";
 import ArchiveView from "./ArchiveView";
 import { ChatType } from "src/enums/ChatType";
 import { color } from "framer-motion";
+import { Role } from "src/enums/SharedEnums";
+import { hasPermission } from "src/utils/permissionHelper";
 
 type HeaderProps = {
   currentView: View;
@@ -146,7 +148,7 @@ const Header = ({ currentView }: HeaderProps) => {
           >
             {currentView?.name}
           </Typography>
-          <CDropdown id="list_action" className="list_action">
+          {hasPermission(currentView.role, 'All') && <CDropdown id="list_action" className="list_action">
             <CDropdownToggle
               color="secondary"
               style={{ paddingTop: 0, display: "flex" }}
@@ -197,7 +199,7 @@ const Header = ({ currentView }: HeaderProps) => {
                 Archive View
               </CDropdownItem>
             </CDropdownMenu>
-          </CDropdown>
+          </CDropdown>}
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
           <ToolBar open={open} onOpen={setOpen} />
@@ -282,16 +284,17 @@ const Header = ({ currentView }: HeaderProps) => {
               >
                 Publish
               </Button>
-              <Button
-                onClick={handleOpenShare}
-                sx={{ mt: { xs: 1, md: 0 } }}
-                size="small"
-                color="primary"
-                variant="text"
-                startIcon={<Iconify icon={"eva:share-outline"} />}
-              >
-                Share
-              </Button>
+              {hasPermission(currentView?.role, 'All') &&
+                <Button
+                  onClick={handleOpenShare}
+                  sx={{ mt: { xs: 1, md: 0 } }}
+                  size="small"
+                  color="primary"
+                  variant="text"
+                  startIcon={<Iconify icon={"eva:share-outline"} />}
+                >
+                  Share
+                </Button>}
             </Box>
             <Box
               sx={{

@@ -50,9 +50,12 @@ import PrintIcon from "@mui/icons-material/Print";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import { getPermission } from "src/repositories/permissionRepository";
+import { hasPermission } from "src/utils/permissionHelper";
+import { View } from "src/models/SharedModels";
 
 interface RowFormProps {
-  currentView: ViewField;
+  currentView: View;
   rowData: any;
   columns: any[];
   open: boolean;
@@ -62,34 +65,6 @@ interface RowFormProps {
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
 
-const actions = [
-  {
-    title: "Resize",
-    icon: <FullscreenIcon />,
-    action: "resize",
-  },
-  {
-    title: "Clone",
-    icon: <ContentCopyIcon />,
-    action: "clone",
-  },
-  {
-    title: "Archive",
-    icon: <ArchiveIcon />,
-    action: "archive",
-  },
-  {
-    title: "Print",
-    icon: <PrintIcon />,
-    action: "print",
-  },
-  {
-    title: "Delete",
-    icon: <DeleteIcon />,
-    action: "delete",
-    color: "#c92929",
-  },
-];
 
 const RowFormPanel = ({
   currentView,
@@ -110,6 +85,43 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [error, setError] = useState<string>("");
   const [panelWidth, setPanelWidth] = useState("500px");
+
+
+  //console.log('knarsterfarster', currentView)
+  const actions = [
+    {
+      title: "Resize",
+      icon: <FullscreenIcon />,
+      action: "resize",
+      allowed: true
+    },
+    {
+      title: "Clone",
+      icon: <ContentCopyIcon />,
+      action: "clone",
+      allowed: hasPermission(currentView.role, 'Update')
+    },
+    {
+      title: "Archive",
+      icon: <ArchiveIcon />,
+      action: "archive",
+      allowed: hasPermission(currentView.role, 'Update')
+    },
+    {
+      title: "Print",
+      icon: <PrintIcon />,
+      action: "print",
+      allowed: hasPermission(currentView.role, 'Read')
+    },
+    {
+      title: "Delete",
+      icon: <DeleteIcon />,
+      action: "delete",
+      color: "#c92929",
+      allowed: hasPermission(currentView.role, 'Delete')
+    },
+  ];
+
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -697,6 +709,7 @@ const RowFormPanel = ({
           }}
         >
           {actions.map((action: any) => (
+            action.allowed &&
             <Box
               key={action.title}
               sx={{
@@ -824,7 +837,7 @@ const RowFormPanel = ({
               {rowData && rowData.id ? "Update Row" : "Create New Row"}
             </Button>
           )}
-          {currentMode === "view" && (
+          {hasPermission(currentView.role, 'Update') && currentMode === "view" && (
             <Button
               color="primary"
               onClick={handleEditRow}

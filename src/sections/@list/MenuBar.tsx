@@ -9,6 +9,7 @@ import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { ViewType } from "src/enums/SharedEnums";
 import { PATH_MAIN } from "src/routes/paths";
+import { hasPermission } from "src/utils/permissionHelper";
 
 type MenuBarProps = {
   search?: string;
@@ -68,7 +69,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
           p: 1,
         }}
       >
-        <Box
+        {hasPermission(currentView?.role, 'All') && <Box
           onClick={handleOpen}
           sx={{
             backgroundColor: theme.palette.palette_style.background.selected,
@@ -102,7 +103,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
           >
             Add View
           </Box>
-        </Box>
+        </Box>}
         <Box
           sx={{
             display: "flex",

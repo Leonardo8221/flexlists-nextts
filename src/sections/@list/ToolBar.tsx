@@ -15,6 +15,7 @@ import ViewFields from "./ViewFields";
 import { listViewService } from "src/services/listView.service";
 import { View } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
+import { hasPermission } from "src/utils/permissionHelper";
 
 type ToolbBarProps = {
   open: boolean;
@@ -164,7 +165,7 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
           },
         }}
       >
-        <Box
+        {hasPermission(currentView?.role, 'Read') && <Box
           sx={{
             position: "relative",
             marginRight: 2,
@@ -184,8 +185,8 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
               setVisibleFilter(false);
             }}
           />
-        </Box>
-        <Box sx={{ position: "relative", marginRight: 2 }}>
+        </Box>}
+        {hasPermission(currentView?.role, 'Read') && <Box sx={{ position: "relative", marginRight: 2 }}>
           <ActionItem
             toolbar={actions[1]}
             onClick={() => {
@@ -198,8 +199,8 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
               setVisibleSort(false);
             }}
           />
-        </Box>
-        <Box sx={{ position: "relative", marginRight: 2 }}>
+        </Box>}
+        {hasPermission(currentView?.role, 'All') && <Box sx={{ position: "relative", marginRight: 2 }}>
           <ActionItem
             toolbar={actions[2]}
             onClick={() => {
@@ -212,8 +213,8 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
               setVisibleFields(false);
             }}
           />
-        </Box>
-        <Box sx={{ position: "relative", marginRight: 2 }}>
+        </Box>}
+        {hasPermission(currentView?.role, 'Update') && <Box sx={{ position: "relative", marginRight: 2 }}>
           <ActionItem
             toolbar={actions[3]}
             onClick={() => {
@@ -226,8 +227,8 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
               setVisibleImport(false);
             }}
           />
-        </Box>
-        <Box sx={{ position: "relative", marginRight: 2 }}>
+        </Box>}
+        {hasPermission(currentView?.role, 'Read') && <Box sx={{ position: "relative", marginRight: 2 }}>
           <ActionItem
             toolbar={actions[4]}
             onClick={() => {
@@ -241,9 +242,10 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
             }}
           />
         </Box>
-        <Box sx={{ position: "relative", marginRight: 2 }}>
+        }
+        {hasPermission(currentView?.role, 'All') && <Box sx={{ position: "relative", marginRight: 2 }}>
           <ActionItem toolbar={actions[5]} onClick={() => saveView()} />
-        </Box>
+        </Box>}
       </Box>
       {/* </Collapse> */}
       {/* {!isDesktop && (
