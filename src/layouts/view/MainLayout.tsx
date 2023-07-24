@@ -17,6 +17,7 @@ const StyledRoot = styled("div")(({ theme }) => ({
   minHeight: "100vh",
   backgroundColor: theme.palette.palette_style.background.default,
   color: theme.palette.palette_style.text.primary,
+  overflow: "hidden",
 }));
 
 const Main = styled("div")(({ theme }) => ({

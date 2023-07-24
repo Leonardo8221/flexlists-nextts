@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Fab } from "@mui/material";
+import { Box, Stack, Fab, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -27,6 +27,39 @@ import ListFields from "./ListFields";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { getChoiceField } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+
+import ArchiveIcon from "@mui/icons-material/Archive";
+
+import PrintIcon from "@mui/icons-material/Print";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+
+const actions = [
+  {
+    title: "Clone",
+    icon: <ContentCopyIcon />,
+    action: "clone",
+  },
+  {
+    title: "Archive",
+    icon: <ArchiveIcon />,
+    action: "archive",
+  },
+  {
+    title: "Print",
+    icon: <PrintIcon />,
+    action: "print",
+  },
+  {
+    title: "Delete",
+    icon: <DeleteIcon />,
+    action: "delete",
+    color: "#c92929",
+  },
+];
 
 type DataTableProps = {
   tab: boolean;
@@ -501,7 +534,7 @@ const DataTable = ({
       )}
       <Stack
         sx={{
-          position: "absolute",
+          position: "fixed",
           bottom: 0,
           width: "100%",
           py: 0.5,
@@ -518,26 +551,91 @@ const DataTable = ({
           flexDirection: "inherit",
         }}
       >
-        <Fab
-          onClick={handleNewRowPanel}
-          sx={{
-            // position: "absolute",
-            // top: -80,
-            // left: 80,
-            backgroundColor: theme.palette.palette_style.primary.main,
-            color: theme.palette.palette_style.text.white,
-            // opacity: 0.2,
-            height: 32,
-            "&:hover": {
-              backgroundColor: theme.palette.palette_style.primary.dark,
-              // opacity: 1,
-            },
-          }}
-          variant="extended"
-        >
-          <AddIcon />
-          Add new row
-        </Fab>
+        <Box sx={{ display: "flex" }}>
+          <Fab
+            onClick={handleNewRowPanel}
+            sx={{
+              // position: "absolute",
+              // top: -80,
+              // left: 80,
+              backgroundColor: theme.palette.palette_style.primary.main,
+              color: theme.palette.palette_style.text.white,
+              // opacity: 0.2,
+              height: 32,
+              "&:hover": {
+                backgroundColor: theme.palette.palette_style.primary.dark,
+                // opacity: 1,
+              },
+            }}
+            variant="extended"
+          >
+            <AddIcon />
+            Add new row
+          </Fab>
+          <Box
+            sx={{
+              display: "flex",
+              // width: "100%",
+              justifyContent: "space-between",
+              px: { xs: 1, md: 3 },
+              // marginTop: 4,
+              // paddingBottom: 2,
+              borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+              gap: 2,
+            }}
+          >
+            {actions.map((action: any) => (
+              <Box
+                key={action.title}
+                sx={{
+                  display: "flex",
+                  cursor: "pointer",
+                }}
+                // onClick={() => {
+                //   handleAction(action.action);
+                // }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box
+                    component="span"
+                    className="svg-color"
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      display: "grid",
+                      placeContent: "center",
+                      color:
+                        action.color ||
+                        theme.palette.palette_style.text.primary,
+                      // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                      // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                      mr: { xs: 0.2, md: 0.5 },
+                    }}
+                  >
+                    {action.icon}
+                  </Box>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color:
+                        action.color ||
+                        theme.palette.palette_style.text.primary,
+                    }}
+                  >
+                    {action.title}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+
         {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
         <Box sx={{ display: "flex" }}>
           <Box sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}>

@@ -9,6 +9,7 @@ import Tooltip from "./Tooltip";
 import Backdrop from "./Backdrop";
 import Typography from "./Typography";
 import Autocomplete from "./Autocomplete";
+import Select from "./Select";
 
 // ----------------------------------------------------------------------
 
@@ -20,6 +21,7 @@ export default function ComponentsOverrides(theme: any) {
     Input(theme),
     Paper(theme),
     Button(theme),
+    Select(theme),
     Tooltip(theme),
     Backdrop(theme),
     Typography(theme),
