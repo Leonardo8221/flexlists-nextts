@@ -191,14 +191,17 @@ export const getViewUsers = (viewId: number): ThunkAction<
   any
 > => {
   return async (dispatch: Dispatch<any>) => {
-    try {
-      var response = await listViewService.getViewUsers(viewId);
-      if (isSucc(response)) {
-        dispatch(setViewUsers(response.data))
-      }
+    var state = store.getState();
+    if (hasPermission(state.view.currentView.role, 'All')) {
+      try {
+        var response = await listViewService.getViewUsers(viewId);
+        if (isSucc(response)) {
+          dispatch(setViewUsers(response.data))
+        }
 
-    } catch (error) {
-      console.log(error)
+      } catch (error) {
+        console.log(error)
+      }
     }
   };
 };
