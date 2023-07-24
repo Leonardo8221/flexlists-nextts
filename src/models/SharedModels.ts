@@ -78,7 +78,8 @@ export type View = {
     order?: Sort[],
     query?: string,
     conditions?:FlatWhere[],
-    description?: string
+    description?: string,
+    role:Role
 }
 export type FieldUIType = {
     name:string;
