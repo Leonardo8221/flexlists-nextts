@@ -98,7 +98,7 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
         {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
 
         <Box sx={{ flexGrow: 1 }} />
-        <LanguagePopover />
+        {/* <LanguagePopover /> */}
         {authValidate && authValidate.isUserValidated && (
           <Stack
             direction="row"
@@ -108,7 +108,7 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
               sm: 1,
             }}
           >
-            <NotificationsPopover />
+            {/* <NotificationsPopover /> */}
             <AccountPopover />
           </Stack>
         )}
