@@ -182,7 +182,7 @@ const RowFormPanel = ({
     let newValues = Object.assign({}, values);
     if (action === "delete") {
       var deleteContentResponse = await listContentService.deleteContent(
-        currentView.listId,
+        currentView.id,
         newValues.id
       );
       if (isErr(deleteContentResponse)) {
