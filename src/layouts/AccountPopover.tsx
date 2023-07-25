@@ -41,7 +41,9 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
     setOpen(null);
     router.push(path);
   };
-
+  const handleClose = () => {
+    setOpen(null);
+  };
   const logout = async () => {
     await authService.logout();
     await router.push({
@@ -80,7 +82,7 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
       <Popover
         open={Boolean(open)}
         anchorEl={open}
-        onClose={selectMenu}
+        onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{

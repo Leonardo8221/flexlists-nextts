@@ -84,6 +84,9 @@ export const LanguagePopover = ({
       setOpen(null);
     }
   };
+  const handleClose = () => {
+    setOpen(null);
+  };
   var style = open && {
     bgcolor: (theme: any) =>
       alpha(theme.palette.primary.main, theme.palette.action.focusOpacity),
@@ -107,7 +110,7 @@ export const LanguagePopover = ({
       <Popover
         open={Boolean(open)}
         anchorEl={open}
-        onClose={handleLanguageChange}
+        onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{
