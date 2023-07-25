@@ -65,7 +65,6 @@ interface RowFormProps {
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
 
-
 const RowFormPanel = ({
   currentView,
   rowData,
@@ -74,7 +73,7 @@ const RowFormPanel = ({
   mode,
   onClose,
   onSubmit,
-  setFlashMessage
+  setFlashMessage,
 }: RowFormProps) => {
   const theme = useTheme();
   const [values, setValues] = useState(rowData);
@@ -86,42 +85,40 @@ const RowFormPanel = ({
   const [error, setError] = useState<string>("");
   const [panelWidth, setPanelWidth] = useState("500px");
 
-
   //console.log('knarsterfarster', currentView)
   const actions = [
     {
       title: "Resize",
       icon: <FullscreenIcon />,
       action: "resize",
-      allowed: true
+      allowed: true,
     },
     {
       title: "Clone",
       icon: <ContentCopyIcon />,
       action: "clone",
-      allowed: hasPermission(currentView?.role, 'Update')
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Archive",
       icon: <ArchiveIcon />,
       action: "archive",
-      allowed: hasPermission(currentView?.role, 'Update')
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Print",
       icon: <PrintIcon />,
       action: "print",
-      allowed: hasPermission(currentView?.role, 'Read')
+      allowed: hasPermission(currentView?.role, "Read"),
     },
     {
       title: "Delete",
       icon: <DeleteIcon />,
       action: "delete",
       color: "#c92929",
-      allowed: hasPermission(currentView?.role, 'Delete')
+      allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -208,8 +205,7 @@ const RowFormPanel = ({
         setPanelWidth("100%");
       }
       return;
-    }
-    else if (action === 'clone') {
+    } else if (action === "clone") {
       var createRowResponse = await listContentService.createContent(
         currentView.id,
         newValues
@@ -223,13 +219,14 @@ const RowFormPanel = ({
         newValues.id = createRowResponse.data.content[0].id;
         newValues.createdAt = new Date().toISOString();
         newValues.updatedAt = new Date().toISOString();
-      }
-      else {
-        setFlashMessage({ type: 'error', message: (createRowResponse as FlexlistsError).message })
+      } else {
+        setFlashMessage({
+          type: "error",
+          message: (createRowResponse as FlexlistsError).message,
+        });
         return;
       }
-    }
-    else if (action === 'archive') {
+    } else if (action === "archive") {
       var archiveField = columns.find(
         (x) => x.system && x.name === "___archived"
       );
@@ -245,7 +242,10 @@ const RowFormPanel = ({
         onClose();
         return;
       } else {
-        setFlashMessage({ type: 'error', message: (updateRowRespone as FlexlistsError).message })
+        setFlashMessage({
+          type: "error",
+          message: (updateRowRespone as FlexlistsError).message,
+        });
         return;
       }
     }
@@ -425,8 +425,8 @@ const RowFormPanel = ({
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleString()
                 : ""}
             </Typography>
           </div>
@@ -453,8 +453,8 @@ const RowFormPanel = ({
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : ""}
             </Typography>
           </div>
@@ -483,8 +483,8 @@ const RowFormPanel = ({
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : "null"}
             </Typography>
           </div>
@@ -576,7 +576,9 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {(values && values[column.id]?.toString() === 'true') ? "yes" : "no"}
+              {values && values[column.id]?.toString() === "true"
+                ? "yes"
+                : "no"}
             </Typography>
           </div>
         );
@@ -708,54 +710,58 @@ const RowFormPanel = ({
             borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
           }}
         >
-          {actions.map((action: any) => (
-            action.allowed &&
-            <Box
-              key={action.title}
-              sx={{
-                display: "flex",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                handleAction(action.action);
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+          {actions.map(
+            (action: any) =>
+              action.allowed && (
                 <Box
-                  component="span"
-                  className="svg-color"
+                  key={action.title}
                   sx={{
-                    width: 24,
-                    height: 24,
-                    display: "grid",
-                    placeContent: "center",
-                    color:
-                      action.color || theme.palette.palette_style.text.primary,
-                    // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                    // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                    mr: { xs: 0.2, md: 0.5 },
+                    display: "flex",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleAction(action.action);
                   }}
                 >
-                  {action.icon}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        display: "grid",
+                        placeContent: "center",
+                        color:
+                          action.color ||
+                          theme.palette.palette_style.text.primary,
+                        // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                        // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                        mr: { xs: 0.2, md: 0.5 },
+                      }}
+                    >
+                      {action.icon}
+                    </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        color:
+                          action.color ||
+                          theme.palette.palette_style.text.primary,
+                      }}
+                    >
+                      {action.title}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color:
-                      action.color || theme.palette.palette_style.text.primary,
-                  }}
-                >
-                  {action.title}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
+              )
+          )}
         </Box>
       )}
 
@@ -837,16 +843,17 @@ const RowFormPanel = ({
               {rowData && rowData.id ? "Update Row" : "Create New Row"}
             </Button>
           )}
-          {hasPermission(currentView?.role, 'Update') && currentMode === "view" && (
-            <Button
-              color="primary"
-              onClick={handleEditRow}
-              variant="contained"
-              type="submit"
-            >
-              Edit
-            </Button>
-          )}
+          {hasPermission(currentView?.role, "Update") &&
+            currentMode === "view" && (
+              <Button
+                color="primary"
+                onClick={handleEditRow}
+                variant="contained"
+                type="submit"
+              >
+                Edit
+              </Button>
+            )}
         </Box>
       </DialogActions>
     </Drawer>
@@ -858,7 +865,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setFlashMessage
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RowFormPanel);

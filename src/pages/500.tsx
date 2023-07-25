@@ -154,6 +154,9 @@ export default function Custom500({ styles }: Custom500Props) {
                   ),
                 }}
               />
+              <Typography variant="caption">
+                Send us this code to make sure what happened
+              </Typography>
               <Snackbar
                 sx={{
                   position: "absolute",
