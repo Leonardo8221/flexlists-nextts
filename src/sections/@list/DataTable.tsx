@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Fab, Typography } from "@mui/material";
+import { Box, Stack, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -28,7 +28,7 @@ import { ChoiceModel } from "src/models/ChoiceModel";
 import { getChoiceField } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
@@ -86,6 +86,7 @@ const DataTable = ({
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
+  const isMobile = useResponsive("down", "md");
 
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
@@ -583,9 +584,10 @@ const DataTable = ({
             flexDirection: "inherit",
           }}
         >
-          <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: "flex", px: { xs: 0, md: 2 } }}>
             {hasPermission(currentView?.role, "Create") && (
-              <Fab
+              <Button
+                variant="contained"
                 onClick={handleNewRowPanel}
                 sx={{
                   // position: "absolute",
@@ -600,12 +602,31 @@ const DataTable = ({
                     // opacity: 1,
                   },
                 }}
-                variant="extended"
               >
                 <AddIcon sx={{ mr: 0.5 }} />
                 {isDesktop ? "add new row" : "new row"}
                 {/* Add new row */}
-              </Fab>
+              </Button>
+            )}
+            {rowSelection && Object.keys(rowSelection).length > 0 && (
+              <Button
+                variant="outlined"
+                // onClick={handleNewRowPanel}
+                sx={{
+                  display: isMobile ? "flex" : "none",
+                  border: 2,
+                  height: 32,
+                  ml: 2,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  "&:hover": {
+                    border: 2,
+                  },
+                }}
+              >
+                List actions
+                <KeyboardArrowDownIcon />
+              </Button>
             )}
             <Box
               sx={{
@@ -701,7 +722,7 @@ const DataTable = ({
           >
             <Typography
               variant="body2"
-              // sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}
+              sx={{ display: { xs: "none", md: "block" } }}
             >
               Rows per page
             </Typography>
