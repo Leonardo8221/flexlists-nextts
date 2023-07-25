@@ -13,6 +13,7 @@ import {
   Alert,
   TextareaAutosize,
   Typography,
+  Link,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Select from "@mui/material/Select";
@@ -34,7 +35,7 @@ import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
 import { DatePicker } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { getChoiceField, getDataColumnId } from "src/utils/flexlistHelper";
+import { downloadFileUrl, getChoiceField, getDataColumnId } from "src/utils/flexlistHelper";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import ReactMarkdown from "react-markdown";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
@@ -53,6 +54,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { getPermission } from "src/repositories/permissionRepository";
 import { hasPermission } from "src/utils/permissionHelper";
 import { View } from "src/models/SharedModels";
+import UploadButton from "src/components/upload/UploadButton";
 
 interface RowFormProps {
   currentView: View;
@@ -634,6 +636,81 @@ const RowFormPanel = ({
             />
           </div>
         );
+        case FieldUiTypeEnum.Image:
+          return currentMode !== "view" ? (
+            <Box key={column.id}>
+              <Typography variant="subtitle2" sx={{ mb:1 }}>
+              {column.name}
+              </Typography>
+              <UploadButton
+                fileAcceptTypes=".png,.jpg,.jpeg,.gif"
+                file={values[column.id]}
+                onUpload={(file) => {
+                  setValues({ ...values, [column.id]: file });
+                }}
+              />
+              <Box
+                component="img"
+                sx={
+                  {
+                    // height: 100,
+                    // width: 350,
+                    // maxHeight: { xs: 233, md: 167 },
+                    // maxWidth: { xs: 350, md: 250 },
+                  }
+                }
+                alt=""
+                src={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
+              />
+            </Box>
+            
+          ) : (
+            <Box key={column.id}>
+              <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+              {column.name}
+              </Typography>
+              <Box
+                component="img"
+                sx={
+                  {
+                    // height: 233,
+                    // width: 350,
+                    // maxHeight: { xs: 233, md: 167 },
+                    // maxWidth: { xs: 350, md: 250 },
+                  }
+                }
+                alt=""
+                src={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
+              />
+            </Box>
+          );
+          case FieldUiTypeEnum.Document:
+            return currentMode !== "view" ? (
+              <Box key={column.id}>
+                <Typography variant="subtitle2" sx={{ mb:1 }}>
+                {column.name}
+                </Typography>
+                <UploadButton
+                  fileAcceptTypes=""
+                  file={values[column.id]}
+                  onUpload={(file) => {
+                    setValues({ ...values, [column.id]: file });
+                  }}
+                />
+              </Box>
+              
+            ) : (
+              <Box key={column.id}>
+                <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+                {column.name}
+                </Typography>
+                {
+                  values && values[column.id]? (
+                    <Link href={downloadFileUrl(values[column.id].fileId)}>{values[column.id].fileName}</Link>
+                  ):(<></>)
+                }
+              </Box>
+            );
       default:
         return <div key={column.id}></div>;
     }

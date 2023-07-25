@@ -32,7 +32,6 @@ export const downloadFileUrl = (id: string) => {
 };
 export const getAvatarUrl = (avartarUrl?:string) : string =>
 {
-    console.log(avartarUrl)
     if(!avartarUrl||avartarUrl === '')
     {
         return '/assets/images/avatars/avatar_2.jpg';

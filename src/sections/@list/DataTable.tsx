@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Fab, Typography } from "@mui/material";
+import { Box, Stack, Fab, Typography, Link } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -25,7 +25,7 @@ import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
 import { ChoiceModel } from "src/models/ChoiceModel";
-import { getChoiceField } from "src/utils/flexlistHelper";
+import { downloadFileUrl, getChoiceField } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
@@ -314,6 +314,39 @@ const DataTable = ({
                     {cellValue?.toString() === "true" ? "yes" : "no"}
                   </Box>
                 );
+              case FieldType.Image:
+                 return (
+                  <Box
+                component="img"
+                sx={
+                  {
+                    // height: 100,
+                    width: 100,
+                    // maxHeight: { xs: 233, md: 167 },
+                    // maxWidth: { xs: 350, md: 250 },
+                  }
+                }
+                alt=""
+                src={cellValue? downloadFileUrl(cellValue.fileId):''}
+              />
+                 )
+              case FieldType.File:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {cellValue?.fileName}
+                  </Box>
+                );
+                // return cellValue? (
+                //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
+                // ):(<></>)
               default:
                 return <></>;
             }

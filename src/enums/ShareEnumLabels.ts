@@ -45,7 +45,7 @@ export const ListCategoryLabel = new Map<string, string>([
       ]
     ],
    ["File",[
-        {fieldType:FieldType.File,displayName:"File",config:{fieldUiType:FieldUiTypeEnum.File}},
+        {fieldType:FieldType.File,displayName:"File",config:{fieldUiType:FieldUiTypeEnum.Video}},
         {fieldType:FieldType.Image,displayName:"Image",config:{fieldUiType:FieldUiTypeEnum.Image}},
       ]
     ]
