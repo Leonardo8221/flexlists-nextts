@@ -114,10 +114,10 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
       sx={{
         display: "flex",
         alignItems: "center",
-        borderBottom: {
-          xs: `1px solid ${theme.palette.palette_style.border.default}`,
-          lg: "none",
-        },
+        // borderBottom: {
+        //   xs: `1px solid ${theme.palette.palette_style.border.default}`,
+        //   lg: "none",
+        // },
         position: "relative",
         // zIndex: 2,
         backgroundColor: theme.palette.palette_style.background.default,
@@ -165,87 +165,98 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
           },
         }}
       >
-        {hasPermission(currentView?.role, 'Read') && <Box
-          sx={{
-            position: "relative",
-            marginRight: 2,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <ActionItem
-            toolbar={actions[0]}
-            onClick={() => {
-              setVisibleFilter(!visibleFilter);
+        {hasPermission(currentView?.role, "Read") && (
+          <Box
+            sx={{
+              position: "relative",
+              marginRight: 2,
+              display: "flex",
+              alignItems: "center",
             }}
-          />
-          <Filter
-            open={visibleFilter}
-            handleClose={() => {
-              setVisibleFilter(false);
-            }}
-          />
-        </Box>}
-        {hasPermission(currentView?.role, 'Read') && <Box sx={{ position: "relative", marginRight: 2 }}>
-          <ActionItem
-            toolbar={actions[1]}
-            onClick={() => {
-              setVisibleSort(!visibleSort);
-            }}
-          />
-          <Sort
-            open={visibleSort}
-            handleClose={() => {
-              setVisibleSort(false);
-            }}
-          />
-        </Box>}
-        {hasPermission(currentView?.role, 'All') && <Box sx={{ position: "relative", marginRight: 2 }}>
-          <ActionItem
-            toolbar={actions[2]}
-            onClick={() => {
-              setVisibleFields(!visibleFields);
-            }}
-          />
-          <ViewFields
-            open={visibleFields}
-            handleClose={() => {
-              setVisibleFields(false);
-            }}
-          />
-        </Box>}
-        {hasPermission(currentView?.role, 'Update') && <Box sx={{ position: "relative", marginRight: 2 }}>
-          <ActionItem
-            toolbar={actions[3]}
-            onClick={() => {
-              setVisibleImport(!visibleImport);
-            }}
-          />
-          <Import
-            open={visibleImport}
-            handleClose={() => {
-              setVisibleImport(false);
-            }}
-          />
-        </Box>}
-        {hasPermission(currentView?.role, 'Read') && <Box sx={{ position: "relative", marginRight: 2 }}>
-          <ActionItem
-            toolbar={actions[4]}
-            onClick={() => {
-              setVisibleExport(!visibleExport);
-            }}
-          />
-          <Export
-            open={visibleExport}
-            handleClose={() => {
-              setVisibleExport(false);
-            }}
-          />
-        </Box>
-        }
-        {hasPermission(currentView?.role, 'All') && <Box sx={{ position: "relative", marginRight: 2 }}>
-          <ActionItem toolbar={actions[5]} onClick={() => saveView()} />
-        </Box>}
+          >
+            <ActionItem
+              toolbar={actions[0]}
+              onClick={() => {
+                setVisibleFilter(!visibleFilter);
+              }}
+            />
+            <Filter
+              open={visibleFilter}
+              handleClose={() => {
+                setVisibleFilter(false);
+              }}
+            />
+          </Box>
+        )}
+        {hasPermission(currentView?.role, "Read") && (
+          <Box sx={{ position: "relative", marginRight: 2 }}>
+            <ActionItem
+              toolbar={actions[1]}
+              onClick={() => {
+                setVisibleSort(!visibleSort);
+              }}
+            />
+            <Sort
+              open={visibleSort}
+              handleClose={() => {
+                setVisibleSort(false);
+              }}
+            />
+          </Box>
+        )}
+        {hasPermission(currentView?.role, "All") && (
+          <Box sx={{ position: "relative", marginRight: 2 }}>
+            <ActionItem
+              toolbar={actions[2]}
+              onClick={() => {
+                setVisibleFields(!visibleFields);
+              }}
+            />
+            <ViewFields
+              open={visibleFields}
+              handleClose={() => {
+                setVisibleFields(false);
+              }}
+            />
+          </Box>
+        )}
+        {hasPermission(currentView?.role, "Update") && (
+          <Box sx={{ position: "relative", marginRight: 2 }}>
+            <ActionItem
+              toolbar={actions[3]}
+              onClick={() => {
+                setVisibleImport(!visibleImport);
+              }}
+            />
+            <Import
+              open={visibleImport}
+              handleClose={() => {
+                setVisibleImport(false);
+              }}
+            />
+          </Box>
+        )}
+        {hasPermission(currentView?.role, "Read") && (
+          <Box sx={{ position: "relative", marginRight: 2 }}>
+            <ActionItem
+              toolbar={actions[4]}
+              onClick={() => {
+                setVisibleExport(!visibleExport);
+              }}
+            />
+            <Export
+              open={visibleExport}
+              handleClose={() => {
+                setVisibleExport(false);
+              }}
+            />
+          </Box>
+        )}
+        {hasPermission(currentView?.role, "All") && (
+          <Box sx={{ position: "relative", marginRight: 2 }}>
+            <ActionItem toolbar={actions[5]} onClick={() => saveView()} />
+          </Box>
+        )}
       </Box>
       {/* </Collapse> */}
       {/* {!isDesktop && (

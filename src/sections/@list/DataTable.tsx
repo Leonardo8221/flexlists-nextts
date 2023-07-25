@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Fab, Typography, Link } from "@mui/material";
+import { Box, Stack, Button, Typography, Link } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -28,7 +28,7 @@ import { ChoiceModel } from "src/models/ChoiceModel";
 import { downloadFileUrl, getChoiceField } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
@@ -86,6 +86,7 @@ const DataTable = ({
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
+  const isMobile = useResponsive("down", "md");
 
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
@@ -110,29 +111,28 @@ const DataTable = ({
       title: "Clone",
       icon: <ContentCopyIcon />,
       action: "clone",
-      allowed: hasPermission(currentView?.role, 'Update'),
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Archive",
       icon: <ArchiveIcon />,
       action: "archive",
-      allowed: hasPermission(currentView?.role, 'Update'),
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Print",
       icon: <PrintIcon />,
       action: "print",
-      allowed: hasPermission(currentView?.role, 'Read'),
+      allowed: hasPermission(currentView?.role, "Read"),
     },
     {
       title: "Delete",
       icon: <DeleteIcon />,
       action: "delete",
       color: "#c92929",
-      allowed: hasPermission(currentView?.role, 'Delete'),
+      allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -609,6 +609,7 @@ const DataTable = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: { xs: 0.25, md: "inherit" },
             backgroundColor: {
               xs: theme.palette.palette_style.background.default,
               md: "transparent",
@@ -616,106 +617,161 @@ const DataTable = ({
             flexDirection: "inherit",
           }}
         >
-          <Box sx={{ display: "flex" }}>
-            {hasPermission(currentView?.role, 'Create') && <Fab
-              onClick={handleNewRowPanel}
-              sx={{
-                // position: "absolute",
-                // top: -80,
-                // left: 80,
-                backgroundColor: theme.palette.palette_style.primary.main,
-                color: theme.palette.palette_style.text.white,
-                // opacity: 0.2,
-                height: 32,
-                "&:hover": {
-                  backgroundColor: theme.palette.palette_style.primary.dark,
-                  // opacity: 1,
-                },
-              }}
-              variant="extended"
-            >
-              <AddIcon />
-              Add new row
-            </Fab>}
+          <Box sx={{ display: "flex", px: { xs: 0, md: 2 } }}>
+            {hasPermission(currentView?.role, "Create") && (
+              <Button
+                variant="contained"
+                onClick={handleNewRowPanel}
+                sx={{
+                  // position: "absolute",
+                  // top: -80,
+                  // left: 80,
+                  backgroundColor: theme.palette.palette_style.primary.main,
+                  color: theme.palette.palette_style.text.white,
+                  // opacity: 0.2,
+                  height: 32,
+                  "&:hover": {
+                    backgroundColor: theme.palette.palette_style.primary.dark,
+                    // opacity: 1,
+                  },
+                }}
+              >
+                <AddIcon sx={{ mr: 0.5 }} />
+                {isDesktop ? "add new row" : "new row"}
+                {/* Add new row */}
+              </Button>
+            )}
+            {rowSelection && Object.keys(rowSelection).length > 0 && (
+              <Button
+                variant="outlined"
+                // onClick={handleNewRowPanel}
+                sx={{
+                  display: isMobile ? "flex" : "none",
+                  border: 2,
+                  height: 32,
+                  ml: 2,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  "&:hover": {
+                    border: 2,
+                  },
+                }}
+              >
+                List actions
+                <KeyboardArrowDownIcon />
+              </Button>
+            )}
             <Box
               sx={{
+                backgroundColor: theme.palette.palette_style.background.paper,
                 display: "flex",
-                // width: "100%",
+                flexDirection: { xs: "column", md: "row" },
+                position: { xs: "absolute", md: "relative" },
+                bottom: { xs: 80, md: "unset" },
+                left: { xs: "50%", md: "unset" },
+                transform: { xs: "translateX(-50%)", md: "unset" },
+                width: { xs: "90%", md: "auto" },
                 justifyContent: "space-between",
+                alignItems: "center",
                 px: { xs: 1, md: 3 },
                 // marginTop: 4,
                 // paddingBottom: 2,
-                borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-                gap: 2,
+                // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                gap: { xs: 0, md: 2 },
+                boxShadow: { xs: "0 0 12px 0 rgba(0,0,0,.1)", md: "none" },
               }}
             >
-              {rowSelection && Object.keys(rowSelection).length > 0 && actions.map((action: any) => (
-                action.allowed &&
-                <Box
-                  key={action.title}
-                  sx={{
-                    display: "flex",
-                    cursor: "pointer",
-                  }}
-                // onClick={() => {
-                //   handleAction(action.action);
-                // }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box
-                      component="span"
-                      className="svg-color"
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        display: "grid",
-                        placeContent: "center",
-                        color:
-                          action.color ||
-                          theme.palette.palette_style.text.primary,
-                        // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                        // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                        mr: { xs: 0.2, md: 0.5 },
-                      }}
-                    >
-                      {action.icon}
-                    </Box>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color:
-                          action.color ||
-                          theme.palette.palette_style.text.primary,
-                      }}
-                    >
-                      {action.title}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
+              {rowSelection &&
+                Object.keys(rowSelection).length > 0 &&
+                actions.map(
+                  (action: any) =>
+                    action.allowed && (
+                      <Box
+                        key={action.title}
+                        sx={{
+                          display: "flex",
+                          cursor: "pointer",
+                          width: "100%",
+                        }}
+                        // onClick={() => {
+                        //   handleAction(action.action);
+                        // }}
+                      >
+                        <Box
+                          sx={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: { xs: "column", md: "row" },
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderBottom: { xs: "1px solid #eee", md: "none" },
+                            py: { xs: 2, md: 0 },
+                          }}
+                        >
+                          <Box
+                            component="span"
+                            className="svg-color"
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              display: "grid",
+                              placeContent: "center",
+                              color:
+                                action.color ||
+                                theme.palette.palette_style.text.primary,
+                              // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                              // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                              mr: { xs: 0.2, md: 0.5 },
+                            }}
+                          >
+                            {action.icon}
+                          </Box>
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              color:
+                                action.color ||
+                                theme.palette.palette_style.text.primary,
+                            }}
+                          >
+                            {action.title}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )
+                )}
             </Box>
           </Box>
 
           {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
-          <Box sx={{ display: "flex" }}>
-            <Box sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}>
-              Row per page
-            </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: { xs: 0, md: 1 },
+              width: "auto",
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ display: { xs: "none", md: "block" } }}
+            >
+              Rows per page
+            </Typography>
             <Select
               id="per_page"
               value={pagination.pageSize.toString()}
               onChange={handleChangeRowsPerPage}
               size="small"
               sx={{
+                // flex: 1,
                 boxShadow: "none",
                 ".MuiOutlinedInput-notchedOutline": { border: 0 },
                 fontSize: "14px",
+                "& .MuiSelect-select": {
+                  pr: 4,
+                },
               }}
             >
               <MenuItem value="5">5</MenuItem>
@@ -728,6 +784,12 @@ const DataTable = ({
               count={Math.ceil(count / pagination.pageSize)}
               page={pagination.pageIndex + 1}
               onChange={handleChange}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                // flex: 1,
+              }}
             />
           </Box>
         </Stack>
@@ -746,7 +808,6 @@ const DataTable = ({
             onClose={() => handleCloseFieldManagementPanel()}
           />
         )}
-
       </Box>
     </>
   );
