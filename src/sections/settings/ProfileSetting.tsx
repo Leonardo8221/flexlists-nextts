@@ -4,22 +4,25 @@ import { MuiTelInput } from "mui-tel-input";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { GetProfileOutputDto } from "src/models/ApiOutputModels";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { UserProfile } from "src/models/UserProfile";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import { setUserProfile } from "src/redux/actions/userActions";
 import { getProfile, updateProfile } from "src/services/account.service";
+import { uploadFile } from "src/services/admin/contentManagement.service";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
 const AvatarImg = styled("img")(({ theme }) => ({
     width: "100%",
     height: "100%",
   }));
 type ProfileSettingProps = {
+    userProfile?:UserProfile;
+    setUserProfile: (userProfile: UserProfile|undefined) => void;
     setFlashMessage: (mesage:FlashMessageModel) => void;
 };
-const ProfileSetting = ({setFlashMessage}:ProfileSettingProps) => {
+const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSettingProps) => {
     const router = useRouter();
-    const [userProfile,setUserProfile] = useState<GetProfileOutputDto>();
     const [isDirty,setIsDirty] = useState<boolean>(false);
     useEffect(() => {
         async function getUserProfile() {
@@ -27,6 +30,10 @@ const ProfileSetting = ({setFlashMessage}:ProfileSettingProps) => {
             if(isSucc(response)&& response.data)
             {
               setUserProfile(response.data)
+            }
+            else
+            {
+              setUserProfile(undefined)
             }
         }
         if (router.isReady) {
@@ -74,7 +81,7 @@ const ProfileSetting = ({setFlashMessage}:ProfileSettingProps) => {
           setFlashMessage({message:"Email is required",type:"error"});
           return;
         }
-        var response = await updateProfile(userProfile.email,userProfile.firstName,userProfile.lastName,userProfile.phoneNumber,userProfile.avatarUrl);
+        var response = await updateProfile(userProfile.email,userProfile.firstName,userProfile.lastName,userProfile.phoneNumber,userProfile.avatarUrl?.toString());
         if(isSucc(response))
         {
           setFlashMessage({message:"Update profile successfully",type:"success"});
@@ -86,6 +93,27 @@ const ProfileSetting = ({setFlashMessage}:ProfileSettingProps) => {
           setIsDirty(false);
         }
     }
+    const handleFileChange = async (
+      event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      if (event.target.files && event.target.files.length > 0) {
+        const formData = new FormData();
+        formData.append("file", event.target.files[0]);
+        let response = await uploadFile(formData);
+        if (response && response.fileId) {
+          let newProfile  = Object.assign({}, userProfile);
+          newProfile.avatarUrl = response.fileId;
+          setUserProfile(newProfile)
+          setIsDirty(true);
+        }
+      }
+    };
+   const handleDeleteAvatar = () => {
+      let newProfile  = Object.assign({}, userProfile);
+      newProfile.avatarUrl = "";
+      setUserProfile(newProfile)
+      setIsDirty(true);
+    };
     return userProfile? (
         <Box mt={4}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -112,8 +140,16 @@ const ProfileSetting = ({setFlashMessage}:ProfileSettingProps) => {
               <AvatarImg src={getAvatarUrl(userProfile?.avatarUrl)} />
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
-              <Button variant="contained">Change Avatar</Button>
-              <Button variant="outlined" sx={{ mt: 1 }}>
+              <Button component="label" variant="contained">
+                Choose File
+                <input
+                  type="file"
+                  accept={`.jpg,.png,.jpeg`}
+                  hidden
+                  onChange={handleFileChange}
+                />
+              </Button>
+              <Button variant="outlined" sx={{ mt: 1 }} onClick={handleDeleteAvatar}>
                 Delete Avatar
               </Button>
             </Box>
@@ -168,10 +204,12 @@ const ProfileSetting = ({setFlashMessage}:ProfileSettingProps) => {
     ) :(<></>)
 }
 const mapStateToProps = (state: any) => ({
+  userProfile : state.user.userProfile
 });
 
 const mapDispatchToProps = {
-   setFlashMessage
+   setFlashMessage,
+   setUserProfile
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileSetting);

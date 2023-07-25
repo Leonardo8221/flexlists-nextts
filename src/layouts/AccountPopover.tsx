@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { alpha } from "@mui/material/styles";
 import {
   Box,
@@ -13,8 +13,12 @@ import {
 import { useRouter } from "next/router";
 import { authService } from "src/services/auth.service";
 import { connect } from "react-redux";
-import { AuthValidate } from "src/models/AuthValidate";
 import { PATH_MAIN } from "src/routes/paths";
+import { getProfile } from "src/services/account.service";
+import { isSucc } from "src/models/ApiResponse";
+import { setUserProfile } from "src/redux/actions/userActions";
+import { UserProfile } from "src/models/UserProfile";
+import { getAvatarUrl } from "src/utils/flexlistHelper";
 
 const MENU_OPTIONS = [
   // {
@@ -28,11 +32,22 @@ const MENU_OPTIONS = [
   },
 ];
 type AccountPopoverProps = {
-  authValidate : AuthValidate
+  userProfile?:UserProfile;
+  setUserProfile: (userProfile: UserProfile|undefined) => void;
 }
-const AccountPopover = ({authValidate} : AccountPopoverProps) => {
+const AccountPopover = ({userProfile,setUserProfile} : AccountPopoverProps) => {
   const [open, setOpen] = useState(null);
   const router = useRouter();
+  useEffect(() => {
+    async function getUserProfile() {
+      const response = await getProfile();
+      if(isSucc(response)&& response.data)
+      {
+        setUserProfile(response.data)
+      }
+    }
+   getUserProfile()
+  }, []);
   const handleOpen = (event: any) => {
     setOpen(event.currentTarget);
   };
@@ -63,7 +78,7 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
     },
   };
 
-  return (
+  return userProfile? (
     <>
       <IconButton
         onClick={handleOpen}
@@ -74,7 +89,7 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
       >
         <Avatar
           sx={{ width: 30, height: 30 }}
-          src={'/assets/images/avatars/avatar_default.jpg'}
+          src={getAvatarUrl(userProfile?.avatarUrl)}
           alt="photoURL"
         />
       </IconButton>
@@ -100,10 +115,10 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-           {authValidate?.user?.firstName} {authValidate?.user?.lastName}
+           {userProfile?.firstName} {userProfile?.lastName}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }} noWrap>
-            {authValidate?.user?.email}
+            {userProfile?.email}
           </Typography>
         </Box>
 
@@ -124,15 +139,16 @@ const AccountPopover = ({authValidate} : AccountPopoverProps) => {
         </MenuItem>
       </Popover>
     </>
-  );
+  ):
+  (<></>)
 }
 
 const mapStateToProps = (state: any) => ({
-  authValidate: state.admin.authValidate
+  userProfile : state.user.userProfile
 });
 
 const mapDispatchToProps = {
-  
+  setUserProfile
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountPopover);

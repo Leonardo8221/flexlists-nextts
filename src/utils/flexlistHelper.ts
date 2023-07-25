@@ -27,13 +27,17 @@ export const getChoiceField = (fieldDataId:string,column:any) : {label:string,fo
     }
     return {label:choiceLabel,font:font,color:color};
 }
+export const downloadFileUrl = (id: string) => {
+    return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/contentManagement/downloadFile?id=${id}`;
+};
 export const getAvatarUrl = (avartarUrl?:string) : string =>
 {
-    if(!avartarUrl)
+    console.log(avartarUrl)
+    if(!avartarUrl||avartarUrl === '')
     {
-        return '/assets/images/avatar_2.jpg';
+        return '/assets/images/avatars/avatar_2.jpg';
     }
-    return avartarUrl;
+    return downloadFileUrl(avartarUrl);
 }
 export const getExportFileExtension = (exportFile:ExportType) : string =>
 {
