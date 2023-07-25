@@ -4,6 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
   MRT_TableInstance,
+  MRT_Virtualizer,
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
 import RowFormPanel from "./RowFormPanel";
@@ -422,6 +423,8 @@ const DataTable = ({
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
+  const rowVirtualizerInstanceRef =
+    useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
   return (
     <>
       <Box
@@ -476,8 +479,6 @@ const DataTable = ({
             enableStickyHeader={true}
             muiTableContainerProps={{
               sx: {
-                scrollBehavior: "smooth !important",
-                WebkitOverflowScrolling: "touch",
                 height: {
                   xs: `${windowHeight - (!tab ? 255 : 301)}px`,
                   lg: "calc(100vh - 188px)",
@@ -499,7 +500,11 @@ const DataTable = ({
             enableColumnResizing
             // enableRowNumbers
             enableRowVirtualization
+            enableColumnVirtualization
             // enableMultiRowSelection={false}
+            rowVirtualizerInstanceRef={rowVirtualizerInstanceRef}
+            rowVirtualizerProps={{ overscan: 5 }}
+            columnVirtualizerProps={{ overscan: 10 }}
             muiSelectCheckboxProps={{
               color: "secondary",
             }}
