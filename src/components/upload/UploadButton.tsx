@@ -1,11 +1,11 @@
 import { Box, Button } from "@mui/material"
 import { fi } from "date-fns/locale"
 import { uploadFile } from "src/services/admin/contentManagement.service";
-
+import DeleteIcon from '@mui/icons-material/Delete';
 type UploadButtonProps = {
     fileAcceptTypes: string,
     file?: {fileId:string,fileName:string},
-    onUpload: (file: {fileId:string,fileName:string}) => void
+    onUpload: (file?: {fileId:string,fileName:string}) => void
 }
 export default function UploadButton({file,fileAcceptTypes,onUpload}: UploadButtonProps) {
 
@@ -21,6 +21,9 @@ export default function UploadButton({file,fileAcceptTypes,onUpload}: UploadButt
           }
         }
       };
+    const deleteFile = () =>{
+        onUpload({fileId:'',fileName:''});
+    }
     return (
         <Box sx={{mb:2}}>
              <Button component="label" variant="contained" sx={{mr:3}}>
@@ -32,7 +35,10 @@ export default function UploadButton({file,fileAcceptTypes,onUpload}: UploadButt
                   onChange={handleFileChange}
                 />
              </Button>
-             <span>{file?.fileName}</span>
+             {
+               file?.fileId && file?.fileName && <span>{file?.fileName}<DeleteIcon onClick ={deleteFile}/></span>
+             }
+             
         </Box>
         
     )

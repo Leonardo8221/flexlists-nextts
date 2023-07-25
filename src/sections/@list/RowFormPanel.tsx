@@ -14,6 +14,7 @@ import {
   TextareaAutosize,
   Typography,
   Link,
+  CardMedia,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Select from "@mui/material/Select";
@@ -55,6 +56,7 @@ import { getPermission } from "src/repositories/permissionRepository";
 import { hasPermission } from "src/utils/permissionHelper";
 import { View } from "src/models/SharedModels";
 import UploadButton from "src/components/upload/UploadButton";
+import ReactPlayer from 'react-player';
 
 interface RowFormProps {
   currentView: View;
@@ -684,6 +686,44 @@ const RowFormPanel = ({
                 alt=""
                 src={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
               />
+            </Box>
+          );
+          case FieldUiTypeEnum.Video:
+          return currentMode !== "view" ? (
+            <Box key={column.id}>
+              <Typography variant="subtitle2" sx={{ mb:1 }}>
+              {column.name}
+              </Typography>
+              <UploadButton
+                fileAcceptTypes=".mp4,.mov,.wmv,.avi,.flv,.mkv,.webm"
+                file={values[column.id]}
+                onUpload={(file) => {
+                  setValues({ ...values, [column.id]: file });
+                }}
+              />
+              <ReactPlayer
+                  url={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
+                  width="100%"
+                  height="auto"
+                  controls
+                />
+              {/* <CardMedia
+                  component='video'
+                  image={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
+                  autoPlay
+              /> */}
+            </Box>
+          ) : (
+            <Box key={column.id}>
+              <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+              {column.name}
+              </Typography>
+              <ReactPlayer
+                  url={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
+                  width="100%"
+                  height="auto"
+                  controls
+                />
             </Box>
           );
           case FieldUiTypeEnum.Document:

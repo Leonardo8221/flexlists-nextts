@@ -19,7 +19,7 @@ import {
   setRows,
 } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
-import { FieldType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
@@ -161,6 +161,7 @@ const DataTable = ({
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
+      let uiFieldType = dataColumn.uiField
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
@@ -196,14 +197,14 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
-          function renderFieldData(columnType: FieldType, cellValue: any) {
+          function renderFieldData(columnType: FieldUiTypeEnum, cellValue: any) {
             switch (columnType) {
-              case FieldType.Integer:
-              case FieldType.Float:
-              case FieldType.Decimal:
-              case FieldType.Double:
-              case FieldType.Money:
-              case FieldType.Percentage:
+              case FieldUiTypeEnum.Integer:
+              case FieldUiTypeEnum.Float:
+              case FieldUiTypeEnum.Decimal:
+              case FieldUiTypeEnum.Double:
+              case FieldUiTypeEnum.Money:
+              case FieldUiTypeEnum.Percentage:
                 return (
                   <Box
                     key={row.id}
@@ -218,7 +219,7 @@ const DataTable = ({
                   </Box>
                 );
 
-              case FieldType.DateTime:
+              case FieldUiTypeEnum.DateTime:
                 return (
                   <Box
                     key={row.id}
@@ -234,7 +235,7 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
-              case FieldType.Date:
+              case FieldUiTypeEnum.Date:
                 return (
                   <Box
                     key={row.id}
@@ -250,7 +251,7 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
-              case FieldType.Time:
+              case FieldUiTypeEnum.Time:
                 return (
                   <Box
                     key={row.id}
@@ -266,7 +267,10 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
-              case FieldType.Text:
+              case FieldUiTypeEnum.Text:
+              case FieldUiTypeEnum.LongText:
+              case FieldUiTypeEnum.HTML:
+              case FieldUiTypeEnum.Markdown:
                 return (
                   <Box
                     key={row.id}
@@ -280,7 +284,7 @@ const DataTable = ({
                     {cellValue}
                   </Box>
                 );
-              case FieldType.Choice:
+              case FieldUiTypeEnum.Choice:
                 const choice = getChoiceField(cellValue, dataColumn);
                 return (
                   <Box
@@ -300,7 +304,7 @@ const DataTable = ({
                     {choice?.label}
                   </Box>
                 );
-              case FieldType.Boolean:
+              case FieldUiTypeEnum.Boolean:
                 return (
                   <Box
                     key={row.id}
@@ -314,7 +318,7 @@ const DataTable = ({
                     {cellValue?.toString() === "true" ? "yes" : "no"}
                   </Box>
                 );
-              case FieldType.Image:
+              case FieldUiTypeEnum.Image:
                  return (
                   <Box
                 component="img"
@@ -327,10 +331,25 @@ const DataTable = ({
                   }
                 }
                 alt=""
-                src={cellValue? downloadFileUrl(cellValue.fileId):''}
+                src={cellValue && cellValue.fileId? downloadFileUrl(cellValue.fileId):''}
               />
                  )
-              case FieldType.File:
+              case FieldUiTypeEnum.Video:
+                  return (
+                   <Box
+                 component="video"
+                 sx={
+                   {
+                     // height: 100,
+                     width: 100,
+                     // maxHeight: { xs: 233, md: 167 },
+                     // maxWidth: { xs: 350, md: 250 },
+                   }
+                 }
+                 src={cellValue && cellValue.fileId? downloadFileUrl(cellValue.fileId):''}
+               />
+                  )
+              case FieldUiTypeEnum.Document:
                 return (
                   <Box
                     key={row.id}
@@ -351,7 +370,7 @@ const DataTable = ({
                 return <></>;
             }
           }
-          return renderFieldData(dataColumnType, renderedCellValue);
+          return renderFieldData(uiFieldType, renderedCellValue);
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,
