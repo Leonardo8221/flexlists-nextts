@@ -26,7 +26,6 @@ export default function Custom404({ styles }: Custom404Props) {
     },
     FormLogoWrapper: {
       display: "flex",
-      marginBottom: 2,
     },
     FormLogo: {
       width: 60,
@@ -101,7 +100,8 @@ export default function Custom404({ styles }: Custom404Props) {
         <Grid container>
           <Grid
             item
-            xs={6}
+            xs={12}
+            md={6}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -168,7 +168,7 @@ export default function Custom404({ styles }: Custom404Props) {
               </Link>
             </Box>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={styles?.image}
               component="img"

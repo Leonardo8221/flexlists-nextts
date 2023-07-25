@@ -6,7 +6,7 @@ import {
   Grid,
   InputAdornment,
   Link,
-  Snackbar
+  Snackbar,
 } from "@mui/material";
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
@@ -22,47 +22,46 @@ export default function Custom500({ styles }: Custom500Props) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const handleClick = () => {
-      setOpen(true)
-    }
+    setOpen(true);
+  };
   styles = {
     image: {
-        width: 660,
-        objectFit: "contain",
-        float: "right",
+      width: 660,
+      objectFit: "contain",
+      float: "right",
+    },
+    FormLogoWrapper: {
+      display: "flex",
+    },
+    FormLogo: {
+      width: 60,
+      height: 45,
+      objectFit: "contain",
+      marginTop: "2px",
+    },
+    textField: {
+      "& .MuiInputBase-root": {
+        backgroundColor: "#fcfeff",
+        border: "none",
+        color: "#666",
+        boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
       },
-      FormLogoWrapper: {
-        display: "flex",
-        marginBottom: 2,
+
+      "& ::placeholder": {
+        color: "#ccc",
       },
-      FormLogo: {
-        width: 60,
-        height: 45,
-        objectFit: "contain",
-        marginTop: "2px",
-      },
-      textField: {
-        "& .MuiInputBase-root": {
-          backgroundColor: "#fcfeff",
+
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
           border: "none",
-          color: "#666",
-          boxShadow: "-4px 0 12px 0 rgba(0,0,0,0.1)",
-        },
-  
-        "& ::placeholder": {
-          color: "#ccc",
-        },
-  
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            border: "none",
-          },
         },
       },
-      link: {
-        color: theme.palette.palette_style.text.selected,
-        textDecoration: "none",
-        "&:hover": { textDecoration: "underline" },
-      },
+    },
+    link: {
+      color: theme.palette.palette_style.text.selected,
+      textDecoration: "none",
+      "&:hover": { textDecoration: "underline" },
+    },
   };
   return (
     <Box>
@@ -98,22 +97,32 @@ export default function Custom500({ styles }: Custom500Props) {
       </Container>
       <Container
         maxWidth="xl"
-        sx={{ display: "flex", alignItems: "center", minHeight: "50vh" }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
       >
-        <Grid container>
+        <Grid
+          container
+          sx={{
+            flexDirection: { xs: "column", md: "row" },
+          }}
+        >
           <Grid
             item
-            xs={6}
+            xs={12}
+            md={6}
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              gap: {xs:1, md:3}
+              gap: { xs: 1, md: 3 },
             }}
           >
             <Box
               sx={{
-                fontSize: "96px",
+                fontSize: { xs: 64, md: 96 },
                 fontWeight: 800,
                 color: theme.palette.palette_style.text.selected,
               }}
@@ -128,26 +137,36 @@ export default function Custom500({ styles }: Custom500Props) {
               the meantime, why not enjoy a cup of virtual coffee and try
               exploring our other pages? Happy hunting!
             </Typography>
-            <Box sx={{background:"red"}}>
+            <Box sx={{ position: "relative" }}>
               <TextField
                 fullWidth
-                sx={{...styles?.textField, ...{border:"1px solid #ccc"}}}
+                sx={{ ...styles?.textField, ...{ border: "1px solid #ccc" } }}
                 value={"123456"}
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment sx={{cursor:"pointer"}} onClick={handleClick} position="start">
+                    <InputAdornment
+                      sx={{ cursor: "pointer" }}
+                      onClick={handleClick}
+                      position="start"
+                    >
                       <ContentPasteIcon />
                     </InputAdornment>
                   ),
                 }}
               />
               <Snackbar
-              sx={{position:"absolute", bottom:"0", right:"0"}}
-            open={open}
-            onClose={() => setOpen(false)}
-            autoHideDuration={2000}
-            message="Copied to clipboard"
-          />
+                sx={{
+                  position: "absolute",
+                  bottom: "-100% !important",
+                  width: "100%",
+                  left: { xs: 0, md: "100% !important" },
+                  transform: { md: "translateX(-100%)" },
+                }}
+                open={open}
+                onClose={() => setOpen(false)}
+                autoHideDuration={2000}
+                message="Copied to clipboard"
+              />
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 6 }}>
               <Box
@@ -169,12 +188,15 @@ export default function Custom500({ styles }: Custom500Props) {
                   />
                 </Link>
               </Box>
-              <Link href="./existingHome" sx={{ ...styles?.link, ...{ color: "#333" } }}
->Back to homepage
+              <Link
+                href="./existingHome"
+                sx={{ ...styles?.link, ...{ color: "#333" } }}
+              >
+                Back to homepage
               </Link>
             </Box>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={styles?.image}
               component="img"
