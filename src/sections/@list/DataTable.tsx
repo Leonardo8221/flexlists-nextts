@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {
+  fetchColumns,
   fetchRowsByPage,
   setCurrentView,
   setRows,
@@ -381,6 +382,7 @@ const DataTable = ({
   }, [columnsTable]);
 
   const handleRowAction = (values: any, action: string) => {
+    fetchColumns(currentView.id)
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
     return;
     // if (action === "create" || action === "clone") {
