@@ -29,12 +29,13 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
+import UnarchiveIcon from "@mui/icons-material/Unarchive";
 
 import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { hasPermission } from "src/utils/permissionHelper";
-import { archiveBulkContents, cloneContent, createContent, deleteBulkContents } from "src/services/listContent.service";
+import { archiveBulkContents, cloneContent, createContent, deleteBulkContents, unarchiveBulkContents } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
@@ -50,7 +51,7 @@ type DataTableProps = {
   count: number;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
-  setFlashMessage:(message: FlashMessageModel) => void
+  setFlashMessage: (message: FlashMessageModel) => void
 };
 
 const DataTable = ({
@@ -98,6 +99,12 @@ const DataTable = ({
       title: "Archive",
       icon: <ArchiveIcon />,
       action: "archive",
+      allowed: hasPermission(currentView?.role, "Update"),
+    },
+    {
+      title: "Unarchive",
+      icon: <UnarchiveIcon />,
+      action: "unarchive",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
@@ -300,36 +307,36 @@ const DataTable = ({
                   </Box>
                 );
               case FieldUiTypeEnum.Image:
-                 return (
+                return (
                   <Box
-                component="img"
-                sx={
-                  {
-                    // height: 100,
-                    width: 100,
-                    // maxHeight: { xs: 233, md: 167 },
-                    // maxWidth: { xs: 350, md: 250 },
-                  }
-                }
-                alt=""
-                src={cellValue && cellValue.fileId? downloadFileUrl(cellValue.fileId):''}
-              />
-                 )
+                    component="img"
+                    sx={
+                      {
+                        // height: 100,
+                        width: 100,
+                        // maxHeight: { xs: 233, md: 167 },
+                        // maxWidth: { xs: 350, md: 250 },
+                      }
+                    }
+                    alt=""
+                    src={cellValue && cellValue.fileId ? downloadFileUrl(cellValue.fileId) : ''}
+                  />
+                )
               case FieldUiTypeEnum.Video:
-                  return (
-                   <Box
-                 component="video"
-                 sx={
-                   {
-                     // height: 100,
-                     width: 100,
-                     // maxHeight: { xs: 233, md: 167 },
-                     // maxWidth: { xs: 350, md: 250 },
-                   }
-                 }
-                 src={cellValue && cellValue.fileId? downloadFileUrl(cellValue.fileId):''}
-               />
-                  )
+                return (
+                  <Box
+                    component="video"
+                    sx={
+                      {
+                        // height: 100,
+                        width: 100,
+                        // maxHeight: { xs: 233, md: 167 },
+                        // maxWidth: { xs: 350, md: 250 },
+                      }
+                    }
+                    src={cellValue && cellValue.fileId ? downloadFileUrl(cellValue.fileId) : ''}
+                  />
+                )
               case FieldUiTypeEnum.Document:
                 return (
                   <Box
@@ -344,9 +351,9 @@ const DataTable = ({
                     {cellValue?.fileName}
                   </Box>
                 );
-                // return cellValue? (
-                //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
-                // ):(<></>)
+              // return cellValue? (
+              //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
+              // ):(<></>)
               default:
                 return <></>;
             }
@@ -458,13 +465,12 @@ const DataTable = ({
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
-  const handleBulkAction = async(action: string) => {
-     switch (action) {
+  const handleBulkAction = async (action: string) => {
+    switch (action) {
       case "clone":
-        let cloneResponse = await cloneContent(currentView.id,Object.keys(rowSelection).map((key:any) => {
+        let cloneResponse = await cloneContent(currentView.id, Object.keys(rowSelection).map((key: any) => {
           let row = rows.find((row) => row.id === parseInt(key));
-          if(row)
-          {
+          if (row) {
             delete row.id;
             var archiveField = columns.find(
               (x) => x.system && x.name === "___archived"
@@ -476,25 +482,37 @@ const DataTable = ({
             return row;
           }
         }));
-        if(isSucc(cloneResponse))
-        {
-          setFlashMessage({message:'Cloned successfully',type:'success'});
+        if (isSucc(cloneResponse)) {
+          setFlashMessage({ message: 'Cloned successfully', type: 'success' });
+          setRowSelection({});
         }
-        else
-        {
-          setFlashMessage({message:(cloneResponse as FlexlistsError).message,type:'error'});
+        else {
+          setFlashMessage({ message: (cloneResponse as FlexlistsError).message, type: 'error' });
+          setRowSelection({});
           return;
         }
         break;
       case "archive":
-        let archiveResponse = await archiveBulkContents(currentView.id,Object.keys(rowSelection).map((key:any) => parseInt(key)));
-        if(isSucc(archiveResponse))
-        {
-          setFlashMessage({message:'Archived successfully',type:'success'});
+        let archiveResponse = await archiveBulkContents(currentView.id, Object.keys(rowSelection).map((key: any) => parseInt(key)));
+        if (isSucc(archiveResponse)) {
+          setFlashMessage({ message: 'Archived successfully', type: 'success' });
+          setRowSelection({});
         }
-        else
-        {
-          setFlashMessage({message:(archiveResponse as FlexlistsError).message,type:'error'});
+        else {
+          setFlashMessage({ message: (archiveResponse as FlexlistsError).message, type: 'error' });
+          setRowSelection({});
+          return;
+        }
+        break;
+      case "unarchive":
+        let unarchiveResponse = await unarchiveBulkContents(currentView.id, Object.keys(rowSelection).map((key: any) => parseInt(key)));
+        if (isSucc(unarchiveResponse)) {
+          setFlashMessage({ message: 'Unarchived successfully', type: 'success' });
+          setRowSelection({});
+        }
+        else {
+          setFlashMessage({ message: (unarchiveResponse as FlexlistsError).message, type: 'error' });
+          setRowSelection({});
           return;
         }
         break;
@@ -505,21 +523,21 @@ const DataTable = ({
         return;
       default:
         break;
-     }
-     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
-  }
-  const handleBulkDelete = async() => {
-    let deleteResponse = await deleteBulkContents(currentView.id,Object.keys(rowSelection).map((key:any) => parseInt(key)));
-    if(isSucc(deleteResponse))
-    {
-      setFlashMessage({message:'Deleted successfully',type:'success'});
     }
-    else
-    {
-      setFlashMessage({message:(deleteResponse as FlexlistsError).message,type:'error'});
+    fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+  }
+  const handleBulkDelete = async () => {
+    let deleteResponse = await deleteBulkContents(currentView.id, Object.keys(rowSelection).map((key: any) => parseInt(key)));
+    if (isSucc(deleteResponse)) {
+      setFlashMessage({ message: 'Deleted successfully', type: 'success' });
+      setRowSelection({});
+    }
+    else {
+      setFlashMessage({ message: (deleteResponse as FlexlistsError).message, type: 'error' });
+      setRowSelection({});
       return;
     }
-    
+
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
   }
   return (
@@ -881,8 +899,8 @@ const DataTable = ({
         message="Are you sure you want to selected rows?"
         open={openBulkDeleteDialog}
         handleClose={() => setOpenBulkDeleteDialog(false)}
-        onSubmit={()=>{handleBulkDelete()}}
-       />
+        onSubmit={() => { handleBulkDelete() }}
+      />
     </>
   );
 };

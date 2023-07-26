@@ -106,7 +106,7 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: "Archive",
+      title: `${values && values[columns.find((x) => x.system && x.name === "___archived").id] ? 'Unarchive' : 'Archive'}`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -196,8 +196,8 @@ const RowFormPanel = ({
   const handleAction = async (action: string) => {
     let newValues = Object.assign({}, values);
     if (action === "delete") {
-       setOpenBulkDeleteDialog(true);
-       return;
+      setOpenBulkDeleteDialog(true);
+      return;
     } else if (action === "resize") {
       if (panelWidth.includes("%")) {
         setPanelWidth("500px");
@@ -206,13 +206,13 @@ const RowFormPanel = ({
       }
       return;
     } else if (action === "clone") {
-        delete newValues.id;
-        var archiveField = columns.find(
-          (x) => x.system && x.name === "___archived"
-        );
-        if (archiveField) {
-          newValues[archiveField.name] = newValues[archiveField.id]
-        }
+      delete newValues.id;
+      var archiveField = columns.find(
+        (x) => x.system && x.name === "___archived"
+      );
+      if (archiveField) {
+        newValues[archiveField.name] = newValues[archiveField.id]
+      }
       var createRowResponse = await cloneContent(
         currentView.id,
         newValues
@@ -236,14 +236,14 @@ const RowFormPanel = ({
         (x) => x.system && x.name === "___archived"
       );
       if (archiveField) {
-        newValues[archiveField.id] = true;
+        newValues[archiveField.id] = !values[archiveField.id];
       }
       var updateRowRespone = await listContentService.updateContent(
         currentView.id,
         newValues
       );
       if (isSucc(updateRowRespone)) {
-        setFlashMessage({message: "Row archived successfully", type: "success"})
+        setFlashMessage({ message: "Row archived successfully", type: "success" })
         onSubmit(newValues, "archive");
         onClose();
         return;
@@ -264,17 +264,16 @@ const RowFormPanel = ({
       values.id
     );
     if (isErr(deleteContentResponse)) {
-      setFlashMessage({message: (deleteContentResponse as FlexlistsError).message, type: "error"})
+      setFlashMessage({ message: (deleteContentResponse as FlexlistsError).message, type: "error" })
       return;
     }
-    else
-    {
-      setFlashMessage({message: "Row deleted successfully", type: "success"})
+    else {
+      setFlashMessage({ message: "Row deleted successfully", type: "success" })
     }
     onSubmit(values, "delete");
     onClose();
   };
-  
+
   const setDateValue = (columnId: number, date: Dayjs | Date | null) => {
     if (date == null) {
       return;
@@ -447,8 +446,8 @@ const RowFormPanel = ({
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
+                  values[getDataColumnId(column.id, columns)]
+                ).toLocaleString()
                 : ""}
             </Typography>
           </div>
@@ -475,8 +474,8 @@ const RowFormPanel = ({
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                  values[getDataColumnId(column.id, columns)]
+                ).toLocaleDateString()
                 : ""}
             </Typography>
           </div>
@@ -505,8 +504,8 @@ const RowFormPanel = ({
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                  values[getDataColumnId(column.id, columns)]
+                ).toLocaleDateString()
                 : "null"}
             </Typography>
           </div>
@@ -658,119 +657,119 @@ const RowFormPanel = ({
             />
           </div>
         );
-        case FieldUiTypeEnum.Image:
-          return currentMode !== "view" ? (
-            <Box key={column.id}>
-              <Typography variant="subtitle2" sx={{ mb:1 }}>
+      case FieldUiTypeEnum.Image:
+        return currentMode !== "view" ? (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {column.name}
-              </Typography>
-              <UploadButton
-                fileAcceptTypes={['png','jpg','jpeg','gif']}
-                file={values[column.id]}
-                onUpload={(file) => {
-                  setValues({ ...values, [column.id]: file });
-                }}
-              />
-              <Box
-                component="img"
-                sx={
-                  {
-                    // height: 100,
-                    // width: 350,
-                    // maxHeight: { xs: 233, md: 167 },
-                    // maxWidth: { xs: 350, md: 250 },
-                  }
+            </Typography>
+            <UploadButton
+              fileAcceptTypes={['png', 'jpg', 'jpeg', 'gif']}
+              file={values[column.id]}
+              onUpload={(file) => {
+                setValues({ ...values, [column.id]: file });
+              }}
+            />
+            <Box
+              component="img"
+              sx={
+                {
+                  // height: 100,
+                  // width: 350,
+                  // maxHeight: { xs: 233, md: 167 },
+                  // maxWidth: { xs: 350, md: 250 },
                 }
-                alt=""
-                src={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
-              />
-            </Box>
-            
-          ) : (
-            <Box key={column.id}>
-              <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+              }
+              alt=""
+              src={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+            />
+          </Box>
+
+        ) : (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
-              </Typography>
-              <Box
-                component="img"
-                sx={
-                  {
-                    // height: 233,
-                    // width: 350,
-                    // maxHeight: { xs: 233, md: 167 },
-                    // maxWidth: { xs: 350, md: 250 },
-                  }
+            </Typography>
+            <Box
+              component="img"
+              sx={
+                {
+                  // height: 233,
+                  // width: 350,
+                  // maxHeight: { xs: 233, md: 167 },
+                  // maxWidth: { xs: 350, md: 250 },
                 }
-                alt=""
-                src={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
-              />
-            </Box>
-          );
-          case FieldUiTypeEnum.Video:
-          return currentMode !== "view" ? (
-            <Box key={column.id}>
-              <Typography variant="subtitle2" sx={{ mb:1 }}>
+              }
+              alt=""
+              src={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+            />
+          </Box>
+        );
+      case FieldUiTypeEnum.Video:
+        return currentMode !== "view" ? (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {column.name}
-              </Typography>
-              <UploadButton
-                fileAcceptTypes={['mp4','mov','wmv','flv','avi','mkv','webm']}
-                file={values[column.id]}
-                onUpload={(file) => {
-                  setValues({ ...values, [column.id]: file });
-                }}
-              />
-              <ReactPlayer
-                  url={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
-                  width="100%"
-                  height="auto"
-                  controls
-                />
-              {/* <CardMedia
+            </Typography>
+            <UploadButton
+              fileAcceptTypes={['mp4', 'mov', 'wmv', 'flv', 'avi', 'mkv', 'webm']}
+              file={values[column.id]}
+              onUpload={(file) => {
+                setValues({ ...values, [column.id]: file });
+              }}
+            />
+            <ReactPlayer
+              url={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+              width="100%"
+              height="auto"
+              controls
+            />
+            {/* <CardMedia
                   component='video'
                   image={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
                   autoPlay
               /> */}
-            </Box>
-          ) : (
-            <Box key={column.id}>
-              <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+          </Box>
+        ) : (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
-              </Typography>
-              <ReactPlayer
-                  url={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
-                  width="100%"
-                  height="auto"
-                  controls
-                />
-            </Box>
-          );
-          case FieldUiTypeEnum.Document:
-            return currentMode !== "view" ? (
-              <Box key={column.id}>
-                <Typography variant="subtitle2" sx={{ mb:1 }}>
-                {column.name}
-                </Typography>
-                <UploadButton
-                  fileAcceptTypes={['*/*']}
-                  file={values[column.id]}
-                  onUpload={(file) => {
-                    setValues({ ...values, [column.id]: file });
-                  }}
-                />
-              </Box>
-              
-            ) : (
-              <Box key={column.id}>
-                <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-                {column.name}
-                </Typography>
-                {
-                  values && values[column.id]? (
-                    <Link href={downloadFileUrl(values[column.id].fileId)}>{values[column.id].fileName}</Link>
-                  ):(<></>)
-                }
-              </Box>
-            );
+            </Typography>
+            <ReactPlayer
+              url={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+              width="100%"
+              height="auto"
+              controls
+            />
+          </Box>
+        );
+      case FieldUiTypeEnum.Document:
+        return currentMode !== "view" ? (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              {column.name}
+            </Typography>
+            <UploadButton
+              fileAcceptTypes={['*/*']}
+              file={values[column.id]}
+              onUpload={(file) => {
+                setValues({ ...values, [column.id]: file });
+              }}
+            />
+          </Box>
+
+        ) : (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+              {column.name}
+            </Typography>
+            {
+              values && values[column.id] ? (
+                <Link href={downloadFileUrl(values[column.id].fileId)}>{values[column.id].fileName}</Link>
+              ) : (<></>)
+            }
+          </Box>
+        );
       default:
         return <div key={column.id}></div>;
     }
@@ -991,11 +990,11 @@ const RowFormPanel = ({
             )}
         </Box>
         <YesNoDialog
-        message="Are you sure you want to delete selected data?"
-        open={openBulkDeleteDialog}
-        handleClose={() => setOpenBulkDeleteDialog(false)}
-        onSubmit={()=>{handleDelete()}}
-       />
+          message="Are you sure you want to delete selected data?"
+          open={openBulkDeleteDialog}
+          handleClose={() => setOpenBulkDeleteDialog(false)}
+          onSubmit={() => { handleDelete() }}
+        />
       </DialogActions>
     </Drawer>
   );
