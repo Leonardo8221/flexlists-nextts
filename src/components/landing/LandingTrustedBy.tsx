@@ -1,6 +1,6 @@
 // material
 import { useTheme, styled } from "@mui/material/styles";
-import { Box, Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import FeatureCard from "src/components/cards/Card";
 // ICONS
 import SearchIcon from "@mui/icons-material/Search";
@@ -75,19 +75,27 @@ const FeatureCards = [
 export default function LandingTrustedBy() {
   return (
     <RootStyle>
-      <Container maxWidth="xl">
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: 4,
+          textAlign: { xs: "center", md: "left" },
+        }}
+      >
+        <Typography variant="h2" gutterBottom sx={{ py: 2 }}>
+          Features title
+        </Typography>
         <Box
           sx={{
             display: "flex",
             flexWrap: "wrap",
             gap: { xs: 2, md: 3 },
-            pt: 0,
           }}
         >
-          {FeatureCards.map((card: any,index:number) => {
+          {FeatureCards.map((card: any, index: number) => {
             return (
               <FeatureCard
-                key = {index}
+                key={index}
                 icon={card.icon}
                 title={card.title}
                 description={card.description}
