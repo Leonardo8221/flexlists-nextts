@@ -33,7 +33,7 @@ import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { hasPermission } from "src/utils/permissionHelper";
-import { archiveBulkContents, createContent, deleteBulkContents } from "src/services/listContent.service";
+import { archiveBulkContents, cloneContent, createContent, deleteBulkContents } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
@@ -457,11 +457,18 @@ const DataTable = ({
   const handleBulkAction = async(action: string) => {
      switch (action) {
       case "clone":
-        let cloneResponse = await createContent(currentView.id,Object.keys(rowSelection).map((key:any) => {
+        let cloneResponse = await cloneContent(currentView.id,Object.keys(rowSelection).map((key:any) => {
           let row = rows.find((row) => row.id === parseInt(key));
           if(row)
           {
             delete row.id;
+            var archiveField = columns.find(
+              (x) => x.system && x.name === "___archived"
+            );
+            if (archiveField) {
+              row[archiveField.name] = row[archiveField.id]
+              delete row[archiveField.id];
+            }
             return row;
           }
         }));

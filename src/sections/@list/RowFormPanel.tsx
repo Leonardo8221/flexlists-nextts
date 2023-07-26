@@ -28,7 +28,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { connect } from "react-redux";
 import { ViewField } from "src/models/ViewField";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
-import { listContentService } from "src/services/listContent.service";
+import { cloneContent, listContentService } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { filter } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
@@ -57,6 +57,7 @@ import { hasPermission } from "src/utils/permissionHelper";
 import { View } from "src/models/SharedModels";
 import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from 'react-player';
+import YesNoDialog from "src/components/dialog/YesNoDialog";
 
 interface RowFormProps {
   currentView: View;
@@ -88,6 +89,7 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [error, setError] = useState<string>("");
   const [panelWidth, setPanelWidth] = useState("500px");
+  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
 
   //console.log('knarsterfarster', currentView)
   const actions = [
@@ -194,14 +196,8 @@ const RowFormPanel = ({
   const handleAction = async (action: string) => {
     let newValues = Object.assign({}, values);
     if (action === "delete") {
-      var deleteContentResponse = await listContentService.deleteContent(
-        currentView.id,
-        newValues.id
-      );
-      if (isErr(deleteContentResponse)) {
-        setError(ErrorConsts.InternalServerError);
-        return;
-      }
+       setOpenBulkDeleteDialog(true);
+       return;
     } else if (action === "resize") {
       if (panelWidth.includes("%")) {
         setPanelWidth("500px");
@@ -210,7 +206,14 @@ const RowFormPanel = ({
       }
       return;
     } else if (action === "clone") {
-      var createRowResponse = await listContentService.createContent(
+        delete newValues.id;
+        var archiveField = columns.find(
+          (x) => x.system && x.name === "___archived"
+        );
+        if (archiveField) {
+          newValues[archiveField.name] = newValues[archiveField.id]
+        }
+      var createRowResponse = await cloneContent(
         currentView.id,
         newValues
       );
@@ -221,8 +224,6 @@ const RowFormPanel = ({
         createRowResponse.data.content.length > 0
       ) {
         newValues.id = createRowResponse.data.content[0].id;
-        newValues.createdAt = new Date().toISOString();
-        newValues.updatedAt = new Date().toISOString();
       } else {
         setFlashMessage({
           type: "error",
@@ -256,7 +257,23 @@ const RowFormPanel = ({
     onSubmit(newValues, action);
     onClose();
   };
-
+  const handleDelete = async () => {
+    var deleteContentResponse = await listContentService.deleteContent(
+      currentView.id,
+      values.id
+    );
+    if (isErr(deleteContentResponse)) {
+      setFlashMessage({message: (deleteContentResponse as FlexlistsError).message, type: "error"})
+      return;
+    }
+    else
+    {
+      setFlashMessage({message: "Row deleted successfully", type: "success"})
+    }
+    onSubmit(values, "delete");
+    onClose();
+  };
+  
   const setDateValue = (columnId: number, date: Dayjs | Date | null) => {
     if (date == null) {
       return;
@@ -972,6 +989,12 @@ const RowFormPanel = ({
               </Button>
             )}
         </Box>
+        <YesNoDialog
+        message="Are you sure you want to delete selected data?"
+        open={openBulkDeleteDialog}
+        handleClose={() => setOpenBulkDeleteDialog(false)}
+        onSubmit={()=>{handleDelete()}}
+       />
       </DialogActions>
     </Drawer>
   );

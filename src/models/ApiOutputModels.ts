@@ -3,18 +3,6 @@ import { TranslationKeyType } from 'src/enums/SharedEnums'
 export type CreateListOutputDto = {
     listId:number
 }
-export type PublishListOutputDto = {
-    code:any
-}
-export type AddAccessToListOutputDto = {
-    keyId:number
-    key:any
-}
-export type GetKeysOutputDto = {
-    keyId:number
-    key:any
-    role:Role
-}
 export type CreateUIFieldOutputDto = {
     viewId:number
     fieldId:number
@@ -28,18 +16,12 @@ export type UpdateUiFieldOutputDto = {
     fieldId:number
 }
 export type CreateContentOutputDto = {
-    listId:number
+    viewId:number
     contentId:number
 }
-export type GetContentsOutputDto = {
-    listId:number
-    count:any
-    content:any[]
-}
-export type GetContentOutputDto = {
-    listId:number
-    count:number
-    content:any
+export type CloneContentOutputDto = {
+    viewId:number
+    contentId:number
 }
 export type SearchContentsOutputDto = {
     listId:number
@@ -63,9 +45,6 @@ export type CreateViewOutputDto = {
 }
 export type SearchViewsOutputDto = {
     views:any[]
-}
-export type CheckInviteOutputDto = {
-    viewId?:any
 }
 export type AcceptInviteOutputDto = {
     viewId?:any

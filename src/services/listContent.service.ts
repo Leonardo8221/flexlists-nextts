@@ -1,6 +1,7 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
 import { CreateContentOutputDto } from 'src/models/ApiOutputModels'
+import { CloneContentOutputDto } from 'src/models/ApiOutputModels'
 import { SearchContentsOutputDto } from 'src/models/ApiOutputModels'
 import { Sort } from 'src/models/SharedModels'
 import { SearchOutputDto } from 'src/models/ApiOutputModels'
@@ -9,6 +10,7 @@ import { Query } from 'src/models/SharedModels'
 
 export const listContentService = {
     createContent,
+    cloneContent,
     updateContent,
     deleteBulkContents,
     deleteContent,
@@ -21,6 +23,11 @@ export const listContentService = {
 
 export async function createContent(viewId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>> {
   var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateContentOutputDto>>(`/api/listContent/createContent`, {viewId,content})
+
+  return response.data;
+};
+export async function cloneContent(viewId:number,content:any): Promise<FlexlistsError|FlexlistsSuccess<CloneContentOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CloneContentOutputDto>>(`/api/listContent/cloneContent`, {viewId,content})
 
   return response.data;
 };
