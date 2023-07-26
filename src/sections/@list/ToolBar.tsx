@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { Box, Snackbar } from "@mui/material";
-import ToolBarItem from "../../components/toolbar";
+import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
-import Collapse from "@mui/material/Collapse";
-import ViewUsersList from "./UserList";
 import ActionItem from "../../components/toolbar/ActionItem";
 import { connect } from "react-redux";
 import Filter from "./Filter";
@@ -16,11 +13,14 @@ import { listViewService } from "src/services/listView.service";
 import { View } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
 import { hasPermission } from "src/utils/permissionHelper";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
 
 type ToolbBarProps = {
   open: boolean;
   onOpen: (action: boolean) => void;
   currentView: View;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
 const dos = [
@@ -77,7 +77,7 @@ const actions = [
   },
 ];
 
-const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
+const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "lg");
   const [visibleFilter, setVisibleFilter] = useState(false);
@@ -103,11 +103,10 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
       currentView.fields
     );
     if (isSucc(response)) {
-      setSaveViewMessage("Save view successfully");
+      setFlashMessage({message: "Save view success", type: "success"})
     } else {
-      setSaveViewMessage("Save view fail");
+      setFlashMessage({message: "Save view failed", type: "error"})
     }
-    setIsSaveViewModalOpen(true);
   };
   return (
     <Box
@@ -126,14 +125,14 @@ const ToolbBar = ({ open, onOpen, currentView }: ToolbBarProps) => {
         width: "100%",
       }}
     >
-      <Snackbar
+      {/* <Snackbar
         // anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={isSaveViewModalOpen}
         autoHideDuration={5000}
         onClose={() => setIsSaveViewModalOpen(false)}
         message={saveViewMessage}
         key={"top-center"}
-      />
+      /> */}
       {/* <Box sx={{ display: "flex" }}> */}
       {/* <Box
           sx={{
@@ -290,6 +289,8 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setFlashMessage
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToolbBar);
