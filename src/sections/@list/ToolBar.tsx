@@ -162,6 +162,9 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
             // xs: `1px solid ${theme.palette.palette_style.border.default}`,
             md: "none",
           },
+          "::-webkit-scrollbar": {
+            display: "none",
+          },
         }}
       >
         {hasPermission(currentView?.role, "Read") && (

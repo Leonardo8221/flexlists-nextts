@@ -178,7 +178,8 @@ const ViewFields = ({
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =  useState<boolean>(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
+    useState<boolean>(false);
 
   return (
     <>
@@ -310,9 +311,11 @@ const ViewFields = ({
                       sx={{
                         borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
                         py: 2,
-                        maxHeight: `${window.innerHeight - 140}px`,
+                        maxHeight: {
+                          xs: `${window.innerHeight - 320}px`,
+                          md: `${window.innerHeight - 140}px`,
+                        },
                         overflow: "auto",
-                        minHeight: "360px",
                       }}
                     >
                       {filterColumns.map((column: any, index: number) => (
@@ -457,11 +460,11 @@ const ViewFields = ({
           )}
         </Box>
       </Modal>
-    <ListFields
-    open={visibleFieldManagementPanel}
-    onClose={() => handleCloseFieldManagementPanel()}
-  />
-  </>
+      <ListFields
+        open={visibleFieldManagementPanel}
+        onClose={() => handleCloseFieldManagementPanel()}
+      />
+    </>
   );
 };
 

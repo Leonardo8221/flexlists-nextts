@@ -1,10 +1,9 @@
 import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
-import MainFeatures from "src/components/products/MainFeatures";
-import { LandingPricingPlans } from "src/components/landing";
+import MainMarketplace from "src/components/marketplace/MainMarketplace";
 
-export default function product() {
+export default function marketplace() {
   return (
     <MainLayout>
       <Box
@@ -51,14 +50,14 @@ export default function product() {
                   maxWidth: "100%",
                   maxHeight: "100%",
                   boxShadow: "0 0 12px 0 rgba(0,0,0,.1)",
+                  mt: { xs: 2, md: 0 },
                 }}
               />
             </Grid>
           </Grid>
         </Container>
       </Box>
-      <MainFeatures />
-      <LandingPricingPlans />
+      <MainMarketplace />
     </MainLayout>
   );
 }

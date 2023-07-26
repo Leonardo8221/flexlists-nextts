@@ -130,7 +130,7 @@ export default function LandingPricingPlans() {
         src="/assets/home/pricingstyle.png"
         variants={varFadeInUp}
       />
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box
           sx={{ margin: "auto", my: 10, textAlign: "center", maxWidth: 650 }}
         >
@@ -156,11 +156,12 @@ export default function LandingPricingPlans() {
         <Grid container spacing={5}>
           {PLANS.map((plan, index) => (
             <Grid key={plan.license} item xs={12} md={4}>
-              <MotionInView
+              <PlanCard plan={plan} cardIndex={index} />
+
+              {/* <MotionInView
                 variants={index === 1 ? varFadeInDown : varFadeInUp}
               >
-                <PlanCard plan={plan} cardIndex={index} />
-              </MotionInView>
+              </MotionInView> */}
             </Grid>
           ))}
         </Grid>
