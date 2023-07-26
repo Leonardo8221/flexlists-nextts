@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Button, Typography, Link } from "@mui/material";
+import { Box, Stack, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -7,8 +7,6 @@ import MaterialReactTable, {
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
 import RowFormPanel from "./RowFormPanel";
-import AddColumnButton from "../../components/add-button/AddColumnButton";
-import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -24,10 +22,8 @@ import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
-import { ChoiceModel } from "src/models/ChoiceModel";
 import { downloadFileUrl, getChoiceField } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
@@ -37,30 +33,12 @@ import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { hasPermission } from "src/utils/permissionHelper";
+import { archiveBulkContents, createContent, deleteBulkContents } from "src/services/listContent.service";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
 
-const actions = [
-  {
-    title: "Clone",
-    icon: <ContentCopyIcon />,
-    action: "clone",
-  },
-  {
-    title: "Archive",
-    icon: <ArchiveIcon />,
-    action: "archive",
-  },
-  {
-    title: "Print",
-    icon: <PrintIcon />,
-    action: "print",
-  },
-  {
-    title: "Delete",
-    icon: <DeleteIcon />,
-    action: "delete",
-    color: "#c92929",
-  },
-];
 
 type DataTableProps = {
   tab: boolean;
@@ -71,6 +49,7 @@ type DataTableProps = {
   count: number;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
+  setFlashMessage:(message: FlashMessageModel) => void
 };
 
 const DataTable = ({
@@ -82,12 +61,12 @@ const DataTable = ({
   count,
   fetchRowsByPage,
   setCurrentView,
+  setFlashMessage
 }: DataTableProps) => {
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
-
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
     useState(false);
@@ -105,8 +84,9 @@ const DataTable = ({
   const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
     "view"
   );
+  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
 
-  const actions = [
+  const bulkActions = [
     {
       title: "Clone",
       icon: <ContentCopyIcon />,
@@ -140,9 +120,9 @@ const DataTable = ({
 
   useEffect(() => {
     if (Object.keys(rowSelection).length) {
-      setSelectedRowData(
-        rows[parseInt(Object.keys(rowSelection).pop() || "0")]
-      );
+      // setSelectedRowData(
+      //   rows[parseInt(Object.keys(rowSelection).pop() || "0")]
+      // );
     }
   }, [rows, rowSelection]);
 
@@ -474,6 +454,63 @@ const DataTable = ({
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
+  const handleBulkAction = async(action: string) => {
+     switch (action) {
+      case "clone":
+        let cloneResponse = await createContent(currentView.id,Object.keys(rowSelection).map((key:any) => {
+          let row = rows.find((row) => row.id === parseInt(key));
+          if(row)
+          {
+            delete row.id;
+            return row;
+          }
+        }));
+        if(isSucc(cloneResponse))
+        {
+          setFlashMessage({message:'Cloned successfully',type:'success'});
+        }
+        else
+        {
+          setFlashMessage({message:(cloneResponse as FlexlistsError).message,type:'error'});
+          return;
+        }
+        break;
+      case "archive":
+        let archiveResponse = await archiveBulkContents(currentView.id,Object.keys(rowSelection).map((key:any) => parseInt(key)));
+        if(isSucc(archiveResponse))
+        {
+          setFlashMessage({message:'Archived successfully',type:'success'});
+        }
+        else
+        {
+          setFlashMessage({message:(archiveResponse as FlexlistsError).message,type:'error'});
+          return;
+        }
+        break;
+      case "print":
+        break;
+      case "delete":
+        setOpenBulkDeleteDialog(true);
+        return;
+      default:
+        break;
+     }
+     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+  }
+  const handleBulkDelete = async() => {
+    let deleteResponse = await deleteBulkContents(currentView.id,Object.keys(rowSelection).map((key:any) => parseInt(key)));
+    if(isSucc(deleteResponse))
+    {
+      setFlashMessage({message:'Deleted successfully',type:'success'});
+    }
+    else
+    {
+      setFlashMessage({message:(deleteResponse as FlexlistsError).message,type:'error'});
+      return;
+    }
+    
+    fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+  }
   return (
     <>
       <Box
@@ -563,6 +600,7 @@ const DataTable = ({
             })}
             onPaginationChange={setPagination}
             state={{ pagination, rowSelection, showColumnFilters }}
+            getRowId={(row) => row.id}
             onRowSelectionChange={setRowSelection}
             onShowColumnFiltersChange={(updater: any) => {
               setShowColumnFilters((prev) =>
@@ -702,7 +740,7 @@ const DataTable = ({
             >
               {rowSelection &&
                 Object.keys(rowSelection).length > 0 &&
-                actions.map(
+                bulkActions.map(
                   (action: any) =>
                     action.allowed && (
                       <Box
@@ -712,9 +750,9 @@ const DataTable = ({
                           cursor: "pointer",
                           width: "100%",
                         }}
-                        // onClick={() => {
-                        //   handleAction(action.action);
-                        // }}
+                        onClick={() => {
+                          handleBulkAction(action.action);
+                        }}
                       >
                         <Box
                           sx={{
@@ -828,6 +866,12 @@ const DataTable = ({
           />
         )}
       </Box>
+      <YesNoDialog
+        message="Are you sure you want to selected rows?"
+        open={openBulkDeleteDialog}
+        handleClose={() => setOpenBulkDeleteDialog(false)}
+        onSubmit={()=>{handleBulkDelete()}}
+       />
     </>
   );
 };
@@ -843,5 +887,6 @@ const mapDispatchToProps = {
   setRows,
   fetchRowsByPage,
   setCurrentView,
+  setFlashMessage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);
