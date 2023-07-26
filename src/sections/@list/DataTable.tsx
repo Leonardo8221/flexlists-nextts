@@ -381,16 +381,18 @@ const DataTable = ({
   }, [columnsTable]);
 
   const handleRowAction = (values: any, action: string) => {
-    if (action === "create" || action === "clone") {
-      var newRows = Object.assign([], rows);
-      newRows.push(values);
-      setRows(newRows);
-    } else if (action === "update") {
-      setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
-    } else if (action === "delete") {
-      setRows(rows.filter((row: any) => row.id !== values.id));
-    } else {
-    }
+    fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+    return;
+    // if (action === "create" || action === "clone") {
+    //   var newRows = Object.assign([], rows);
+    //   newRows.push(values);
+    //   setRows(newRows);
+    // } else if (action === "update") {
+    //   setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
+    // } else if (action === "delete") {
+    //   setRows(rows.filter((row: any) => row.id !== values.id));
+    // } else {
+    // }
   };
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {

@@ -243,7 +243,8 @@ const RowFormPanel = ({
         newValues
       );
       if (isSucc(updateRowRespone)) {
-        onSubmit(newValues, "update");
+        setFlashMessage({message: "Row archived successfully", type: "success"})
+        onSubmit(newValues, "archive");
         onClose();
         return;
       } else {
