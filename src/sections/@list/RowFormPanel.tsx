@@ -647,7 +647,7 @@ const RowFormPanel = ({
               {column.name}
               </Typography>
               <UploadButton
-                fileAcceptTypes=".png,.jpg,.jpeg,.gif"
+                fileAcceptTypes={['png','jpg','jpeg','gif']}
                 file={values[column.id]}
                 onUpload={(file) => {
                   setValues({ ...values, [column.id]: file });
@@ -695,7 +695,7 @@ const RowFormPanel = ({
               {column.name}
               </Typography>
               <UploadButton
-                fileAcceptTypes=".mp4,.mov,.wmv,.avi,.flv,.mkv,.webm"
+                fileAcceptTypes={['mp4','mov','wmv','flv','avi','mkv','webm']}
                 file={values[column.id]}
                 onUpload={(file) => {
                   setValues({ ...values, [column.id]: file });
@@ -733,7 +733,7 @@ const RowFormPanel = ({
                 {column.name}
                 </Typography>
                 <UploadButton
-                  fileAcceptTypes=""
+                  fileAcceptTypes={['*/*']}
                   file={values[column.id]}
                   onUpload={(file) => {
                     setValues({ ...values, [column.id]: file });

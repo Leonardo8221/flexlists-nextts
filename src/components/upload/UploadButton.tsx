@@ -2,19 +2,30 @@ import { Box, Button } from "@mui/material"
 import { fi } from "date-fns/locale"
 import { uploadFile } from "src/services/admin/contentManagement.service";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { connect } from "react-redux";
+import { isFileExtensionAllowed } from "src/utils/fileUtils";
 type UploadButtonProps = {
-    fileAcceptTypes: string,
+    fileAcceptTypes: string[],
     file?: {fileId:string,fileName:string},
-    onUpload: (file?: {fileId:string,fileName:string}) => void
+    onUpload: (file?: {fileId:string,fileName:string}) => void,
+    setFlashMessage?: (message: FlashMessageModel) => void
 }
-export default function UploadButton({file,fileAcceptTypes,onUpload}: UploadButtonProps) {
+function UploadButton({file,fileAcceptTypes,onUpload,setFlashMessage}: UploadButtonProps) {
 
     const handleFileChange = async (
         event: React.ChangeEvent<HTMLInputElement>
       ) => {
         if (event.target.files && event.target.files.length > 0) {
+          const file = event.target.files[0];
+          if(!isFileExtensionAllowed(file.name,fileAcceptTypes))
+          {
+            setFlashMessage && setFlashMessage({message:'File extension not allowed',type:'error'});
+            return;
+          }
           const formData = new FormData();
-          formData.append("file", event.target.files[0]);
+          formData.append("file", file);
           let response = await uploadFile(formData);
           if (response && response.fileId) {
             onUpload({fileId:response.fileId,fileName:event.target.files[0].name});
@@ -30,7 +41,13 @@ export default function UploadButton({file,fileAcceptTypes,onUpload}: UploadButt
                 Choose File
                 <input
                   type="file"
-                  accept={fileAcceptTypes}
+                  accept={fileAcceptTypes.map((x)=>{
+                    if(x === '*/*')
+                    {
+                      return x
+                    }
+                    return `.${x}`
+                  }).join(",")}
                   hidden
                   onChange={handleFileChange}
                 />
@@ -43,3 +60,11 @@ export default function UploadButton({file,fileAcceptTypes,onUpload}: UploadButt
         
     )
 }
+const mapStateToProps = (state: any) => ({
+});
+
+const mapDispatchToProps = {
+  setFlashMessage,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadButton);
