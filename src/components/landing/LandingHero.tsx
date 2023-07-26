@@ -22,7 +22,7 @@ export default function LandingHero({
   return (
     <Box
       sx={{
-        // marginTop: { xs: "64px", md: "88px" },
+        mt: { xs: "64px", md: "88px" },
         minHeight: "calc(100vh - 144px)",
       }}
     >

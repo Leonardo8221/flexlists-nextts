@@ -1,10 +1,10 @@
 import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
-import MainFeatures from "src/components/products/MainFeatures";
+import MainPricing from "src/components/pricing/MainPricing";
 import { LandingPricingPlans } from "src/components/landing";
 
-export default function product() {
+export default function pricing() {
   return (
     <MainLayout>
       <Box
@@ -57,7 +57,7 @@ export default function product() {
           </Grid>
         </Container>
       </Box>
-      <MainFeatures />
+      <MainPricing />
       <LandingPricingPlans />
     </MainLayout>
   );
