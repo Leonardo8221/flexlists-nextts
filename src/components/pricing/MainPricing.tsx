@@ -20,6 +20,8 @@ import MuiAccordionSummary, {
 } from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 // ---------------------------------------------------------------------
 
@@ -60,7 +62,14 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   //   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
-export default function MainPricing() {
+type ContentProps = {
+
+};
+export default function MainPricing({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
   const theme = useTheme();
   const isLight = theme.palette.mode === "light";
   const [expanded, setExpanded] = React.useState<string | false>("panel1");

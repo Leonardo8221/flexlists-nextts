@@ -59,8 +59,17 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   //   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
 
-export default function MainFeatures() {
+type ContentProps = {
+
+};
+export default function MainFeatures({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
   const theme = useTheme();
   const isLight = theme.palette.mode === "light";
   const [expanded, setExpanded] = React.useState<string | false>("panel1");

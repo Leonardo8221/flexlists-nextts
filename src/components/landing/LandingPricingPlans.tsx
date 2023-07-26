@@ -19,6 +19,8 @@ import {
   varFadeInDown,
 } from "src/components/animate";
 import { motion } from "framer-motion";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 // ----------------------------------------------------------------------
 
@@ -121,8 +123,14 @@ function PlanCard({ plan, cardIndex }: any) {
     </Card>
   );
 }
+type ContentProps = {
 
-export default function LandingPricingPlans() {
+};
+export default function LandingPricingPlans({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
   return (
     <RootStyle>
       <PriceImgStyle
