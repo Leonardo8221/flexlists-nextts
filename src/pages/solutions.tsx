@@ -2,8 +2,18 @@ import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
 import MainSolutions from "src/components/solutions/MainSolutions";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
 
-export default function solutions() {
+type ContentProps = {
+
+};
+function solutions({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
   return (
     <MainLayout>
       <Box
@@ -61,3 +71,8 @@ export default function solutions() {
     </MainLayout>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  return await getTranslations("existing pricing page", context)
+}
+export default solutions;

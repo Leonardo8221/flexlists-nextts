@@ -3,10 +3,20 @@ import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
 import MainFeatures from "src/components/products/MainFeatures";
 import { LandingPricingPlans } from "src/components/landing";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
 
-export default function product() {
+type ContentProps = {
+
+};
+function product({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
   return (
-    <MainLayout>
+    <MainLayout translations={translations}>
       <Box
         sx={{
           mt: { xs: "64px", md: "88px" },
@@ -57,8 +67,13 @@ export default function product() {
           </Grid>
         </Container>
       </Box>
-      <MainFeatures />
-      <LandingPricingPlans />
+      <MainFeatures translations={translations} />
+      <LandingPricingPlans translations={translations} />
     </MainLayout>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  return await getTranslations("existing pricing page", context)
+}
+export default product;

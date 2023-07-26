@@ -2,8 +2,18 @@ import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
 import MainMarketplace from "src/components/marketplace/MainMarketplace";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
 
-export default function marketplace() {
+type ContentProps = {
+
+};
+function marketplace({ translations }: ContentProps & { translations?: TranslationText[] }) {
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
   return (
     <MainLayout>
       <Box
@@ -61,3 +71,8 @@ export default function marketplace() {
     </MainLayout>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  return await getTranslations("existing pricing page", context)
+}
+export default marketplace;
