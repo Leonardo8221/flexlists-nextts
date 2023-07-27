@@ -5,6 +5,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import "easymde/dist/easymde.min.css";
 import dynamic from 'next/dynamic'
+import remarkGfm from 'remark-gfm'
 
 const SimpleMdeReact = dynamic(() => {
     return import("react-simplemde-editor")
@@ -45,7 +46,7 @@ const MarkdownEditor = ({ id, name, value, handleChange, preview }: { id: number
             <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
                 {name}
             </Typography>
-            <ReactMarkdown>{value}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>{value}</ReactMarkdown>
         </div>
     );
 
