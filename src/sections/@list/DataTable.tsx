@@ -40,7 +40,8 @@ import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
-
+import { useReactToPrint } from 'react-to-print';
+import PrintDataTable from "./PrintDataTable";
 
 type DataTableProps = {
   tab: boolean;
@@ -65,6 +66,7 @@ const DataTable = ({
   setCurrentView,
   setFlashMessage
 }: DataTableProps) => {
+  const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
@@ -87,7 +89,7 @@ const DataTable = ({
     "view"
   );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-
+  const [printRows,setPrintRows] = useState<any[]>([])
   const bulkActions = [
     {
       title: "Clone",
@@ -121,7 +123,7 @@ const DataTable = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-
+  
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -131,6 +133,12 @@ const DataTable = ({
       // setSelectedRowData(
       //   rows[parseInt(Object.keys(rowSelection).pop() || "0")]
       // );
+      setPrintRows(Object.keys(rowSelection).map((key: any) => {
+        let row = rows.find((row) => row.id === parseInt(key));
+        if (row) {
+          return row;
+        }
+      }))
     }
   }, [rows, rowSelection]);
 
@@ -517,7 +525,8 @@ const DataTable = ({
         }
         break;
       case "print":
-        break;
+        handlePrint();
+        return;
       case "delete":
         setOpenBulkDeleteDialog(true);
         return;
@@ -540,6 +549,9 @@ const DataTable = ({
 
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
   }
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   return (
     <>
       <Box
@@ -901,6 +913,12 @@ const DataTable = ({
         handleClose={() => setOpenBulkDeleteDialog(false)}
         onSubmit={() => { handleBulkDelete() }}
       />
+      <div ref={componentRef}>
+        <PrintDataTable 
+          columns={columns}
+          rows={printRows}
+        />
+      </div>
     </>
   );
 };
