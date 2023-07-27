@@ -1,15 +1,15 @@
-import {
-    Box,
-    Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import "easymde/dist/easymde.min.css";
 import dynamic from 'next/dynamic'
 import remarkGfm from 'remark-gfm'
 
-const SimpleMdeReact = dynamic(() => {
-    return import("react-simplemde-editor")
-}, { ssr: false })
+const SimpleMdeReact = dynamic(
+    () => {
+        return import("react-simplemde-editor");
+    },
+    { ssr: false }
+);
 
 const MarkdownEditor = ({ id, name, value, handleChange, preview }: { id: number, name: string, value: string, handleChange: (newValue: string) => void, preview?: boolean }) => {
 
