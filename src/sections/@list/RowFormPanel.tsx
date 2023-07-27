@@ -42,7 +42,7 @@ import ReactMarkdown from "react-markdown";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { marked } from "marked";
 import TurndownService from "turndown";
-import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
+//import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
 // -----ICONS------
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
@@ -58,9 +58,11 @@ import { View } from "src/models/SharedModels";
 import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from 'react-player';
 import YesNoDialog from "src/components/dialog/YesNoDialog";
-import "easymde/dist/easymde.min.css";
-import dynamic from 'next/dynamic'
-import 'react-quill/dist/quill.snow.css'
+// import "easymde/dist/easymde.min.css";
+// import dynamic from 'next/dynamic'
+// import 'react-quill/dist/quill.snow.css'
+import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
+import HTMLEditor from "src/components/rowedit/HTMLEditor";
 
 interface RowFormProps {
   currentView: View;
@@ -73,13 +75,13 @@ interface RowFormProps {
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
 
-const SimpleMdeReact = dynamic(() => {
-  return import("react-simplemde-editor")
-}, { ssr: false })
+// const SimpleMdeReact = dynamic(() => {
+//   return import("react-simplemde-editor")
+// }, { ssr: false })
 
-const ReactQuill = dynamic(() => {
-  return import("react-quill")
-}, { ssr: false })
+// const ReactQuill = dynamic(() => {
+//   return import("react-quill")
+// }, { ssr: false })
 
 const RowFormPanel = ({
   currentView,
@@ -617,99 +619,105 @@ const RowFormPanel = ({
         );
       case FieldUiTypeEnum.Markdown:
 
-
-
-        return currentMode !== "view" ? (
-          <Box
-            key={column.id}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              position: "relative",
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                textTransform: "capitalize",
-                color: "rgba(0, 0, 0, 0.6)",
-                fontSize: "12px",
-                position: "absolute",
-                top: "-10px",
-                left: "12px",
-                background: "#fff",
-              }}
-            >
-              {column.name}
-            </Typography>
-            {/* <MarkdownEditor
-              markdown={values[column.id]}
-              setMarkdown={(newValue) => {
-
-                setValues({ ...values, [column.id]: newValue });
-              }}
-            /> */}
-            <SimpleMdeReact value={values[column.id]}
-              style={{ width: '100%' }}
-              onChange={(newValue: string) => {
-                setValues({ ...values, [column.id]: newValue });
-              }} />
-          </Box>
-        ) : (
-          <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <ReactMarkdown>{values[column.id]}</ReactMarkdown>
-          </div>
-        );
+        return <MarkdownEditor id={column.id} name={column.name} value={values[column.id]} handleChange={(newValue: string) => {
+          setValues({ ...values, [column.id]: newValue });
+        }} preview={currentMode === "view"} />
+        break;
+      // return currentMode !== "view" ? (
+      //   <Box
+      //     key={column.id}
+      //     sx={{
+      //       display: "flex",
+      //       flexDirection: "column",
+      //       alignItems: "flex-start",
+      //       position: "relative",
+      //     }}
+      //   >
+      //     <Typography
+      //       variant="body1"
+      //       sx={{
+      //         textTransform: "capitalize",
+      //         color: "rgba(0, 0, 0, 0.6)",
+      //         fontSize: "12px",
+      //         position: "absolute",
+      //         top: "-10px",
+      //         left: "12px",
+      //         background: "#fff",
+      //       }}
+      //     >
+      //       {column.name}
+      //     </Typography>
+      //     {/* <MarkdownEditor
+      //       markdown={values[column.id]}
+      //       setMarkdown={(newValue) => {
+      //         setValues({ ...values, [column.id]: newValue });
+      //       }}
+      //     /> */}
+      //     <SimpleMdeReact value={values[column.id]}
+      //       style={{ width: '100%' }}
+      //       onChange={(newValue: string) => {
+      //         setValues({ ...values, [column.id]: newValue });
+      //       }} />
+      //   </Box>
+      // ) : (
+      //   <div key={column.id}>
+      //     <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+      //       {column.name}
+      //     </Typography>
+      //     <ReactMarkdown>{values[column.id]}</ReactMarkdown>
+      //   </div>
+      // );
       case FieldUiTypeEnum.HTML:
-        return currentMode !== "view" ? (
-          <Box
-            key={column.id}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              position: "relative",
-              height: '300px',
-              paddingBottom: '50px'
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                textTransform: "capitalize",
-                color: "rgba(0, 0, 0, 0.6)",
-                fontSize: "12px",
-                position: "absolute",
-                top: "-10px",
-                left: "12px",
-                background: "#fff",
-              }}
-            >
-              {column.name}
-            </Typography>
-            <ReactQuill theme="snow" value={values[column.id]}
-              style={{ width: '97%', height: '100%' }}
 
-              onChange={(newValue: string) => {
-                setValues({ ...values, [column.id]: newValue });
-              }} />
-          </Box>
-        ) : (
-          <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: values[column.id]?.toString(),
-              }}
-            />
-          </div>
-        );
+        return <HTMLEditor id={column.id} name={column.name} value={values[column.id]} handleChange={(newValue: string) => {
+          setValues({ ...values, [column.id]: newValue });
+        }} preview={currentMode === "view"} />
+        break;
+      // return currentMode !== "view" ? (
+      //   <Box
+      //     key={column.id}
+      //     sx={{
+      //       display: "flex",
+      //       flexDirection: "column",
+      //       alignItems: "flex-start",
+      //       position: "relative",
+      //       height: '300px',
+      //       paddingBottom: '50px'
+      //     }}
+      //   >
+      //     <Typography
+      //       variant="body1"
+      //       sx={{
+      //         textTransform: "capitalize",
+      //         color: "rgba(0, 0, 0, 0.6)",
+      //         fontSize: "12px",
+      //         position: "absolute",
+      //         top: "-10px",
+      //         left: "12px",
+      //         background: "#fff",
+      //       }}
+      //     >
+      //       {column.name}
+      //     </Typography>
+      //     <ReactQuill theme="snow" value={values[column.id]}
+      //       style={{ width: '97%', height: '100%' }}
+
+      //       onChange={(newValue: string) => {
+      //         setValues({ ...values, [column.id]: newValue });
+      //       }} />
+      //   </Box>
+      // ) : (
+      //   <div key={column.id}>
+      //     <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+      //       {column.name}
+      //     </Typography>
+      //     <div
+      //       dangerouslySetInnerHTML={{
+      //         __html: values[column.id]?.toString(),
+      //       }}
+      //     />
+      //   </div>
+      // );
       case FieldUiTypeEnum.Image:
         return currentMode !== "view" ? (
           <Box key={column.id}>
