@@ -70,8 +70,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 // import 'react-quill/dist/quill.snow.css'
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
-import { useReactToPrint } from 'react-to-print';
-
+import { useReactToPrint } from "react-to-print";
 
 interface RowFormProps {
   currentView: View;
@@ -281,9 +280,8 @@ const RowFormPanel = ({
         });
         return;
       }
-    }
-    else if(action === "print"){
-      handlePrint()
+    } else if (action === "print") {
+      handlePrint();
       return;
     }
     onSubmit(newValues, action);
@@ -334,10 +332,10 @@ const RowFormPanel = ({
   const convertMarkdownToHtml = (markdown: string): string => {
     return marked(markdown);
   };
-  const renderField = (column: ViewField,isPrint:boolean=false) => {
+  const renderField = (column: ViewField, isPrint: boolean = false) => {
     switch (column.uiField) {
       case FieldUiTypeEnum.Text:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <TextField
             key={column.id}
             style={{ width: "100%" }}
@@ -405,7 +403,7 @@ const RowFormPanel = ({
         //   required={column.required}
         // // error={submit && column.required && !values[column.id]}
         // />
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <TextField
             key={column.id}
             label={column.name}
@@ -450,7 +448,7 @@ const RowFormPanel = ({
       //TODO : will use this for
       case FieldUiTypeEnum.Percentage:
       case FieldUiTypeEnum.Money:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <TextField
             key={column.id}
             label={column.name}
@@ -485,7 +483,7 @@ const RowFormPanel = ({
           </div>
         );
       case FieldUiTypeEnum.DateTime:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
               value={dayjs(values[column.id])}
@@ -527,7 +525,7 @@ const RowFormPanel = ({
           </div>
         );
       case FieldUiTypeEnum.Date:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DatePicker
               value={dayjs(values[column.id])}
@@ -569,7 +567,7 @@ const RowFormPanel = ({
           </div>
         );
       case FieldUiTypeEnum.Time:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <TimePicker
               value={dayjs(values[column.id])}
@@ -613,7 +611,7 @@ const RowFormPanel = ({
           </div>
         );
       case FieldUiTypeEnum.Choice:
-        if ((currentMode !== "view" && !isPrint)) {
+        if (currentMode !== "view" && !isPrint) {
           return (
             <FormControl key={column.id} required={column.required}>
               <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
@@ -688,7 +686,7 @@ const RowFormPanel = ({
           );
         }
       case FieldUiTypeEnum.Boolean:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <FormControlLabel
             key={column.id}
             control={
@@ -734,7 +732,7 @@ const RowFormPanel = ({
             handleChange={(newValue: string) => {
               setValues({ ...values, [column.id]: newValue });
             }}
-            preview={(currentMode === "view"||isPrint)}
+            preview={currentMode === "view" || isPrint}
           />
         );
         break;
@@ -791,7 +789,7 @@ const RowFormPanel = ({
             handleChange={(newValue: string) => {
               setValues({ ...values, [column.id]: newValue });
             }}
-            preview={currentMode === "view"||isPrint}
+            preview={currentMode === "view" || isPrint}
           />
         );
         break;
@@ -841,7 +839,7 @@ const RowFormPanel = ({
       //   </div>
       // );
       case FieldUiTypeEnum.Image:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <Box key={column.id}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {column.name}
@@ -896,7 +894,7 @@ const RowFormPanel = ({
           </Box>
         );
       case FieldUiTypeEnum.Video:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <Box key={column.id}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {column.name}
@@ -950,7 +948,7 @@ const RowFormPanel = ({
           </Box>
         );
       case FieldUiTypeEnum.Document:
-        return (currentMode !== "view" && !isPrint) ? (
+        return currentMode !== "view" && !isPrint ? (
           <Box key={column.id}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {column.name}
@@ -987,8 +985,8 @@ const RowFormPanel = ({
   };
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-  })
-  
+  });
+
   return (
     <Drawer
       anchor="right"
@@ -998,7 +996,7 @@ const RowFormPanel = ({
         sx: {
           width: { xs: "100%", lg: panelWidth },
           border: "none",
-          height: `${windowHeight}px`,
+          // height: `${windowHeight}px`,
           backgroundColor: theme.palette.palette_style.background.default,
         },
       }}
@@ -1176,7 +1174,12 @@ const RowFormPanel = ({
           />
         )}
 
-        <Box sx={{ display: "flex" }}>
+        <Box
+          sx={{
+            display: "flex",
+            bottom: 0,
+          }}
+        >
           <Button onClick={handleCloseModal}>Cancel</Button>
           {(currentMode === "update" || currentMode === "create") && (
             <Button
@@ -1208,7 +1211,7 @@ const RowFormPanel = ({
             handleDelete();
           }}
         />
-        <div  style={{ display: "none" }}>
+        <div style={{ display: "none" }}>
           <div ref={componentRef}>
             <Stack
               sx={{
@@ -1219,11 +1222,11 @@ const RowFormPanel = ({
                 paddingTop: 2,
               }}
             >
-                {values &&
-                  columns.map((column: any) => renderField(column,true))}
+              {values &&
+                columns.map((column: any) => renderField(column, true))}
             </Stack>
-      </div> 
-      </div>
+          </div>
+        </div>
       </DialogActions>
     </Drawer>
   );

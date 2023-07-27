@@ -35,12 +35,18 @@ import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { hasPermission } from "src/utils/permissionHelper";
-import { archiveBulkContents, cloneContent, createContent, deleteBulkContents, unarchiveBulkContents } from "src/services/listContent.service";
+import {
+  archiveBulkContents,
+  cloneContent,
+  createContent,
+  deleteBulkContents,
+  unarchiveBulkContents,
+} from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 
 type DataTableProps = {
@@ -52,7 +58,7 @@ type DataTableProps = {
   count: number;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
-  setFlashMessage: (message: FlashMessageModel) => void
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
 const DataTable = ({
@@ -64,7 +70,7 @@ const DataTable = ({
   count,
   fetchRowsByPage,
   setCurrentView,
-  setFlashMessage
+  setFlashMessage,
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -89,8 +95,7 @@ const DataTable = ({
     "view"
   );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-  const [printRows, setPrintRows] = useState<any[]>([])
-  const [hidePrint, setHidePrint] = useState(true)
+  const [printRows, setPrintRows] = useState<any[]>([]);
   const bulkActions = [
     {
       title: "Clone",
@@ -134,12 +139,14 @@ const DataTable = ({
       // setSelectedRowData(
       //   rows[parseInt(Object.keys(rowSelection).pop() || "0")]
       // );
-      setPrintRows(Object.keys(rowSelection).map((key: any) => {
-        let row = rows.find((row) => row.id === parseInt(key));
-        if (row) {
-          return row;
-        }
-      }))
+      setPrintRows(
+        Object.keys(rowSelection).map((key: any) => {
+          let row = rows.find((row) => row.id === parseInt(key));
+          if (row) {
+            return row;
+          }
+        })
+      );
     }
   }, [rows, rowSelection]);
 
@@ -158,7 +165,7 @@ const DataTable = ({
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
-      let uiFieldType = dataColumn.uiField
+      let uiFieldType = dataColumn.uiField;
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
@@ -194,7 +201,10 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
-          function renderFieldData(columnType: FieldUiTypeEnum, cellValue: any) {
+          function renderFieldData(
+            columnType: FieldUiTypeEnum,
+            cellValue: any
+          ) {
             switch (columnType) {
               case FieldUiTypeEnum.Integer:
               case FieldUiTypeEnum.Float:
@@ -319,33 +329,37 @@ const DataTable = ({
                 return (
                   <Box
                     component="img"
-                    sx={
-                      {
-                        // height: 100,
-                        width: 100,
-                        // maxHeight: { xs: 233, md: 167 },
-                        // maxWidth: { xs: 350, md: 250 },
-                      }
-                    }
+                    sx={{
+                      // height: 100,
+                      width: 100,
+                      // maxHeight: { xs: 233, md: 167 },
+                      // maxWidth: { xs: 350, md: 250 },
+                    }}
                     alt=""
-                    src={cellValue && cellValue.fileId ? downloadFileUrl(cellValue.fileId) : ''}
+                    src={
+                      cellValue && cellValue.fileId
+                        ? downloadFileUrl(cellValue.fileId)
+                        : ""
+                    }
                   />
-                )
+                );
               case FieldUiTypeEnum.Video:
                 return (
                   <Box
                     component="video"
-                    sx={
-                      {
-                        // height: 100,
-                        width: 100,
-                        // maxHeight: { xs: 233, md: 167 },
-                        // maxWidth: { xs: 350, md: 250 },
-                      }
+                    sx={{
+                      // height: 100,
+                      width: 100,
+                      // maxHeight: { xs: 233, md: 167 },
+                      // maxWidth: { xs: 350, md: 250 },
+                    }}
+                    src={
+                      cellValue && cellValue.fileId
+                        ? downloadFileUrl(cellValue.fileId)
+                        : ""
                     }
-                    src={cellValue && cellValue.fileId ? downloadFileUrl(cellValue.fileId) : ''}
                   />
-                )
+                );
               case FieldUiTypeEnum.Document:
                 return (
                   <Box
@@ -398,7 +412,7 @@ const DataTable = ({
   }, [columnsTable]);
 
   const handleRowAction = (values: any, action: string) => {
-    fetchColumns(currentView.id)
+    fetchColumns(currentView.id);
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
     return;
     // if (action === "create" || action === "clone") {
@@ -477,50 +491,71 @@ const DataTable = ({
   const handleBulkAction = async (action: string) => {
     switch (action) {
       case "clone":
-        let cloneResponse = await cloneContent(currentView.id, Object.keys(rowSelection).map((key: any) => {
-          let row = rows.find((row) => row.id === parseInt(key));
-          if (row) {
-            delete row.id;
-            var archiveField = columns.find(
-              (x) => x.system && x.name === "___archived"
-            );
-            if (archiveField) {
-              row[archiveField.name] = row[archiveField.id]
-              delete row[archiveField.id];
+        let cloneResponse = await cloneContent(
+          currentView.id,
+          Object.keys(rowSelection).map((key: any) => {
+            let row = rows.find((row) => row.id === parseInt(key));
+            if (row) {
+              delete row.id;
+              var archiveField = columns.find(
+                (x) => x.system && x.name === "___archived"
+              );
+              if (archiveField) {
+                row[archiveField.name] = row[archiveField.id];
+                delete row[archiveField.id];
+              }
+              return row;
             }
-            return row;
-          }
-        }));
+          })
+        );
         if (isSucc(cloneResponse)) {
-          setFlashMessage({ message: 'Cloned successfully', type: 'success' });
+          setFlashMessage({ message: "Cloned successfully", type: "success" });
           setRowSelection({});
-        }
-        else {
-          setFlashMessage({ message: (cloneResponse as FlexlistsError).message, type: 'error' });
+        } else {
+          setFlashMessage({
+            message: (cloneResponse as FlexlistsError).message,
+            type: "error",
+          });
           setRowSelection({});
           return;
         }
         break;
       case "archive":
-        let archiveResponse = await archiveBulkContents(currentView.id, Object.keys(rowSelection).map((key: any) => parseInt(key)));
+        let archiveResponse = await archiveBulkContents(
+          currentView.id,
+          Object.keys(rowSelection).map((key: any) => parseInt(key))
+        );
         if (isSucc(archiveResponse)) {
-          setFlashMessage({ message: 'Archived successfully', type: 'success' });
+          setFlashMessage({
+            message: "Archived successfully",
+            type: "success",
+          });
           setRowSelection({});
-        }
-        else {
-          setFlashMessage({ message: (archiveResponse as FlexlistsError).message, type: 'error' });
+        } else {
+          setFlashMessage({
+            message: (archiveResponse as FlexlistsError).message,
+            type: "error",
+          });
           setRowSelection({});
           return;
         }
         break;
       case "unarchive":
-        let unarchiveResponse = await unarchiveBulkContents(currentView.id, Object.keys(rowSelection).map((key: any) => parseInt(key)));
+        let unarchiveResponse = await unarchiveBulkContents(
+          currentView.id,
+          Object.keys(rowSelection).map((key: any) => parseInt(key))
+        );
         if (isSucc(unarchiveResponse)) {
-          setFlashMessage({ message: 'Unarchived successfully', type: 'success' });
+          setFlashMessage({
+            message: "Unarchived successfully",
+            type: "success",
+          });
           setRowSelection({});
-        }
-        else {
-          setFlashMessage({ message: (unarchiveResponse as FlexlistsError).message, type: 'error' });
+        } else {
+          setFlashMessage({
+            message: (unarchiveResponse as FlexlistsError).message,
+            type: "error",
+          });
           setRowSelection({});
           return;
         }
@@ -535,21 +570,26 @@ const DataTable = ({
         break;
     }
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
-  }
+  };
   const handleBulkDelete = async () => {
-    let deleteResponse = await deleteBulkContents(currentView.id, Object.keys(rowSelection).map((key: any) => parseInt(key)));
+    let deleteResponse = await deleteBulkContents(
+      currentView.id,
+      Object.keys(rowSelection).map((key: any) => parseInt(key))
+    );
     if (isSucc(deleteResponse)) {
-      setFlashMessage({ message: 'Deleted successfully', type: 'success' });
+      setFlashMessage({ message: "Deleted successfully", type: "success" });
       setRowSelection({});
-    }
-    else {
-      setFlashMessage({ message: (deleteResponse as FlexlistsError).message, type: 'error' });
+    } else {
+      setFlashMessage({
+        message: (deleteResponse as FlexlistsError).message,
+        type: "error",
+      });
       setRowSelection({});
       return;
     }
 
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
-  }
+  };
   const handlePrint = useReactToPrint({
 
     content: () => componentRef.current,
@@ -879,6 +919,8 @@ const DataTable = ({
               <MenuItem value="25">25</MenuItem>
               <MenuItem value="50">50</MenuItem>
               <MenuItem value="100">100</MenuItem>
+              <MenuItem value="500">500</MenuItem>
+              <MenuItem value="1000">1000</MenuItem>
             </Select>
             <Pagination
               count={Math.ceil(count / pagination.pageSize)}
@@ -913,13 +955,16 @@ const DataTable = ({
         message="Are you sure you want to selected rows?"
         open={openBulkDeleteDialog}
         handleClose={() => setOpenBulkDeleteDialog(false)}
-        onSubmit={() => { handleBulkDelete() }}
+        onSubmit={() => {
+          handleBulkDelete();
+        }}
       />
       <div ref={componentRef} hidden={false} style={{ maxWidth: '0px', 'maxHeight': '0px' }}>
         <PrintDataTable
           columns={columns}
           rows={printRows}
         />
+
       </div>
     </>
   );
@@ -936,6 +981,6 @@ const mapDispatchToProps = {
   setRows,
   fetchRowsByPage,
   setCurrentView,
-  setFlashMessage
+  setFlashMessage,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);
