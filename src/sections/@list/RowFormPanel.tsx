@@ -127,12 +127,11 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: `${
-        values &&
+      title: `${values &&
         values[columns.find((x) => x.system && x.name === "___archived").id]
-          ? "Unarchive"
-          : "Archive"
-      }`,
+        ? "Unarchive"
+        : "Archive"
+        }`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -509,8 +508,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleString()
                   : ""
               }
             />
@@ -551,8 +550,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                   : ""
               }
             />
@@ -593,8 +592,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                   : "null"
               }
             />
@@ -726,6 +725,7 @@ const RowFormPanel = ({
       case FieldUiTypeEnum.Markdown:
         return (
           <MarkdownEditor
+            key={column.id}
             id={column.id}
             name={column.name}
             value={values[column.id]}
@@ -784,6 +784,7 @@ const RowFormPanel = ({
         return (
           <HTMLEditor
             id={column.id}
+            key={column.id}
             name={column.name}
             value={values[column.id]}
             handleChange={(newValue: string) => {

@@ -94,7 +94,6 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
             {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
-
         {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
 
         <Box sx={{ flexGrow: 1 }} />
