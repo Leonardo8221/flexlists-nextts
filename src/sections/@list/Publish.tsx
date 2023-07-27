@@ -17,8 +17,10 @@ import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { motion } from "framer-motion";
 import { getShareURL } from "src/services/listView.service";
+import { isErr } from "src/models/ApiResponse";
 
 type Props = {
+  id: number;
   open: boolean;
   handleClose: () => void;
 };
@@ -63,19 +65,30 @@ const scaleUp = {
 
 const PublishList = (props: Props) => {
   const { open, handleClose } = props;
-  const [shareURL, setShareURL] = useState<string | undefined>(undefined);
+  const [code, setCode] = useState("");
 
   const closeModal = () => {
     handleClose();
   };
 
+
   useEffect(() => {
-    const getShareURLFromAPI = async () => {
-      // const url = await getShareURL();
-      // setShareURL(url);
-    };
-    getShareURLFromAPI();
-  }, []);
+    async function setStart() {
+      if (!code && props.id) {
+        const url = await getShareURLAsync("html");
+        setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`)
+      }
+    }
+    setStart()
+  }, [])
+
+  async function getShareURLAsync(format: string) {
+    const url = await getShareURL(props.id, format);
+    if (isErr(url)) {
+      return ""
+    }
+    return url.data!
+  }
 
   return (
     <Modal
@@ -111,14 +124,23 @@ const PublishList = (props: Props) => {
             <FormControlLabel
               value="iframe"
               control={<Radio />}
-              // onChange={() => {
-
-              // })
+              onChange={async (event: any, checked: boolean) => {
+                if (checked) {
+                  const url = await getShareURLAsync("html");
+                  setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`)
+                }
+              }}
               label={<Typography variant="body2">iframe</Typography>}
             />
             <FormControlLabel
               value="javascript"
               control={<Radio />}
+              onChange={async (event: any, checked: boolean) => {
+                if (checked) {
+                  const url = await getShareURLAsync("js");
+                  setCode(`<script src="${url}"></script>`)
+                }
+              }}
               label={<Typography variant="body2">JavaScript</Typography>}
             />
             {/* <FormControlLabel
@@ -129,6 +151,7 @@ const PublishList = (props: Props) => {
           </RadioGroup>
         </FormControl>
         <TextField
+          value={code}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

@@ -354,6 +354,7 @@ const Header = ({ currentView }: HeaderProps) => {
       />
       <>
         <PublishList
+          id={currentView.id}
           open={openPublish}
           handleClose={() => {
             handleClosePublish();

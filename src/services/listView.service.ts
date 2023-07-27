@@ -82,8 +82,8 @@ export async function getView(viewId: number): Promise<FlexlistsError | Flexlist
   var response = await axios.get<FlexlistsError | FlexlistsSuccess<View[]>>('/api/listView/getView' + `?viewId=${viewId}`)
   return response.data;
 };
-export async function getShareURL(viewId: number, format: string): Promise<FlexlistsError | FlexlistsSuccess<View[]>> {
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess<View[]>>('/api/export/getURL' + `?viewId=${viewId}&format=${format}`)
+export async function getShareURL(viewId: number, format: string): Promise<FlexlistsError | FlexlistsSuccess<string>> {
+  var response = await axios.get<FlexlistsError | FlexlistsSuccess<string>>('/api/export/getURL' + `?viewId=${viewId}&format=${format}`)
   return response.data;
 };
 export async function inviteUserToView(viewId: number, userId: number, role: Role): Promise<FlexlistsError | FlexlistsSuccess> {
