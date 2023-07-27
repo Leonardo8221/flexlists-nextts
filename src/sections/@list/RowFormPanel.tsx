@@ -606,6 +606,7 @@ const RowFormPanel = ({
       case FieldUiTypeEnum.Markdown:
         return currentMode !== "view" ? (
           <Box
+            key={column.id}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -630,6 +631,7 @@ const RowFormPanel = ({
             <MarkdownEditor
               markdown={values[column.id]}
               setMarkdown={(newValue) => {
+                console.log(newValue)
                 setValues({ ...values, [column.id]: newValue });
               }}
             />
