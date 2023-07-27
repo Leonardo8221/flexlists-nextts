@@ -897,7 +897,7 @@ const DataTable = ({
               variant="body2"
               sx={{ display: { xs: "none", md: "block" } }}
             >
-              Rows per page
+              {pagination.pageIndex * pagination.pageSize + 1}-{(pagination.pageIndex + 1) * pagination.pageSize} of {count}, per page:
             </Typography>
             <Select
               id="per_page"
@@ -919,8 +919,8 @@ const DataTable = ({
               <MenuItem value="25">25</MenuItem>
               <MenuItem value="50">50</MenuItem>
               <MenuItem value="100">100</MenuItem>
-              <MenuItem value="500">500</MenuItem>
-              <MenuItem value="1000">1000</MenuItem>
+              {/* <MenuItem value="500">500</MenuItem>
+              <MenuItem value="1000">1000</MenuItem> */}
             </Select>
             <Pagination
               count={Math.ceil(count / pagination.pageSize)}
