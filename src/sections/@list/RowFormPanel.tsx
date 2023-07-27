@@ -58,8 +58,8 @@ import { View } from "src/models/SharedModels";
 import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from 'react-player';
 import YesNoDialog from "src/components/dialog/YesNoDialog";
-import SimpleMdeReact from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
+import dynamic from 'next/dynamic'
 
 interface RowFormProps {
   currentView: View;
@@ -71,6 +71,11 @@ interface RowFormProps {
   onSubmit: (values: any, action: string) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
+
+const SimpleMdeReact = dynamic(() => {
+  return import("react-simplemde-editor")
+}, { ssr: false })
+
 
 const RowFormPanel = ({
   currentView,
@@ -606,6 +611,9 @@ const RowFormPanel = ({
           </div>
         );
       case FieldUiTypeEnum.Markdown:
+
+
+
         return currentMode !== "view" ? (
           <Box
             key={column.id}
