@@ -28,7 +28,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { connect } from "react-redux";
 import { ViewField } from "src/models/ViewField";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
-import { cloneContent, listContentService } from "src/services/listContent.service";
+import {
+  cloneContent,
+  listContentService,
+} from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { filter } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
@@ -36,7 +39,11 @@ import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
 import { DatePicker } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { downloadFileUrl, getChoiceField, getDataColumnId } from "src/utils/flexlistHelper";
+import {
+  downloadFileUrl,
+  getChoiceField,
+  getDataColumnId,
+} from "src/utils/flexlistHelper";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import ReactMarkdown from "react-markdown";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
@@ -56,7 +63,7 @@ import { getPermission } from "src/repositories/permissionRepository";
 import { hasPermission } from "src/utils/permissionHelper";
 import { View } from "src/models/SharedModels";
 import UploadButton from "src/components/upload/UploadButton";
-import ReactPlayer from 'react-player';
+import ReactPlayer from "react-player";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 // import "easymde/dist/easymde.min.css";
 // import dynamic from 'next/dynamic'
@@ -119,7 +126,12 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: `${values && values[columns.find((x) => x.system && x.name === "___archived").id] ? 'Unarchive' : 'Archive'}`,
+      title: `${
+        values &&
+        values[columns.find((x) => x.system && x.name === "___archived").id]
+          ? "Unarchive"
+          : "Archive"
+      }`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -224,12 +236,9 @@ const RowFormPanel = ({
         (x) => x.system && x.name === "___archived"
       );
       if (archiveField) {
-        newValues[archiveField.name] = newValues[archiveField.id]
+        newValues[archiveField.name] = newValues[archiveField.id];
       }
-      var createRowResponse = await cloneContent(
-        currentView.id,
-        newValues
-      );
+      var createRowResponse = await cloneContent(currentView.id, newValues);
       if (
         isSucc(createRowResponse) &&
         createRowResponse.data &&
@@ -256,7 +265,10 @@ const RowFormPanel = ({
         newValues
       );
       if (isSucc(updateRowRespone)) {
-        setFlashMessage({ message: "Row archived successfully", type: "success" })
+        setFlashMessage({
+          message: "Row archived successfully",
+          type: "success",
+        });
         onSubmit(newValues, "archive");
         onClose();
         return;
@@ -277,11 +289,13 @@ const RowFormPanel = ({
       values.id
     );
     if (isErr(deleteContentResponse)) {
-      setFlashMessage({ message: (deleteContentResponse as FlexlistsError).message, type: "error" })
+      setFlashMessage({
+        message: (deleteContentResponse as FlexlistsError).message,
+        type: "error",
+      });
       return;
-    }
-    else {
-      setFlashMessage({ message: "Row deleted successfully", type: "success" })
+    } else {
+      setFlashMessage({ message: "Row deleted successfully", type: "success" });
     }
     onSubmit(values, "delete");
     onClose();
@@ -320,7 +334,7 @@ const RowFormPanel = ({
         return currentMode !== "view" ? (
           <TextField
             key={column.id}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
             label={column.name}
             name={`${column.id}`}
             size="small"
@@ -336,13 +350,21 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}{" "}
-              {/* <InfoOutlinedIcon sx={{ color: "#999", fontSize: 16 }} /> */}
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[column.id]?.toString() : ""}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+              {column.name}
+              <InfoOutlinedIcon sx={{ color: "#999", fontSize: 16 }} />
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[column.id]?.toString() : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.LongText:
@@ -397,12 +419,22 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              multiline
+              minRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[column.id] : ""}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[column.id] : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Integer:
@@ -430,12 +462,20 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[getDataColumnId(column.id, columns)] : ""}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[getDataColumnId(column.id, columns)] : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.DateTime:
@@ -456,14 +496,28 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle1">{column.name}</Typography>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[getDataColumnId(column.id, columns)]
+                  ? new Date(
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleString()
+                  : ""
+              }
+            />
+            {/* <Typography variant="subtitle1">{column.name}</Typography>
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleString()
                 : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Date:
@@ -484,14 +538,28 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle1">{column.name}</Typography>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[getDataColumnId(column.id, columns)]
+                  ? new Date(
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleDateString()
+                  : ""
+              }
+            />
+            {/* <Typography variant="subtitle1">{column.name}</Typography>
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Time:
@@ -512,16 +580,30 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[getDataColumnId(column.id, columns)]
+                  ? new Date(
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleDateString()
+                  : "null"
+              }
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : "null"}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Choice:
@@ -565,7 +647,15 @@ const RowFormPanel = ({
           const choice = getChoiceField(values[column.id], column);
           return (
             <div key={column.id}>
-              <Typography
+              <TextField
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+                label={column.name}
+                value={choice?.label}
+              />
+              {/* <Typography
                 variant="subtitle2"
                 sx={{ textTransform: "uppercase" }}
               >
@@ -587,7 +677,7 @@ const RowFormPanel = ({
                 }}
               >
                 {choice?.label}
-              </Box>
+              </Box> */}
             </div>
           );
         }
@@ -607,21 +697,40 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[column.id]?.toString() === "true"
+                  ? "yes"
+                  : "no"
+              }
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[column.id]?.toString() === "true"
                 ? "yes"
                 : "no"}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Markdown:
-
-        return <MarkdownEditor id={column.id} name={column.name} value={values[column.id]} handleChange={(newValue: string) => {
-          setValues({ ...values, [column.id]: newValue });
-        }} preview={currentMode === "view"} />
+        return (
+          <MarkdownEditor
+            id={column.id}
+            name={column.name}
+            value={values[column.id]}
+            handleChange={(newValue: string) => {
+              setValues({ ...values, [column.id]: newValue });
+            }}
+            preview={currentMode === "view"}
+          />
+        );
         break;
       // return currentMode !== "view" ? (
       //   <Box
@@ -668,10 +777,17 @@ const RowFormPanel = ({
       //   </div>
       // );
       case FieldUiTypeEnum.HTML:
-
-        return <HTMLEditor id={column.id} name={column.name} value={values[column.id]} handleChange={(newValue: string) => {
-          setValues({ ...values, [column.id]: newValue });
-        }} preview={currentMode === "view"} />
+        return (
+          <HTMLEditor
+            id={column.id}
+            name={column.name}
+            value={values[column.id]}
+            handleChange={(newValue: string) => {
+              setValues({ ...values, [column.id]: newValue });
+            }}
+            preview={currentMode === "view"}
+          />
+        );
         break;
       // return currentMode !== "view" ? (
       //   <Box
@@ -725,7 +841,7 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <UploadButton
-              fileAcceptTypes={['png', 'jpg', 'jpeg', 'gif']}
+              fileAcceptTypes={["png", "jpg", "jpeg", "gif"]}
               file={values[column.id]}
               onUpload={(file) => {
                 setValues({ ...values, [column.id]: file });
@@ -742,10 +858,13 @@ const RowFormPanel = ({
                 }
               }
               alt=""
-              src={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+              src={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
             />
           </Box>
-
         ) : (
           <Box key={column.id}>
             <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
@@ -762,7 +881,11 @@ const RowFormPanel = ({
                 }
               }
               alt=""
-              src={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+              src={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
             />
           </Box>
         );
@@ -773,14 +896,26 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <UploadButton
-              fileAcceptTypes={['mp4', 'mov', 'wmv', 'flv', 'avi', 'mkv', 'webm']}
+              fileAcceptTypes={[
+                "mp4",
+                "mov",
+                "wmv",
+                "flv",
+                "avi",
+                "mkv",
+                "webm",
+              ]}
               file={values[column.id]}
               onUpload={(file) => {
                 setValues({ ...values, [column.id]: file });
               }}
             />
             <ReactPlayer
-              url={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+              url={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
               width="100%"
               height="auto"
               controls
@@ -797,7 +932,11 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <ReactPlayer
-              url={values[column.id] && values[column.id].fileId ? downloadFileUrl(values[column.id].fileId) : ''}
+              url={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
               width="100%"
               height="auto"
               controls
@@ -811,24 +950,25 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <UploadButton
-              fileAcceptTypes={['*/*']}
+              fileAcceptTypes={["*/*"]}
               file={values[column.id]}
               onUpload={(file) => {
                 setValues({ ...values, [column.id]: file });
               }}
             />
           </Box>
-
         ) : (
           <Box key={column.id}>
             <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
-            {
-              values && values[column.id] ? (
-                <Link href={downloadFileUrl(values[column.id].fileId)}>{values[column.id].fileName}</Link>
-              ) : (<></>)
-            }
+            {values && values[column.id] ? (
+              <Link href={downloadFileUrl(values[column.id].fileId)}>
+                {values[column.id].fileName}
+              </Link>
+            ) : (
+              <></>
+            )}
           </Box>
         );
       default:
@@ -1054,7 +1194,9 @@ const RowFormPanel = ({
           message="Are you sure you want to delete selected data?"
           open={openBulkDeleteDialog}
           handleClose={() => setOpenBulkDeleteDialog(false)}
-          onSubmit={() => { handleDelete() }}
+          onSubmit={() => {
+            handleDelete();
+          }}
         />
       </DialogActions>
     </Drawer>

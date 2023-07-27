@@ -57,11 +57,33 @@ const HTMLEditor = ({
       />
     </Box>
   ) : (
-    <div key={id}>
-      <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+    <div
+      key={id}
+      style={{
+        border: "1px solid rgba(158, 158, 158, 0.32)",
+        paddingBlock: 8,
+        paddingInline: 8,
+        position: "relative",
+      }}
+    >
+      <Typography
+        variant="body2"
+        component={"label"}
+        sx={{
+          textTransform: "capitalize",
+          fontSize: 12,
+          position: "absolute",
+          top: "-10px",
+          background: "#fff",
+          zIndex: 2,
+          px: 0.5,
+          color: "rgba(0, 0, 0, 0.6)",
+        }}
+      >
         {name}
       </Typography>
       <div
+        className="htmlViewer"
         dangerouslySetInnerHTML={{
           __html: value?.toString(),
         }}
