@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { Autocomplete, Box, MenuItem } from "@mui/material";
+import { Autocomplete, Box, IconButton, MenuItem } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -21,7 +21,7 @@ import { searchViews } from "src/services/listView.service";
 import { debounce, set } from "lodash";
 import { SearchTypeModel, View } from "src/models/SharedModels";
 import { PATH_MAIN } from "src/routes/paths";
-
+import ClearIcon from '@mui/icons-material/Clear';
 const StyledSearchBarMin = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
@@ -53,6 +53,7 @@ const SearchBarMin = ({
     SearchTypeModel[]
   >([]);
   const [searchOptions, setSearchOptions] = useState<any[]>([]);
+  const [clearSearchVisible, setClearSearchVisible] = useState<boolean>(false);
 
   useEffect(() => {
     if (router.isReady && searchTypes) {
@@ -94,6 +95,16 @@ const SearchBarMin = ({
       }
     }
   };
+  const handleClearSearch = async () => {
+
+    let newView: View = Object.assign({}, currentView);
+    newView.query = undefined
+    newView.conditions = undefined;
+    setCurrentView(newView);
+    setSearch('');
+    setClearSearchVisible(false);
+    fetchRowsByPage(0, 25);
+  }
 
   const fetchViews = async (searchTerm: string) => {
     try {
@@ -156,8 +167,18 @@ const SearchBarMin = ({
             size="small"
             key={searchType}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setClearSearchVisible(e.target.value !== ''); }}
             onKeyDown={(e) => handleKeyPress(e)}
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  sx={{ visibility: clearSearchVisible ? "visible" : "hidden" }}
+                  onClick={() => handleClearSearch()}
+                >
+                  <ClearIcon />
+                </IconButton>
+              ),
+            }}
           />
         )}
         {searchType === "AllViews" && (
