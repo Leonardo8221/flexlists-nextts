@@ -58,6 +58,8 @@ import { View } from "src/models/SharedModels";
 import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from 'react-player';
 import YesNoDialog from "src/components/dialog/YesNoDialog";
+import SimpleMdeReact from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 
 interface RowFormProps {
   currentView: View;
@@ -628,13 +630,16 @@ const RowFormPanel = ({
             >
               {column.name}
             </Typography>
-            <MarkdownEditor
+            {/* <MarkdownEditor
               markdown={values[column.id]}
               setMarkdown={(newValue) => {
-                console.log(newValue)
+
                 setValues({ ...values, [column.id]: newValue });
               }}
-            />
+            /> */}
+            <SimpleMdeReact value={values[column.id]} onChange={(newValue: string) => {
+              setValues({ ...values, [column.id]: newValue });
+            }} />
           </Box>
         ) : (
           <div key={column.id}>
