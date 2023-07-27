@@ -89,7 +89,8 @@ const DataTable = ({
     "view"
   );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-  const [printRows,setPrintRows] = useState<any[]>([])
+  const [printRows, setPrintRows] = useState<any[]>([])
+  const [hidePrint, setHidePrint] = useState(true)
   const bulkActions = [
     {
       title: "Clone",
@@ -123,7 +124,7 @@ const DataTable = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-  
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -550,6 +551,7 @@ const DataTable = ({
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
   }
   const handlePrint = useReactToPrint({
+
     content: () => componentRef.current,
   });
   return (
@@ -913,8 +915,8 @@ const DataTable = ({
         handleClose={() => setOpenBulkDeleteDialog(false)}
         onSubmit={() => { handleBulkDelete() }}
       />
-      <div ref={componentRef}>
-        <PrintDataTable 
+      <div ref={componentRef} hidden={false} style={{ maxWidth: '0px', 'maxHeight': '0px' }}>
+        <PrintDataTable
           columns={columns}
           rows={printRows}
         />

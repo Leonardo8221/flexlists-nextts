@@ -12,10 +12,11 @@ import {
   Divider,
   Button,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { motion } from "framer-motion";
+import { getShareURL } from "src/services/listView.service";
 
 type Props = {
   open: boolean;
@@ -62,9 +63,19 @@ const scaleUp = {
 
 const PublishList = (props: Props) => {
   const { open, handleClose } = props;
+  const [shareURL, setShareURL] = useState<string | undefined>(undefined);
+
   const closeModal = () => {
     handleClose();
   };
+
+  useEffect(() => {
+    const getShareURLFromAPI = async () => {
+      // const url = await getShareURL();
+      // setShareURL(url);
+    };
+    getShareURLFromAPI();
+  }, []);
 
   return (
     <Modal
@@ -107,11 +118,11 @@ const PublishList = (props: Props) => {
               control={<Radio />}
               label={<Typography variant="body2">JavaScript</Typography>}
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               value="other"
               control={<Radio />}
               label={<Typography variant="body2">Other</Typography>}
-            />
+            /> */}
           </RadioGroup>
         </FormControl>
         <TextField
