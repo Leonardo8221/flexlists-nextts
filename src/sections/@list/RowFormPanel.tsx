@@ -60,6 +60,8 @@ import ReactPlayer from 'react-player';
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import "easymde/dist/easymde.min.css";
 import dynamic from 'next/dynamic'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 interface RowFormProps {
   currentView: View;
@@ -314,6 +316,7 @@ const RowFormPanel = ({
         return currentMode !== "view" ? (
           <TextField
             key={column.id}
+            style={{ width: '97%' }}
             label={column.name}
             name={`${column.id}`}
             size="small"
@@ -645,9 +648,11 @@ const RowFormPanel = ({
                 setValues({ ...values, [column.id]: newValue });
               }}
             /> */}
-            <SimpleMdeReact value={values[column.id]} onChange={(newValue: string) => {
-              setValues({ ...values, [column.id]: newValue });
-            }} />
+            <SimpleMdeReact value={values[column.id]}
+              style={{ width: '97%' }}
+              onChange={(newValue: string) => {
+                setValues({ ...values, [column.id]: newValue });
+              }} />
           </Box>
         ) : (
           <div key={column.id}>
@@ -659,7 +664,36 @@ const RowFormPanel = ({
         );
       case FieldUiTypeEnum.HTML:
         return currentMode !== "view" ? (
-          <></>
+          <Box
+            key={column.id}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              position: "relative",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                textTransform: "capitalize",
+                color: "rgba(0, 0, 0, 0.6)",
+                fontSize: "12px",
+                position: "absolute",
+                top: "-10px",
+                left: "12px",
+                background: "#fff",
+              }}
+            >
+              {column.name}
+            </Typography>
+            <ReactQuill theme="snow" value={values[column.id]}
+              style={{ width: '97%' }}
+
+              onChange={(newValue: string) => {
+                setValues({ ...values, [column.id]: newValue });
+              }} />
+          </Box>
         ) : (
           <div key={column.id}>
             <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
