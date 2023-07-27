@@ -60,17 +60,14 @@ const MarkdownEditor = ({
     <div className="focusedNeed" tabIndex={8}>
       <Box
         key={id}
-        //   component={"input"}
         className="markdownBox"
         sx={{
           border: "1px solid rgba(158, 158, 158, 0.32)",
           p: 2,
           position: "relative",
           borderRadius: "6px",
-          boxSizing: "border-box",
           ".focusedNeed:focus &": {
             border: "2px solid #1976d2",
-            outline: 0,
           },
           "&:hover": {
             border: "1px solid rgba(0, 0, 0, 0.87)",
@@ -99,11 +96,18 @@ const MarkdownEditor = ({
         >
           {name}
         </Typography>
-        <div className="markdownWrapper">
+        <Box
+          className="markdownWrapper"
+          sx={{
+            ".focusedNeed:focus &": {
+              margin: "-1px",
+            },
+          }}
+        >
           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]}>
             {value}
           </ReactMarkdown>
-        </div>
+        </Box>
       </Box>
     </div>
   );

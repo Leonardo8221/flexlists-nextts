@@ -57,37 +57,57 @@ const HTMLEditor = ({
       />
     </Box>
   ) : (
-    <div
-      key={id}
-      style={{
-        border: "1px solid rgba(158, 158, 158, 0.32)",
-        paddingBlock: 8,
-        paddingInline: 8,
-        position: "relative",
-      }}
-    >
-      <Typography
-        variant="body2"
-        component={"label"}
+    <div className="focusedNeed" tabIndex={8}>
+      <Box
+        key={id}
+        className="markdownBox"
         sx={{
-          textTransform: "capitalize",
-          fontSize: 12,
-          position: "absolute",
-          top: "-10px",
-          background: "#fff",
-          zIndex: 2,
-          px: 0.5,
-          color: "rgba(0, 0, 0, 0.6)",
+          border: "1px solid rgba(158, 158, 158, 0.32)",
+          p: 2,
+          position: "relative",
+          borderRadius: "6px",
+          ".focusedNeed:focus &": {
+            border: "2px solid #1976d2",
+          },
+          "&:hover": {
+            border: "1px solid rgba(0, 0, 0, 0.87)",
+          },
         }}
       >
-        {name}
-      </Typography>
-      <div
-        className="htmlViewer"
-        dangerouslySetInnerHTML={{
-          __html: value?.toString(),
-        }}
-      />
+        <Typography
+          variant="body2"
+          component={"label"}
+          sx={{
+            textTransform: "capitalize",
+            fontSize: 12,
+            position: "absolute",
+            top: "-10px",
+            left: "10px",
+            background: "#fff",
+            zIndex: 2,
+            px: 0.5,
+            color: "rgba(0, 0, 0, 0.6)",
+            ".focusedNeed:focus &": {
+              color: "#1976d2",
+              top: "-11px",
+              left: "9px",
+            },
+          }}
+        >
+          {name}
+        </Typography>
+        <Box
+          className="htmlViewer"
+          dangerouslySetInnerHTML={{
+            __html: value?.toString(),
+          }}
+          sx={{
+            ".focusedNeed:focus &": {
+              margin: "-1px",
+            },
+          }}
+        />
+      </Box>
     </div>
   );
 };
