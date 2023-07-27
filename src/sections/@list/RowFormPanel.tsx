@@ -60,7 +60,6 @@ import ReactPlayer from 'react-player';
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import "easymde/dist/easymde.min.css";
 import dynamic from 'next/dynamic'
-import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 
 interface RowFormProps {
@@ -78,6 +77,9 @@ const SimpleMdeReact = dynamic(() => {
   return import("react-simplemde-editor")
 }, { ssr: false })
 
+const ReactQuill = dynamic(() => {
+  return import("react-quill")
+}, { ssr: false })
 
 const RowFormPanel = ({
   currentView,
@@ -316,7 +318,7 @@ const RowFormPanel = ({
         return currentMode !== "view" ? (
           <TextField
             key={column.id}
-            style={{ width: '97%' }}
+            style={{ width: '100%' }}
             label={column.name}
             name={`${column.id}`}
             size="small"
@@ -649,7 +651,7 @@ const RowFormPanel = ({
               }}
             /> */}
             <SimpleMdeReact value={values[column.id]}
-              style={{ width: '97%' }}
+              style={{ width: '100%' }}
               onChange={(newValue: string) => {
                 setValues({ ...values, [column.id]: newValue });
               }} />
@@ -671,6 +673,8 @@ const RowFormPanel = ({
               flexDirection: "column",
               alignItems: "flex-start",
               position: "relative",
+              height: '300px',
+              paddingBottom: '50px'
             }}
           >
             <Typography
@@ -688,7 +692,7 @@ const RowFormPanel = ({
               {column.name}
             </Typography>
             <ReactQuill theme="snow" value={values[column.id]}
-              style={{ width: '97%' }}
+              style={{ width: '97%', height: '100%' }}
 
               onChange={(newValue: string) => {
                 setValues({ ...values, [column.id]: newValue });
