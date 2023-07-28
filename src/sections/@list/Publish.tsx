@@ -68,9 +68,11 @@ const PublishList = (props: Props) => {
   const { open, handleClose } = props;
   const [code, setCode] = useState("");
   const [copyOpen, setCopyOpen] = useState(false);
+  const [selected, setSelected] = useState("iframe");
 
   const closeModal = () => {
     handleClose();
+    setCode("");
   };
 
 
@@ -82,7 +84,7 @@ const PublishList = (props: Props) => {
       }
     }
     setStart()
-  }, [])
+  }, [code, props.id])
 
   async function getShareURLAsync(format: string) {
     const url = await getShareURL(props.id, format);
@@ -132,16 +134,18 @@ const PublishList = (props: Props) => {
             <FormLabel id="demo-radio-buttons-group-label">Publish as</FormLabel>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue="iframe"
+              defaultValue='iframe'
               name="radio-buttons-group"
             >
               <FormControlLabel
                 value="iframe"
                 control={<Radio />}
+                checked={selected === "iframe"}
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("html");
                     setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`)
+                    setSelected("iframe")
                   }
                 }}
                 label={<Typography variant="body2">IFrame</Typography>}
@@ -149,10 +153,12 @@ const PublishList = (props: Props) => {
               <FormControlLabel
                 value="javascript"
                 control={<Radio />}
+                checked={selected === "javascript"}
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("js");
                     setCode(`<script src="${url}"></script>`)
+                    setSelected("javascript")
                   }
                 }}
                 label={<Typography variant="body2">JavaScript</Typography>}
@@ -160,10 +166,12 @@ const PublishList = (props: Props) => {
               <FormControlLabel
                 value="json"
                 control={<Radio />}
+                checked={selected === "json"}
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("json");
                     setCode(`${url}`)
+                    setSelected("json")
                   }
                 }}
                 label={<Typography variant="body2">JSON</Typography>}
