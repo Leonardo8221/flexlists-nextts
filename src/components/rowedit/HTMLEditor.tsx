@@ -35,16 +35,18 @@ const HTMLEditor = ({
       }}
     >
       <Typography
-        variant="body1"
+        variant="body2"
+        component={"label"}
         sx={{
           textTransform: "capitalize",
-          color: "rgba(0, 0, 0, 0.6)",
-          fontSize: "12px",
+          fontSize: 12,
           position: "absolute",
           top: "-10px",
-          left: "12px",
+          left: "10px",
           background: "#fff",
+          zIndex: 2,
           px: 0.5,
+          color: "rgba(0, 0, 0, 0.6)",
         }}
       >
         {name}
@@ -52,7 +54,7 @@ const HTMLEditor = ({
       <ReactQuill
         theme="snow"
         value={value}
-        style={{ width: "97%", height: "100%" }}
+        style={{ width: "100%", height: "100%" }}
         onChange={handleChange}
       />
     </Box>
