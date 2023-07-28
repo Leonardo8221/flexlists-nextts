@@ -210,7 +210,7 @@ const Register = ({
         firstName,
         lastName,
         userEmail,
-        phoneNumber
+        phoneNumber.length > 3 ? phoneNumber : ''
       );
       // var response = await authService.register(
       //   firstName,
