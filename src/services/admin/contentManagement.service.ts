@@ -59,7 +59,7 @@ async function getContentManagementTranslationTexts(contentManagementId: number,
   var response = await axios.get<FlexlistsError | FlexlistsSuccess<GetContentManagementTranslationTextsOutputDto[]>>('/api/contentManagement/getContentManagementTranslationTexts' + `?contentManagementId=${contentManagementId}&i18n=${i18n}`)
   return response.data;
 };
-export async function uploadFile(formData: any): Promise<any> {
+export async function uploadFile(formData: any): Promise<FlexlistsError | FlexlistsSuccess<{fileId:any}>> {
   var response = await axios.post<any>(`/api/contentManagement/uploadFile`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

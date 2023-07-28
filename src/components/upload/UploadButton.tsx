@@ -6,6 +6,7 @@ import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { isFileExtensionAllowed } from "src/utils/fileUtils";
+import { isSucc } from "src/models/ApiResponse";
 type UploadButtonProps = {
     fileAcceptTypes: string[],
     file?: {fileId:string,fileName:string},
@@ -27,8 +28,12 @@ function UploadButton({file,fileAcceptTypes,onUpload,setFlashMessage}: UploadBut
           const formData = new FormData();
           formData.append("file", file);
           let response = await uploadFile(formData);
-          if (response && response.fileId) {
-            onUpload({fileId:response.fileId,fileName:event.target.files[0].name});
+          if (isSucc(response) &&response.data && response.data.fileId) {
+            onUpload({fileId:response.data.fileId,fileName:event.target.files[0].name});
+          }
+          else
+          {
+            setFlashMessage && setFlashMessage({message:response.message,type:'error'});
           }
         }
       };

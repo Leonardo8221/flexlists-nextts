@@ -224,14 +224,18 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
     const formData = new FormData();
     formData.append("file", file);
     let response = await contentManagementService.uploadFile(formData);
-    if (response && response.fileId) {
+    if (isSucc(response)&&response.data && response.data.fileId) {
       let newTranslationTexts = translationTexts.map((x) => {
         if (x.translationKeyId === translationText.translationKeyId) {
-          x.translation = response.fileId;
+          x.translation = response.data.fileId;
         }
         return x;
       });
       setTranslationTexts(newTranslationTexts);
+    }
+    else
+    {
+      setError((response as FlexlistsError).message);
     }
   };
 
