@@ -141,7 +141,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
         lastName,
         userName,
         userEmail,
-        phoneNumber,
+        phoneNumber.length > 3 ? phoneNumber : '',
         password,
         termsAndConditions
       );
