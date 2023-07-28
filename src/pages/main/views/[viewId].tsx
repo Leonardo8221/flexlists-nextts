@@ -86,7 +86,7 @@ export function ListDetail({
           backgroundColor: theme.palette.palette_style.background.default,
           boxShadow: "none",
           width: "100%",
-          height: { xs: "calc(100% - 8px)", md: "100%" },
+          height: { xs: "100%", md: "100%" },
           overflow: "hidden",
         }}
       >

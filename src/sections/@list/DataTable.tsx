@@ -99,31 +99,31 @@ const DataTable = ({
   const bulkActions = [
     {
       title: "Clone",
-      icon: <ContentCopyIcon />,
+      icon: <ContentCopyIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "clone",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Archive",
-      icon: <ArchiveIcon />,
+      icon: <ArchiveIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Unarchive",
-      icon: <UnarchiveIcon />,
+      icon: <UnarchiveIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "unarchive",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Print",
-      icon: <PrintIcon />,
+      icon: <PrintIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "print",
       allowed: hasPermission(currentView?.role, "Read"),
     },
     {
       title: "Delete",
-      icon: <DeleteIcon />,
+      icon: <DeleteIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "delete",
       color: "#c92929",
       allowed: hasPermission(currentView?.role, "Delete"),
@@ -591,7 +591,6 @@ const DataTable = ({
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
   };
   const handlePrint = useReactToPrint({
-
     content: () => componentRef.current,
   });
   return (
@@ -600,6 +599,10 @@ const DataTable = ({
         sx={{
           width: { xs: "100vw", lg: "100%" },
           overFlow: "scroll",
+          height: {
+            xs: "calc(100vh - 234px)",
+            md: "inherit",
+          },
         }}
         id="datatable_wrap"
       >
@@ -651,7 +654,9 @@ const DataTable = ({
                 scrollBehavior: "smooth !important",
                 WebkitOverflowScrolling: "touch",
                 height: {
-                  xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+                  // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+                  xs: "calc(100vh - 236px)",
+                  sm: "calc(100vh - 196px)",
                   lg: "calc(100vh - 188px)",
                 },
                 width: { lg: "100vw" },
@@ -673,7 +678,7 @@ const DataTable = ({
             enableRowVirtualization
             // enableMultiRowSelection={false}
             muiSelectCheckboxProps={{
-              color: "secondary",
+              color: "primary",
             }}
             muiTableBodyRowProps={({ row }: any) => ({
               onClick: () => {
@@ -757,7 +762,13 @@ const DataTable = ({
             flexDirection: "inherit",
           }}
         >
-          <Box sx={{ display: "flex", px: { xs: 0, md: 2 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              px: { xs: 0, md: 2 },
+              gap: { xs: 1, md: 4 },
+            }}
+          >
             {hasPermission(currentView?.role, "Create") && (
               <Button
                 variant="contained"
@@ -766,9 +777,11 @@ const DataTable = ({
                   // position: "absolute",
                   // top: -80,
                   // left: 80,
+                  flex: { md: 1 },
                   backgroundColor: theme.palette.palette_style.primary.main,
                   color: theme.palette.palette_style.text.white,
                   // opacity: 0.2,
+                  px: { xs: 1, md: "inherit" },
                   height: 32,
                   "&:hover": {
                     backgroundColor: theme.palette.palette_style.primary.dark,
@@ -787,9 +800,9 @@ const DataTable = ({
                 // onClick={handleNewRowPanel}
                 sx={{
                   display: isMobile ? "flex" : "none",
+                  px: { xs: 1, md: "inherit" },
                   border: 2,
                   height: 32,
-                  ml: 2,
                   justifyContent: "space-between",
                   alignItems: "center",
                   "&:hover": {
@@ -805,15 +818,17 @@ const DataTable = ({
               sx={{
                 backgroundColor: theme.palette.palette_style.background.paper,
                 display: "flex",
-                flexDirection: { xs: "column", md: "row" },
+                // flexDirection: { xs: "column", md: "row" },
                 position: { xs: "absolute", md: "relative" },
                 bottom: { xs: 80, md: "unset" },
                 left: { xs: "50%", md: "unset" },
                 transform: { xs: "translateX(-50%)", md: "unset" },
                 width: { xs: "90%", md: "auto" },
-                justifyContent: "space-between",
-                alignItems: "center",
-                px: { xs: 1, md: 3 },
+                // justifyContent: "space-between",
+                // alignItems: "center",
+                zIndex: 11,
+                flexWrap: { xs: "wrap", md: "nowrap" },
+                // px: { xs: 1, md: 3 },
                 // marginTop: 4,
                 // paddingBottom: 2,
                 // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
@@ -831,7 +846,7 @@ const DataTable = ({
                         sx={{
                           display: "flex",
                           cursor: "pointer",
-                          width: "100%",
+                          width: { xs: "50%", sm: "33.33%", md: "100%" },
                         }}
                         onClick={() => {
                           handleBulkAction(action.action);
@@ -894,10 +909,12 @@ const DataTable = ({
             }}
           >
             <Typography
-              variant="body2"
-              sx={{ display: { xs: "none", md: "block" } }}
+              variant="caption"
+              sx={{ display: { xs: "none", lg: "block" } }}
             >
-              {pagination.pageIndex * pagination.pageSize + 1}-{(pagination.pageIndex + 1) * pagination.pageSize} of {count}, per page:
+              {pagination.pageIndex * pagination.pageSize + 1}-
+              {(pagination.pageIndex + 1) * pagination.pageSize} of {count}, per
+              page:
             </Typography>
             <Select
               id="per_page"
@@ -959,16 +976,15 @@ const DataTable = ({
           handleBulkDelete();
         }}
       />
-      <div style={{display:'none'}}>
-      <div ref={componentRef} hidden={false} style={{ maxWidth: '0px', 'maxHeight': '0px' }}>
-        <PrintDataTable
-          columns={columns}
-          rows={printRows}
-        />
-
+      <div style={{ display: "none" }}>
+        <div
+          ref={componentRef}
+          hidden={false}
+          style={{ maxWidth: "0px", maxHeight: "0px" }}
+        >
+          <PrintDataTable columns={columns} rows={printRows} />
+        </div>
       </div>
-      </div>
-      
     </>
   );
 };
