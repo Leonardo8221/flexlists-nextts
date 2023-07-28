@@ -959,6 +959,7 @@ const DataTable = ({
           handleBulkDelete();
         }}
       />
+      <div style={{display:'none'}}>
       <div ref={componentRef} hidden={false} style={{ maxWidth: '0px', 'maxHeight': '0px' }}>
         <PrintDataTable
           columns={columns}
@@ -966,6 +967,8 @@ const DataTable = ({
         />
 
       </div>
+      </div>
+      
     </>
   );
 };
