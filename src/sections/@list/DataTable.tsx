@@ -656,7 +656,7 @@ const DataTable = ({
                 height: {
                   // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
                   xs: "calc(100vh - 236px)",
-                  sm: "calc(100vh - 196px)",
+                  md: "calc(100vh - 200px)",
                   lg: "calc(100vh - 188px)",
                 },
                 width: { lg: "100vw" },
