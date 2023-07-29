@@ -22,6 +22,7 @@ import { isErr } from "src/models/ApiResponse";
 
 type Props = {
   id: number;
+  name: string;
   open: boolean;
   handleClose: () => void;
 };
@@ -86,6 +87,7 @@ const PublishList = (props: Props) => {
   }, [code, props.id])
 
   async function getShareURLAsync(format: string) {
+    console.log(props)
     const url = await getShareURL(props.id, format);
     if (isErr(url)) {
       return ""
@@ -182,12 +184,12 @@ const PublishList = (props: Props) => {
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EmbeddedWidget</title>
+  <title>Flexlists.com, showing list ${props.name}</title>
   <script src="${domain}${widgetURI}"></script>
 </head>
 
 <body>
-  <p>Embedded Flexlists Widget</p>
+  <h3>${props.name}</h3>
 
   <script>
     EmbeddedWidget.mount('${domain}', '${key}');
