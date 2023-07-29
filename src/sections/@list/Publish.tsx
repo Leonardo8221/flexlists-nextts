@@ -16,6 +16,8 @@ import {
 import React, { useEffect } from "react";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import NewReleaseIcon from "@mui/icons-material/NewReleases";
+
 import { motion } from "framer-motion";
 import { getShareURL } from "src/services/listView.service";
 import { isErr } from "src/models/ApiResponse";
@@ -201,7 +203,7 @@ const PublishList = (props: Props) => {
                     setSelected("dynamic-javascript")
                   }
                 }}
-                label={<Typography variant="body2">Dynamic JavaScript (new!)</Typography>}
+                label={<Typography variant="body2">Dynamic JavaScript <NewReleaseIcon /></Typography>}
               />
               <FormControlLabel
                 value="json"
