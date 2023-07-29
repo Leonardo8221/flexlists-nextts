@@ -72,7 +72,6 @@ const PublishList = (props: Props) => {
 
   const closeModal = () => {
     handleClose();
-    setCode("");
   };
 
 
@@ -161,7 +160,46 @@ const PublishList = (props: Props) => {
                     setSelected("javascript")
                   }
                 }}
-                label={<Typography variant="body2">JavaScript</Typography>}
+                label={<Typography variant="body2">Static JavaScript</Typography>}
+              />
+              <FormControlLabel
+                value="dynamic-javascript"
+                control={<Radio />}
+                checked={selected === "dynamic-javascript"}
+                onChange={async (event: any, checked: boolean) => {
+                  if (checked) {
+                    const url = await getShareURLAsync("js");
+                    const widgetURI = '/api/export/widgets/flexlists-react-table-widget.js'
+                    // url looks like;  http://localhost:3003/api/export/xxx.js
+                    // get the http://domain from the url; 
+                    const domain = url.split('/').slice(0, 3).join('/')
+                    // now get the xxx (key) from the url ;
+                    const key = url.split('/').slice(-1)[0].split('.')[0]
+                    setCode(`
+                    <html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmbeddedWidget</title>
+  <script src="${domain}${widgetURI}"></script>
+</head>
+
+<body>
+  <p>Embedded Flexlists Widget</p>
+
+  <script>
+    EmbeddedWidget.mount('${domain}', '${key}');
+  </script>
+</body>
+
+</html>
+                    `.trim())
+                    setSelected("dynamic-javascript")
+                  }
+                }}
+                label={<Typography variant="body2">Dynamic JavaScript (new!)</Typography>}
               />
               <FormControlLabel
                 value="json"
