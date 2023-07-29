@@ -75,7 +75,7 @@ axiosInstance.interceptors.response.use(
 
 async function get<T>(url: string, params?: any) {
   try {
-    return await axiosInstance.get<T>(url, { params })
+    return await axiosInstance.get<T>(url, params)
   } catch (e: any) {
     if (!onServer) store.dispatch(setLoading(false))
     console.log(e)

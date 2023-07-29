@@ -78,8 +78,8 @@ export async function softDeleteView(viewId: number): Promise<FlexlistsError | F
 
   return response.data;
 };
-export async function getView(viewId: number): Promise<FlexlistsError | FlexlistsSuccess<View[]>> {
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess<View[]>>('/api/listView/getView' + `?viewId=${viewId}`)
+export async function getView(viewId: number, config?: any): Promise<FlexlistsError | FlexlistsSuccess<View[]>> {
+  var response = await axios.get<FlexlistsError | FlexlistsSuccess<View[]>>('/api/listView/getView' + `?viewId=${viewId}`, config)
   return response.data;
 };
 export async function getShareURL(viewId: number, format: string): Promise<FlexlistsError | FlexlistsSuccess<string>> {
