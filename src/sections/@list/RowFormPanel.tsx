@@ -127,11 +127,12 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: `${values &&
+      title: `${
+        values &&
         values[columns.find((x) => x.system && x.name === "___archived").id]
-        ? "Unarchive"
-        : "Archive"
-        }`,
+          ? "Unarchive"
+          : "Archive"
+      }`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -146,7 +147,8 @@ const RowFormPanel = ({
       title: "Delete",
       icon: <DeleteIcon />,
       action: "delete",
-      color: "#c92929",
+      // color: "#c92929",
+      color: theme.palette.palette_style.error.dark,
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
@@ -508,8 +510,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleString()
                   : ""
               }
             />
@@ -550,8 +552,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleDateString()
                   : ""
               }
             />
@@ -592,8 +594,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleDateString()
                   : "null"
               }
             />
@@ -841,10 +843,51 @@ const RowFormPanel = ({
       // );
       case FieldUiTypeEnum.Image:
         return currentMode !== "view" && !isPrint ? (
-          <Box key={column.id}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+          <Box
+            key={column.id}
+            sx={{
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              p: 2,
+              position: "relative",
+              borderRadius: "6px",
+              "&:hover": {
+                border: "1px solid rgba(0, 0, 0, 0.87)",
+              },
+            }}
+          >
+            <Typography
+              variant="body2"
+              component={"label"}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: 12,
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
+              }}
+            >
               {column.name}
             </Typography>
+            <Box
+              component="img"
+              sx={{
+                mb: 2,
+                // height: 100,
+                // width: 350,
+                // maxHeight: { xs: 233, md: 167 },
+                // maxWidth: { xs: 350, md: 250 },
+              }}
+              alt=""
+              src={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
+            />
             <UploadButton
               fileAcceptTypes={["png", "jpg", "jpeg", "gif"]}
               file={values[column.id]}
@@ -852,47 +895,66 @@ const RowFormPanel = ({
                 setValues({ ...values, [column.id]: file });
               }}
             />
-            <Box
-              component="img"
-              sx={
-                {
-                  // height: 100,
-                  // width: 350,
-                  // maxHeight: { xs: 233, md: 167 },
-                  // maxWidth: { xs: 350, md: 250 },
-                }
-              }
-              alt=""
-              src={
-                values[column.id] && values[column.id].fileId
-                  ? downloadFileUrl(values[column.id].fileId)
-                  : ""
-              }
-            />
           </Box>
         ) : (
-          <Box key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
+          <div className="focusedNeed" tabIndex={8}>
             <Box
-              component="img"
-              sx={
-                {
-                  // height: 233,
-                  // width: 350,
-                  // maxHeight: { xs: 233, md: 167 },
-                  // maxWidth: { xs: 350, md: 250 },
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="imageWrapper"
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+                component="img"
+                alt=""
+                src={
+                  values[column.id] && values[column.id].fileId
+                    ? downloadFileUrl(values[column.id].fileId)
+                    : ""
                 }
-              }
-              alt=""
-              src={
-                values[column.id] && values[column.id].fileId
-                  ? downloadFileUrl(values[column.id].fileId)
-                  : ""
-              }
-            />
-          </Box>
+              />
+            </Box>
+          </div>
         );
       case FieldUiTypeEnum.Video:
         return currentMode !== "view" && !isPrint ? (
@@ -932,26 +994,96 @@ const RowFormPanel = ({
               /> */}
           </Box>
         ) : (
-          <Box key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <ReactPlayer
-              url={
-                values[column.id] && values[column.id].fileId
-                  ? downloadFileUrl(values[column.id].fileId)
-                  : ""
-              }
-              width="100%"
-              height="auto"
-              controls
-            />
-          </Box>
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="markdownWrapper"
+                sx={{
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+              >
+                <ReactPlayer
+                  url={
+                    values[column.id] && values[column.id].fileId
+                      ? downloadFileUrl(values[column.id].fileId)
+                      : ""
+                  }
+                  width="100%"
+                  height="auto"
+                  controls
+                />
+              </Box>
+            </Box>
+          </div>
         );
       case FieldUiTypeEnum.Document:
         return currentMode !== "view" && !isPrint ? (
-          <Box key={column.id}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+          <Box
+            key={column.id}
+            sx={{
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              p: 2,
+              position: "relative",
+              borderRadius: "6px",
+              "&:hover": {
+                border: "1px solid rgba(0, 0, 0, 0.87)",
+              },
+            }}
+          >
+            <Typography
+              variant="body2"
+              component={"label"}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: 12,
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
+              }}
+            >
               {column.name}
             </Typography>
             <UploadButton
@@ -963,18 +1095,63 @@ const RowFormPanel = ({
             />
           </Box>
         ) : (
-          <Box key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            {values && values[column.id] ? (
-              <Link href={downloadFileUrl(values[column.id].fileId)}>
-                {values[column.id].fileName}
-              </Link>
-            ) : (
-              <></>
-            )}
-          </Box>
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="markdownWrapper"
+                sx={{
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+              >
+                {values && values[column.id] ? (
+                  <Link href={downloadFileUrl(values[column.id].fileId)}>
+                    {values[column.id].fileName}
+                  </Link>
+                ) : (
+                  <></>
+                )}
+              </Box>
+            </Box>
+          </div>
         );
       default:
         return <div key={column.id}></div>;
