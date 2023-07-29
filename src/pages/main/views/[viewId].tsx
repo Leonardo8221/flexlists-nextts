@@ -23,6 +23,8 @@ import { ViewType } from "src/enums/SharedEnums";
 import CalendarView from "src/sections/@calendar/CalendarView";
 import { ViewField } from "src/models/ViewField";
 import KanbanView from "src/sections/@kanban/KanbanView";
+import { GetServerSideProps } from "next";
+import { listViewService } from "src/services/listView.service";
 
 type ListProps = {
   currentView: View;
@@ -47,6 +49,7 @@ export function ListDetail({
     if (
       router.isReady &&
       router.query.viewId &&
+      getCurrentView &&
       isInteger(router.query.viewId)
     ) {
       getCurrentView(convertToNumber(router.query.viewId));
@@ -113,4 +116,19 @@ const mapDispatchToProps = {
   fetchColumns,
   fetchRowsByPage,
 };
+
+// TODO: make this work, there is an access issue, so probably it's not passing the JWT token to the request 
+// when requesting from the server side. 
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//   var id = context.query.viewId;
+//   const response = await listViewService.getView(convertToNumber(id));
+//   console.log(response)
+
+//   const ressult = {
+//     props: {
+//       //currentView: response.data!,
+//     },
+//   }
+//   return ressult;
+// }
 export default connect(mapStateToProps, mapDispatchToProps)(ListDetail);
