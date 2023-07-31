@@ -77,24 +77,23 @@ const PublishList = (props: Props) => {
     handleClose();
   };
 
-
   useEffect(() => {
     async function setStart() {
       if (!code && props.id) {
         const url = await getShareURLAsync("html");
-        setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`)
+        setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`);
       }
     }
-    setStart()
-  }, [code, props.id])
+    setStart();
+  }, [code, props.id]);
 
   async function getShareURLAsync(format: string) {
-    console.log(props)
+    console.log(props);
     const url = await getShareURL(props.id, format);
     if (isErr(url)) {
-      return ""
+      return "";
     }
-    return url.data!
+    return url.data!;
   }
 
   function handleCopyClose() {
@@ -129,15 +128,18 @@ const PublishList = (props: Props) => {
           </Typography>
 
           <Typography gutterBottom variant="body2" sx={{ my: 1 }}>
-            With Web export you can add the list to your website by simply adding
-            a bit of javascript. Simply copy the code below into your site.
+            With Web export you can add the list to your website by simply
+            adding a bit of javascript. Simply copy the code below into your
+            site.
           </Typography>
           <Divider sx={{ my: 1 }}></Divider>
           <FormControl sx={{ my: 1 }}>
-            <FormLabel id="demo-radio-buttons-group-label">Publish as</FormLabel>
+            <FormLabel id="demo-radio-buttons-group-label">
+              Publish as
+            </FormLabel>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue='iframe'
+              defaultValue="iframe"
               name="radio-buttons-group"
             >
               <FormControlLabel
@@ -147,8 +149,10 @@ const PublishList = (props: Props) => {
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("html");
-                    setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`)
-                    setSelected("iframe")
+                    setCode(
+                      `<iframe src="${url}" width="100%" height="100%"></iframe>`
+                    );
+                    setSelected("iframe");
                   }
                 }}
                 label={<Typography variant="body2">IFrame</Typography>}
@@ -160,11 +164,13 @@ const PublishList = (props: Props) => {
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("js");
-                    setCode(`<script src="${url}"></script>`)
-                    setSelected("javascript")
+                    setCode(`<script src="${url}"></script>`);
+                    setSelected("javascript");
                   }
                 }}
-                label={<Typography variant="body2">Static JavaScript</Typography>}
+                label={
+                  <Typography variant="body2">Static JavaScript</Typography>
+                }
               />
               <FormControlLabel
                 value="dynamic-javascript"
@@ -173,13 +179,15 @@ const PublishList = (props: Props) => {
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("js");
-                    const widgetURI = '/api/export/widgets/flexlists-react-table-widget.js'
+                    const widgetURI =
+                      "/api/export/widgets/flexlists-react-table-widget.js";
                     // url looks like;  http://localhost:3003/api/export/xxx.js
-                    // get the http://domain from the url; 
-                    const domain = url.split('/').slice(0, 3).join('/')
+                    // get the http://domain from the url;
+                    const domain = url.split("/").slice(0, 3).join("/");
                     // now get the xxx (key) from the url ;
-                    const key = url.split('/').slice(-1)[0].split('.')[0]
-                    setCode(`
+                    const key = url.split("/").slice(-1)[0].split(".")[0];
+                    setCode(
+                      `
                     <html lang="ja">
 
 <head>
@@ -194,16 +202,22 @@ const PublishList = (props: Props) => {
   <h3>${props.name}</h3>
 
   <script>
-    EmbeddedWidget.mount('${domain}', '${key}');
+    const widget = new EmbeddedWidget(host, apiKey, 'test');
+    widget.mount();
   </script>
 </body>
 
 </html>
-                    `.trim())
-                    setSelected("dynamic-javascript")
+                    `.trim()
+                    );
+                    setSelected("dynamic-javascript");
                   }
                 }}
-                label={<Typography variant="body2">Dynamic JavaScript <NewReleaseIcon /></Typography>}
+                label={
+                  <Typography variant="body2">
+                    Dynamic JavaScript <NewReleaseIcon />
+                  </Typography>
+                }
               />
               <FormControlLabel
                 value="json"
@@ -212,8 +226,8 @@ const PublishList = (props: Props) => {
                 onChange={async (event: any, checked: boolean) => {
                   if (checked) {
                     const url = await getShareURLAsync("json");
-                    setCode(`${url}`)
-                    setSelected("json")
+                    setCode(`${url}`);
+                    setSelected("json");
                   }
                 }}
                 label={<Typography variant="body2">JSON</Typography>}
@@ -226,17 +240,24 @@ const PublishList = (props: Props) => {
             </RadioGroup>
           </FormControl>
           <TextField
+            size="small"
             value={code}
             InputProps={{
               endAdornment: (
-                <InputAdornment position="end" onClick={() => {
-                  setCopyOpen(true);
-                  navigator.clipboard.writeText(code)
-                }}>
-                  <ContentCopyIcon sx={{ cursor: "pointer" }} onClick={() => {
+                <InputAdornment
+                  position="end"
+                  onClick={() => {
                     setCopyOpen(true);
-                    navigator.clipboard.writeText(code)
-                  }} />
+                    navigator.clipboard.writeText(code);
+                  }}
+                >
+                  <ContentCopyIcon
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setCopyOpen(true);
+                      navigator.clipboard.writeText(code);
+                    }}
+                  />
                 </InputAdornment>
               ),
             }}

@@ -156,9 +156,6 @@ const ShareList = ({
       minWidth: "fit-content",
       flex: 1,
     },
-    textField: {
-      height: "36px",
-    },
   };
 
   return (
@@ -179,7 +176,7 @@ const ShareList = ({
         <Typography gutterBottom variant="h5">
           Share
         </Typography>
-        <Box borderBottom={"solid 1px"} borderColor={"divider"}>
+        <Box borderBottom={"solid 1px"} sx={{ mb: 1 }} borderColor={"divider"}>
           <Tabs
             value={currentTab}
             scrollButtons="auto"
@@ -285,10 +282,9 @@ const ShareUsers = ({
   };
   return (
     <>
-      <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
         Invite user
       </Typography>
-      <Divider></Divider>
 
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Box>
@@ -301,11 +297,7 @@ const ShareUsers = ({
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
           </FormLabel>
-          <Select
-            sx={styles?.textField}
-            value={role}
-            onChange={handleSelectRoleChange}
-          >
+          <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
               roles.map((role, index) => {
                 return (
@@ -321,7 +313,7 @@ const ShareUsers = ({
             <Typography variant="body2">Users</Typography>
           </FormLabel>
           <Autocomplete
-            sx={styles?.textField}
+            size="small"
             // freeSolo
             id="free-solo-2-demo"
             disableClearable
@@ -438,7 +430,7 @@ const ShareGroups = ({
   };
   return (
     <>
-      <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
         Invite group
       </Typography>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
@@ -450,11 +442,7 @@ const ShareGroups = ({
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
           </FormLabel>
-          <Select
-            sx={styles?.textField}
-            value={role}
-            onChange={handleSelectRoleChange}
-          >
+          <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
               roles.map((role, index) => {
                 return (
@@ -471,6 +459,7 @@ const ShareGroups = ({
               <Typography variant="body2">Groups</Typography>
             </FormLabel>
             <Autocomplete
+              size="small"
               id="combo-box-groups"
               filterSelectedOptions={true}
               options={groups.filter(
@@ -482,9 +471,8 @@ const ShareGroups = ({
               onChange={(event, newInputValue) => {
                 onGroupChange(newInputValue);
               }}
-              sx={styles?.textField}
               renderInput={(params) => (
-                <TextField {...params} label="Search groups" />
+                <TextField {...params} size="small" label="Search groups" />
               )}
             />
           </Grid>
@@ -559,16 +547,15 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
   return (
     <>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-      <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
         Create keys
       </Typography>
-      <Divider></Divider>
       <Grid container spacing={2}>
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
           </FormLabel>
-          <Select value={role} onChange={handleSelectRoleChange}>
+          <Select value={role} size="small" onChange={handleSelectRoleChange}>
             {roles &&
               roles.map((role, index) => {
                 return (
@@ -584,24 +571,20 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
             <Typography variant="body2">Info</Typography>
           </FormLabel>
           <TextField
+            size="small"
             placeholder="Name of key..."
             value={keyName}
             onChange={onKeyNameChange}
           ></TextField>
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{ height: "56px" }}
-            onClick={() => onSubmit()}
-          >
+          <Button variant="contained" fullWidth onClick={() => onSubmit()}>
             Create Key
           </Button>
         </Grid>
       </Grid>
       <Divider sx={{ my: 3, mb: 2 }}></Divider>
-      <Typography gutterBottom variant="subtitle1">
+      <Typography gutterBottom variant="subtitle2">
         All keys
       </Typography>
       <ManageKeys

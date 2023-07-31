@@ -8,7 +8,7 @@ import { Sort } from 'src/models/SharedModels'
 import { View } from 'src/models/SharedModels'
 import { SearchViewsOutputDto } from 'src/models/ApiOutputModels'
 import { Role } from 'src/enums/SharedEnums'
-import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
+//import { CheckInviteOutputDto } from 'src/models/ApiOutputModels'
 import { AcceptInviteOutputDto } from 'src/models/ApiOutputModels'
 import { GetViewGroupsOutputDto } from 'src/models/ApiOutputModels'
 import { AddTableViewToGroupOutputDto } from 'src/models/ApiOutputModels'
@@ -31,7 +31,7 @@ export const listViewService = {
   inviteEmailToView,
   updateUserRoleForView,
   deleteUserFromView,
-  checkInvite,
+  //checkInvite,
   acceptInvite,
   getViewGroups,
   addTableViewToGroup,
@@ -106,10 +106,10 @@ export async function deleteUserFromView(viewId: number, userId: number): Promis
 
   return response.data;
 };
-export async function checkInvite(uuid: any): Promise<FlexlistsError | FlexlistsSuccess<CheckInviteOutputDto>> {
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess<CheckInviteOutputDto>>('/api/listView/checkInvite' + `?uuid=${uuid}`)
-  return response.data;
-};
+// export async function checkInvite(uuid: any): Promise<FlexlistsError | FlexlistsSuccess<CheckInviteOutputDto>> {
+//   var response = await axios.get<FlexlistsError | FlexlistsSuccess<CheckInviteOutputDto>>('/api/listView/checkInvite' + `?uuid=${uuid}`)
+//   return response.data;
+// };
 export async function acceptInvite(uuid: any): Promise<FlexlistsError | FlexlistsSuccess<AcceptInviteOutputDto>> {
   var response = await axios.get<FlexlistsError | FlexlistsSuccess<AcceptInviteOutputDto>>('/api/listView/acceptInvite' + `?uuid=${uuid}`)
   return response.data;
