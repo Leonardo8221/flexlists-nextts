@@ -232,129 +232,131 @@ const ListFields = ({
                       minHeight: "360px",
                     }}
                   >
-                    {filter(fields, (x) => (x.system !== true || x.name !=='id')).map(
-                      (field: any, index: number) => (
-                        <Draggable
-                          key={field.id}
-                          draggableId={`${field.id}`}
-                          index={index}
-                        >
-                          {(provided: any) => (
+                    {filter(
+                      fields,
+                      (x) => x.system !== true || x.name !== "id"
+                    ).map((field: any, index: number) => (
+                      <Draggable
+                        key={field.id}
+                        draggableId={`${field.id}`}
+                        index={index}
+                      >
+                        {(provided: any) => (
+                          <Box
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: { xs: 1, md: 2 },
+                              cursor: "pointer",
+                              py: 2,
+                              px: 1,
+                              "&:hover": {
+                                backgroundColor: "#fafafa",
+                              },
+                            }}
+                          >
                             <Box
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
+                              component="span"
+                              className="svg-color"
+                              sx={{
+                                width: 14,
+                                height: 14,
+                                display: "inline-block",
+                                bgcolor:
+                                  theme.palette.palette_style.text.primary,
+                                mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
+                                WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
+                              }}
+                            />
+                            <Box
                               sx={{
                                 display: "flex",
+                                justifyContent: "space-between",
+                                width: "100%",
                                 alignItems: "center",
-                                gap: { xs: 1, md: 2 },
-                                cursor: "pointer",
-                                py: 2,
-                                px: 1,
-                                "&:hover": {
-                                  backgroundColor: "#fafafa",
-                                },
                               }}
                             >
                               <Box
-                                component="span"
-                                className="svg-color"
                                 sx={{
-                                  width: 14,
-                                  height: 14,
-                                  display: "inline-block",
-                                  bgcolor:
-                                    theme.palette.palette_style.text.primary,
-                                  mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
-                                  WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
+                                  display: "flex",
+                                  alignItems: "center",
                                 }}
-                              />
+                              >
+                                {field.icon && (
+                                  <Box
+                                    component="span"
+                                    className="svg-color"
+                                    sx={{
+                                      width: 15,
+                                      height: 15,
+                                      display: "inline-block",
+                                      bgcolor:
+                                        theme.palette.palette_style.text
+                                          .primary,
+                                      mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
+                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
+                                    }}
+                                  />
+                                )}
+
+                                <Box
+                                  component={"span"}
+                                  sx={{
+                                    fontFamily: "Poppins",
+                                    maxWidth: { xs: "150px", md: "200px" },
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    ml: 0.5,
+                                  }}
+                                >
+                                  {field.name}
+                                </Box>
+                              </Box>
                               <Box
                                 sx={{
                                   display: "flex",
-                                  justifyContent: "space-between",
-                                  width: "100%",
                                   alignItems: "center",
+                                  gap: { xs: 1, md: 3 },
                                 }}
                               >
                                 <Box
                                   sx={{
                                     display: "flex",
                                     alignItems: "center",
+                                    gap: 0.5,
+                                    cursor: "pointer",
+                                    fontWeight: 500,
+                                    color: "primary.main",
                                   }}
+                                  onClick={() => handleUpdateField(field)}
                                 >
-                                  {field.icon && (
-                                    <Box
-                                      component="span"
-                                      className="svg-color"
-                                      sx={{
-                                        width: 15,
-                                        height: 15,
-                                        display: "inline-block",
-                                        bgcolor:
-                                          theme.palette.palette_style.text
-                                            .primary,
-                                        mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
-                                        WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
-                                      }}
-                                    />
-                                  )}
-
-                                  <Box
+                                  <EditIcon />
+                                  <Typography
+                                    variant="subtitle2"
                                     component={"span"}
                                     sx={{
-                                      fontFamily: "Poppins",
-                                      maxWidth: { xs: "150px", md: "200px" },
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      whiteSpace: "nowrap",
-                                      ml: 0.5,
+                                      display: {
+                                        xs: "none",
+                                        md: "block",
+                                      },
                                     }}
                                   >
-                                    {field.name}
-                                  </Box>
+                                    Edit
+                                  </Typography>
                                 </Box>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: { xs: 1, md: 3 },
-                                  }}
-                                >
+                                {field.system !== true ? (
                                   <Box
                                     sx={{
                                       display: "flex",
-                                      alignItems: "center",
-                                      gap: 1,
-                                      cursor: "pointer",
-                                      fontWeight: 500,
-                                      color: "primary.main",
-                                    }}
-                                    onClick={() => handleUpdateField(field)}
-                                  >
-                                    <EditIcon />
-                                    <Typography
-                                      variant="subtitle2"
-                                      component={"span"}
-                                      sx={{
-                                        display: {
-                                          xs: "none",
-                                          md: "block",
-                                        },
-                                      }}
-                                    >
-                                      Edit
-                                    </Typography>
-                                  </Box>
-                                  {
-                                    field.system !== true ?
-                                    <Box
-                                    sx={{
-                                      display: "flex",
-                                      gap: 1,
+                                      gap: 0.5,
                                       alignItems: "center",
                                       cursor: "pointer",
-                                      color: "#eb2027",
+                                      color:
+                                        theme.palette.palette_style.error.dark,
                                       fontWeight: 500,
                                     }}
                                     onClick={() => handleDeleteField(field.id)}
@@ -372,28 +374,26 @@ const ListFields = ({
                                     >
                                       Delete
                                     </Typography>
-                                  </Box> :
-                                   <Box
-                                   sx={{
-                                     display: "flex",
-                                     gap: 0,
-                                     alignItems: "center",
-                                     cursor: "pointer",
-                                     color: "#eb2027",
-                                     fontWeight: 500,
-                                     ml: 10
-                                   }}
-                                 >
-                                 </Box>
-                                  }
-                                  
-                                </Box>
+                                  </Box>
+                                ) : (
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      gap: 0,
+                                      alignItems: "center",
+                                      cursor: "pointer",
+                                      color: "#eb2027",
+                                      fontWeight: 500,
+                                      ml: 10,
+                                    }}
+                                  ></Box>
+                                )}
                               </Box>
                             </Box>
-                          )}
-                        </Draggable>
-                      )
-                    )}
+                          </Box>
+                        )}
+                      </Draggable>
+                    ))}
                   </Box>
                 )}
               </Droppable>
