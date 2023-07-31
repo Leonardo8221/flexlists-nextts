@@ -49,6 +49,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
+import sanitizeHtml from 'sanitize-html';
 
 type DataTableProps = {
   tab: boolean;
@@ -278,6 +279,19 @@ const DataTable = ({
               case FieldUiTypeEnum.Text:
               case FieldUiTypeEnum.LongText:
               case FieldUiTypeEnum.HTML:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {sanitizeHtml(cellValue.replace(/</g, " <"), { allowedTags: [] })}
+                  </Box>
+                );
               case FieldUiTypeEnum.Markdown:
                 return (
                   <Box
