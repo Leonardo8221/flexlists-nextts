@@ -1,5 +1,13 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Button,
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -49,7 +57,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
-import sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from "sanitize-html";
 
 type DataTableProps = {
   tab: boolean;
@@ -289,7 +297,9 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {sanitizeHtml(cellValue.replace(/</g, " <"), { allowedTags: [] })}
+                    {sanitizeHtml(cellValue.replace(/</g, " <"), {
+                      allowedTags: [],
+                    })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:
@@ -337,7 +347,14 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue?.toString() === "true" ? "yes" : "no"}
+                    {/* {cellValue?.toString() === "true" ? "yes" : "no"} */}
+                    <FormGroup>
+                      <FormControlLabel
+                        disabled
+                        control={<Switch checked={cellValue} />}
+                        label={cellValue?.toString() === "true" ? "Yes" : "No"}
+                      />
+                    </FormGroup>
                   </Box>
                 );
               case FieldUiTypeEnum.Image:
