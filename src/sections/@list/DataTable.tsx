@@ -674,9 +674,6 @@ const DataTable = ({
             enableBottomToolbar={false}
             enablePagination={true}
             enableColumnResizing
-            // enableRowNumbers
-            enableRowVirtualization
-            // enableMultiRowSelection={false}
             muiSelectCheckboxProps={{
               color: "primary",
             }}
