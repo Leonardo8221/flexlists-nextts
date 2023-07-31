@@ -270,7 +270,7 @@ const Filter = ({
 
         render =
           filter.cmp !== FilterOperator.in &&
-          filter.cmp !== FilterOperator.nin ? (
+            filter.cmp !== FilterOperator.nin ? (
             <Select
               value={filter.right}
               onChange={(e) => {
@@ -439,8 +439,8 @@ const Filter = ({
                       {columns.map((column: any) => {
                         var columnValue =
                           column.system &&
-                          (column.name === "createdAt" ||
-                            column.name === "updatedAt")
+                            (column.name === "createdAt" ||
+                              column.name === "updatedAt")
                             ? column.name
                             : column.id;
 
@@ -577,8 +577,62 @@ const Filter = ({
             Submit
           </Button>
         </Box>
+        <Box>
+          <Typography variant="subtitle2">Predefined & Saved filters:</Typography>
+          <Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="body1"
+                sx={{ color: theme.palette.palette_style.text.selected, cursor: "pointer", }}
+                onClick={() => {
+                  var newView: View = Object.assign({}, currentView);
+                  const archived = columns.find((x: any) => x.name === "___archived");
+                  newView.conditions = [{ "left": archived.id, "leftType": "Field", "right": false, "rightType": "SearchString", "cmp": "eq" }, "Or", { "left": archived.id, "leftType": "Field", "right": true, "rightType": "SearchString", "cmp": "eq" }] as any
+                  setCurrentView(newView);
+                  fetchRows();
+                  handleClose();
+                }}
+              >
+                Show All
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="body1"
+                sx={{ color: theme.palette.palette_style.text.selected, cursor: "pointer", }}
+                onClick={() => {
+                  var newView: View = Object.assign({}, currentView);
+                  const archived = columns.find((x: any) => x.name === "___archived");
+                  newView.conditions = [{ "left": archived.id, "leftType": "Field", "right": true, "rightType": "SearchString", "cmp": "eq" }] as any
+                  newView.query = undefined;
+                  setCurrentView(newView);
+                  fetchRows();
+                  handleClose();
+                }}
+              >
+                Archived
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="body1"
+                sx={{ color: theme.palette.palette_style.text.selected, cursor: "pointer", }}
+                onClick={() => {
+                  var newView: View = Object.assign({}, currentView);
+                  const archived = columns.find((x: any) => x.name === "___archived");
+                  newView.conditions = [{ "left": archived.id, "leftType": "Field", "right": false, "rightType": "SearchString", "cmp": "eq" }] as any
+                  setCurrentView(newView);
+                  fetchRows();
+                  handleClose();
+                }}
+              >
+                Unarchived
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
       </Box>
-    </Modal>
+    </Modal >
   );
 };
 

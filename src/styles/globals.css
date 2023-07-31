@@ -106,6 +106,34 @@ a {
   }
 } */
 
+.markdownWrapper,
+.editor-preview-side,
+.CodeMirror-code,
+.htmlViewer,
+.ql-editor {
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+}
+.markdownWrapper ul:nth-child(2),
+.editor-preview-side ul:nth-child(2) {
+  margin-bottom: 1rem;
+}
+
+.markdownWrapper ul li,
+.editor-preview-side ul li {
+  /* list-style-type: disc; */
+  margin-left: 1em;
+}
+.markdownWrapper p,
+.editor-preview-side p {
+  margin-bottom: 0;
+}
+
+.htmlViewer li {
+  margin-left: 2rem;
+}
+
 html {
   height: 100%;
   /* overflow: hidden; */
@@ -171,9 +199,9 @@ body {
 #new_row_form .css-1xhypcz-MuiStack-root {
   padding-top: 0;
 }
-.toolbar_item:last-child {
-  /* margin-right: 6px; */
-}
+/* .toolbar_item:last-child {
+   margin-right: 6px; 
+} */
 .Mui-error fieldset {
   border-color: #d32f2f !important;
 }

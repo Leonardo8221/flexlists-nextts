@@ -122,7 +122,7 @@ export default function Custom404({ styles }: Custom404Props) {
               Our 404 error page seems to have gone on vacation.{" "}
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Don't worry, we've sent out a search party to bring it back. In
+              Don&apos;t worry, we&apos;ve sent out a search party to bring it back. In
               the meantime, why not enjoy a cup of virtual coffee and try
               exploring our other pages? Happy hunting!
             </Typography>

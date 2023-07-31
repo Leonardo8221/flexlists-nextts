@@ -102,11 +102,24 @@ function MenuDesktopItem({
   const { title, path, children } = item;
   const isActive = pathname === path;
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
   const handleClose = () => {
     setIsOpen(false);
   };
-  const handleOpen = () => {
-    setIsOpen(true);
+  const handleOpen = async() => {
+    if(title === "Documentation")
+    {
+      setIsOpen(true);
+    }
+    else
+    {
+      if(path)
+      {
+        await router.push({pathname: path})
+      }
+      
+    }
+    
   };
   // if (children) {
   //   return (

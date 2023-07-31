@@ -19,40 +19,40 @@ export type WhereCmp = {
 export type FlatWhere = WhereCmp | 'Or' | 'And'
 
 export type Field = {
-    id:number
-    listId:number
-    name:string
+    id: number
+    listId: number
+    name: string
     uiField: string
-    type:FieldType
-    ordering:number
-    required:boolean
-    detailsOnly:boolean
-    deleted:boolean
-    config:any
-    icon:any
-    description?:string
-    minimum?:number
-    maximum?:number
-    system:boolean
-    defaultValue?:string
-    indexed:boolean
+    type: FieldType
+    ordering: number
+    required: boolean
+    detailsOnly: boolean
+    deleted: boolean
+    config: any
+    icon: any
+    description?: string
+    minimum?: number
+    maximum?: number
+    system: boolean
+    defaultValue?: string
+    indexed: boolean
 }
 export type List = {
-    id:number
-    name:string
-    fields:Field []
-    subList:List []
-    role:Role[]
-    description?:string
+    id: number
+    name: string
+    fields: Field[]
+    subList: List[]
+    role: Role[]
+    description?: string
 }
 export type Sort = {
-    fieldId:number
-    direction:string
+    fieldId: number
+    direction: string
 }
 export type Query = {
-    table:string[]
-    field:any
-    query:any
+    table: string[]
+    field: any
+    query: any
 }
 export type ViewFieldConfig = {
     id: number,
@@ -64,11 +64,11 @@ export type ViewFieldConfig = {
     default?: string
 }
 export type View = {
-    id:number
-    name:string
-    type:ViewType
-    listId:number
-    category:ListCategory
+    id: number
+    name: string
+    type: ViewType
+    listId: number
+    category: ListCategory
     template?: boolean,
     config: any,
     icon?: string,
@@ -77,56 +77,56 @@ export type View = {
     limit?: number,
     order?: Sort[],
     query?: string,
-    conditions?:FlatWhere[],
+    conditions?: FlatWhere[],
     description?: string,
-    role:Role
+    role: Role
 }
 export type FieldUIType = {
-    name:string;
-    description:string;
-    baseType:FieldType;
-    minimum:number;
-    maximum:number;
-    group:string;
-    validator:(value:any)=>boolean;
+    name: string;
+    description: string;
+    baseType: FieldType;
+    minimum: number;
+    maximum: number;
+    group: string;
+    validator: (value: any) => boolean;
 }
 export type SearchTypeModel = {
-    name:string;
-    description:string;
-    text:string;
+    name: string;
+    description: string;
+    text: string;
 }
 export type User = {
-    userId:number
-    name:string
-    firstName:string
-    lastName:string
-    email:string
-    systemRole:string
-    status:UserStatus
-    membershipLevel:MembershipLevel
+    userId: number
+    name: string
+    firstName: string
+    lastName: string
+    email: string
+    systemRole: string
+    status: UserStatus
+    membershipLevel: MembershipLevel
 }
 export type OwnerInfo = {
-    userName:string
-    firstName:string
-    lastName:string
+    userName: string
+    firstName: string
+    lastName: string
 }
 export type ViewChat = {
-    id:number
-    contentId?:number
-    message:string
-    ownerId:number
-    ownerInfo:OwnerInfo
-    createdAt?:Date
-    updatedAt?:Date
-}& {
+    id: number
+    contentId?: number
+    message: string
+    ownerId: number
+    ownerInfo: OwnerInfo
+    createdAt?: Date
+    updatedAt?: Date
+} & {
     over: boolean
 }
 export type TranslationText = {
-    id:number
-    translationKey:string;
-    translationKeyId?:number
-    translationKeyType:TranslationKeyType,
-    i18N:string
-    translation:string
-    ownerId:number
+    id: number
+    translationKey: string;
+    translationKeyId?: number
+    translationKeyType: TranslationKeyType,
+    i18N: string
+    translation: string
+    ownerId: number
 }

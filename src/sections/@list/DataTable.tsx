@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Fab, Typography } from "@mui/material";
+import { Box, Stack, Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
@@ -8,60 +8,47 @@ import MaterialReactTable, {
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
 import RowFormPanel from "./RowFormPanel";
-import AddColumnButton from "../../components/add-button/AddColumnButton";
-import AddRowButton from "../../components/add-button/AddRowButton";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {
+  fetchColumns,
   fetchRowsByPage,
   setCurrentView,
   setRows,
 } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
-import { FieldType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
-import { ChoiceModel } from "src/models/ChoiceModel";
-import { getChoiceField } from "src/utils/flexlistHelper";
+import { downloadFileUrl, getChoiceField } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
+import UnarchiveIcon from "@mui/icons-material/Unarchive";
 
 import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { hasPermission } from "src/utils/permissionHelper";
-
-const actions = [
-  {
-    title: "Clone",
-    icon: <ContentCopyIcon />,
-    action: "clone",
-  },
-  {
-    title: "Archive",
-    icon: <ArchiveIcon />,
-    action: "archive",
-  },
-  {
-    title: "Print",
-    icon: <PrintIcon />,
-    action: "print",
-  },
-  {
-    title: "Delete",
-    icon: <DeleteIcon />,
-    action: "delete",
-    color: "#c92929",
-  },
-];
+import {
+  archiveBulkContents,
+  cloneContent,
+  createContent,
+  deleteBulkContents,
+  unarchiveBulkContents,
+} from "src/services/listContent.service";
+import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
+import { useReactToPrint } from "react-to-print";
+import PrintDataTable from "./PrintDataTable";
 
 type DataTableProps = {
   tab: boolean;
@@ -72,6 +59,7 @@ type DataTableProps = {
   count: number;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
 const DataTable = ({
@@ -83,11 +71,13 @@ const DataTable = ({
   count,
   fetchRowsByPage,
   setCurrentView,
+  setFlashMessage,
 }: DataTableProps) => {
+  const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
-
+  const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
     useState(false);
@@ -105,35 +95,41 @@ const DataTable = ({
   const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
     "view"
   );
-
-  const actions = [
+  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
+  const [printRows, setPrintRows] = useState<any[]>([]);
+  const bulkActions = [
     {
       title: "Clone",
-      icon: <ContentCopyIcon />,
+      icon: <ContentCopyIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "clone",
-      allowed: hasPermission(currentView?.role, 'Update'),
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Archive",
-      icon: <ArchiveIcon />,
+      icon: <ArchiveIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "archive",
-      allowed: hasPermission(currentView?.role, 'Update'),
+      allowed: hasPermission(currentView?.role, "Update"),
+    },
+    {
+      title: "Unarchive",
+      icon: <UnarchiveIcon sx={{ width: { xs: 16, lg: 20 } }} />,
+      action: "unarchive",
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Print",
-      icon: <PrintIcon />,
+      icon: <PrintIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "print",
-      allowed: hasPermission(currentView?.role, 'Read'),
+      allowed: hasPermission(currentView?.role, "Read"),
     },
     {
       title: "Delete",
-      icon: <DeleteIcon />,
+      icon: <DeleteIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "delete",
       color: "#c92929",
-      allowed: hasPermission(currentView?.role, 'Delete'),
+      allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -141,8 +137,16 @@ const DataTable = ({
 
   useEffect(() => {
     if (Object.keys(rowSelection).length) {
-      setSelectedRowData(
-        rows[parseInt(Object.keys(rowSelection).pop() || "0")]
+      // setSelectedRowData(
+      //   rows[parseInt(Object.keys(rowSelection).pop() || "0")]
+      // );
+      setPrintRows(
+        Object.keys(rowSelection).map((key: any) => {
+          let row = rows.find((row) => row.id === parseInt(key));
+          if (row) {
+            return row;
+          }
+        })
       );
     }
   }, [rows, rowSelection]);
@@ -162,6 +166,7 @@ const DataTable = ({
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
+      let uiFieldType = dataColumn.uiField;
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
@@ -197,14 +202,17 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
-          function renderFieldData(columnType: FieldType, cellValue: any) {
+          function renderFieldData(
+            columnType: FieldUiTypeEnum,
+            cellValue: any
+          ) {
             switch (columnType) {
-              case FieldType.Integer:
-              case FieldType.Float:
-              case FieldType.Decimal:
-              case FieldType.Double:
-              case FieldType.Money:
-              case FieldType.Percentage:
+              case FieldUiTypeEnum.Integer:
+              case FieldUiTypeEnum.Float:
+              case FieldUiTypeEnum.Decimal:
+              case FieldUiTypeEnum.Double:
+              case FieldUiTypeEnum.Money:
+              case FieldUiTypeEnum.Percentage:
                 return (
                   <Box
                     key={row.id}
@@ -219,7 +227,7 @@ const DataTable = ({
                   </Box>
                 );
 
-              case FieldType.DateTime:
+              case FieldUiTypeEnum.DateTime:
                 return (
                   <Box
                     key={row.id}
@@ -235,7 +243,7 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
-              case FieldType.Date:
+              case FieldUiTypeEnum.Date:
                 return (
                   <Box
                     key={row.id}
@@ -251,7 +259,7 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
-              case FieldType.Time:
+              case FieldUiTypeEnum.Time:
                 return (
                   <Box
                     key={row.id}
@@ -267,7 +275,10 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
-              case FieldType.Text:
+              case FieldUiTypeEnum.Text:
+              case FieldUiTypeEnum.LongText:
+              case FieldUiTypeEnum.HTML:
+              case FieldUiTypeEnum.Markdown:
                 return (
                   <Box
                     key={row.id}
@@ -281,7 +292,7 @@ const DataTable = ({
                     {cellValue}
                   </Box>
                 );
-              case FieldType.Choice:
+              case FieldUiTypeEnum.Choice:
                 const choice = getChoiceField(cellValue, dataColumn);
                 return (
                   <Box
@@ -301,7 +312,7 @@ const DataTable = ({
                     {choice?.label}
                   </Box>
                 );
-              case FieldType.Boolean:
+              case FieldUiTypeEnum.Boolean:
                 return (
                   <Box
                     key={row.id}
@@ -315,11 +326,63 @@ const DataTable = ({
                     {cellValue?.toString() === "true" ? "yes" : "no"}
                   </Box>
                 );
+              case FieldUiTypeEnum.Image:
+                return (
+                  <Box
+                    component="img"
+                    sx={{
+                      // height: 100,
+                      width: 100,
+                      // maxHeight: { xs: 233, md: 167 },
+                      // maxWidth: { xs: 350, md: 250 },
+                    }}
+                    alt=""
+                    src={
+                      cellValue && cellValue.fileId
+                        ? downloadFileUrl(cellValue.fileId)
+                        : ""
+                    }
+                  />
+                );
+              case FieldUiTypeEnum.Video:
+                return (
+                  <Box
+                    component="video"
+                    sx={{
+                      // height: 100,
+                      width: 100,
+                      // maxHeight: { xs: 233, md: 167 },
+                      // maxWidth: { xs: 350, md: 250 },
+                    }}
+                    src={
+                      cellValue && cellValue.fileId
+                        ? downloadFileUrl(cellValue.fileId)
+                        : ""
+                    }
+                  />
+                );
+              case FieldUiTypeEnum.Document:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {cellValue?.fileName}
+                  </Box>
+                );
+              // return cellValue? (
+              //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
+              // ):(<></>)
               default:
                 return <></>;
             }
           }
-          return renderFieldData(dataColumnType, renderedCellValue);
+          return renderFieldData(uiFieldType, renderedCellValue);
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,
@@ -350,16 +413,19 @@ const DataTable = ({
   }, [columnsTable]);
 
   const handleRowAction = (values: any, action: string) => {
-    if (action === "create" || action === "clone") {
-      var newRows = Object.assign([], rows);
-      newRows.push(values);
-      setRows(newRows);
-    } else if (action === "update") {
-      setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
-    } else if (action === "delete") {
-      setRows(rows.filter((row: any) => row.id !== values.id));
-    } else {
-    }
+    fetchColumns(currentView.id);
+    fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+    return;
+    // if (action === "create" || action === "clone") {
+    //   var newRows = Object.assign([], rows);
+    //   newRows.push(values);
+    //   setRows(newRows);
+    // } else if (action === "update") {
+    //   setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
+    // } else if (action === "delete") {
+    //   setRows(rows.filter((row: any) => row.id !== values.id));
+    // } else {
+    // }
   };
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -425,12 +491,122 @@ const DataTable = ({
   };
   const rowVirtualizerInstanceRef =
     useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
+
+  const handleBulkAction = async (action: string) => {
+    switch (action) {
+      case "clone":
+        let cloneResponse = await cloneContent(
+          currentView.id,
+          Object.keys(rowSelection).map((key: any) => {
+            let row = rows.find((row) => row.id === parseInt(key));
+            if (row) {
+              delete row.id;
+              var archiveField = columns.find(
+                (x) => x.system && x.name === "___archived"
+              );
+              if (archiveField) {
+                row[archiveField.name] = row[archiveField.id];
+                delete row[archiveField.id];
+              }
+              return row;
+            }
+          })
+        );
+        if (isSucc(cloneResponse)) {
+          setFlashMessage({ message: "Cloned successfully", type: "success" });
+          setRowSelection({});
+        } else {
+          setFlashMessage({
+            message: (cloneResponse as FlexlistsError).message,
+            type: "error",
+          });
+          setRowSelection({});
+          return;
+        }
+        break;
+      case "archive":
+        let archiveResponse = await archiveBulkContents(
+          currentView.id,
+          Object.keys(rowSelection).map((key: any) => parseInt(key))
+        );
+        if (isSucc(archiveResponse)) {
+          setFlashMessage({
+            message: "Archived successfully",
+            type: "success",
+          });
+          setRowSelection({});
+        } else {
+          setFlashMessage({
+            message: (archiveResponse as FlexlistsError).message,
+            type: "error",
+          });
+          setRowSelection({});
+          return;
+        }
+        break;
+      case "unarchive":
+        let unarchiveResponse = await unarchiveBulkContents(
+          currentView.id,
+          Object.keys(rowSelection).map((key: any) => parseInt(key))
+        );
+        if (isSucc(unarchiveResponse)) {
+          setFlashMessage({
+            message: "Unarchived successfully",
+            type: "success",
+          });
+          setRowSelection({});
+        } else {
+          setFlashMessage({
+            message: (unarchiveResponse as FlexlistsError).message,
+            type: "error",
+          });
+          setRowSelection({});
+          return;
+        }
+        break;
+      case "print":
+        handlePrint();
+        return;
+      case "delete":
+        setOpenBulkDeleteDialog(true);
+        return;
+      default:
+        break;
+    }
+    fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+  };
+  const handleBulkDelete = async () => {
+    let deleteResponse = await deleteBulkContents(
+      currentView.id,
+      Object.keys(rowSelection).map((key: any) => parseInt(key))
+    );
+    if (isSucc(deleteResponse)) {
+      setFlashMessage({ message: "Deleted successfully", type: "success" });
+      setRowSelection({});
+    } else {
+      setFlashMessage({
+        message: (deleteResponse as FlexlistsError).message,
+        type: "error",
+      });
+      setRowSelection({});
+      return;
+    }
+
+    fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+  };
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   return (
     <>
       <Box
         sx={{
           width: { xs: "100vw", lg: "100%" },
           overFlow: "scroll",
+          height: {
+            xs: "calc(100vh - 234px)",
+            md: "inherit",
+          },
         }}
         id="datatable_wrap"
       >
@@ -480,7 +656,9 @@ const DataTable = ({
             muiTableContainerProps={{
               sx: {
                 height: {
-                  xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+                  // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+                  xs: "calc(100vh - 236px)",
+                  md: "calc(100vh - 200px)",
                   lg: "calc(100vh - 188px)",
                 },
                 width: { lg: "100vw" },
@@ -499,14 +677,14 @@ const DataTable = ({
             enablePagination={true}
             enableColumnResizing
             // enableRowNumbers
-            enableRowVirtualization
-            enableColumnVirtualization
+            //enableRowVirtualization
+            //enableColumnVirtualization
             // enableMultiRowSelection={false}
             rowVirtualizerInstanceRef={rowVirtualizerInstanceRef}
             rowVirtualizerProps={{ overscan: 5 }}
             columnVirtualizerProps={{ overscan: 10 }}
             muiSelectCheckboxProps={{
-              color: "secondary",
+              color: "primary",
             }}
             muiTableBodyRowProps={({ row }: any) => ({
               onClick: () => {
@@ -516,6 +694,7 @@ const DataTable = ({
             })}
             onPaginationChange={setPagination}
             state={{ pagination, rowSelection, showColumnFilters }}
+            getRowId={(row) => row.id}
             onRowSelectionChange={setRowSelection}
             onShowColumnFiltersChange={(updater: any) => {
               setShowColumnFilters((prev) =>
@@ -581,6 +760,7 @@ const DataTable = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: { xs: 0.25, md: "inherit" },
             backgroundColor: {
               xs: theme.palette.palette_style.background.default,
               md: "transparent",
@@ -588,106 +768,173 @@ const DataTable = ({
             flexDirection: "inherit",
           }}
         >
-          <Box sx={{ display: "flex" }}>
-            {hasPermission(currentView?.role, 'Create') && <Fab
-              onClick={handleNewRowPanel}
-              sx={{
-                // position: "absolute",
-                // top: -80,
-                // left: 80,
-                backgroundColor: theme.palette.palette_style.primary.main,
-                color: theme.palette.palette_style.text.white,
-                // opacity: 0.2,
-                height: 32,
-                "&:hover": {
-                  backgroundColor: theme.palette.palette_style.primary.dark,
-                  // opacity: 1,
-                },
-              }}
-              variant="extended"
-            >
-              <AddIcon />
-              Add new row
-            </Fab>}
+          <Box
+            sx={{
+              display: "flex",
+              px: { xs: 0, md: 2 },
+              gap: { xs: 1, md: 4 },
+            }}
+          >
+            {hasPermission(currentView?.role, "Create") && (
+              <Button
+                variant="contained"
+                onClick={handleNewRowPanel}
+                sx={{
+                  // position: "absolute",
+                  // top: -80,
+                  // left: 80,
+                  flex: { md: 1 },
+                  backgroundColor: theme.palette.palette_style.primary.main,
+                  color: theme.palette.palette_style.text.white,
+                  // opacity: 0.2,
+                  px: { xs: 1, md: "inherit" },
+                  height: 32,
+                  "&:hover": {
+                    backgroundColor: theme.palette.palette_style.primary.dark,
+                    // opacity: 1,
+                  },
+                }}
+              >
+                <AddIcon sx={{ mr: 0.5 }} />
+                {isDesktop ? "add new row" : "new row"}
+                {/* Add new row */}
+              </Button>
+            )}
+            {rowSelection && Object.keys(rowSelection).length > 0 && (
+              <Button
+                variant="outlined"
+                // onClick={handleNewRowPanel}
+                sx={{
+                  display: isMobile ? "flex" : "none",
+                  px: { xs: 1, md: "inherit" },
+                  border: 2,
+                  height: 32,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  "&:hover": {
+                    border: 2,
+                  },
+                }}
+              >
+                List actions
+                <KeyboardArrowDownIcon />
+              </Button>
+            )}
             <Box
               sx={{
+                backgroundColor: theme.palette.palette_style.background.paper,
                 display: "flex",
-                // width: "100%",
-                justifyContent: "space-between",
-                px: { xs: 1, md: 3 },
+                // flexDirection: { xs: "column", md: "row" },
+                position: { xs: "absolute", md: "relative" },
+                bottom: { xs: 80, md: "unset" },
+                left: { xs: "50%", md: "unset" },
+                transform: { xs: "translateX(-50%)", md: "unset" },
+                width: { xs: "90%", md: "auto" },
+                // justifyContent: "space-between",
+                // alignItems: "center",
+                zIndex: 11,
+                flexWrap: { xs: "wrap", md: "nowrap" },
+                // px: { xs: 1, md: 3 },
                 // marginTop: 4,
                 // paddingBottom: 2,
-                borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-                gap: 2,
+                // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                gap: { xs: 0, md: 2 },
+                boxShadow: { xs: "0 0 12px 0 rgba(0,0,0,.1)", md: "none" },
               }}
             >
-              {rowSelection && Object.keys(rowSelection).length > 0 && actions.map((action: any) => (
-                action.allowed &&
-                <Box
-                  key={action.title}
-                  sx={{
-                    display: "flex",
-                    cursor: "pointer",
-                  }}
-                // onClick={() => {
-                //   handleAction(action.action);
-                // }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box
-                      component="span"
-                      className="svg-color"
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        display: "grid",
-                        placeContent: "center",
-                        color:
-                          action.color ||
-                          theme.palette.palette_style.text.primary,
-                        // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                        // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                        mr: { xs: 0.2, md: 0.5 },
-                      }}
-                    >
-                      {action.icon}
-                    </Box>
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        color:
-                          action.color ||
-                          theme.palette.palette_style.text.primary,
-                      }}
-                    >
-                      {action.title}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
+              {rowSelection &&
+                Object.keys(rowSelection).length > 0 &&
+                bulkActions.map(
+                  (action: any) =>
+                    action.allowed && (
+                      <Box
+                        key={action.title}
+                        sx={{
+                          display: "flex",
+                          cursor: "pointer",
+                          width: { xs: "50%", sm: "33.33%", md: "100%" },
+                        }}
+                        onClick={() => {
+                          handleBulkAction(action.action);
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: { xs: "column", md: "row" },
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderBottom: { xs: "1px solid #eee", md: "none" },
+                            py: { xs: 2, md: 0 },
+                          }}
+                        >
+                          <Box
+                            component="span"
+                            className="svg-color"
+                            sx={{
+                              width: 24,
+                              height: 24,
+                              display: "grid",
+                              placeContent: "center",
+                              color:
+                                action.color ||
+                                theme.palette.palette_style.text.primary,
+                              // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                              // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                              mr: { xs: 0.2, md: 0.5 },
+                            }}
+                          >
+                            {action.icon}
+                          </Box>
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              color:
+                                action.color ||
+                                theme.palette.palette_style.text.primary,
+                            }}
+                          >
+                            {action.title}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )
+                )}
             </Box>
           </Box>
 
           {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
-          <Box sx={{ display: "flex" }}>
-            <Box sx={{ display: { xs: "none", md: "block" }, py: 0.5 }}>
-              Row per page
-            </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: { xs: 0, md: 1 },
+              width: "auto",
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{ display: { xs: "none", lg: "block" } }}
+            >
+              {pagination.pageIndex * pagination.pageSize + 1}-
+              {(pagination.pageIndex + 1) * pagination.pageSize} of {count}, per
+              page:
+            </Typography>
             <Select
               id="per_page"
               value={pagination.pageSize.toString()}
               onChange={handleChangeRowsPerPage}
               size="small"
               sx={{
+                // flex: 1,
                 boxShadow: "none",
                 ".MuiOutlinedInput-notchedOutline": { border: 0 },
                 fontSize: "14px",
+                "& .MuiSelect-select": {
+                  pr: 4,
+                },
               }}
             >
               <MenuItem value="5">5</MenuItem>
@@ -695,11 +942,19 @@ const DataTable = ({
               <MenuItem value="25">25</MenuItem>
               <MenuItem value="50">50</MenuItem>
               <MenuItem value="100">100</MenuItem>
+              {/* <MenuItem value="500">500</MenuItem>
+              <MenuItem value="1000">1000</MenuItem> */}
             </Select>
             <Pagination
               count={Math.ceil(count / pagination.pageSize)}
               page={pagination.pageIndex + 1}
               onChange={handleChange}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                // flex: 1,
+              }}
             />
           </Box>
         </Stack>
@@ -718,8 +973,24 @@ const DataTable = ({
             onClose={() => handleCloseFieldManagementPanel()}
           />
         )}
-
       </Box>
+      <YesNoDialog
+        message="Are you sure you want to selected rows?"
+        open={openBulkDeleteDialog}
+        handleClose={() => setOpenBulkDeleteDialog(false)}
+        onSubmit={() => {
+          handleBulkDelete();
+        }}
+      />
+      <div style={{ display: "none" }}>
+        <div
+          ref={componentRef}
+          hidden={false}
+          style={{ maxWidth: "0px", maxHeight: "0px" }}
+        >
+          <PrintDataTable columns={columns} rows={printRows} />
+        </div>
+      </div>
     </>
   );
 };
@@ -735,5 +1006,6 @@ const mapDispatchToProps = {
   setRows,
   fetchRowsByPage,
   setCurrentView,
+  setFlashMessage,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

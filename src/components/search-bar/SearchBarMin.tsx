@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { Autocomplete, Box, MenuItem } from "@mui/material";
+import { Autocomplete, Box, IconButton, MenuItem } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -21,10 +21,12 @@ import { searchViews } from "src/services/listView.service";
 import { debounce, set } from "lodash";
 import { SearchTypeModel, View } from "src/models/SharedModels";
 import { PATH_MAIN } from "src/routes/paths";
-
+import ClearIcon from "@mui/icons-material/Clear";
 const StyledSearchBarMin = styled("div")(({ theme }) => ({
   display: "flex",
   width: "100%",
+  justifyContent: "center",
+  alignItems: "center",
   [theme.breakpoints.up("lg")]: {
     justifyContent: "center",
     alignItems: "center",
@@ -51,18 +53,23 @@ const SearchBarMin = ({
     SearchTypeModel[]
   >([]);
   const [searchOptions, setSearchOptions] = useState<any[]>([]);
+  const [clearSearchVisible, setClearSearchVisible] = useState<boolean>(false);
 
   useEffect(() => {
     if (router.isReady && searchTypes) {
       if (router.query.viewId) {
         setCurrentSearchTypes(searchTypes);
+        //if (currentSearchTypes.find((x) => x.name === "CurrentView")) {
         setSearchType("CurrentView");
+        //}
         setSearch(currentView.query ?? "");
       } else {
         setCurrentSearchTypes(
           searchTypes.filter((x) => x.name !== "CurrentView")
         );
+        //if (currentSearchTypes.find((x) => x.name === "CurrentView")) {
         setSearchType("AllViews");
+        // }
       }
     }
   }, [router.isReady, searchTypes]);
@@ -87,6 +94,15 @@ const SearchBarMin = ({
         fetchRowsByPage(0, 25);
       }
     }
+  };
+  const handleClearSearch = async () => {
+    let newView: View = Object.assign({}, currentView);
+    newView.query = undefined;
+    newView.conditions = undefined;
+    setCurrentView(newView);
+    setSearch("");
+    setClearSearchVisible(false);
+    fetchRowsByPage(0, 25);
   };
 
   const fetchViews = async (searchTerm: string) => {
@@ -127,7 +143,11 @@ const SearchBarMin = ({
         {searchType && (
           <Select
             id="lst_type"
-            value={searchType}
+            value={
+              currentSearchTypes.find((x) => x.name === searchType)
+                ? searchType
+                : ""
+            }
             onChange={(e) => handleSearchTypeChange(e)}
             size="small"
             sx={{
@@ -150,8 +170,21 @@ const SearchBarMin = ({
             size="small"
             key={searchType}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setClearSearchVisible(e.target.value !== "");
+            }}
             onKeyDown={(e) => handleKeyPress(e)}
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  sx={{ visibility: clearSearchVisible ? "visible" : "hidden" }}
+                  onClick={() => handleClearSearch()}
+                >
+                  <ClearIcon />
+                </IconButton>
+              ),
+            }}
           />
         )}
         {searchType === "AllViews" && (
@@ -159,6 +192,7 @@ const SearchBarMin = ({
             freeSolo
             id="free-solo-2-name"
             fullWidth
+            size="small"
             options={searchOptions}
             getOptionLabel={(option) => option.name}
             onChange={(event: any, newValue: any) => {
@@ -166,14 +200,14 @@ const SearchBarMin = ({
             }}
             sx={{
               width: "100%",
-              height: 32,
+              // height: 32,
               boxShadow: "none",
-              ".MuiOutlinedInput-notchedOutline": { border: 0 },
+              // ".MuiOutlinedInput-notchedOutline": { border: 0 },
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Search..."
+                // label="Search..."
                 onChange={handleSearchViewInputChange}
               />
             )}

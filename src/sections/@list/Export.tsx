@@ -65,6 +65,13 @@ const exports_all = [
     isShow: false,
     isShowMore: true,
   },
+  {
+    name: ExportType.HTML,
+    label: "HTML",
+    icon: "toolbar/jira",
+    isShow: false,
+    isShowMore: true,
+  },
 ];
 
 const exports_currentView = [
@@ -106,6 +113,13 @@ const exports_currentView = [
   {
     name: ExportType.YML,
     label: "YML",
+    icon: "toolbar/jira",
+    isShow: false,
+    isShowMore: true,
+  },
+  {
+    name: ExportType.HTML,
+    label: "HTML",
     icon: "toolbar/jira",
     isShow: false,
     isShowMore: true,

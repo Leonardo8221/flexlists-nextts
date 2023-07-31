@@ -23,6 +23,13 @@ import { ViewType } from "src/enums/SharedEnums";
 import CalendarView from "src/sections/@calendar/CalendarView";
 import { ViewField } from "src/models/ViewField";
 import KanbanView from "src/sections/@kanban/KanbanView";
+import { GetServerSideProps } from "next";
+import { listViewService } from "src/services/listView.service";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { getCookieRefreshToken, getCookieToken, removeCookie, setCookieToken } from "src/utils/cookieUtils";
+
+
 
 type ListProps = {
   currentView: View;
@@ -31,24 +38,34 @@ type ListProps = {
   fetchColumns: (viewId: number) => void;
   fetchRowsByPage: (page?: number, limit?: number) => void;
 };
+
 export function ListDetail({
   currentView,
   getCurrentView,
   columns,
   fetchColumns,
   fetchRowsByPage,
-}: ListProps) {
+  translations,
+  //test
+}: ListProps & { translations?: TranslationText[]/*, test?: string */ }) {
   const router = useRouter();
   const theme = useTheme();
   const isDesktop = useResponsive("up", "lg");
   const [open, setOpen] = useState(false);
 
+  const t = (key: string): string => {
+    if (!translations) return key
+    return getTranslation(key, translations)
+  }
+
   useEffect(() => {
     if (
       router.isReady &&
       router.query.viewId &&
+      getCurrentView &&
       isInteger(router.query.viewId)
     ) {
+      //console.log(translations, 'flap', test)
       getCurrentView(convertToNumber(router.query.viewId));
     }
   }, [router.isReady]);
@@ -86,7 +103,7 @@ export function ListDetail({
           backgroundColor: theme.palette.palette_style.background.default,
           boxShadow: "none",
           width: "100%",
-          height: { xs: "calc(100% - 8px)", md: "100%" },
+          height: { xs: "100%", md: "100%" },
           overflow: "hidden",
         }}
       >
@@ -113,4 +130,33 @@ const mapDispatchToProps = {
   fetchColumns,
   fetchRowsByPage,
 };
+
+// TODO: make this work, there is an access issue, so probably it's not passing the JWT token to the request 
+// when requesting from the server side. 
+// -> not sure if it's even possible 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // const token = getCookieToken(context.req, context.res);
+  // var id = context.query.viewId;
+  // try {
+  //   const response = await listViewService.getView(convertToNumber(id), {
+  //     headers: {
+  //       Cookie: `token=${token};`
+  //     }
+  //   });
+  //   console.log('response', response)
+  // } catch (e: any) {
+  //   console.log(e)
+  // }
+
+  // const result = {
+  //   props: {
+  //     //currentView: response.data!,
+  //   },
+  // }
+
+  const translations = await getTranslations("existing landing page", context)
+
+
+  return { props: { translations: translations/*, test: 'abrikoos'*/ } }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(ListDetail);

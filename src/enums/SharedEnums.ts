@@ -52,8 +52,9 @@ export enum FieldUiTypeEnum {
     DateTime = 'DateTime',
     Money = 'Money',
     Boolean = 'Boolean',
-    File = 'File',
+    Video = 'Video',
     Image = 'Image',
+    Document = 'Document',
     Choice = 'Choice',
     Percentage = 'Percentage',
     Markdown = 'Markdown',
@@ -81,6 +82,7 @@ export enum ExportType {
     XML = 'XML',
     YML = 'YML',
     XLSX = 'XLSX',
+    HTML = 'HTML'
 }
 export enum ViewType {
     List = 'List',
@@ -98,19 +100,18 @@ export enum PublishType {
     JSON = 'JSON',
     JSIframe = 'JSIframe',
 }
-export enum FilterOperator
-{
-  eq = 'eq',
-  neq = 'neq',
-  ne = "ne",
-  gt = 'gt',
-  gte = 'gte',
-  lt = 'lt',
-  lte = 'lte',
-  like = 'like',
-  nlike = 'nlike',
-  in = 'in',
-  nin = 'nin'
+export enum FilterOperator {
+    eq = 'eq',
+    neq = 'neq',
+    ne = "ne",
+    gt = 'gt',
+    gte = 'gte',
+    lt = 'lt',
+    lte = 'lte',
+    like = 'like',
+    nlike = 'nlike',
+    in = 'in',
+    nin = 'nin'
 }
 export enum UserStatus {
     InActive = 'InActive',

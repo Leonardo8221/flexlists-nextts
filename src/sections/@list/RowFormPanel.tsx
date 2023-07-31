@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
   DialogActions,
@@ -13,6 +13,8 @@ import {
   Alert,
   TextareaAutosize,
   Typography,
+  Link,
+  CardMedia,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Select from "@mui/material/Select";
@@ -26,7 +28,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { connect } from "react-redux";
 import { ViewField } from "src/models/ViewField";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
-import { listContentService } from "src/services/listContent.service";
+import {
+  cloneContent,
+  listContentService,
+} from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { filter } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
@@ -34,13 +39,17 @@ import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
 import { DatePicker } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { getChoiceField, getDataColumnId } from "src/utils/flexlistHelper";
+import {
+  downloadFileUrl,
+  getChoiceField,
+  getDataColumnId,
+} from "src/utils/flexlistHelper";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import ReactMarkdown from "react-markdown";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { marked } from "marked";
 import TurndownService from "turndown";
-import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
+//import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
 // -----ICONS------
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
@@ -53,6 +62,15 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { getPermission } from "src/repositories/permissionRepository";
 import { hasPermission } from "src/utils/permissionHelper";
 import { View } from "src/models/SharedModels";
+import UploadButton from "src/components/upload/UploadButton";
+import ReactPlayer from "react-player";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
+// import "easymde/dist/easymde.min.css";
+// import dynamic from 'next/dynamic'
+// import 'react-quill/dist/quill.snow.css'
+import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
+import HTMLEditor from "src/components/rowedit/HTMLEditor";
+import { useReactToPrint } from "react-to-print";
 
 interface RowFormProps {
   currentView: View;
@@ -65,6 +83,13 @@ interface RowFormProps {
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
 }
 
+// const SimpleMdeReact = dynamic(() => {
+//   return import("react-simplemde-editor")
+// }, { ssr: false })
+
+// const ReactQuill = dynamic(() => {
+//   return import("react-quill")
+// }, { ssr: false })
 
 const RowFormPanel = ({
   currentView,
@@ -74,8 +99,9 @@ const RowFormPanel = ({
   mode,
   onClose,
   onSubmit,
-  setFlashMessage
+  setFlashMessage,
 }: RowFormProps) => {
+  const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const [values, setValues] = useState(rowData);
   const [submit, setSubmit] = useState(false);
@@ -85,43 +111,47 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [error, setError] = useState<string>("");
   const [panelWidth, setPanelWidth] = useState("500px");
-
-
+  const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   //console.log('knarsterfarster', currentView)
   const actions = [
     {
       title: "Resize",
       icon: <FullscreenIcon />,
       action: "resize",
-      allowed: true
+      allowed: true,
     },
     {
       title: "Clone",
       icon: <ContentCopyIcon />,
       action: "clone",
-      allowed: hasPermission(currentView?.role, 'Update')
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: "Archive",
+      title: `${
+        values &&
+        values[columns.find((x) => x.system && x.name === "___archived").id]
+          ? "Unarchive"
+          : "Archive"
+      }`,
       icon: <ArchiveIcon />,
       action: "archive",
-      allowed: hasPermission(currentView?.role, 'Update')
+      allowed: hasPermission(currentView?.role, "Update"),
     },
     {
       title: "Print",
       icon: <PrintIcon />,
       action: "print",
-      allowed: hasPermission(currentView?.role, 'Read')
+      allowed: hasPermission(currentView?.role, "Read"),
     },
     {
       title: "Delete",
       icon: <DeleteIcon />,
       action: "delete",
-      color: "#c92929",
-      allowed: hasPermission(currentView?.role, 'Delete')
+      // color: "#c92929",
+      color: theme.palette.palette_style.error.dark,
+      allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -193,14 +223,8 @@ const RowFormPanel = ({
   const handleAction = async (action: string) => {
     let newValues = Object.assign({}, values);
     if (action === "delete") {
-      var deleteContentResponse = await listContentService.deleteContent(
-        currentView.id,
-        newValues.id
-      );
-      if (isErr(deleteContentResponse)) {
-        setError(ErrorConsts.InternalServerError);
-        return;
-      }
+      setOpenBulkDeleteDialog(true);
+      return;
     } else if (action === "resize") {
       if (panelWidth.includes("%")) {
         setPanelWidth("500px");
@@ -208,12 +232,15 @@ const RowFormPanel = ({
         setPanelWidth("100%");
       }
       return;
-    }
-    else if (action === 'clone') {
-      var createRowResponse = await listContentService.createContent(
-        currentView.id,
-        newValues
+    } else if (action === "clone") {
+      delete newValues.id;
+      var archiveField = columns.find(
+        (x) => x.system && x.name === "___archived"
       );
+      if (archiveField) {
+        newValues[archiveField.name] = newValues[archiveField.id];
+      }
+      var createRowResponse = await cloneContent(currentView.id, newValues);
       if (
         isSucc(createRowResponse) &&
         createRowResponse.data &&
@@ -221,35 +248,61 @@ const RowFormPanel = ({
         createRowResponse.data.content.length > 0
       ) {
         newValues.id = createRowResponse.data.content[0].id;
-        newValues.createdAt = new Date().toISOString();
-        newValues.updatedAt = new Date().toISOString();
-      }
-      else {
-        setFlashMessage({ type: 'error', message: (createRowResponse as FlexlistsError).message })
+      } else {
+        setFlashMessage({
+          type: "error",
+          message: (createRowResponse as FlexlistsError).message,
+        });
         return;
       }
-    }
-    else if (action === 'archive') {
+    } else if (action === "archive") {
       var archiveField = columns.find(
         (x) => x.system && x.name === "___archived"
       );
       if (archiveField) {
-        newValues[archiveField.id] = true;
+        newValues[archiveField.id] = !values[archiveField.id];
       }
       var updateRowRespone = await listContentService.updateContent(
         currentView.id,
         newValues
       );
       if (isSucc(updateRowRespone)) {
-        onSubmit(newValues, "update");
+        setFlashMessage({
+          message: "Row archived successfully",
+          type: "success",
+        });
+        onSubmit(newValues, "archive");
         onClose();
         return;
       } else {
-        setFlashMessage({ type: 'error', message: (updateRowRespone as FlexlistsError).message })
+        setFlashMessage({
+          type: "error",
+          message: (updateRowRespone as FlexlistsError).message,
+        });
         return;
       }
+    } else if (action === "print") {
+      handlePrint();
+      return;
     }
     onSubmit(newValues, action);
+    onClose();
+  };
+  const handleDelete = async () => {
+    var deleteContentResponse = await listContentService.deleteContent(
+      currentView.id,
+      values.id
+    );
+    if (isErr(deleteContentResponse)) {
+      setFlashMessage({
+        message: (deleteContentResponse as FlexlistsError).message,
+        type: "error",
+      });
+      return;
+    } else {
+      setFlashMessage({ message: "Row deleted successfully", type: "success" });
+    }
+    onSubmit(values, "delete");
     onClose();
   };
 
@@ -280,12 +333,13 @@ const RowFormPanel = ({
   const convertMarkdownToHtml = (markdown: string): string => {
     return marked(markdown);
   };
-  const renderField = (column: ViewField) => {
+  const renderField = (column: ViewField, isPrint: boolean = false) => {
     switch (column.uiField) {
       case FieldUiTypeEnum.Text:
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <TextField
             key={column.id}
+            style={{ width: "100%" }}
             label={column.name}
             name={`${column.id}`}
             size="small"
@@ -301,13 +355,21 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}{" "}
-              {/* <InfoOutlinedIcon sx={{ color: "#999", fontSize: 16 }} /> */}
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[column.id]?.toString() : ""}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+              {column.name}
+              <InfoOutlinedIcon sx={{ color: "#999", fontSize: 16 }} />
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[column.id]?.toString() : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.LongText:
@@ -342,7 +404,7 @@ const RowFormPanel = ({
         //   required={column.required}
         // // error={submit && column.required && !values[column.id]}
         // />
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <TextField
             key={column.id}
             label={column.name}
@@ -362,12 +424,22 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              multiline
+              minRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[column.id] : ""}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[column.id] : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Integer:
@@ -377,7 +449,7 @@ const RowFormPanel = ({
       //TODO : will use this for
       case FieldUiTypeEnum.Percentage:
       case FieldUiTypeEnum.Money:
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <TextField
             key={column.id}
             label={column.name}
@@ -395,16 +467,24 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[getDataColumnId(column.id, columns)] : ""}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[getDataColumnId(column.id, columns)] : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.DateTime:
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
               value={dayjs(values[column.id])}
@@ -421,18 +501,32 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle1">{column.name}</Typography>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[getDataColumnId(column.id, columns)]
+                  ? new Date(
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleString()
+                  : ""
+              }
+            />
+            {/* <Typography variant="subtitle1">{column.name}</Typography>
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleString()
                 : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Date:
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DatePicker
               value={dayjs(values[column.id])}
@@ -449,18 +543,32 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle1">{column.name}</Typography>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[getDataColumnId(column.id, columns)]
+                  ? new Date(
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleDateString()
+                  : ""
+              }
+            />
+            {/* <Typography variant="subtitle1">{column.name}</Typography>
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : ""}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Time:
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <TimePicker
               value={dayjs(values[column.id])}
@@ -477,20 +585,34 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[getDataColumnId(column.id, columns)]
+                  ? new Date(
+                      values[getDataColumnId(column.id, columns)]
+                    ).toLocaleDateString()
+                  : "null"
+              }
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : "null"}
-            </Typography>
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Choice:
-        if (currentMode !== "view") {
+        if (currentMode !== "view" && !isPrint) {
           return (
             <FormControl key={column.id} required={column.required}>
               <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
@@ -530,7 +652,15 @@ const RowFormPanel = ({
           const choice = getChoiceField(values[column.id], column);
           return (
             <div key={column.id}>
-              <Typography
+              <TextField
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+                label={column.name}
+                value={choice?.label}
+              />
+              {/* <Typography
                 variant="subtitle2"
                 sx={{ textTransform: "uppercase" }}
               >
@@ -552,12 +682,12 @@ const RowFormPanel = ({
                 }}
               >
                 {choice?.label}
-              </Box>
+              </Box> */}
             </div>
           );
         }
       case FieldUiTypeEnum.Boolean:
-        return currentMode !== "view" ? (
+        return currentMode !== "view" && !isPrint ? (
           <FormControlLabel
             key={column.id}
             control={
@@ -572,66 +702,455 @@ const RowFormPanel = ({
           />
         ) : (
           <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+            <TextField
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={
+                values && values[column.id]?.toString() === "true"
+                  ? "yes"
+                  : "no"
+              }
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {(values && values[column.id]?.toString() === 'true') ? "yes" : "no"}
-            </Typography>
+              {values && values[column.id]?.toString() === "true"
+                ? "yes"
+                : "no"}
+            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Markdown:
-        return currentMode !== "view" ? (
+        return (
+          <MarkdownEditor
+            key={column.id}
+            id={column.id}
+            name={column.name}
+            value={values[column.id]}
+            handleChange={(newValue: string) => {
+              setValues({ ...values, [column.id]: newValue });
+            }}
+            preview={currentMode === "view" || isPrint}
+          />
+        );
+        break;
+      // return currentMode !== "view" ? (
+      //   <Box
+      //     key={column.id}
+      //     sx={{
+      //       display: "flex",
+      //       flexDirection: "column",
+      //       alignItems: "flex-start",
+      //       position: "relative",
+      //     }}
+      //   >
+      //     <Typography
+      //       variant="body1"
+      //       sx={{
+      //         textTransform: "capitalize",
+      //         color: "rgba(0, 0, 0, 0.6)",
+      //         fontSize: "12px",
+      //         position: "absolute",
+      //         top: "-10px",
+      //         left: "12px",
+      //         background: "#fff",
+      //       }}
+      //     >
+      //       {column.name}
+      //     </Typography>
+      //     {/* <MarkdownEditor
+      //       markdown={values[column.id]}
+      //       setMarkdown={(newValue) => {
+      //         setValues({ ...values, [column.id]: newValue });
+      //       }}
+      //     /> */}
+      //     <SimpleMdeReact value={values[column.id]}
+      //       style={{ width: '100%' }}
+      //       onChange={(newValue: string) => {
+      //         setValues({ ...values, [column.id]: newValue });
+      //       }} />
+      //   </Box>
+      // ) : (
+      //   <div key={column.id}>
+      //     <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+      //       {column.name}
+      //     </Typography>
+      //     <ReactMarkdown>{values[column.id]}</ReactMarkdown>
+      //   </div>
+      // );
+      case FieldUiTypeEnum.HTML:
+        return (
+          <HTMLEditor
+            id={column.id}
+            key={column.id}
+            name={column.name}
+            value={values[column.id]}
+            handleChange={(newValue: string) => {
+              setValues({ ...values, [column.id]: newValue });
+            }}
+            preview={currentMode === "view" || isPrint}
+          />
+        );
+        break;
+      // return currentMode !== "view" ? (
+      //   <Box
+      //     key={column.id}
+      //     sx={{
+      //       display: "flex",
+      //       flexDirection: "column",
+      //       alignItems: "flex-start",
+      //       position: "relative",
+      //       height: '300px',
+      //       paddingBottom: '50px'
+      //     }}
+      //   >
+      //     <Typography
+      //       variant="body1"
+      //       sx={{
+      //         textTransform: "capitalize",
+      //         color: "rgba(0, 0, 0, 0.6)",
+      //         fontSize: "12px",
+      //         position: "absolute",
+      //         top: "-10px",
+      //         left: "12px",
+      //         background: "#fff",
+      //       }}
+      //     >
+      //       {column.name}
+      //     </Typography>
+      //     <ReactQuill theme="snow" value={values[column.id]}
+      //       style={{ width: '97%', height: '100%' }}
+
+      //       onChange={(newValue: string) => {
+      //         setValues({ ...values, [column.id]: newValue });
+      //       }} />
+      //   </Box>
+      // ) : (
+      //   <div key={column.id}>
+      //     <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+      //       {column.name}
+      //     </Typography>
+      //     <div
+      //       dangerouslySetInnerHTML={{
+      //         __html: values[column.id]?.toString(),
+      //       }}
+      //     />
+      //   </div>
+      // );
+      case FieldUiTypeEnum.Image:
+        return currentMode !== "view" && !isPrint ? (
           <Box
+            key={column.id}
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              p: 2,
               position: "relative",
+              borderRadius: "6px",
+              "&:hover": {
+                border: "1px solid rgba(0, 0, 0, 0.87)",
+              },
             }}
           >
             <Typography
-              variant="body1"
+              variant="body2"
+              component={"label"}
               sx={{
                 textTransform: "capitalize",
-                color: "rgba(0, 0, 0, 0.6)",
-                fontSize: "12px",
+                fontSize: 12,
                 position: "absolute",
                 top: "-10px",
-                left: "12px",
+                left: "10px",
                 background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
               }}
             >
               {column.name}
             </Typography>
-            <MarkdownEditor
-              markdown={values[column.id]}
-              setMarkdown={(newValue) => {
-                setValues({ ...values, [column.id]: newValue });
+            <Box
+              component="img"
+              sx={{
+                mb: 2,
+                // height: 100,
+                // width: 350,
+                // maxHeight: { xs: 233, md: 167 },
+                // maxWidth: { xs: 350, md: 250 },
+              }}
+              alt=""
+              src={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
+            />
+            <UploadButton
+              fileAcceptTypes={["png", "jpg", "jpeg", "gif"]}
+              file={values[column.id]}
+              onUpload={(file) => {
+                setValues({ ...values, [column.id]: file });
               }}
             />
           </Box>
         ) : (
-          <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <ReactMarkdown>{values[column.id]}</ReactMarkdown>
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="imageWrapper"
+                sx={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+                component="img"
+                alt=""
+                src={
+                  values[column.id] && values[column.id].fileId
+                    ? downloadFileUrl(values[column.id].fileId)
+                    : ""
+                }
+              />
+            </Box>
           </div>
         );
-      case FieldUiTypeEnum.HTML:
-        return currentMode !== "view" ? (
-          <></>
-        ) : (
-          <div key={column.id}>
-            <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+      case FieldUiTypeEnum.Video:
+        return currentMode !== "view" && !isPrint ? (
+          <Box key={column.id}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {column.name}
             </Typography>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: values[column.id]?.toString(),
+            <UploadButton
+              fileAcceptTypes={[
+                "mp4",
+                "mov",
+                "wmv",
+                "flv",
+                "avi",
+                "mkv",
+                "webm",
+              ]}
+              file={values[column.id]}
+              onUpload={(file) => {
+                setValues({ ...values, [column.id]: file });
               }}
             />
+            <ReactPlayer
+              url={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
+              width="100%"
+              height="auto"
+              controls
+            />
+            {/* <CardMedia
+                  component='video'
+                  image={values[column.id] && values[column.id].fileId? downloadFileUrl(values[column.id].fileId):''}
+                  autoPlay
+              /> */}
+          </Box>
+        ) : (
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="markdownWrapper"
+                sx={{
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+              >
+                <ReactPlayer
+                  url={
+                    values[column.id] && values[column.id].fileId
+                      ? downloadFileUrl(values[column.id].fileId)
+                      : ""
+                  }
+                  width="100%"
+                  height="auto"
+                  controls
+                />
+              </Box>
+            </Box>
+          </div>
+        );
+      case FieldUiTypeEnum.Document:
+        return currentMode !== "view" && !isPrint ? (
+          <Box
+            key={column.id}
+            sx={{
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              p: 2,
+              position: "relative",
+              borderRadius: "6px",
+              "&:hover": {
+                border: "1px solid rgba(0, 0, 0, 0.87)",
+              },
+            }}
+          >
+            <Typography
+              variant="body2"
+              component={"label"}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: 12,
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
+              }}
+            >
+              {column.name}
+            </Typography>
+            <UploadButton
+              fileAcceptTypes={["*/*"]}
+              file={values[column.id]}
+              onUpload={(file) => {
+                setValues({ ...values, [column.id]: file });
+              }}
+            />
+          </Box>
+        ) : (
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="markdownWrapper"
+                sx={{
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+              >
+                {values && values[column.id] ? (
+                  <Link href={downloadFileUrl(values[column.id].fileId)}>
+                    {values[column.id].fileName}
+                  </Link>
+                ) : (
+                  <></>
+                )}
+              </Box>
+            </Box>
           </div>
         );
       default:
@@ -642,6 +1161,10 @@ const RowFormPanel = ({
     setCurrentMode("view");
     onClose();
   };
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
     <Drawer
       anchor="right"
@@ -651,7 +1174,7 @@ const RowFormPanel = ({
         sx: {
           width: { xs: "100%", lg: panelWidth },
           border: "none",
-          height: `${windowHeight}px`,
+          // height: `${windowHeight}px`,
           backgroundColor: theme.palette.palette_style.background.default,
         },
       }}
@@ -708,54 +1231,58 @@ const RowFormPanel = ({
             borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
           }}
         >
-          {actions.map((action: any) => (
-            action.allowed &&
-            <Box
-              key={action.title}
-              sx={{
-                display: "flex",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                handleAction(action.action);
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+          {actions.map(
+            (action: any) =>
+              action.allowed && (
                 <Box
-                  component="span"
-                  className="svg-color"
+                  key={action.title}
                   sx={{
-                    width: 24,
-                    height: 24,
-                    display: "grid",
-                    placeContent: "center",
-                    color:
-                      action.color || theme.palette.palette_style.text.primary,
-                    // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                    // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
-                    mr: { xs: 0.2, md: 0.5 },
+                    display: "flex",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleAction(action.action);
                   }}
                 >
-                  {action.icon}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box
+                      component="span"
+                      className="svg-color"
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        display: "grid",
+                        placeContent: "center",
+                        color:
+                          action.color ||
+                          theme.palette.palette_style.text.primary,
+                        // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
+                        // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
+                        mr: { xs: 0.2, md: 0.5 },
+                      }}
+                    >
+                      {action.icon}
+                    </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        color:
+                          action.color ||
+                          theme.palette.palette_style.text.primary,
+                      }}
+                    >
+                      {action.title}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color:
-                      action.color || theme.palette.palette_style.text.primary,
-                  }}
-                >
-                  {action.title}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
+              )
+          )}
         </Box>
       )}
 
@@ -825,7 +1352,12 @@ const RowFormPanel = ({
           />
         )}
 
-        <Box sx={{ display: "flex" }}>
+        <Box
+          sx={{
+            display: "flex",
+            bottom: 0,
+          }}
+        >
           <Button onClick={handleCloseModal}>Cancel</Button>
           {(currentMode === "update" || currentMode === "create") && (
             <Button
@@ -837,17 +1369,42 @@ const RowFormPanel = ({
               {rowData && rowData.id ? "Update Row" : "Create New Row"}
             </Button>
           )}
-          {hasPermission(currentView?.role, 'Update') && currentMode === "view" && (
-            <Button
-              color="primary"
-              onClick={handleEditRow}
-              variant="contained"
-              type="submit"
-            >
-              Edit
-            </Button>
-          )}
+          {hasPermission(currentView?.role, "Update") &&
+            currentMode === "view" && (
+              <Button
+                color="primary"
+                onClick={handleEditRow}
+                variant="contained"
+                type="submit"
+              >
+                Edit
+              </Button>
+            )}
         </Box>
+        <YesNoDialog
+          message="Are you sure you want to delete selected data?"
+          open={openBulkDeleteDialog}
+          handleClose={() => setOpenBulkDeleteDialog(false)}
+          onSubmit={() => {
+            handleDelete();
+          }}
+        />
+        <div style={{ display: "none" }}>
+          <div ref={componentRef}>
+            <Stack
+              sx={{
+                // display:'none',
+                width: "100%",
+                minWidth: { xs: "300px", sm: "360px", md: "400px" },
+                gap: "1.5rem",
+                paddingTop: 2,
+              }}
+            >
+              {values &&
+                columns.map((column: any) => renderField(column, true))}
+            </Stack>
+          </div>
+        </div>
       </DialogActions>
     </Drawer>
   );
@@ -858,7 +1415,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setFlashMessage
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RowFormPanel);

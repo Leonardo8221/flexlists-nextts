@@ -100,11 +100,15 @@ const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSett
         const formData = new FormData();
         formData.append("file", event.target.files[0]);
         let response = await uploadFile(formData);
-        if (response && response.fileId) {
+        if (isSucc(response) && response.data && response.data.fileId) {
           let newProfile  = Object.assign({}, userProfile);
-          newProfile.avatarUrl = response.fileId;
+          newProfile.avatarUrl = response.data.fileId;
           setUserProfile(newProfile)
           setIsDirty(true);
+        }
+        else
+        {
+          setFlashMessage({message:(response as FlexlistsError).message,type:"error"});
         }
       }
     };

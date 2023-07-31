@@ -19,7 +19,7 @@ export default function LandingCTA() {
         <Typography
           variant="h3"
           sx={{
-            px: 8,
+            px: { xs: 4, md: 8 },
           }}
         >
           Try the new Flexlists using your existing data in complete safety!

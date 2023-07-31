@@ -94,13 +94,18 @@ const ViewFields = ({
   };
 
   const changeDetailsOnly = (index: number) => {
+    let newColumns = columns.map((column: any, i: number) => {
+      if (index === i)
+        column.viewFieldDetailsOnly = !column.viewFieldDetailsOnly;
+      return column;
+    })
     setColumns(
-      columns.map((column: any, i: number) => {
-        if (index === i)
-          column.viewFieldDetailsOnly = !column.viewFieldDetailsOnly;
-        return column;
-      })
+      newColumns
     );
+    let field = newColumns[index];
+    if (field) {
+      updateViewFieldConfig(field);
+    }
   };
 
   const handleSearchColumns = (e: any) => {
@@ -122,6 +127,9 @@ const ViewFields = ({
       );
     });
     setFilterColumns(newFileteColumns);
+    updateViewFieldConfig(field);
+  };
+  const updateViewFieldConfig = (field: ViewField) => {
     let newView: View = Object.assign({}, currentView);
     let viewFieldConfig: ViewFieldConfig = {
       id: field.id,
@@ -138,16 +146,14 @@ const ViewFields = ({
       );
       if (currentViewFieldIndex >= 0) {
         newView.fields[currentViewFieldIndex] = viewFieldConfig;
-        console.log(newView.fields);
       } else {
         newView.fields.push(viewFieldConfig);
       }
     } else {
       newView.fields = [viewFieldConfig];
     }
-    console.log(newView);
     setCurrentView(newView);
-  };
+  }
   const handleCloseModal = () => {
     setFieldListMode(true);
     handleClose();
@@ -172,7 +178,8 @@ const ViewFields = ({
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =  useState<boolean>(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
+    useState<boolean>(false);
 
   return (
     <>
@@ -304,9 +311,11 @@ const ViewFields = ({
                       sx={{
                         borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
                         py: 2,
-                        maxHeight: `${window.innerHeight - 140}px`,
+                        maxHeight: {
+                          xs: `${window.innerHeight - 320}px`,
+                          md: `${window.innerHeight - 140}px`,
+                        },
                         overflow: "auto",
-                        minHeight: "360px",
                       }}
                     >
                       {filterColumns.map((column: any, index: number) => (
@@ -451,11 +460,11 @@ const ViewFields = ({
           )}
         </Box>
       </Modal>
-    <ListFields
-    open={visibleFieldManagementPanel}
-    onClose={() => handleCloseFieldManagementPanel()}
-  />
-  </>
+      <ListFields
+        open={visibleFieldManagementPanel}
+        onClose={() => handleCloseFieldManagementPanel()}
+      />
+    </>
   );
 };
 

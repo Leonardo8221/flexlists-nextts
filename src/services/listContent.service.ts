@@ -1,31 +1,33 @@
 import { FlexlistsError, FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
 import { CreateContentOutputDto } from 'src/models/ApiOutputModels'
-import { GetContentsOutputDto } from 'src/models/ApiOutputModels'
-import { Sort } from 'src/models/SharedModels'
-import { ExportType } from 'src/enums/SharedEnums'
-import { Query } from 'src/models/SharedModels'
-import { GetContentOutputDto } from 'src/models/ApiOutputModels'
+import { CloneContentOutputDto } from 'src/models/ApiOutputModels'
 import { SearchContentsOutputDto } from 'src/models/ApiOutputModels'
+import { Sort } from 'src/models/SharedModels'
 import { SearchOutputDto } from 'src/models/ApiOutputModels'
 import { SearchType } from 'src/enums/SharedEnums'
+import { Query } from 'src/models/SharedModels'
 
 export const listContentService = {
   createContent,
+  cloneContent,
   updateContent,
+  deleteBulkContents,
   deleteContent,
-  getContents,
-  importContent,
-  exportContent,
-  getContent,
+  archiveBulkContents,
   archiveContent,
   unarchiveContent,
   searchContents,
   search,
 };
 
-export async function createContent(listId: number, content: any): Promise<FlexlistsError | FlexlistsSuccess<CreateContentOutputDto>> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess<CreateContentOutputDto>>(`/api/listContent/createContent`, { listId, content })
+export async function createContent(viewId: number, content: any): Promise<FlexlistsError | FlexlistsSuccess<CreateContentOutputDto>> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess<CreateContentOutputDto>>(`/api/listContent/createContent`, { viewId, content })
+
+  return response.data;
+};
+export async function cloneContent(viewId: number, content: any): Promise<FlexlistsError | FlexlistsSuccess<CloneContentOutputDto>> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess<CloneContentOutputDto>>(`/api/listContent/cloneContent`, { viewId, content })
 
   return response.data;
 };
@@ -34,40 +36,37 @@ export async function updateContent(viewId: number, content: any): Promise<Flexl
 
   return response.data;
 };
-export async function deleteContent(listId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess>('/api/listContent/deleteContent' + `?listId=${listId}&contentId=${contentId}`)
-  return response.data;
-};
-export async function getContents(listId: number, page?: number, limit?: number, order?: Sort[]): Promise<FlexlistsError | FlexlistsSuccess<GetContentsOutputDto>> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess<GetContentsOutputDto>>(`/api/listContent/getContents`, { listId, page, limit, order })
+export async function deleteBulkContents(viewId: number, contentIds: number[]): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/deleteBulkContents`, { viewId, contentIds })
 
   return response.data;
 };
-export async function importContent(): Promise<FlexlistsError | FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/importContent`,)
+export async function deleteContent(viewId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.delete<FlexlistsError | FlexlistsSuccess>(`/api/listContent/deleteContent` + `?viewId=${viewId}&contentId=${contentId}`);
 
   return response.data;
 };
-export async function exportContent(listId: number, type: ExportType, includeHeader?: boolean, delimiter?: string, page?: number, limit?: number, allPages?: boolean, includeSubs?: boolean, order?: Sort[], query?: Query): Promise<FlexlistsError | FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/exportContent`, { listId, type, includeHeader, delimiter, page, limit, allPages, includeSubs, order, query })
+export async function archiveBulkContents(viewId: number, contentIds: number[]): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/archiveBulkContents`, { viewId, contentIds })
 
   return response.data;
 };
-export async function getContent(listId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess<GetContentOutputDto>> {
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess<GetContentOutputDto>>('/api/listContent/getContent' + `?listId=${listId}&contentId=${contentId}`)
-  return response.data;
-};
-export async function archiveContent(listId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/archiveContent`, { listId, contentId })
+export async function unarchiveBulkContents(viewId: number, contentIds: number[]): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/unarchiveBulkContents`, { viewId, contentIds })
 
   return response.data;
 };
-export async function unarchiveContent(listId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/unarchiveContent`, { listId, contentId })
+export async function archiveContent(viewId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/archiveContent`, { viewId, contentId })
 
   return response.data;
 };
-export async function searchContents(viewId: number, page?: number, limit?: number, order?: Sort[], query?: string, conditions?: any, includeCount?: boolean): Promise<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>> {
+export async function unarchiveContent(viewId: number, contentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/unarchiveContent`, { viewId, contentId })
+
+  return response.data;
+};
+export async function searchContents(viewId: number, page?: number, limit?: number, order?: Sort[], query?: any, conditions?: any, includeCount?: boolean): Promise<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, { viewId, page, limit, order, query, conditions, includeCount })
 
   return response.data;
