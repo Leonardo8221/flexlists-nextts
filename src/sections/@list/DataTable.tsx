@@ -297,7 +297,7 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {sanitizeHtml(cellValue.replace(/</g, " <"), {
+                    {!cellValue?'':sanitizeHtml(cellValue.replace(/</g, " <"), {
                       allowedTags: [],
                     })}
                   </Box>
