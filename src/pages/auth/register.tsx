@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
-import SocialLogin from "../../sections/auth/SocialLoginButtons";
 import LoginIcon from "@mui/icons-material/Login";
 // import {MuiTelInput}  from "mui-tel-input";
 import { authService } from "../../services/auth.service";
@@ -33,9 +32,6 @@ import { ErrorConsts } from "src/constants/errorConstants";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
-import { first } from "lodash";
-import phone from "phone";
-import { FieldDefinitionTypeEnum } from "src/enums/TableEnums";
 
 interface RegisterProps {
   message: any;

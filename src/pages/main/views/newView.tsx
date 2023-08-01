@@ -24,6 +24,7 @@ import { PATH_MAIN } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 import { createCoreView } from "src/services/listView.service";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 
 interface NewListProps {
   message: any;
@@ -33,6 +34,8 @@ interface NewListProps {
 
 function NewList({ message, setMessage,viewTemplate }: NewListProps) {
   const router = useRouter();
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
   var categories: { key: string; name: string }[] = [];
   Object.keys(ListCategory).forEach((x) => {
     categories.push({ key: x, name: ListCategoryLabel.get(x) ?? "" });
@@ -85,15 +88,18 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
     setCurrentList(newList);
   };
   const handleSubmit = async () => {
-    if (!currentList.name) {
-      setError("Name is required");
-      return;
-    }
+    setIsSubmit(true);
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newViewName = await frontendValidate(ModelValidatorEnum.TableDefinition,FieldValidatorEnum.name,currentList.name,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
     let createListResponse : any;
     if(!viewTemplate || !viewTemplate.id|| viewTemplate.id == 0){
-      console.log("create list")
       createListResponse= await listService.createList(
-        currentList.name,
+        newViewName,
         currentList.description,
         currentList.category as ListCategory,
         ViewType.List
@@ -102,7 +108,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
     else{
       createListResponse= await createCoreView(
         viewTemplate.id,
-        currentList.name,
+        newViewName,
         currentList.description,
       )
     }
@@ -149,6 +155,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
               id="fullWidth"
               value={currentList.name}
               onChange={onNameChange}
+              error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)} 
             />
           </Box>
           <Box>
