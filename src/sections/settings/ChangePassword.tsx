@@ -6,7 +6,7 @@ import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
-
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -24,6 +24,8 @@ export type ChangePasswordProps = {
 }
 function ChangePassword({setFlashMessage}:ChangePasswordProps) {
   const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = React.useState("");
@@ -58,6 +60,7 @@ function ChangePassword({setFlashMessage}:ChangePasswordProps) {
   {
     setNewPassword(e.target.value);
     setFieldDirty("newPassword");
+    setIsSubmit(false)
   }
   const handleNewPasswordConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) =>
   {
@@ -67,13 +70,25 @@ function ChangePassword({setFlashMessage}:ChangePasswordProps) {
   const isFormInvalid = () => {
     return !oldPassword || !newPassword || !newPasswordConfirm || newPassword !== newPasswordConfirm;
   }
+  function setError(message: string) {
+    setFlashMessage({message:message, type:"error"});
+  }
   const onSubmit = async() => {
-    console.log('bbbb')
+
     if (isFormInvalid()) {
+      setFlashMessage({message:"Password and Confirm Password does not match", type:"error"})
       return;
     }
+    setIsSubmit(true);
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.password,newPassword,_errors,_setErrors,true)
+    if(isFrontendError(FieldValidatorEnum.password,_errors,setErrors,setError)) return
+
     let response = await accountService.changePassword(oldPassword, newPassword);
-    console.log(response);  
     if(isSucc(response))
     {
       setFlashMessage({message:"Password changed successfully", type:"success"});
@@ -126,7 +141,7 @@ function ChangePassword({setFlashMessage}:ChangePasswordProps) {
             <TextField 
             value={newPassword} 
             onChange={handleNewPasswordChange} 
-            error={isFieldDirty("newPassword") && !newPassword}
+            error={((isFieldDirty("newPassword") && !newPassword)||(isSubmit && isFrontendError(FieldValidatorEnum.password,errors)))}
             onBlur={() => setFieldDirty("newPassword")}
             fullWidth />
           </Box>
