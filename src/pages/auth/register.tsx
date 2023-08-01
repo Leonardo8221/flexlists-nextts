@@ -51,6 +51,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordErrorMessage,setPasswordErrorMessage] = useState<string>('');
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
@@ -103,8 +104,22 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
     setIsReservedUserName(false);
   };
 
-  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangePassword = async(event: React.ChangeEvent<HTMLInputElement>) => {
+    let _errors: { [key: string]: string|boolean } = {}
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
     setPassword(event.target.value);
+    await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.password,event.target.value,_errors,_setErrors,true)
+    let _error = _errors[FieldValidatorEnum.password]
+    if(_error)
+    {
+      setPasswordErrorMessage(_error as string)
+    }
+    else
+    {
+      setPasswordErrorMessage('')
+    }
   };
 
   const handleTermsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -543,6 +558,17 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                     ),
                   }}
                 ></TextField>
+                {
+                   passwordErrorMessage && <Typography
+                   id="modal-modal-title"
+                   variant="subtitle2"
+                   component="span"
+                   sx={{textAlign:'right'}}
+                 >
+                   {passwordErrorMessage}
+                 </Typography>
+                }
+                
               </Grid>
               <Grid item xs={12}>
                 <MuiTelInput
