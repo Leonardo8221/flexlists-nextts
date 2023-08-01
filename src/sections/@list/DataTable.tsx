@@ -141,6 +141,17 @@ const DataTable = ({
   ];
 
   useEffect(() => {
+    //editRow(row) => from rows
+    if (router.query.rowId) {
+      const row = rows.find((row, i) => row.id === parseInt(router.query.rowId as string));
+      if (row) {
+        const index = rows.indexOf(row);
+        editRow({ original: row, index: index })
+      }
+    }
+  }, [rows, router.query]);
+
+  useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
 
@@ -297,7 +308,7 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {!cellValue?'':sanitizeHtml(cellValue.replace(/</g, " <"), {
+                    {!cellValue ? '' : sanitizeHtml(cellValue.replace(/</g, " <"), {
                       allowedTags: [],
                     })}
                   </Box>
