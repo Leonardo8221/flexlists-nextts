@@ -12,6 +12,7 @@ import { setUserProfile } from "src/redux/actions/userActions";
 import { getProfile, updateProfile } from "src/services/account.service";
 import { uploadFile } from "src/services/admin/contentManagement.service";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 const AvatarImg = styled("img")(({ theme }) => ({
     width: "100%",
     height: "100%",
@@ -24,6 +25,8 @@ type ProfileSettingProps = {
 const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSettingProps) => {
     const router = useRouter();
     const [isDirty,setIsDirty] = useState<boolean>(false);
+    const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+    const [isSubmit,setIsSubmit] = useState<boolean>(false);
     useEffect(() => {
         async function getUserProfile() {
             const response = await getProfile();
@@ -65,33 +68,43 @@ const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSett
       setUserProfile(newProfile)
       setIsDirty(true);
     };
+    const setError = (message:string)=>{
+      setFlashMessage({message:message,type:'error'})
+    }
     const onSubmit = async () => {
-       if(!userProfile?.firstName)
-       {
-          setFlashMessage({message:"First name is required",type:"error"});
-          return;
-       }
-        if(!userProfile?.lastName)
-        {
-          setFlashMessage({message:"Last name is required",type:"error"});
-          return;
-        }
-        if(!userProfile?.email)
-        {
-          setFlashMessage({message:"Email is required",type:"error"});
-          return;
-        }
-        var response = await updateProfile(userProfile.email,userProfile.firstName,userProfile.lastName,userProfile.phoneNumber,userProfile.avatarUrl?.toString());
-        if(isSucc(response))
-        {
-          setFlashMessage({message:"Update profile successfully",type:"success"});
-          setIsDirty(false);
-        }
-        else
-        {
-          setFlashMessage({message:(response as FlexlistsError).message,type:"error"});
-          setIsDirty(false);
-        }
+      setIsSubmit(true);
+      let _errors: { [key: string]: string|boolean } = {}
+
+      const _setErrors = (e: { [key: string]: string|boolean }) => { 
+        _errors = e
+      } 
+      let newFirstName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.firstName,userProfile?.firstName,_errors,_setErrors,true)
+          if(isFrontendError(FieldValidatorEnum.firstName,_errors,setErrors,setError)) return
+      let newLastName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.lastName,userProfile?.lastName,_errors,_setErrors,true)
+         if(isFrontendError(FieldValidatorEnum.lastName,_errors,setErrors,setError)) return
+      let newEmail = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.email,userProfile?.email,_errors,_setErrors,true)
+         if(isFrontendError(FieldValidatorEnum.email,_errors,setErrors,setError)) return
+      let newPhoneNumber : string = userProfile && userProfile.phoneNumber?userProfile.phoneNumber:'';
+      if(newPhoneNumber.length > 3)
+      {
+        newPhoneNumber = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.phoneNumber,newPhoneNumber,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.phoneNumber,_errors,setErrors,setError)) return
+      }
+      else
+      {
+        newPhoneNumber = ''
+      }
+      var response = await updateProfile(newEmail,newFirstName,newLastName,newPhoneNumber,userProfile?.avatarUrl?.toString());
+      if(isSucc(response))
+      {
+        setFlashMessage({message:"Update profile successfully",type:"success"});
+        setIsDirty(false);
+      }
+      else
+      {
+        setFlashMessage({message:(response as FlexlistsError).message,type:"error"});
+        setIsDirty(false);
+      }
     }
     const handleFileChange = async (
       event: React.ChangeEvent<HTMLInputElement>
@@ -165,7 +178,7 @@ const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSett
               sx={{ width: "100%" }} 
               value={userProfile?.firstName} 
               onChange={handleFirstNameChange} 
-              error={isDirty && !userProfile?.firstName}
+              error = {isSubmit && isFrontendError(FieldValidatorEnum.firstName,errors)}
               />
             </Grid>
             <Grid item md={6}>
@@ -174,7 +187,7 @@ const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSett
               sx={{ width: "100%" }} 
               value={userProfile?.lastName} 
               onChange={handleLastNameChange} 
-              error={isDirty && !userProfile?.lastName}
+              error = {isSubmit && isFrontendError(FieldValidatorEnum.lastName,errors)}
               />
             </Grid>
           </Grid>
@@ -186,7 +199,7 @@ const ProfileSetting = ({setFlashMessage,userProfile,setUserProfile}:ProfileSett
                 value = {userProfile?.email}
                 type="email"
                 onChange={handleEmailChange}
-                error={isDirty && !userProfile?.email}
+                error = {isSubmit && isFrontendError(FieldValidatorEnum.email,errors)}
               />
             </Grid>
           </Grid>

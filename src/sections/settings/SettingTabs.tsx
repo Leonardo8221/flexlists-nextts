@@ -35,13 +35,12 @@ const ThemeChoiceImage = styled("img")(({ theme }) => ({
 
 interface TabPanelProps {
   children?: React.ReactNode;
-  index: number;
-  value: number;
+  index: string;
+  value: string;
 }
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -60,17 +59,18 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
+function a11yProps(key: string) {
   return {
-    id: `vertical-tab-${index}`,
-    "aria-controls": `vertical-tabpanel-${index}`,
+    id: `vertical-tab-${key}`,
+    "aria-controls": `vertical-tabpanel-${key}`,
   };
 }
 
 export default function SettingTabs() {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState("profile");
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    console.log(newValue);
     setValue(newValue);
   };
 
@@ -101,7 +101,7 @@ export default function SettingTabs() {
       >
         <Tab
           label="Profile"
-          {...a11yProps(0)}
+          {...a11yProps("profile")}
           icon={<GroupsIcon sx={{ mr: 1 }} />}
           sx={{
             display: "flex",
@@ -109,10 +109,11 @@ export default function SettingTabs() {
             flexDirection: "row",
             justifyContent: "flex-start",
           }}
+          value="profile"
         />
         {/* <Tab
           label="General"
-          {...a11yProps(1)}
+          {...a11yProps("general")}
           icon={<SettingsIcon sx={{ mr: 1 }} />}
           sx={{
             display: "flex",
@@ -120,10 +121,11 @@ export default function SettingTabs() {
             flexDirection: "row",
             justifyContent: "flex-start",
           }}
+          value="general"
         /> */}
         <Tab
           label="Security"
-          {...a11yProps(2)}
+          {...a11yProps("security")}
           icon={<GppGoodIcon sx={{ mr: 1 }} />}
           sx={{
             display: "flex",
@@ -131,10 +133,11 @@ export default function SettingTabs() {
             flexDirection: "row",
             justifyContent: "flex-start",
           }}
+          value="security"
         />
         {/* <Tab
           label="Notifications"
-          {...a11yProps(3)}
+          {...a11yProps("notifications")}
           icon={<NotificationsIcon sx={{ mr: 1 }} />}
           sx={{
             display: "flex",
@@ -142,47 +145,16 @@ export default function SettingTabs() {
             flexDirection: "row",
             justifyContent: "flex-start",
           }}
+          value="notifications"
         />
-        <Tab
-          label="Item Five"
-          {...a11yProps(4)}
-          icon={<GroupsIcon sx={{ mr: 1 }} />}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-          }}
-        />
-        <Tab
-          label="Item Six"
-          {...a11yProps(5)}
-          icon={<GroupsIcon sx={{ mr: 1 }} />}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-          }}
-        />
-        <Tab
-          label="Item Seven"
-          {...a11yProps(6)}
-          icon={<GroupsIcon sx={{ mr: 1 }} />}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-          }}
-        /> */}
+       */}
       </Tabs>
-      <TabPanel value={value} index={0}>
+      <TabPanel value={value} index="profile">
         <Typography variant="h4">Profile Settings</Typography>
         <Divider light sx={{ my: 4 }}></Divider>
         <ProfileSetting />
       </TabPanel>
-      <TabPanel value={value} index={1}>
+      <TabPanel value={value} index="general">
         <Typography variant="h4">General Settings</Typography>
         <Divider light sx={{ my: 4 }}></Divider>
 
@@ -265,7 +237,7 @@ export default function SettingTabs() {
           </Grid>
         </Box>
       </TabPanel>
-      <TabPanel value={value} index={2}>
+      <TabPanel value={value} index="security">
         <Typography variant="h4">Security Settings</Typography>
         <Divider light sx={{ my: 4 }}></Divider>
 
@@ -351,18 +323,7 @@ export default function SettingTabs() {
           </Box>
         </Box>
       </TabPanel>
-      <TabPanel value={value} index={3}>
-        Item Four
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
-      </TabPanel>
+      
     </Box>
   );
 }
