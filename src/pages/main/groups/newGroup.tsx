@@ -7,8 +7,17 @@ import { useRouter } from "next/router";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
 import { groupService } from "src/services/group.service";
-export default function NewGroup() {
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { connect } from "react-redux";
+type NewGroupProps = {
+  setFlashMessage: (message: FlashMessageModel) => void;
+};
+ function NewGroup({ setFlashMessage }: NewGroupProps) {
   const router = useRouter();
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
   const [currentGroup, setCurrentGroup] = useState<{
     name: string;
     description: string;
@@ -23,9 +32,20 @@ export default function NewGroup() {
     newGroup.description = newValue;
     setCurrentGroup(newGroup);
   };
+  const setError = (message:string)=>{
+    setFlashMessage({message:message,type:'error'})
+  }
   const handleSubmit = async () => {
+    setIsSubmit(true)
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newGroupName = await frontendValidate(ModelValidatorEnum.Group,FieldValidatorEnum.name,currentGroup.name,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
     var createListResponse = await groupService.createUserGroup(
-      currentGroup.name,
+      newGroupName,
       currentGroup.description
     );
     if (
@@ -62,6 +82,7 @@ export default function NewGroup() {
               id="fullWidth"
               value={currentGroup.name}
               onChange={onNameChange}
+              error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
             />
           </Box>
           <Box>
@@ -93,3 +114,11 @@ export default function NewGroup() {
     </MainLayout>
   );
 }
+const mapStateToProps = (state: any) => ({
+});
+
+const mapDispatchToProps = {
+  setFlashMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewGroup);
