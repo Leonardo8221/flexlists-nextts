@@ -34,6 +34,7 @@ import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate } from "src/utils/validatorHelper";
 import { first } from "lodash";
+import phone from "phone";
 
 interface RegisterProps {
   message: any;
@@ -140,6 +141,17 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
       if(!_isValidate(_errors)) return
       let newPassword = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.password,password,_errors,_setErrors,true)
       if(!_isValidate(_errors)) return
+      let newPhoneNumber : string = phoneNumber
+      if(phoneNumber.length > 3)
+      {
+        newPhoneNumber = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.phoneNumber,phoneNumber,_errors,_setErrors,true)
+        console.log(newPhoneNumber)
+        if(!_isValidate(_errors)) return
+      }
+      else
+      {
+        newPhoneNumber = ''
+      }
       
       if (!termsAndConditions) {
         setError("Please accept terms and conditions");
@@ -151,7 +163,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
         newLastName,
         newUserName,
         newEmail,
-        phoneNumber.length > 3 ? phoneNumber : '',
+        newPhoneNumber.length > 3 ? phoneNumber : '',
         newPassword,
         termsAndConditions
       );
