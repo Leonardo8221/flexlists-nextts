@@ -60,6 +60,7 @@ const AccountPopover = ({userProfile,setUserProfile} : AccountPopoverProps) => {
     setOpen(null);
   };
   const logout = async () => {
+    handleClose();
     await authService.logout();
     await router.push({
       pathname: "/",

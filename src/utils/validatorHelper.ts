@@ -194,7 +194,22 @@ export async function frontendValidate(model: ModelValidatorEnum, field: FieldVa
     setErrors(newErrors)
     return value
 }
-
+export const isFrontendError = (key:FieldValidatorEnum, errors: { [key: string]: string|boolean },setErrors?: (value: { [key: string]: string | boolean }) => void,setError?: (message: string) => void) => {
+    if(setErrors)
+    {
+        setErrors(errors)
+    }
+    let _error = errors[key]
+    if (_error !== undefined && _error !== false) 
+    {
+        if(setError)
+        {
+            setError(_error as string)
+        }
+      return true;
+    }
+    return false
+  }
 
 const Validator = {
     GenericTypes: {

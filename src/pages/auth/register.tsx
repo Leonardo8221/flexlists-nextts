@@ -32,9 +32,10 @@ import { PATH_AUTH } from "src/routes/paths";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
-import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate } from "src/utils/validatorHelper";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { first } from "lodash";
 import phone from "phone";
+import { FieldDefinitionTypeEnum } from "src/enums/TableEnums";
 
 interface RegisterProps {
   message: any;
@@ -121,32 +122,21 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
       const _setErrors = (e: { [key: string]: string|boolean }) => { 
         _errors = e
       } 
-      const _isValidate = (e: { [key: string]: string|boolean }) => {
-        let _error = Object.keys(_errors).find((key)=>_errors[key] !==false);
-        if (_error) 
-        {
-          setError(_errors[_error as string] as string)
-          setErrors(_errors)
-          return false;
-        }
-        return true
-      }
       let newFirstName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.firstName,firstName,_errors,_setErrors,true)
-      if(!_isValidate(_errors)) return
+          if(isFrontendError(FieldValidatorEnum.firstName,_errors,setErrors,setError)) return
       let newLastName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.lastName,lastName,_errors,_setErrors,true)
-      if(!_isValidate(_errors)) return
+          if(isFrontendError(FieldValidatorEnum.lastName,_errors,setErrors,setError)) return
       let newUserName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.userName,userName,_errors,_setErrors,true)
-      if(!_isValidate(_errors)) return
+          if(isFrontendError(FieldValidatorEnum.userName,_errors,setErrors,setError)) return
       let newEmail = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.email,userEmail,_errors,_setErrors,true)
-      if(!_isValidate(_errors)) return
+          if(isFrontendError(FieldValidatorEnum.email,_errors,setErrors,setError)) return
       let newPassword = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.password,password,_errors,_setErrors,true)
-      if(!_isValidate(_errors)) return
+          if(isFrontendError(FieldValidatorEnum.password,_errors,setErrors,setError)) return
       let newPhoneNumber : string = phoneNumber
       if(phoneNumber.length > 3)
       {
         newPhoneNumber = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.phoneNumber,phoneNumber,_errors,_setErrors,true)
-        console.log(newPhoneNumber)
-        if(!_isValidate(_errors)) return
+        if(isFrontendError(FieldValidatorEnum.phoneNumber,_errors,setErrors,setError)) return
       }
       else
       {
@@ -456,7 +446,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                     required
                     value={firstName}
                     onChange={handleFirstNameChange}
-                    error = {isSubmit && errors[FieldValidatorEnum.firstName] !== false} 
+                    error = {isSubmit && isFrontendError(FieldValidatorEnum.firstName,errors)} 
                   ></TextField>
                 </Grid>
 
@@ -469,7 +459,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                     required
                     value={lastName}
                     onChange={handleLastNameChange}
-                    error = {isSubmit && errors[FieldValidatorEnum.lastName] !== false} 
+                    error = {isSubmit && isFrontendError(FieldValidatorEnum.lastName,errors)} 
                   ></TextField>
                 </Grid>
               </Grid>
@@ -482,7 +472,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   required
                   value={userName}
                   onChange={handleChangeUserName}
-                  error = {isSubmit && errors[FieldValidatorEnum.userName] !== false} 
+                  error = {isSubmit && isFrontendError(FieldValidatorEnum.userName,errors)} 
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -526,7 +516,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   required
                   value={userEmail}
                   onChange={handleEmailChange}
-                  error = {isSubmit && errors[FieldValidatorEnum.email] !== false} 
+                  error = {isSubmit && isFrontendError(FieldValidatorEnum.email,errors)} 
                 ></TextField>
               </Grid>
 
@@ -539,7 +529,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   value={password}
                   onChange={handleChangePassword}
                   type={showPassword ? "text" : "password"}
-                  error = {isSubmit && errors[FieldValidatorEnum.password] !== false} 
+                  error = {isSubmit && isFrontendError(FieldValidatorEnum.password,errors)} 
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
