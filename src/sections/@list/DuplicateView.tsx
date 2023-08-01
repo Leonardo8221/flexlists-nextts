@@ -15,23 +15,28 @@ import { connect } from "react-redux";
 import { View } from "src/models/SharedModels";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
-import { ErrorConsts } from "src/constants/errorConstants";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
 type DuplicateViewProps = {
   open: boolean;
   handleClose: () => void;
-  currentView: View
+  currentView: View,
+  setFlashMessage : (message:FlashMessageModel)=>void
 };
 
-const DuplicateView = ({ open, handleClose, currentView }: DuplicateViewProps) => {
+const DuplicateView = ({ open, handleClose, currentView,setFlashMessage }: DuplicateViewProps) => {
   const router = useRouter()
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [error, setError] = useState<string>('')
-  const [submit, setSubmit] = useState<boolean>(false)
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
 
-
+  const setError = (message:string)=>{
+    setFlashMessage({message:message,type:'error'})
+  }
   const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -40,12 +45,15 @@ const DuplicateView = ({ open, handleClose, currentView }: DuplicateViewProps) =
   };
 
   const onSubmit = async () => {
-    setSubmit(true)
-    if (!name) {
-      setError('Name required')
-      return;
-    }
-    var response = await listViewService.createView(currentView.listId, name, currentView.type, currentView.config, currentView.template,
+    setIsSubmit(true)
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newViewName = await frontendValidate(ModelValidatorEnum.TableView,FieldValidatorEnum.name,name,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+    var response = await listViewService.createView(currentView.listId, newViewName, currentView.type, currentView.config, currentView.template,
       currentView.category, currentView.page, currentView.limit, currentView.order, currentView.query, description, currentView.conditions, currentView.fields)
     if (isSucc(response) && response.data && response.data.viewId) {
       await router.push(`${PATH_MAIN.views}/${response.data.viewId}`)
@@ -62,9 +70,6 @@ const DuplicateView = ({ open, handleClose, currentView }: DuplicateViewProps) =
       <Typography variant="h6">Duplicate View</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
-        {error && <Alert severity="error">{error}</Alert>}
-      </Box>
-      <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
           fullWidth
@@ -72,7 +77,7 @@ const DuplicateView = ({ open, handleClose, currentView }: DuplicateViewProps) =
           value={name}
           placeholder="Name"
           required
-          error={submit && !name}
+          error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
         />
       </Box>
       <Box>
@@ -113,6 +118,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DuplicateView);

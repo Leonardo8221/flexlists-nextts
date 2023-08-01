@@ -8,12 +8,16 @@ import { setCurrentView } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 type RenameViewProps = {
   open: boolean;
   handleClose: () => void;
   currentView: View;
   setCurrentView: (newView: View) => void;
+  setFlashMessage : (message:FlashMessageModel)=>void
 };
 
 const RenameView = ({
@@ -21,14 +25,15 @@ const RenameView = ({
   handleClose,
   currentView,
   setCurrentView,
+  setFlashMessage
 }: RenameViewProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
   const [view, setView] = useState<View>(currentView);
   const [isUpdate,setIsUpdate] = useState<boolean>(false);
-  const [error,setError] = useState<string>('');
-  const [submit,setSubmit] = useState<boolean>(false)
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -47,14 +52,19 @@ const RenameView = ({
     setIsUpdate(true)
     setView(newView);
   };
+  const setError = (message:string)=>{
+    setFlashMessage({message:message,type:'error'})
+  }
   const onSubmit = async () => {
-    setSubmit(true)
-    if(!view.name)
-    {
-      setError('Name required')
-      return;
-    }
-    var response = await listViewService.renameView(view.id, view.name,view.description);
+    setIsSubmit(true)
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newViewName = await frontendValidate(ModelValidatorEnum.TableView,FieldValidatorEnum.name,view.name,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+    var response = await listViewService.renameView(view.id, newViewName,view.description);
     if (isSucc(response)) {
       setCurrentView(view);
       handleClose();
@@ -65,9 +75,6 @@ const RenameView = ({
       <Typography variant="h6">Rename View</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
-          {error && <Alert severity="error">{error}</Alert>}
-      </Box>
-      <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
           fullWidth
@@ -75,7 +82,7 @@ const RenameView = ({
           value={view?.name}
           placeholder="Name"
           required
-          error = {submit && !view?.name}
+          error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
         />
       </Box>
       <Box>
@@ -113,6 +120,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setCurrentView,
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RenameView);

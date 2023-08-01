@@ -94,7 +94,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
     const _setErrors = (e: { [key: string]: string|boolean }) => { 
       _errors = e
     } 
-    let newViewName = await frontendValidate(ModelValidatorEnum.TableDefinition,FieldValidatorEnum.name,currentList.name,_errors,_setErrors,true)
+    let newViewName = await frontendValidate(ModelValidatorEnum.TableView,FieldValidatorEnum.name,currentList.name,_errors,_setErrors,true)
         if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
     let createListResponse : any;
     if(!viewTemplate || !viewTemplate.id|| viewTemplate.id == 0){
