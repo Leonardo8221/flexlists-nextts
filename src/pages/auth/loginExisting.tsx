@@ -170,7 +170,7 @@ const Login = ({
     container: {
       minHeight: "100vh",
       display: "flex",
-      flexDirection: { xs: "column", md: "row" },
+      flexDirection: { xs: "column-reverse", md: "row" },
       alignItems: "center",
       justifyContent: "center",
       px: { xs: 0, sm: 0, md: 0 },

@@ -31,7 +31,12 @@ import { PATH_AUTH } from "src/routes/paths";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { connect } from "react-redux";
 import { setMessage } from "src/redux/actions/authAction";
-import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import {
+  FieldValidatorEnum,
+  ModelValidatorEnum,
+  frontendValidate,
+  isFrontendError,
+} from "src/utils/validatorHelper";
 
 interface RegisterProps {
   message: any;
@@ -40,18 +45,18 @@ interface RegisterProps {
 }
 const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const theme = useTheme();
-  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
   const isDesktop = useResponsive("up", "md");
   //const [error, setError] = useState<string>();
   const router = useRouter();
-  const [isSubmit,setIsSubmit] = useState<boolean>(false);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [userEmail, setUserEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordErrorMessage,setPasswordErrorMessage] = useState<string>('');
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
@@ -85,11 +90,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
     setPhoneNumber(newPhoneNumber);
   };
 
-  const handleFirstNameChange = async(
+  const handleFirstNameChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setFirstName(event.target.value);
-    
   };
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserEmail(event.target.value);
@@ -104,21 +108,27 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
     setIsReservedUserName(false);
   };
 
-  const handleChangePassword = async(event: React.ChangeEvent<HTMLInputElement>) => {
-    let _errors: { [key: string]: string|boolean } = {}
-    const _setErrors = (e: { [key: string]: string|boolean }) => { 
-      _errors = e
-    } 
+  const handleChangePassword = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let _errors: { [key: string]: string | boolean } = {};
+    const _setErrors = (e: { [key: string]: string | boolean }) => {
+      _errors = e;
+    };
     setPassword(event.target.value);
-    await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.password,event.target.value,_errors,_setErrors,true)
-    let _error = _errors[FieldValidatorEnum.password]
-    if(_error)
-    {
-      setPasswordErrorMessage(_error as string)
-    }
-    else
-    {
-      setPasswordErrorMessage('')
+    await frontendValidate(
+      ModelValidatorEnum.User,
+      FieldValidatorEnum.password,
+      event.target.value,
+      _errors,
+      _setErrors,
+      true
+    );
+    let _error = _errors[FieldValidatorEnum.password];
+    if (_error) {
+      setPasswordErrorMessage(_error as string);
+    } else {
+      setPasswordErrorMessage("");
     }
   };
 
@@ -128,32 +138,114 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const handleSubmit = async () => {
     try {
       setIsSubmit(true);
-      let _errors: { [key: string]: string|boolean } = {}
+      let _errors: { [key: string]: string | boolean } = {};
 
-      const _setErrors = (e: { [key: string]: string|boolean }) => { 
-        _errors = e
-      } 
-      let newFirstName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.firstName,firstName,_errors,_setErrors,true)
-          if(isFrontendError(FieldValidatorEnum.firstName,_errors,setErrors,setError)) return
-      let newLastName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.lastName,lastName,_errors,_setErrors,true)
-          if(isFrontendError(FieldValidatorEnum.lastName,_errors,setErrors,setError)) return
-      let newUserName = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.userName,userName,_errors,_setErrors,true)
-          if(isFrontendError(FieldValidatorEnum.userName,_errors,setErrors,setError)) return
-      let newEmail = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.email,userEmail,_errors,_setErrors,true)
-          if(isFrontendError(FieldValidatorEnum.email,_errors,setErrors,setError)) return
-      let newPassword = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.password,password,_errors,_setErrors,true)
-          if(isFrontendError(FieldValidatorEnum.password,_errors,setErrors,setError)) return
-      let newPhoneNumber : string = phoneNumber
-      if(phoneNumber.length > 3)
-      {
-        newPhoneNumber = await frontendValidate(ModelValidatorEnum.User,FieldValidatorEnum.phoneNumber,phoneNumber,_errors,_setErrors,true)
-        if(isFrontendError(FieldValidatorEnum.phoneNumber,_errors,setErrors,setError)) return
+      const _setErrors = (e: { [key: string]: string | boolean }) => {
+        _errors = e;
+      };
+      let newFirstName = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.firstName,
+        firstName,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(
+          FieldValidatorEnum.firstName,
+          _errors,
+          setErrors,
+          setError
+        )
+      )
+        return;
+      let newLastName = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.lastName,
+        lastName,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(
+          FieldValidatorEnum.lastName,
+          _errors,
+          setErrors,
+          setError
+        )
+      )
+        return;
+      let newUserName = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.userName,
+        userName,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(
+          FieldValidatorEnum.userName,
+          _errors,
+          setErrors,
+          setError
+        )
+      )
+        return;
+      let newEmail = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.email,
+        userEmail,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(FieldValidatorEnum.email, _errors, setErrors, setError)
+      )
+        return;
+      let newPassword = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.password,
+        password,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(
+          FieldValidatorEnum.password,
+          _errors,
+          setErrors,
+          setError
+        )
+      )
+        return;
+      let newPhoneNumber: string = phoneNumber;
+      if (phoneNumber.length > 3) {
+        newPhoneNumber = await frontendValidate(
+          ModelValidatorEnum.User,
+          FieldValidatorEnum.phoneNumber,
+          phoneNumber,
+          _errors,
+          _setErrors,
+          true
+        );
+        if (
+          isFrontendError(
+            FieldValidatorEnum.phoneNumber,
+            _errors,
+            setErrors,
+            setError
+          )
+        )
+          return;
+      } else {
+        newPhoneNumber = "";
       }
-      else
-      {
-        newPhoneNumber = ''
-      }
-      
+
       if (!termsAndConditions) {
         setError("Please accept terms and conditions");
         return;
@@ -164,7 +256,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
         newLastName,
         newUserName,
         newEmail,
-        newPhoneNumber.length > 3 ? phoneNumber : '',
+        newPhoneNumber.length > 3 ? phoneNumber : "",
         newPassword,
         termsAndConditions
       );
@@ -229,7 +321,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
     container: {
       minHeight: "100vh",
       display: "flex",
-      flexDirection: { xs: "column", md: "row" },
+      flexDirection: { xs: "column-reverse", md: "row" },
       alignItems: "center",
       justifyContent: "center",
       px: { xs: 0, sm: 0, md: 0 },
@@ -457,7 +549,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                     required
                     value={firstName}
                     onChange={handleFirstNameChange}
-                    error = {isSubmit && isFrontendError(FieldValidatorEnum.firstName,errors)} 
+                    error={
+                      isSubmit &&
+                      isFrontendError(FieldValidatorEnum.firstName, errors)
+                    }
                   ></TextField>
                 </Grid>
 
@@ -470,7 +565,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                     required
                     value={lastName}
                     onChange={handleLastNameChange}
-                    error = {isSubmit && isFrontendError(FieldValidatorEnum.lastName,errors)} 
+                    error={
+                      isSubmit &&
+                      isFrontendError(FieldValidatorEnum.lastName, errors)
+                    }
                   ></TextField>
                 </Grid>
               </Grid>
@@ -483,7 +581,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   required
                   value={userName}
                   onChange={handleChangeUserName}
-                  error = {isSubmit && isFrontendError(FieldValidatorEnum.userName,errors)} 
+                  error={
+                    isSubmit &&
+                    isFrontendError(FieldValidatorEnum.userName, errors)
+                  }
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
@@ -527,7 +628,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   required
                   value={userEmail}
                   onChange={handleEmailChange}
-                  error = {isSubmit && isFrontendError(FieldValidatorEnum.email,errors)} 
+                  error={
+                    isSubmit &&
+                    isFrontendError(FieldValidatorEnum.email, errors)
+                  }
                 ></TextField>
               </Grid>
 
@@ -540,7 +644,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   value={password}
                   onChange={handleChangePassword}
                   type={showPassword ? "text" : "password"}
-                  error = {isSubmit && isFrontendError(FieldValidatorEnum.password,errors)} 
+                  error={
+                    isSubmit &&
+                    isFrontendError(FieldValidatorEnum.password, errors)
+                  }
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -558,17 +665,16 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                     ),
                   }}
                 ></TextField>
-                {
-                   passwordErrorMessage && <Typography
-                   id="modal-modal-title"
-                   variant="subtitle2"
-                   component="span"
-                   sx={{textAlign:'right'}}
-                 >
-                   {passwordErrorMessage}
-                 </Typography>
-                }
-                
+                {passwordErrorMessage && (
+                  <Typography
+                    id="modal-modal-title"
+                    variant="subtitle2"
+                    component="span"
+                    sx={{ textAlign: "right" }}
+                  >
+                    {passwordErrorMessage}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={12}>
                 <MuiTelInput

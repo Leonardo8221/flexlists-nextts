@@ -43,6 +43,8 @@ import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+
+import EditIcon from "@mui/icons-material/Edit";
 import { hasPermission } from "src/utils/permissionHelper";
 import {
   archiveBulkContents,
@@ -143,10 +145,12 @@ const DataTable = ({
   useEffect(() => {
     //editRow(row) => from rows
     if (router.query.rowId) {
-      const row = rows.find((row, i) => row.id === parseInt(router.query.rowId as string));
+      const row = rows.find(
+        (row, i) => row.id === parseInt(router.query.rowId as string)
+      );
       if (row) {
         const index = rows.indexOf(row);
-        editRow({ original: row, index: index })
+        editRow({ original: row, index: index });
       }
     }
   }, [rows, router.query]);
@@ -308,9 +312,11 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {!cellValue ? '' : sanitizeHtml(cellValue.replace(/</g, " <"), {
-                      allowedTags: [],
-                    })}
+                    {!cellValue
+                      ? ""
+                      : sanitizeHtml(cellValue.replace(/</g, " <"), {
+                          allowedTags: [],
+                        })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:
@@ -851,15 +857,16 @@ const DataTable = ({
                   px: { xs: 1, md: "inherit" },
                   border: 2,
                   height: 32,
-                  justifyContent: "space-between",
+                  justifyContent: "center",
                   alignItems: "center",
                   "&:hover": {
                     border: 2,
                   },
                 }}
               >
-                List actions
-                <KeyboardArrowDownIcon />
+                {/* List actions */}
+                {/* <KeyboardArrowDownIcon /> */}
+                <EditIcon />
               </Button>
             )}
             <Box
