@@ -35,7 +35,7 @@ import {
   listContentService,
 } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
-import { filter } from "lodash";
+import { filter, set } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
 import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
@@ -111,7 +111,6 @@ const RowFormPanel = ({
     "view" | "create" | "update" | "comment"
   >(mode);
   const [windowHeight, setWindowHeight] = useState(0);
-  const [error, setError] = useState<string>("");
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   //console.log('knarsterfarster', currentView)
@@ -162,20 +161,26 @@ const RowFormPanel = ({
   useEffect(() => {
     setValues(rowData);
     setSubmit(false);
-    setError("");
     setCurrentMode(mode);
   }, [open, rowData, mode]);
 
   const handleSubmit = async () => {
     setSubmit(true);
-    if (!values) setValues({ submit: true });
+    if (!values)
+    {
+      setFlashMessage({message: "No values", type: "error"})
+    }
 
     let validator = true;
-
+    let errorFields : string[] = [];
     if (values) {
       columns.forEach((column) => {
-        if (!column.system && column.required && !values[column.id])
+        if (!column.system && column.required && (!values[column.id]||values[column.id]===null))
+        {
           validator = false;
+          errorFields.push(column.name);
+        }
+          
       });
       if (validator) {
         //update row data
@@ -187,7 +192,7 @@ const RowFormPanel = ({
           if (isSucc(updateRowRespone)) {
             onSubmit(values, "update");
           } else {
-            setError(ErrorConsts.InternalServerError);
+            setFlashMessage({message: (updateRowRespone as FlexlistsError).message, type: "error"})
             return;
           }
         } else {
@@ -212,12 +217,16 @@ const RowFormPanel = ({
             }
             onSubmit(values, "create");
           } else {
-            setError(ErrorConsts.InternalServerError);
+            setFlashMessage({message: (createRowResponse as FlexlistsError).message, type: "error"})
             return;
           }
         }
 
         onClose();
+      }
+      else
+      {
+        setFlashMessage({message: `${errorFields.join(',')} ${errorFields.length>1?'are':'is'} required`, type: "error"})
       }
     }
   };
@@ -309,14 +318,22 @@ const RowFormPanel = ({
   };
 
   const setDateValue = (columnId: number, date: Dayjs | Date | null) => {
-    if (date == null) {
-      return;
+    try
+    {
+      if (date == null) {
+        return;
+      }
+      if (typeof date === "string") {
+        setValues({ ...values, [columnId]: date });
+        return;
+      }
+      setValues({ ...values, [columnId]: date.toISOString() });
     }
-    if (typeof date === "string") {
-      setValues({ ...values, [columnId]: date });
-      return;
+    catch(e)
+    {
+
     }
-    setValues({ ...values, [columnId]: date.toISOString() });
+    
   };
   const setTimeValue = (columnId: number, time: Dayjs | null) => {
     if (time == null) {
@@ -489,7 +506,7 @@ const RowFormPanel = ({
         return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
-              value={dayjs(values[column.id])}
+              value={values[column.id]&&values[column.id]!=null?dayjs(values[column.id]):null}
               label={column.name}
               onChange={(x) => {
                 setDateValue(column.id, x);
@@ -1401,9 +1418,6 @@ const RowFormPanel = ({
       <DialogContent>
         {currentMode !== "comment" && (
           <form onSubmit={(e) => e.preventDefault()} id="new_row_form">
-            <Stack>
-              <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-            </Stack>
             <Stack
               sx={{
                 width: "100%",
