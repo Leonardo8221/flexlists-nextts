@@ -76,6 +76,24 @@ const AddViewCards = [
     title: "Kanban View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
+  {
+    type: ViewType.TimeLine,
+    icon: "/assets/icons/KanbanSVG.svg",
+    title: "TimeLine View",
+    description: "Lorem ipsum dolor sit amet consectetur.",
+  },
+  {
+    type: ViewType.Gantt,
+    icon: "/assets/icons/KanbanSVG.svg",
+    title: "Gantt View",
+    description: "Lorem ipsum dolor sit amet consectetur.",
+  },
+  {
+    type: ViewType.Map,
+    icon: "/assets/icons/KanbanSVG.svg",
+    title: "Map View",
+    description: "Lorem ipsum dolor sit amet consectetur.",
+  }
 ];
 
 type ListViewFormProps = {

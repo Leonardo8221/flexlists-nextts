@@ -23,6 +23,10 @@ import { ViewType } from "src/enums/SharedEnums";
 import CalendarView from "src/sections/@calendar/CalendarView";
 import { ViewField } from "src/models/ViewField";
 import KanbanView from "src/sections/@kanban/KanbanView";
+import GalleryView from "src/sections/@gallery/GalleryView";
+import TimelineView from "src/sections/@timeline/TimelineView";
+import GanttView from "src/sections/@gantt/GanttView";
+import MapView from "src/sections/@map/MapView";
 import { GetServerSideProps } from "next";
 import { listViewService } from "src/services/listView.service";
 import { TranslationText } from "src/models/SharedModels";
@@ -114,6 +118,10 @@ export function ListDetail({
         {currentView.type === ViewType.List && <DataTable tab={open} />}
         {currentView.type === ViewType.Calendar && <CalendarView open={open} />}
         {currentView.type === ViewType.KanBan && <KanbanView open={open} />}
+        {currentView.type === ViewType.Gallery && <GalleryView open={open} />}
+        {currentView.type === ViewType.TimeLine && <TimelineView open={open} />}
+        {currentView.type === ViewType.Gantt && <GanttView open={open} />}
+        {currentView.type === ViewType.Map && <MapView open={open} />}
       </Box>
     </MainLayout>
   ) : (

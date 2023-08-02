@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, addWeeks, compareAsc, addHours } from 'date-fns';
 import RowFormPanel from "src/sections/@list/RowFormPanel"
 import { connect } from 'react-redux';
-import { setColumns } from '../../redux/actions/viewActions';
+import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import { setRows } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import CalendarTitle from "./CalendarTitle";
@@ -14,18 +14,19 @@ import WeeklyView from './WeeklyView';
 import DailyView from './DailyView';
 import CalendarFooter from './CalendarFooter';
 import { getDataColumnId } from 'src/utils/flexlistHelper';
-import { View } from 'src/models/SharedModels';
+import { FlatWhere, View } from 'src/models/SharedModels';
 
 type CalendarViewProps = {
   currentView:View,
   columns: any;
   rows: any;
-  setColumns: (columns: any) => void;
-  setRows: (columns: any) => void;
   open: boolean;
+  setRows: (columns: any) => void;
+  fetchRows: () => void;
+  setCurrentView: (view: View) => void;
 };
 
-const CalendarView = ({currentView, columns, rows, setRows, open }: CalendarViewProps) => {
+const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, setCurrentView }: CalendarViewProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -44,6 +45,9 @@ const CalendarView = ({currentView, columns, rows, setRows, open }: CalendarView
 
   useEffect(() => {
     const displayDays = [];
+    let newView: View = Object.assign({}, currentView);
+    let filterStartDate, filterEndDate;
+    newView.conditions = [];
 
     if (mode === 'month') {
       const monthStart = startOfMonth(currentDate);
@@ -73,6 +77,36 @@ const CalendarView = ({currentView, columns, rows, setRows, open }: CalendarView
     }
 
     setDays(displayDays);
+
+    if (mode === 'day') {
+      filterStartDate = filterEndDate = currentDate;
+    } else {
+      filterStartDate = displayDays[0];
+      filterEndDate = displayDays[displayDays.length - 1];      
+    }
+
+    const dateColumn = getDataColumnId(currentView.config.dateFieldId,columns);
+    const filter1: FlatWhere = {
+      left: dateColumn,
+      leftType: "Field",
+      right: `${format(filterStartDate, 'MM/dd/yyyy')} 00:00:00`,
+      rightType: "SearchString",
+      cmp: 'gte',
+    } as FlatWhere;
+    const filter2: FlatWhere = {
+      left: dateColumn,
+      leftType: "Field",
+      right: `${format(filterEndDate, 'MM/dd/yyyy')} 23:59:59`,
+      rightType: "SearchString",
+      cmp: 'lte',
+    } as FlatWhere;
+    
+    newView.conditions.push(filter1);
+    newView.conditions.push("And");
+    newView.conditions.push(filter2);
+
+    setCurrentView(newView);
+    fetchRows();
   }, [currentDate, mode]);
 
   const getData = (date: Date, action: string) => {
@@ -163,8 +197,9 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setColumns,
-  setRows
+  setRows,
+  fetchRows,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CalendarView);

@@ -938,7 +938,7 @@ const DataTable = ({
             </Select>
             <Pagination
               count={Math.ceil(count / pagination.pageSize)}
-              page={pagination.pageIndex + 1}
+              page={(currentView.page || 0) + 1}
               onChange={handleChange}
               sx={{
                 display: "flex",

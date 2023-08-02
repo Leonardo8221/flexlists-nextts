@@ -11,7 +11,7 @@ const WeekBar = (props: Props) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
-  const weeks = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const weeks = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', backgroundColor: theme.palette.palette_style.text.selected, color: 'white', paddingRight: mode === 'month' ? 'inherit' : {md: '5px'} }}>

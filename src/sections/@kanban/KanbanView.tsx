@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { connect } from 'react-redux';
-import { setRows } from '../../redux/actions/viewActions';
+import { setRows, fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import KanbanColumn from './KanbanColumn';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { styled } from '@mui/material/styles';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import { ChoiceModel } from "src/models/ChoiceModel";
-import { View } from "src/models/SharedModels";
+import { FlatWhere, View } from "src/models/SharedModels";
 import { KanbanConfig } from "src/models/ViewConfig";
 import { ViewField } from "src/models/ViewField";
 
@@ -16,9 +16,11 @@ type KanbanViewProps = {
   rows: any[];
   open: boolean;
   setRows: (columns: any) => void;
+  fetchRows: () => void;
+  setCurrentView: (view: View) => void;
 };
 
-const KanbanView = ({currentView,columns, rows, open, setRows }: KanbanViewProps) => {
+const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCurrentView }: KanbanViewProps) => {
   
   // const [testData, setTestData] = useState<any>();
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -44,6 +46,25 @@ const KanbanView = ({currentView,columns, rows, open, setRows }: KanbanViewProps
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
+
+    let newView: View = Object.assign({}, currentView);
+    newView.conditions = [];
+
+    for(let i = 0; i < boardColumns.length; i++) {
+      const filter: FlatWhere = {
+        left: kanbanConfig.boardColumnId,
+        leftType: "Field",
+        right: boardColumns[i].id,
+        rightType: "SearchString",
+        cmp: 'eq',
+      } as FlatWhere;
+  
+      newView.conditions.push(filter);
+      if (i < boardColumns.length -1) newView.conditions.push("Or");
+    }
+    
+    setCurrentView(newView);
+    fetchRows();
   }, []);
 
   const onDragEnd = (result: any) => {
@@ -98,6 +119,7 @@ const KanbanView = ({currentView,columns, rows, open, setRows }: KanbanViewProps
       }
       const [changed] = newRows.splice(sourceIndex, 1);
       newRows.splice(destIndex, 0, changed);
+      console.log(newRows)
       setRows(newRows);
   }
   const handleRowData = (row: any) => {
@@ -132,7 +154,9 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setRows
+  setRows,
+  fetchRows,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(KanbanView);

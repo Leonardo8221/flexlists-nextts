@@ -9,7 +9,7 @@ import ViewFooter from '../../components/view-footer/ViewFooter';
 import GoogleMapReact from 'google-map-react';
 import LocationPin from "./LocationPin";
 
-const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_FLEXLIST_GOOGLE_MAPS_API_KEY;
 
 const CENTER = {
   lat: 49.84120,
