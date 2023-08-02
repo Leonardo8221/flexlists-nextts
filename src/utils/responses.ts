@@ -45,43 +45,43 @@ export const SentryMeta = {
     sentryInitialized: false
 }
 
-export type LogLevel = 'Fatal' | 'Log' | 'Error' | 'Warning' | 'Info' | 'Debug'
+export type LogLevel = 'fatal' | 'log' | 'error' | 'warning' | 'info' | 'debug'
 
 const LogLevelErrorMappings: { [key: string]: string } = {
-    NotAUser: 'Info',
-    InvalidCredentials: 'Info',
-    ListNotFound: 'Info',
-    InvalidViewId: 'Info',
-    UnknownType: "Info",
-    InvalidListId: 'Info',
-    NotFound: 'Info',
-    NotReachable: 'Fatal',
-    UnacceptedTermsAndConditions: 'Info',
-    InvalidPassword: 'Info',
-    InvalidKey: 'Info',
+    NotAUser: 'info',
+    InvalidCredentials: 'info',
+    ListNotFound: 'info',
+    InvalidViewId: 'info',
+    UnknownType: "info",
+    InvalidListId: 'info',
+    NotFound: 'info',
+    NotReachable: 'fatal',
+    UnacceptedTermsAndConditions: 'info',
+    InvalidPassword: 'info',
+    InvalidKey: 'info',
 
-    NotImplemented: 'Fatal',
-    CreateError: 'Fatal',
-    UserAlreadyMigrated: 'Info',
-    InvalidInput: 'Info',
-    UpdateError: 'Fatal',
-    QueryError: 'Erorr',
-    AlreadyHasAccess: 'Info',
-    UserExists: 'Info',
-    UserAlreadyActivated: 'Info',
-    AlreadyMigrated: 'Info',
-    ReservedUserName: 'Info',
-    UserNotActivated: 'Info',
-    NameAlreadyExists: 'Info',
-    UserNameAlreadyExists: 'Info',
-    UserEmailAlreadyExists: 'Info',
-    UnknownMigrationError: 'Error',
-    MigrationInProgress: 'Info',
-    ReloadMigration: 'Info',
-    SignInOrRegister: 'Info',
+    NotImplemented: 'fatal',
+    CreateError: 'fatal',
+    UserAlreadyMigrated: 'info',
+    InvalidInput: 'info',
+    UpdateError: 'fatal',
+    QueryError: 'erorr',
+    AlreadyHasAccess: 'info',
+    UserExists: 'info',
+    UserAlreadyActivated: 'info',
+    AlreadyMigrated: 'info',
+    ReservedUserName: 'info',
+    UserNotActivated: 'info',
+    NameAlreadyExists: 'info',
+    UserNameAlreadyExists: 'info',
+    UserEmailAlreadyExists: 'info',
+    UnknownMigrationError: 'error',
+    MigrationInProgress: 'info',
+    ReloadMigration: 'info',
+    SignInOrRegister: 'info',
 
-    DeprecatedFunction: 'Error',
-    UnknownError: 'Fatal'
+    DeprecatedFunction: 'error',
+    UnknownError: 'fatal'
 }
 
 const StatusCodeErrroMappings: { [key: string]: number } = {
@@ -137,7 +137,7 @@ export class FlexlistsError {
     public data: any
     public trace: string
     public httpStatus: number = 500
-    public logLevel: LogLevel = 'Log'
+    public logLevel: LogLevel = 'log'
 
     constructor(message: string, code: number, data?: any, stackTrace?: string, logLevel?: LogLevel) {
         this.message = message
