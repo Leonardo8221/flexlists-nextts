@@ -158,7 +158,14 @@ export class FlexlistsError {
         this.trace += '\n\n' + trace.join('\n')
 
         if (SentryMeta.sentryInitialized) {
-            Sentry.captureMessage(`${message} - ${code}\n\n${this.trace}`, (logLevel ?? this.logLevel) as Sentry.SeverityLevel)
+            Sentry.withScope(scope => {
+                scope.setExtra("trace", this.trace)
+                scope.setExtra("data", data)
+                //Sentry.captureException(data.exception)
+                Sentry.captureMessage(`${message} - ${code}`, (logLevel ?? this.logLevel) as Sentry.SeverityLevel)
+
+            });
+            //Sentry.captureMessage(`${message} - ${code}`, (logLevel ?? this.logLevel) as Sentry.SeverityLevel)
             this.trace = ''
         } else {
             console.log(`ERROR: ${message} - ${code}\n\n${this.trace}`)
