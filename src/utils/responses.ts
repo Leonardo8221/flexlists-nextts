@@ -41,6 +41,10 @@ export enum Errors {
 
 import * as Sentry from "@sentry/nextjs";
 
+export const SentryMeta = {
+    sentryInitialized: false
+}
+
 export type LogLevel = 'Fatal' | 'Log' | 'Error' | 'Warning' | 'Info' | 'Debug'
 
 const LogLevelErrorMappings: { [key: string]: string } = {
@@ -153,7 +157,7 @@ export class FlexlistsError {
         trace.shift()
         this.trace += '\n\n' + trace.join('\n')
 
-        if (process.env.SENTRY_DSN && process.env.SENTRY_DSN.length > 0) {
+        if (SentryMeta.sentryInitialized) {
             Sentry.captureMessage(`${message} - ${code}\n\n${this.trace}`, "error",)
             this.trace = ''
         } else {
