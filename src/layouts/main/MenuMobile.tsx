@@ -292,6 +292,7 @@ type MenuDesktopProps = {
   isOffset: boolean;
   isHome: boolean;
   navConfig: any[];
+  isMenuMobileOpen: boolean;
 };
 
 export default function MenuMobile({
@@ -299,6 +300,7 @@ export default function MenuMobile({
   isHome,
   navConfig,
   translations,
+  isMenuMobileOpen
 }: MenuDesktopProps & { translations?: TranslationText[] }) {
   const router = useRouter();
   const pathname = router.pathname;
@@ -354,7 +356,7 @@ export default function MenuMobile({
         ml: { xs: 0, lg: 6 },
         top: { xs: 64, md: 88 },
         left: { xs: 0, lg: 0 },
-        transform: "translateX(4000px)",
+        transform: !isMenuMobileOpen?"translateX(4000px)": "translateX(0px)",
         transition: "transform ease .5s",
         position: "absolute",
         textTransform: "uppercase",

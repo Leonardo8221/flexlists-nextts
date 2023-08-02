@@ -26,6 +26,7 @@ import { getTranslations, getTranslation } from "src/utils/i18n";
 import MenuMobile from "./MenuMobile";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -91,6 +92,7 @@ export default function MainNavbar({
   const router = useRouter();
   var pathname = router.pathname;
   const isHome = pathname === "/";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const gotoSignin = async () => {
     await router.push({
       pathname: "/auth/login",
@@ -100,6 +102,9 @@ export default function MainNavbar({
     await router.push({
       pathname: "/auth/register",
     });
+  };
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: "white" }}>
@@ -173,11 +178,17 @@ export default function MainNavbar({
             <Box sx={{ display: "flex", alignItems: "center", gap: 0 }}>
               {/* <LanguagePopover translations={translations} /> */}
 
-              <Button variant="text" size="small">
-                {/* <MenuIcon sx={{ fontSize: 36 }} /> */}
-                <CloseIcon sx={{ fontSize: 36 }} />
+              <Button variant="text" size="small" onClick={()=>toggleMobileMenu()}>
+                {
+                  !isMobileMenuOpen && <MenuIcon sx={{ fontSize: 36 }}  />
+                }
+                {
+                  isMobileMenuOpen && <CloseIcon sx={{ fontSize: 36 }} />
+                }
+                
               </Button>
               <MenuMobile
+                isMenuMobileOpen={isMobileMenuOpen}
                 isOffset={isOffset}
                 isHome={isHome}
                 navConfig={navConfig.map((item) => ({
