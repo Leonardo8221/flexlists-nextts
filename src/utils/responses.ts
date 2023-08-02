@@ -41,6 +41,82 @@ export enum Errors {
 
 import * as Sentry from "@sentry/nextjs";
 
+export type LogLevel = 'Fatal' | 'Log' | 'Error' | 'Warning' | 'Info' | 'Debug'
+
+const LogLevelErrorMappings: { [key: string]: string } = {
+    NotAUser: 'Info',
+    InvalidCredentials: 'Info',
+    ListNotFound: 'Info',
+    InvalidViewId: 'Info',
+    UnknownType: "Info",
+    InvalidListId: 'Info',
+    NotFound: 'Info',
+    NotReachable: 'Fatal',
+    UnacceptedTermsAndConditions: 'Info',
+    InvalidPassword: 'Info',
+    InvalidKey: 'Info',
+
+    NotImplemented: 'Fatal',
+    CreateError: 'Fatal',
+    UserAlreadyMigrated: 'Info',
+    InvalidInput: 'Info',
+    UpdateError: 'Fatal',
+    QueryError: 'Erorr',
+    AlreadyHasAccess: 'Info',
+    UserExists: 'Info',
+    UserAlreadyActivated: 'Info',
+    AlreadyMigrated: 'Info',
+    ReservedUserName: 'Info',
+    UserNotActivated: 'Info',
+    NameAlreadyExists: 'Info',
+    UserNameAlreadyExists: 'Info',
+    UserEmailAlreadyExists: 'Info',
+    UnknownMigrationError: 'Error',
+    MigrationInProgress: 'Info',
+    ReloadMigration: 'Info',
+    SignInOrRegister: 'Info',
+
+    DeprecatedFunction: 'Error',
+    UnknownError: 'Fatal'
+}
+
+const StatusCodeErrroMappings: { [key: string]: number } = {
+    NotAUser: 401,
+    InvalidCredentials: 401,
+    ListNotFound: 404,
+    InvalidViewId: 404,
+    UnknownType: 400,
+    InvalidListId: 404,
+    NotFound: 404,
+    NotReachable: 503,
+    UnacceptedTermsAndConditions: 400,
+    InvalidPassword: 400,
+    InvalidKey: 401,
+
+    NotImplemented: 500,
+    CreateError: 500,
+    UserAlreadyMigrated: 503,
+    InvalidInput: 504,
+    UpdateError: 500,
+    QueryError: 503,
+    AlreadyHasAccess: 400,
+    UserExists: 400,
+    UserAlreadyActivated: 400,
+    AlreadyMigrated: 400,
+    ReservedUserName: 400,
+    UserNotActivated: 400,
+    NameAlreadyExists: 400,
+    UserNameAlreadyExists: 400,
+    UserEmailAlreadyExists: 400,
+    UnknownMigrationError: 500,
+    MigrationInProgress: 400,
+    ReloadMigration: 400,
+    SignInOrRegister: 400,
+
+    DeprecatedFunction: 500,
+    UnknownError: 500
+}
+
 export function isErr(x: any): x is FlexlistsError {
     return typeof x === 'object' && x != null && !(x as any).isSuccess
 }
@@ -56,11 +132,16 @@ export class FlexlistsError {
     public code: number
     public data: any
     public trace: string
+    public httpStatus: number = 500
+    public logLevel: LogLevel = 'Log'
 
-    constructor(message: string, code: number, data?: any, stackTrace?: string, logLevel: 'Fatal' | 'Log' | 'Error' | 'Warning' | 'Info' | 'Debug' = 'Log') {
+    constructor(message: string, code: number, data?: any, stackTrace?: string, logLevel?: LogLevel) {
         this.message = message
         this.code = code
         this.data = data
+        const err = Errors[code]
+        this.logLevel = logLevel ?? LogLevelErrorMappings[err] as LogLevel
+        this.httpStatus = StatusCodeErrroMappings[err]
 
         this.trace = ''
         if (stackTrace) {
@@ -73,10 +154,10 @@ export class FlexlistsError {
         this.trace += '\n\n' + trace.join('\n')
 
         if (process.env.SENTRY_DSN && process.env.SENTRY_DSN.length > 0) {
-            Sentry.captureMessage(`${message} - ${code}\n\n${this.trace}`, logLevel as Sentry.SeverityLevel)
+            Sentry.captureMessage(`${message} - ${code}\n\n${this.trace}`, "error",)
             this.trace = ''
         } else {
-            console.log(`${logLevel}: ${message} - ${code}\n\n${this.trace}`)
+            console.log(`ERROR: ${message} - ${code}\n\n${this.trace}`)
         }
     }
 
