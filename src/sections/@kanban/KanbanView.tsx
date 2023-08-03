@@ -9,6 +9,9 @@ import { ChoiceModel } from "src/models/ChoiceModel";
 import { FlatWhere, View } from "src/models/SharedModels";
 import { KanbanConfig } from "src/models/ViewConfig";
 import { ViewField } from "src/models/ViewField";
+import { listContentService } from "src/services/listContent.service";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 type KanbanViewProps = {
   columns: ViewField[];
@@ -87,7 +90,7 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
       }
     }
   };
-  const reorderRowMap = (draggableId:string,source:any,destination:any)=>{
+  const reorderRowMap = async (draggableId:string,source:any,destination:any)=>{
      const destColumn = boardColumns.find((x)=>x.id.toString() === destination.droppableId);
      const destTasks = rows.filter((row: any) => row[kanbanConfig.boardColumnId] === destColumn?.id);
      let destinationIndex = ((source.droppableId === destination.droppableId && destination.index>source.index)? destination.index+1:destination.index);
@@ -119,8 +122,26 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
       }
       const [changed] = newRows.splice(sourceIndex, 1);
       newRows.splice(destIndex, 0, changed);
-      console.log(newRows)
-      setRows(newRows);
+
+      const updateRowRespone = await listContentService.updateContent(
+        currentView.id,
+        newRows[destIndex]
+      );
+      if (isSucc(updateRowRespone)) {
+        setFlashMessage({
+          message: "Row updated successfully",
+          type: "success",
+        });
+        
+        setRows(newRows);
+        return;
+      } else {
+        setFlashMessage({
+          type: "error",
+          message: (updateRowRespone as FlexlistsError).message,
+        });
+        return;
+      }
   }
   const handleRowData = (row: any) => {
     setRowData(row);

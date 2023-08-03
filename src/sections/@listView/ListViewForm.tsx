@@ -183,6 +183,10 @@ const ListViewForm = ({
           setError("Board field required");
           isValidConfig = false;
         }
+        if (!config.orderColumnId || config.orderColumnId === 0) {
+          setError("Order field required");
+          isValidConfig = false;
+        }
         if (!config.titleId || config.titleId === 0) {
           setError("Title field required");
           isValidConfig = false;

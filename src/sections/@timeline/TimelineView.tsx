@@ -2,18 +2,22 @@ import { useState, useEffect } from "react";
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns } from '../../redux/actions/viewActions';
+import { setColumns, fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import {  setRows } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
-import { format, startOfMonth, getDaysInMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
+import { FlatWhere, View } from 'src/models/SharedModels';
 
 type Props = {
   columns: any;
   rows: any;
+  open: boolean;
+  currentView:View,
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
-  open: boolean;
+  fetchRows: () => void;
+  setCurrentView: (view: View) => void;
 };
 
 const meetings = [
@@ -62,7 +66,7 @@ const meetings = [
 ];
 
 const TimelineView = (props: Props) => {
-  const { columns, rows, setRows, open } = props;
+  const { columns, rows, open, currentView, setRows, fetchRows, setCurrentView } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -71,10 +75,36 @@ const TimelineView = (props: Props) => {
 
   const ROWS = 10;
   const currentMonth = startOfMonth(new Date());
+  const endDate = endOfMonth(new Date());
   const daysInMonth = getDaysInMonth(new Date());
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
+
+    let newView: View = Object.assign({}, currentView);
+    newView.conditions = [];
+
+    const filter1: FlatWhere = {
+      left: 'createdAt',
+      leftType: "Field",
+      right: `${format(currentMonth, 'MM/dd/yyyy')} 00:00:00`,
+      rightType: "SearchString",
+      cmp: 'gte',
+    } as FlatWhere;
+    const filter2: FlatWhere = {
+      left: 'createdAt',
+      leftType: "Field",
+      right: `${format(endDate, 'MM/dd/yyyy')} 23:59:59`,
+      rightType: "SearchString",
+      cmp: 'lte',
+    } as FlatWhere;
+    
+    newView.conditions.push(filter1);
+    newView.conditions.push("And");
+    newView.conditions.push(filter2);
+
+    setCurrentView(newView);
+    fetchRows();
   }, []);
 
   const dayTitle = () => {
@@ -168,12 +198,15 @@ const TimelineView = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
-  rows: state.view.columns
+  rows: state.view.columns,
+  currentView:state.view.currentView
 });
 
 const mapDispatchToProps = {
   setColumns,
-  setRows
+  setRows,
+  fetchRows,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimelineView);

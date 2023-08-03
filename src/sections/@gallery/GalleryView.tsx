@@ -4,14 +4,20 @@ import { connect } from 'react-redux';
 import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import Pagination from '@mui/material/Pagination';
+import { View } from "src/models/SharedModels";
+import { fetchRowsByPage, setCurrentView } from "src/redux/actions/viewActions";
 
 type Props = {
   rows: any;
   open: boolean;
+  currentView: View;
+  count: number;
+  fetchRowsByPage: (page?: number, limit?: number) => void;
+  setCurrentView: (view: View) => void;
 };
 
 const GalleryView = (props: Props) => {
-  const { rows, open } = props;
+  const { rows, open, currentView, count, fetchRowsByPage, setCurrentView } = props;
   const isXL = useResponsive('up', 'xl');
   const isLG = useResponsive('up', 'lg');
   const isMD = useResponsive('up', 'md');
@@ -20,14 +26,20 @@ const GalleryView = (props: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [windowHeight, setWindowHeight] = useState(0);
 
-  useEffect(() => {
-    setWindowHeight(window.innerHeight);
-  }, []);
-
   const PAGE_SIZE = isXL ? 12 : isLG ? 10 : isMD ? 8 : 6;
 
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+    fetchRowsByPage(0, PAGE_SIZE);
+  }, []);
+
   const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    const newView: View = Object.assign({}, currentView);
+
+    newView.page = value - 1;
     setCurrentPage(value);
+    setCurrentView(newView);
+    fetchRowsByPage(newView.page, PAGE_SIZE);
   };
 
   const getColorByImportance = (importance: string) => {
@@ -42,8 +54,7 @@ const GalleryView = (props: Props) => {
   return (
     <Box sx={{ p: 1, overflowY: 'auto', height: `${windowHeight - (isLG ? 205 : isMD ? 260 : (open ? 306 : 262))}px` }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: {sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(5, 1fr)', xl:'repeat(6, 1fr)'}, gap: '24px' }}>
-            {rows.map((row: any, index: number) => (
-                index >= (currentPage - 1) * PAGE_SIZE && index < currentPage * PAGE_SIZE &&
+            {rows.map((row: any) => (
                 <Box key={row.id} sx={{ boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.1)', borderRadius: '16px', overflow: 'hidden', maxHeight: {sm: '408px'}, cursor: 'pointer' }} onClick={() => { handleData(row) }}>
                     <Box
                         component="img"
@@ -74,14 +85,21 @@ const GalleryView = (props: Props) => {
         </Box>
         
         <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={selectedRowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setSelectedRowData}>
-          <Pagination count={Math.ceil(rows.length / PAGE_SIZE)} page={currentPage} onChange={handlePage} />
+          <Pagination count={Math.ceil(count / PAGE_SIZE)} page={currentPage} onChange={handlePage} />
         </ViewFooter>
     </Box>
   );
 };
 
 const mapStateToProps = (state: any) => ({
-  rows: state.view.rows
+  rows: state.view.rows,
+  currentView: state.view.currentView,
+  count: state.view.count
 });
 
-export default connect(mapStateToProps)(GalleryView);
+const mapDispatchToProps = {
+  fetchRowsByPage,
+  setCurrentView
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(GalleryView);

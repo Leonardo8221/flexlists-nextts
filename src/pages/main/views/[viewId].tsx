@@ -33,8 +33,6 @@ import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { getCookieRefreshToken, getCookieToken, removeCookie, setCookieToken } from "src/utils/cookieUtils";
 
-
-
 type ListProps = {
   currentView: View;
   getCurrentView: (viewId: number) => void;
