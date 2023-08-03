@@ -54,7 +54,6 @@ function Home({ translations }: ContentProps & { translations: TranslationText[]
   );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  new FlexlistsError("Does this work? TRANSLATIONS", Errors.UnknownError)
   return await getTranslations("existing landing page", context)
 }
 export default Home;
