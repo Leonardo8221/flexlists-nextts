@@ -161,6 +161,7 @@ export class FlexlistsError {
             Sentry.withScope(scope => {
                 scope.setExtra("trace", this.trace)
                 scope.setExtra("data", data)
+                scope.setExtra('deploy-tag', process.env.NEXT_PUBLIC_DEPLOY_TAG ?? process.env.DEPLOY_TAG ?? 'UKNOWN:BAD')
                 //Sentry.captureException(data.exception)
                 console.log(`${(logLevel ?? this.logLevel).toString()}: ${message} - ${code}\n\n${this.trace}`)
                 Sentry.captureMessage(`${message} - ${code}`, (logLevel ?? this.logLevel) as Sentry.SeverityLevel)
