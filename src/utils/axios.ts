@@ -2,6 +2,7 @@ import axios from 'axios';
 import { setLoading } from 'src/redux/actions/adminAction';
 import store from 'src/redux/store';
 import { PATH_AUTH, PATH_AUTH_API } from 'src/routes/paths';
+import { FlexlistsError, Errors, FlexlistsSuccess } from './responses';
 // ----------------------------------------------------------------------
 const ignore = [
   PATH_AUTH_API.verifyToken,
@@ -43,6 +44,7 @@ axiosInstance.interceptors.response.use(
       const url = response?.config?.url;
       if (url && !ignore.some((path: string) => url.indexOf(path) > -1)) {
         window.location.href = "/500"
+        new FlexlistsError('Unknown Error, please try again.', Errors.UnknownError, response.data.data)
         return response
       }
     }
@@ -58,6 +60,7 @@ axiosInstance.interceptors.response.use(
     ) {
 
       window.location.href = '/500'
+      new FlexlistsError('Unknown Error, please try again.', Errors.UnknownError, error.response?.data)
       return await Promise.reject(error)
     }
     if (

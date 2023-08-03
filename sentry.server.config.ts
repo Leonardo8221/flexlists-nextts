@@ -3,16 +3,21 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { SentryMeta } from "src/utils/responses";
 
 const sentryDsn = {
   dsn: "nope",
 }
-if (sentryDsn.dsn !== 'nope') Sentry.init({
-  dsn: sentryDsn.dsn,
+if (sentryDsn.dsn !== 'nope') {
 
-  // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: 1,
+  Sentry.init({
+    dsn: sentryDsn.dsn,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
-});
+    // Adjust this value in production, or use tracesSampler for greater control
+    tracesSampleRate: 1,
+
+    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    debug: false,
+  })
+  SentryMeta.sentryInitialized = true
+};
