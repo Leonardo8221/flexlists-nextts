@@ -126,7 +126,7 @@ const ChatForm = ({
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <Box
+        {/* <Box
           component="span"
           className="svg-color"
           sx={{
@@ -139,7 +139,7 @@ const ChatForm = ({
             cursor: "pointer",
             marginRight: { xs: 1.5, md: 4 },
           }}
-        />
+        /> */}
         <Typography variant="subtitle1">Comments</Typography>
       </Box>
       <Box

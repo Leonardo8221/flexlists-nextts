@@ -41,6 +41,10 @@ import {
 import { convertToInteger } from "src/utils/convertUtils";
 import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
 import { groupService } from "src/services/group.service";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { clone } from "lodash";
 
 type ShareListProps = {
   open: boolean;
@@ -50,6 +54,7 @@ type ShareListProps = {
   setViewUsers: (newUsers: any[]) => void;
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
   styles?: any;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
 const style = {
@@ -98,6 +103,7 @@ const ShareList = ({
   setViewUsers,
   setViewGroups,
   styles,
+  setFlashMessage
 }: ShareListProps) => {
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
@@ -112,7 +118,7 @@ const ShareList = ({
       value: "Users",
       icon: <PersonIcon />,
       component: (
-        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} />
+        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} setFlashMessage={setFlashMessage} />
       ),
     },
     {
@@ -123,6 +129,7 @@ const ShareList = ({
           viewGroups={viewGroups}
           roles={roles}
           setViewGroups={setViewGroups}
+          setFlashMessage={setFlashMessage}
         />
       ),
     },
@@ -210,12 +217,14 @@ type ShareUsersProps = {
   roles: { name: string; label: string }[];
   setViewUsers: (newUsers: any[]) => void;
   styles?: any;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 const ShareUsers = ({
   users,
   roles,
   setViewUsers,
   styles,
+  setFlashMessage
 }: ShareUsersProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
@@ -224,10 +233,11 @@ const ShareUsers = ({
   };
   const [contacts, setContacts] = useState<GetUserContactsOutputDto[]>([]);
   const [invitedEmail, setInvitedEmail] = useState<any>("");
-  const [submit, setSubmit] = useState<boolean>(false);
+  // const [submit, setSubmit] = useState<boolean>(false);
   const [isEmailValid, setEmailValid] = useState(false);
   const [emailDirty, setEmailDirty] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
   useEffect(() => {
     async function fetchData() {
@@ -240,14 +250,25 @@ const ShareUsers = ({
       fetchData();
     }
   }, [router.isReady]);
+  const setError = (message:string)=>{
+    setFlashMessage({message:message,type:'error'})
+  }
   const onSubmit = async () => {
     if (!router.query.viewId) {
-      setError("view id not exist");
+      setFlashMessage({ message: "View id is not valid", type: "error" });
       return;
     }
-    if (!isEmailValid) return;
+    setIsSubmit(true)
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newEmail = await frontendValidate(ModelValidatorEnum.GenericTypes,FieldValidatorEnum.email,invitedEmail,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.email,_errors,setErrors,setError)) return
+    
     var existContact = contacts.find((x) => x.email === invitedEmail);
-    setSubmit(true);
+    
     if (existContact) {
       let inviteToUserResponse = await listViewService.inviteUserToView(
         convertToInteger(router.query.viewId),
@@ -255,9 +276,9 @@ const ShareUsers = ({
         role
       );
       if (isSucc(inviteToUserResponse)) {
-        setSuccessMessage(`Invite to ${invitedEmail} sent`);
+        setFlashMessage({ message: `Invite to ${invitedEmail} sent`, type: "success"});
       } else {
-        setError((inviteToUserResponse as FlexlistsError).message);
+        setFlashMessage({ message: (inviteToUserResponse as FlexlistsError).message, type: "error" });
       }
     } else {
       let inviteToEmailResponse = await listViewService.inviteEmailToView(
@@ -265,12 +286,10 @@ const ShareUsers = ({
         invitedEmail,
         role
       );
-      console.log(inviteToEmailResponse);
       if (isSucc(inviteToEmailResponse)) {
-        console.log("bbbb");
-        setSuccessMessage(`Invite to ${invitedEmail} sent`);
+        setFlashMessage({ message: `Invite to ${invitedEmail} sent`, type: "success"});
       } else {
-        setError((inviteToEmailResponse as FlexlistsError).message);
+        setFlashMessage({ message: (inviteToEmailResponse as FlexlistsError).message, type: "error" });
       }
     }
   };
@@ -286,12 +305,6 @@ const ShareUsers = ({
         Invite user
       </Typography>
 
-      <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-      <Box>
-        {submit && successMessage && (
-          <Alert severity="success">{successMessage}</Alert>
-        )}
-      </Box>
       <Grid container spacing={2}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
@@ -309,21 +322,26 @@ const ShareUsers = ({
           </Select>
         </Grid>
         <Grid item xs={7} sx={{ display: "flex", flexDirection: "column" }}>
-          <FormLabel>
+          {/* <FormLabel>
             <Typography variant="body2">Users</Typography>
-          </FormLabel>
+          </FormLabel> */}
           <Autocomplete
+            sx={{marginTop:'23px'}}
             size="small"
-            // freeSolo
+            freeSolo
             id="free-solo-2-demo"
             disableClearable
-            onInputChange={(event, newInputValue) => {
+            onInputChange={async(event, newInputValue) => {
+              setIsSubmit(false)
               setInvitedEmail(newInputValue);
-              if (!validateEmail(newInputValue)) {
-                setEmailValid(false);
-              } else {
-                setEmailValid(true);
-              }
+
+              let _errors: { [key: string]: string|boolean } = {}
+
+              const _setErrors = (e: { [key: string]: string|boolean }) => { 
+                _errors = e
+              } 
+              await frontendValidate(ModelValidatorEnum.GenericTypes,FieldValidatorEnum.email,newInputValue,_errors,_setErrors,true)
+              setErrors(_errors)
             }}
             options={contacts.map((option) => option.email)}
             renderInput={(params) => (
@@ -335,7 +353,7 @@ const ShareUsers = ({
                   type: "search",
                 }}
                 required
-                error={emailDirty && isEmailValid === false}
+                error={(emailDirty||isSubmit) && isFrontendError(FieldValidatorEnum.email,errors)}
                 onBlur={() => setEmailDirty(true)}
                 sx={styles?.textField}
               />
@@ -358,12 +376,14 @@ type ShareGroupsProps = {
   roles: { name: string; label: string }[];
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
   styles?: any;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 const ShareGroups = ({
   viewGroups,
   roles,
   setViewGroups,
   styles,
+  setFlashMessage
 }: ShareGroupsProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
@@ -603,6 +623,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setViewUsers,
   setViewGroups,
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareList);

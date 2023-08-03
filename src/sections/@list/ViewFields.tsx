@@ -374,8 +374,8 @@ const ViewFields = ({
                                     display: "inline-block",
                                     bgcolor:
                                       theme.palette.palette_style.text.primary,
-                                    mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                                    WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                    mask: `${column.icon?`url(/assets/icons/table/${column.icon}.svg)`:''} no-repeat center / contain`,
+                                    WebkitMask: `${column.icon?`url(/assets/icons/table/${column.icon}.svg)`:''} no-repeat center / contain`,
                                     marginRight: 1,
                                     marginTop: 0.5,
                                   }}
