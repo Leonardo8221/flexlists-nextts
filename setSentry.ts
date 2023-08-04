@@ -16,7 +16,7 @@ async function replaceDSN(file: string) {
     let updatedSentryConfigContent = sentryConfigContent.replace(/dsn: ".*?"/, `dsn: "${sentryDsn}"`);
 
     fs.writeFileSync(sentryConfigPath, updatedSentryConfigContent);
-    console.log(`sentry.${file}.config.ts updated successfully`);
+    console.log(`sentry.${file}.config.ts updated successfully; ${sentryDsn}`);
 }
 
 (async () => {
