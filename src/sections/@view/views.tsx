@@ -4,7 +4,7 @@ import { Box, Grid, Container, Typography, Button, Snackbar, Alert, AlertColor }
 import { useState, useEffect } from "react";
 import ViewCard from "./ViewCard";
 import { View } from "src/models/SharedModels";
-import { isSucc } from "src/models/ApiResponse";
+import { isErr, isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import { listViewService } from "src/services/listView.service";
@@ -12,11 +12,12 @@ import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 
 interface ViewsProps {
+  isArchived: boolean;
   message: any;
   setMessage: (message: any) => void;
 }
 
-function Views({ message, setMessage }: ViewsProps) {
+function Views({isArchived, message, setMessage }: ViewsProps) {
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -28,7 +29,7 @@ function Views({ message, setMessage }: ViewsProps) {
 
   // error handling 
   const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
-
+  
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -65,16 +66,22 @@ function Views({ message, setMessage }: ViewsProps) {
   }, [router.isReady]);
   useEffect(() => {
     async function fetchData() {
-      var response = await listViewService.getViews();
-      if (isSucc(response) && response.data && response.data.length > 0) {
+      var response = await listViewService.getViews(undefined,undefined,undefined,undefined,isArchived);
+      if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
           setViews(response.data);
         }
+        else
+        {
+          if(!isArchived)
+          {
+            setMessage({ message: "No views yet, click a template to create your first one!", type: "success" })
+            await router.push(PATH_MAIN.chooseTemplate);
+          }
+        }
       }
       else {
-        setMessage({ message: "No views yet, click a template to create your first one!", type: "success" })
-        await router.push(PATH_MAIN.chooseTemplate);
-
+        setFlashMessage(response?.data?.message);
       }
     }
     fetchData();
@@ -172,14 +179,17 @@ function Views({ message, setMessage }: ViewsProps) {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6">Your files.</Typography>
-          <Button
+          <Typography variant="h6"></Typography>
+          {
+            !isArchived && <Button
             size="medium"
             variant="contained"
             onClick={() => createNewView()}
           >
             Create new
           </Button>
+          }
+          
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
           {views.length > 0 &&
