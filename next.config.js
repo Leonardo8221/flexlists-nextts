@@ -8,7 +8,7 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback = { fs: false, module: false }
     }
-    
+
     config.experiments = config.experiments || {};
     config.experiments.topLevelAwait = true;
 
@@ -31,7 +31,7 @@ module.exports = nextConfig
 
 const { withSentryConfig } = require("@sentry/nextjs");
 
-module.exports = withSentryConfig(
+if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== 'nope') module.exports = withSentryConfig(
   module.exports,
   {
     // For all available options, see:
