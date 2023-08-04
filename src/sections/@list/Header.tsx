@@ -20,36 +20,21 @@ import { View } from "src/models/SharedModels";
 import RenameView from "./RenameView";
 import DuplicateView from "./DuplicateView";
 import DeleteView from "./DeleteView";
-import ArchiveView from "./ArchiveView";
 import { ChatType } from "src/enums/ChatType";
-import { color } from "framer-motion";
-import { Role } from "src/enums/SharedEnums";
 import { hasPermission } from "src/utils/permissionHelper";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
+import { archiveView, unArchiveView } from "../../services/listView.service";
+import { FlexlistsError, isSucc } from "src/utils/responses";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 type HeaderProps = {
   currentView: View;
+  setFlashMessage:(message: FlashMessageModel)=>void
 };
 
-const lists = [
-  {
-    label: "Rename list",
-    value: "rename_list",
-  },
-  {
-    label: "Delete list",
-    value: "delete_list",
-  },
-  {
-    label: "Duplicate",
-    value: "duplicate",
-  },
-  {
-    label: "Archive",
-    value: "archive",
-  },
-];
 
-const Header = ({ currentView }: HeaderProps) => {
+const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
@@ -98,6 +83,28 @@ const Header = ({ currentView }: HeaderProps) => {
   const handleOpenArchiveModal = () => {
     setIsArchiveOpenModal(true);
   };
+  const handleArchive = async() =>{
+     setIsArchiveOpenModal(false);
+     let response = await archiveView(currentView?.id);
+     if(isSucc(response)){
+        setFlashMessage({message:'View archived successfully',type:'success'});
+     }
+     else
+     {
+       setFlashMessage({message:(response as FlexlistsError).message,type:'error'});
+     }
+  }
+  const handleUnArchive = async() =>{
+    setIsArchiveOpenModal(false);
+    let response = await unArchiveView(currentView?.id);
+    if(isSucc(response)){
+       setFlashMessage({message:'View unarchived successfully',type:'success'});
+    }
+    else
+    {
+      setFlashMessage({message:(response as FlexlistsError).message,type:'error'});
+    }
+  }
   return (
     <Box
       sx={{
@@ -191,13 +198,24 @@ const Header = ({ currentView }: HeaderProps) => {
               >
                 Delete View
               </CDropdownItem>
-              <CDropdownItem
+              {
+                currentView?.isArchived ? 
+                <CDropdownItem
+                href="#"
+                key={"unarchive_list"}
+                onClick={() => handleUnArchive()}
+                >
+                  UnArchive View
+                </CDropdownItem> :
+                <CDropdownItem
                 href="#"
                 key={"archive_list"}
                 onClick={() => handleOpenArchiveModal()}
-              >
-                Archive View
-              </CDropdownItem>
+                >
+                  Archive View
+                </CDropdownItem> 
+              }
+              
             </CDropdownMenu>
           </CDropdown>}
         </Box>
@@ -385,12 +403,16 @@ const Header = ({ currentView }: HeaderProps) => {
             open={isDeleteOpenModal}
             handleClose={() => setIsDeleteOpenModal(false)}
           />
-          {isArchiveOpenModal && (
-            <ArchiveView
-              open={isArchiveOpenModal}
-              handleClose={() => setIsArchiveOpenModal(false)}
-            />
-          )}
+          <YesNoDialog
+          title="Archive View"
+          submitText="Archive"
+          message="Are you sure you want to archive selected view?"
+          open={isArchiveOpenModal}
+          handleClose={() => setIsArchiveOpenModal(false)}
+          onSubmit={() => {
+            handleArchive();
+          }}
+          />
         </>
       )}
     </Box>
@@ -402,7 +424,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  // setRows
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

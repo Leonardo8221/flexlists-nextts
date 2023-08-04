@@ -166,3 +166,8 @@ export async function archiveView(viewId:number): Promise<FlexlistsError|Flexlis
 
   return response.data;
 };
+export async function unArchiveView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess>(`/api/listView/unArchiveView`+`?viewId=${viewId}`);
+
+  return response.data;
+};
