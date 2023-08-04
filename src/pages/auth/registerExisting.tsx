@@ -36,6 +36,12 @@ import {
   setLegacyCredentials,
   setMessage,
 } from "src/redux/actions/authAction";
+import {
+  FieldValidatorEnum,
+  ModelValidatorEnum,
+  frontendValidate,
+  isFrontendError,
+} from "src/utils/validatorHelper";
 
 interface RegisterProps {
   message: any;
@@ -55,6 +61,8 @@ const Register = ({
   const isDesktop = useResponsive("up", "md");
   //const [error, setError] = useState<string>();
   const router = useRouter();
+  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
@@ -142,21 +150,79 @@ const Register = ({
 
   const handleSubmit = async () => {
     try {
-      if (!firstName) {
-        setError("First Name required");
+      setIsSubmit(true);
+      let _errors: { [key: string]: string | boolean } = {};
+
+      const _setErrors = (e: { [key: string]: string | boolean }) => {
+        _errors = e;
+      };
+      let newFirstName = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.firstName,
+        firstName,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(
+          FieldValidatorEnum.firstName,
+          _errors,
+          setErrors,
+          setError
+        )
+      )
         return;
-      }
-      if (!lastName) {
-        setError("Last Name required");
+      let newLastName = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.lastName,
+        lastName,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(
+          FieldValidatorEnum.lastName,
+          _errors,
+          setErrors,
+          setError
+        )
+      )
         return;
-      }
-      if (!userName) {
-        setError("User Name required");
+      let newEmail = await frontendValidate(
+        ModelValidatorEnum.User,
+        FieldValidatorEnum.email,
+        userEmail,
+        _errors,
+        _setErrors,
+        true
+      );
+      if (
+        isFrontendError(FieldValidatorEnum.email, _errors, setErrors, setError)
+      )
         return;
-      }
-      if (!userEmail) {
-        setError("Email required");
-        return;
+      let newPhoneNumber: string = phoneNumber;
+      if (phoneNumber.length > 3) {
+        newPhoneNumber = await frontendValidate(
+          ModelValidatorEnum.User,
+          FieldValidatorEnum.phoneNumber,
+          phoneNumber,
+          _errors,
+          _setErrors,
+          true
+        );
+        if (
+          isFrontendError(
+            FieldValidatorEnum.phoneNumber,
+            _errors,
+            setErrors,
+            setError
+          )
+        )
+          return;
+      } else {
+        newPhoneNumber = "";
       }
       if (!password) {
         setError("Password required");
@@ -207,10 +273,10 @@ const Register = ({
         userName,
         password,
         termsAndConditions,
-        firstName,
-        lastName,
-        userEmail,
-        phoneNumber.length > 3 ? phoneNumber : ''
+        newFirstName,
+        newLastName,
+        newEmail,
+        newPhoneNumber.length > 3 ? newPhoneNumber : ""
       );
       // var response = await authService.register(
       //   firstName,
@@ -278,7 +344,7 @@ const Register = ({
     container: {
       minHeight: "100vh",
       display: "flex",
-      flexDirection: { xs: "column", md: "row" },
+      flexDirection: { xs: "column-reverse", md: "row" },
       alignItems: "center",
       justifyContent: "center",
       px: { xs: 0, sm: 0, md: 0 },
@@ -384,7 +450,7 @@ const Register = ({
 
       "& .MuiOutlinedInput-root": {
         "& fieldset": {
-          border: "none",
+          // border: "none",
         },
       },
     },
@@ -522,6 +588,10 @@ const Register = ({
                     required
                     value={firstName}
                     onChange={handleFirstNameChange}
+                    error={
+                      isSubmit &&
+                      isFrontendError(FieldValidatorEnum.firstName, errors)
+                    }
                   ></TextField>
                 </Grid>
 
@@ -534,6 +604,10 @@ const Register = ({
                     required
                     value={lastName}
                     onChange={handleLastNameChange}
+                    error={
+                      isSubmit &&
+                      isFrontendError(FieldValidatorEnum.lastName, errors)
+                    }
                   ></TextField>
                 </Grid>
               </Grid>
@@ -548,6 +622,10 @@ const Register = ({
                   value={userEmail}
                   onChange={handleEmailChange}
                   disabled={userEmailDisabled}
+                  error={
+                    isSubmit &&
+                    isFrontendError(FieldValidatorEnum.email, errors)
+                  }
                 ></TextField>
               </Grid>
 

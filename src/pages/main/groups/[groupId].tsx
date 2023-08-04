@@ -31,6 +31,9 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { isSucc } from "src/models/ApiResponse";
 import { connect } from "react-redux";
 import CentralModal from "src/components/modal/CentralModal";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 const activeButtonStyle: React.CSSProperties = {
   border: "1px solid #eee",
@@ -96,7 +99,10 @@ const ListViewButton = ({
     </Box>
   );
 };
-function GroupDetail() {
+type GroupDetailProps = {
+  setFlashMessage: (flashMessage: FlashMessageModel) => void;
+};
+function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const router = useRouter();
   const [groupViews, setGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
   const [sort, setSort] = useState<string>("");
@@ -242,6 +248,7 @@ function GroupDetail() {
           handleClose={() => setIsRenameGroupOpenModal(false)}
           open={isRenameGroupOpenModal}
           onUpdate={(newGroup) => handleUpdateGroup(newGroup)}
+          setFlashMessage={setFlashMessage}
         />
       )}
     </MainLayout>
@@ -251,7 +258,9 @@ const mapStateToProps = (state: any) => ({
   groups: state.group.groups,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setFlashMessage
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroupDetail);
 
@@ -260,6 +269,7 @@ type RenameGroupProps = {
   handleClose: () => void;
   group: GetUserGroupsOutputDto;
   onUpdate: (newGroup: GetUserGroupsOutputDto) => void;
+  setFlashMessage:(message:FlashMessageModel)=>void
 };
 
 const RenameGroup = ({
@@ -267,12 +277,13 @@ const RenameGroup = ({
   handleClose,
   group,
   onUpdate,
+  setFlashMessage
 }: RenameGroupProps) => {
   const [windowHeight, setWindowHeight] = useState(0);
   const [currentGroup, setCurrentGroup] =
     useState<GetUserGroupsOutputDto>(group);
-  const [error, setError] = useState<string>("");
-  const [submit, setSubmit] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
+  const [isSubmit,setIsSubmit] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -294,12 +305,19 @@ const RenameGroup = ({
     setIsUpdate(true);
     setCurrentGroup(newGroup);
   };
+  const setError = (message:string)=>{
+    setFlashMessage({message:message,type:'error'})
+  }
   const onSubmit = async () => {
-    setSubmit(true);
-    if (!currentGroup.name) {
-      setError("Name required");
-      return;
-    }
+    setIsSubmit(true)
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newGroupName = await frontendValidate(ModelValidatorEnum.Group,FieldValidatorEnum.name,currentGroup.name,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+
     var response = await groupService.updateUserGroup(
       currentGroup.groupId,
       currentGroup.name,
@@ -315,7 +333,6 @@ const RenameGroup = ({
     <CentralModal open={open} handleClose={handleClose}>
       <Typography variant="h6">Rename Group</Typography>
       <Divider sx={{ my: 2 }}></Divider>
-      <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
@@ -324,7 +341,7 @@ const RenameGroup = ({
           value={currentGroup?.name}
           placeholder="Name"
           required
-          error={submit && !currentGroup?.name}
+          error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
         />
       </Box>
       <Box>

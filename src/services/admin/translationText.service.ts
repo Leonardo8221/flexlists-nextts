@@ -26,6 +26,6 @@ async function suggest(language: string, text: string): Promise<FlexlistsError |
 };
 async function getTranslationTexts(i18n: string, contentManagementName?: string): Promise<FlexlistsError | FlexlistsSuccess<GetTranslationTextsOutputDto[]>> {
   const url = '/api/translationText/getTranslationTexts' + `?i18n=${i18n}&contentManagementName=${contentManagementName}`
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess<GetTranslationTextsOutputDto[]>>(url)
+  var response = await axios.get<FlexlistsError | FlexlistsSuccess<GetTranslationTextsOutputDto[]>>(url, undefined, true)
   return response.data;
 };

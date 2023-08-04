@@ -28,6 +28,7 @@ type ContentMangementProps = {
 const ContentManagement = ({ setFlashMessage }: ContentMangementProps) => {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState("Content Builder");
+  const [key, setKey] = useState(Date.now());
   const tabs: any[] = [
     {
       value: "Content Builder",
@@ -65,6 +66,7 @@ const ContentManagement = ({ setFlashMessage }: ContentMangementProps) => {
     if (!e.target.files) {
       return;
     }
+    setKey(Date.now());
     const file = e.target.files[0];
     if (file) {
       const formData = new FormData();
@@ -96,6 +98,7 @@ const ContentManagement = ({ setFlashMessage }: ContentMangementProps) => {
           >
             Import{" "}
             <input
+              key={key}
               type="file"
               accept=".json"
               hidden

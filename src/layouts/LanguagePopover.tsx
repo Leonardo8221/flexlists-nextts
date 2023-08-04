@@ -28,21 +28,19 @@ type LanguagePopoverProps = {
   languages: Language[];
   getLanguages: () => void;
   translations?: TranslationText[];
-
 };
-
 
 export const LanguagePopover = ({
   languages,
   getLanguages,
-  translations
+  translations,
 }: LanguagePopoverProps) => {
   const t = (key: string): string => {
     if (!translations) {
-      return key
+      return key;
     }
-    return getTranslation(key, translations)
-  }
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [open, setOpen] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState<Language>();
@@ -101,9 +99,14 @@ export const LanguagePopover = ({
             width: 44,
             height: 44,
             style,
+            mr: 1,
           }}
         >
-          <img src={currentLanguage.icon} style={{ width: 28 }} alt={currentLanguage.name} />
+          <img
+            src={currentLanguage.icon}
+            style={{ width: 28 }}
+            alt={currentLanguage.name}
+          />
         </IconButton>
       )}
 
@@ -134,7 +137,6 @@ export const LanguagePopover = ({
               selected={language.id === languages[0].id}
               onClick={() => handleLanguageChange(language.id)}
             >
-
               <Box
                 component="img"
                 alt={t(language.name)}

@@ -7,8 +7,14 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ```
 NEXT_PUBLIC_FLEXLIST_API_URL=http://localhost:8080
+NEXT_PUBLIC_FLEXLIST_API_URL_SSR=http://localhost:8080
 NEXT_PUBLIC_FLEXLIST_CLIENT_URL=http://localhost:8080
+                                       
 ```
+
+The SSR url is for real deployments, so the call to the backend via NEXTJS doesn't roundtrip over the entire
+internet before calling the localhost backend :]
+
 
 - start this repository in dev mode 
 

@@ -15,6 +15,8 @@ import {
   Typography,
   Link,
   CardMedia,
+  Switch,
+  FormGroup,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Select from "@mui/material/Select";
@@ -33,7 +35,7 @@ import {
   listContentService,
 } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
-import { filter } from "lodash";
+import { filter, set } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
 import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
@@ -109,7 +111,6 @@ const RowFormPanel = ({
     "view" | "create" | "update" | "comment"
   >(mode);
   const [windowHeight, setWindowHeight] = useState(0);
-  const [error, setError] = useState<string>("");
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   //console.log('knarsterfarster', currentView)
@@ -160,20 +161,26 @@ const RowFormPanel = ({
   useEffect(() => {
     setValues(rowData);
     setSubmit(false);
-    setError("");
     setCurrentMode(mode);
   }, [open, rowData, mode]);
 
   const handleSubmit = async () => {
     setSubmit(true);
-    if (!values) setValues({ submit: true });
+    if (!values)
+    {
+      setFlashMessage({message: "No values", type: "error"})
+    }
 
     let validator = true;
-
+    let errorFields : string[] = [];
     if (values) {
       columns.forEach((column) => {
-        if (!column.system && column.required && !values[column.id])
+        if (!column.system && column.required && (!values[column.id]||values[column.id]===null))
+        {
           validator = false;
+          errorFields.push(column.name);
+        }
+          
       });
       if (validator) {
         //update row data
@@ -185,7 +192,7 @@ const RowFormPanel = ({
           if (isSucc(updateRowRespone)) {
             onSubmit(values, "update");
           } else {
-            setError(ErrorConsts.InternalServerError);
+            setFlashMessage({message: (updateRowRespone as FlexlistsError).message, type: "error"})
             return;
           }
         } else {
@@ -210,12 +217,16 @@ const RowFormPanel = ({
             }
             onSubmit(values, "create");
           } else {
-            setError(ErrorConsts.InternalServerError);
+            setFlashMessage({message: (createRowResponse as FlexlistsError).message, type: "error"})
             return;
           }
         }
 
         onClose();
+      }
+      else
+      {
+        setFlashMessage({message: `${errorFields.join(',')} ${errorFields.length>1?'are':'is'} required`, type: "error"})
       }
     }
   };
@@ -307,14 +318,22 @@ const RowFormPanel = ({
   };
 
   const setDateValue = (columnId: number, date: Dayjs | Date | null) => {
-    if (date == null) {
-      return;
+    try
+    {
+      if (date == null) {
+        return;
+      }
+      if (typeof date === "string") {
+        setValues({ ...values, [columnId]: date });
+        return;
+      }
+      setValues({ ...values, [columnId]: date.toISOString() });
     }
-    if (typeof date === "string") {
-      setValues({ ...values, [columnId]: date });
-      return;
+    catch(e)
+    {
+
     }
-    setValues({ ...values, [columnId]: date.toISOString() });
+    
   };
   const setTimeValue = (columnId: number, time: Dayjs | null) => {
     if (time == null) {
@@ -487,7 +506,7 @@ const RowFormPanel = ({
         return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
-              value={dayjs(values[column.id])}
+              value={values[column.id]&&values[column.id]!=null?dayjs(values[column.id]):null}
               label={column.name}
               onChange={(x) => {
                 setDateValue(column.id, x);
@@ -688,21 +707,131 @@ const RowFormPanel = ({
         }
       case FieldUiTypeEnum.Boolean:
         return currentMode !== "view" && !isPrint ? (
-          <FormControlLabel
-            key={column.id}
-            control={
-              <Checkbox
-                checked={values[column.id]}
-                onChange={(e) =>
-                  setValues({ ...values, [column.id]: e.target.checked })
-                }
-              />
-            }
-            label={column.name}
-          />
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              className="booleanBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 1,
+                px: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="booleanWrapper"
+                sx={{
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+              >
+                <FormControlLabel
+                  key={column.id}
+                  control={
+                    <Switch
+                      checked={values[column.id]}
+                      onChange={(e) =>
+                        setValues({ ...values, [column.id]: e.target.checked })
+                      }
+                    />
+                  }
+                  label={column.name}
+                />
+              </Box>
+            </Box>
+          </div>
         ) : (
-          <div key={column.id}>
-            <TextField
+          <div key={column.id} className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="booleanBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 1,
+                px: 2,
+                position: "relative",
+                borderRadius: "6px",
+                ".focusedNeed:focus &": {
+                  border: "2px solid #1976d2",
+                },
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {
+                    color: "#1976d2",
+                    top: "-11px",
+                    left: "9px",
+                  },
+                }}
+              >
+                {column.name}
+              </Typography>
+              <Box
+                className="booleanWrapper"
+                sx={{
+                  ".focusedNeed:focus &": {
+                    margin: "-1px",
+                  },
+                }}
+              >
+                <FormGroup>
+                  <FormControlLabel
+                    disabled
+                    control={<Switch checked={values[column.id]} />}
+                    label={
+                      values && values[column.id]?.toString() === "true"
+                        ? "Yes"
+                        : "No"
+                    }
+                  />
+                </FormGroup>
+              </Box>
+            </Box>
+            {/* <TextField
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -710,10 +839,10 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[column.id]?.toString() === "true"
-                  ? "yes"
-                  : "no"
+                  ? "Yes"
+                  : "No"
               }
-            />
+            /> */}
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
@@ -1289,9 +1418,6 @@ const RowFormPanel = ({
       <DialogContent>
         {currentMode !== "comment" && (
           <form onSubmit={(e) => e.preventDefault()} id="new_row_form">
-            <Stack>
-              <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-            </Stack>
             <Stack
               sx={{
                 width: "100%",

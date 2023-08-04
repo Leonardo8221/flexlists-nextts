@@ -14,6 +14,7 @@ import MainLayout from "src/layouts/main/MainLayout";
 import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
+import { Errors, FlexlistsError } from "src/utils/responses";
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +54,6 @@ function Home({ translations }: ContentProps & { translations: TranslationText[]
   );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
   return await getTranslations("existing landing page", context)
 }
 export default Home;

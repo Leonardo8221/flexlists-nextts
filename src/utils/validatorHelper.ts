@@ -19,7 +19,9 @@ export class ValidationError extends Error {
         this.isValidationError = true;
     }
 }        
-
+export function isInputValidateError(error: any): boolean {
+    return error.isValidationError;
+}
 
 
 export enum ModelValidatorEnum {
@@ -96,9 +98,12 @@ export enum FieldValidatorEnum {
     file =  'file',
     money =  'money',
     snapshot =  'snapshot',
+    previousId =  'previousId',
+    nextId =  'nextId',
     currentPoint =  'currentPoint',
     tableDefinition =  'tableDefinition',
     path =  'path',
+    tableName =  'tableName',
     name =  'name',
     config =  'config',
     type =  'type',
@@ -161,6 +166,7 @@ export enum FieldValidatorEnum {
     defaultValue =  'defaultValue',
     indexed =  'indexed',
     key =  'key',
+    cors =  'cors',
     price =  'price',
     expiredDate =  'expiredDate',
     userResourceName =  'userResourceName',
@@ -194,6 +200,22 @@ export async function frontendValidate(model: ModelValidatorEnum, field: FieldVa
     setErrors(newErrors)
     return value
 }
+export const isFrontendError = (key:FieldValidatorEnum, errors: { [key: string]: string|boolean },setErrors?: (value: { [key: string]: string | boolean }) => void,setError?: (message: string) => void) => {
+    if(setErrors)
+    {
+        setErrors(errors)
+    }
+    let _error = errors[key]
+    if (_error !== undefined && _error !== false) 
+    {
+        if(setError)
+        {
+            setError(_error as string)
+        }
+      return true;
+    }
+    return false
+  }
 
 
 const Validator = {
@@ -380,7 +402,7 @@ const Validator = {
             else if (!required && value.trim().length === 0) return undefined
             if (minimum !== undefined && value.length<minimum) throw new ValidationError('Password must be at least '+minimum+' characters', value)
             if (maximum !== undefined && value.length>maximum) throw new ValidationError('Password must be at most '+maximum+' characters', value)
-            if (!value.match(/^([ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]:;\?><\,\./\-=]+)$/)) throw new ValidationError('Password must contain only valid characters', value)
+            if (!value.match(/^([ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]:;\?><\,\./\-=]+)$/)) throw new ValidationError('Password must contain only valid characters, The password has to be at least 8 characters long and contain at least 1 of ABCDEFGHIJKLMNOPQRSTUVWXYZ and contain at least 1 of abcdefghijklmnopqrstuvwxyz and contain at least 1 of 0123456789 and contain at least 1 of !@#$%^&*()_+~`|}{[]:;?><,./-=', value)
             return value
         }, 
         city: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<string|undefined> => {
@@ -612,6 +634,24 @@ const Validator = {
             value = sanitizeHtml(value, {allowedTags: ['b','i','em','strong','a','p','ul','ol','li','h1','h2','h3','h4','h5']})
             return value
         }, 
+        previousId: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<number|undefined> => {
+            value = parseInt(value)
+            if (required === undefined) required = false
+            if (required && value!==0 && !value) throw new ValidationError('PreviousId is required', value)
+            else if (!required && value!==0 && !value) return undefined
+            if (minimum !== undefined && value<minimum) throw new ValidationError('PreviousId must be at least '+minimum, value)
+            if (maximum !== undefined && value>maximum) throw new ValidationError('PreviousId must be at most '+maximum, value)
+            return value
+        }, 
+        nextId: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<number|undefined> => {
+            value = parseInt(value)
+            if (required === undefined) required = false
+            if (required && value!==0 && !value) throw new ValidationError('NextId is required', value)
+            else if (!required && value!==0 && !value) return undefined
+            if (minimum !== undefined && value<minimum) throw new ValidationError('NextId must be at least '+minimum, value)
+            if (maximum !== undefined && value>maximum) throw new ValidationError('NextId must be at most '+maximum, value)
+            return value
+        }, 
         currentPoint: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<boolean|undefined> => {
             if (value === undefined) value = false
             if (value===true || value===false) return value
@@ -640,6 +680,17 @@ const Validator = {
             if (required && !value) throw new ValidationError('Path is required', value)
             else if (!required && !value) return undefined
             if (!value.match(/^([a-zA-Z0-9_\-\.\/]+)$/)) throw new ValidationError('Path must be a valid unix file path', value)
+            value = sanitizeHtml(value, {allowedTags: ['b','i','em','strong','a','p','ul','ol','li','h1','h2','h3','h4','h5']})
+            return value
+        }, 
+        tableName: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<string|undefined> => {
+            value = value?value.toString():undefined
+            if (required === undefined) required = true
+            // could be an empty string, which is ! in JS...
+            if (required && typeof value !== 'string' && !value) throw new ValidationError('TableName is required', value)
+            else if (!required && typeof value !== 'string' && !value) return undefined
+            if (minimum !== undefined && value.length<minimum) throw new ValidationError('TableName must be at least '+minimum+' characters', value)
+            if (maximum !== undefined && value.length>maximum) throw new ValidationError('TableName must be at most '+maximum+' characters', value)
             value = sanitizeHtml(value, {allowedTags: ['b','i','em','strong','a','p','ul','ol','li','h1','h2','h3','h4','h5']})
             return value
         }, 
@@ -1061,10 +1112,10 @@ const Validator = {
             else if (!required && value.trim().length === 0) return undefined
             if (value.length<(minimum??8)) throw new ValidationError('Password must be at least '+(minimum??8)+' characters', value)
             if (value.length>(maximum??70)) throw new ValidationError('Password must be at most '+(maximum??70)+' characters', value)
-            if (!value.match(/^([ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]\\:;\?><\,\./\-=]+)$/)) throw new ValidationError('Password must contain only valid characters', value)
-            if (!value.match(/([ABCDEFGHIJKLMNOPQRSTUVWXYZ])/g) || value.match(/([ABCDEFGHIJKLMNOPQRSTUVWXYZ])/g).length<1) throw new ValidationError('Password must contain at least 1 capital letters', value)
-            if (!value.match(/([0123456789])/g) || value.match(/([0123456789])/g).length<1) throw new ValidationError('Password must contain at least 1 numbers', value)
-            if (!value.match(/([!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]\\:;\?><\,\./\-=])/g) || value.match(/([!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]\\:;\?><\,\./\-=])/g).length<1) throw new ValidationError('Password must contain at least 1 special characters', value)
+            if (!value.match(/^([ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]\\:;\?><\,\./\-=]+)$/)) throw new ValidationError('Password must contain only valid characters, The password has to be at least 8 characters long and contain at least 1 of ABCDEFGHIJKLMNOPQRSTUVWXYZ and contain at least 1 of abcdefghijklmnopqrstuvwxyz and contain at least 1 of 0123456789 and contain at least 1 of !@#$%^&*()_+~`|}{[]\:;?><,./-=', value)
+            if (!value.match(/([ABCDEFGHIJKLMNOPQRSTUVWXYZ])/g) || value.match(/([ABCDEFGHIJKLMNOPQRSTUVWXYZ])/g).length<1) throw new ValidationError('Password must contain at least 1 capital letters, The password has to be at least 8 characters long and contain at least 1 of ABCDEFGHIJKLMNOPQRSTUVWXYZ and contain at least 1 of abcdefghijklmnopqrstuvwxyz and contain at least 1 of 0123456789 and contain at least 1 of !@#$%^&*()_+~`|}{[]\:;?><,./-=', value)
+            if (!value.match(/([0123456789])/g) || value.match(/([0123456789])/g).length<1) throw new ValidationError('Password must contain at least 1 numbers, The password has to be at least 8 characters long and contain at least 1 of ABCDEFGHIJKLMNOPQRSTUVWXYZ and contain at least 1 of abcdefghijklmnopqrstuvwxyz and contain at least 1 of 0123456789 and contain at least 1 of !@#$%^&*()_+~`|}{[]\:;?><,./-=', value)
+            if (!value.match(/([!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]\\:;\?><\,\./\-=])/g) || value.match(/([!@\#\$%\^&\*\(\)_\+~`\|\}\{\[\]\\:;\?><\,\./\-=])/g).length<1) throw new ValidationError('Password must contain at least 1 special characters, The password has to be at least 8 characters long and contain at least 1 of ABCDEFGHIJKLMNOPQRSTUVWXYZ and contain at least 1 of abcdefghijklmnopqrstuvwxyz and contain at least 1 of 0123456789 and contain at least 1 of !@#$%^&*()_+~`|}{[]\:;?><,./-=', value)
             return value
         }, 
         passwordSalt: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<string|undefined> => {
@@ -3231,6 +3282,17 @@ const Validator = {
             else if (!required && !value) return undefined
             if (value<1) throw new ValidationError('Owner must be at least 1', value)
             if (!(value<=2147483647)) throw new ValidationError('Owner must be smaller than 2147483647', value)
+            return value
+        }, 
+        cors: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<string|undefined> => {
+            value = value?value.toString():undefined
+            if (required === undefined) required = false
+            // could be an empty string, which is ! in JS...
+            if (required && typeof value !== 'string' && !value) throw new ValidationError('Cors is required', value)
+            else if (!required && typeof value !== 'string' && !value) return undefined
+            if (minimum !== undefined && value.length<minimum) throw new ValidationError('Cors must be at least '+minimum+' characters', value)
+            if (value.length>(maximum??250)) throw new ValidationError('Cors must be at most '+(maximum??250)+' characters', value)
+            value = sanitizeHtml(value, {allowedTags: ['b','i','em','strong','a','p','ul','ol','li','h1','h2','h3','h4','h5']})
             return value
         }, 
         createdAt: async (value: any, required?: boolean, minimum?: number, maximum?: number, config?: any):Promise<Date|undefined> => {

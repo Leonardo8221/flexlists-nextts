@@ -1,9 +1,18 @@
 import { useMemo, useState, useEffect, useRef, useReducer } from "react";
-import { Box, Stack, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Button,
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
   MRT_ToggleFiltersButton,
   MRT_TableInstance,
+  MRT_Virtualizer,
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
 import RowFormPanel from "./RowFormPanel";
@@ -34,6 +43,8 @@ import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import PrintIcon from "@mui/icons-material/Print";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+
+import EditIcon from "@mui/icons-material/Edit";
 import { hasPermission } from "src/utils/permissionHelper";
 import {
   archiveBulkContents,
@@ -48,6 +59,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
+import sanitizeHtml from "sanitize-html";
 
 type DataTableProps = {
   tab: boolean;
@@ -129,6 +141,19 @@ const DataTable = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
+
+  useEffect(() => {
+    //editRow(row) => from rows
+    if (router.query.rowId) {
+      const row = rows.find(
+        (row, i) => row.id === parseInt(router.query.rowId as string)
+      );
+      if (row) {
+        const index = rows.indexOf(row);
+        editRow({ original: row, index: index });
+      }
+    }
+  }, [rows, router.query]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -277,6 +302,23 @@ const DataTable = ({
               case FieldUiTypeEnum.Text:
               case FieldUiTypeEnum.LongText:
               case FieldUiTypeEnum.HTML:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {!cellValue
+                      ? ""
+                      : sanitizeHtml(cellValue.replace(/</g, " <"), {
+                          allowedTags: [],
+                        })}
+                  </Box>
+                );
               case FieldUiTypeEnum.Markdown:
                 return (
                   <Box
@@ -322,7 +364,14 @@ const DataTable = ({
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {cellValue?.toString() === "true" ? "yes" : "no"}
+                    {/* {cellValue?.toString() === "true" ? "yes" : "no"} */}
+                    <FormGroup>
+                      <FormControlLabel
+                        disabled
+                        control={<Switch checked={cellValue} />}
+                        label={cellValue?.toString() === "true" ? "Yes" : "No"}
+                      />
+                    </FormGroup>
                   </Box>
                 );
               case FieldUiTypeEnum.Image:
@@ -488,6 +537,9 @@ const DataTable = ({
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
+  const rowVirtualizerInstanceRef =
+    useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
+
   const handleBulkAction = async (action: string) => {
     switch (action) {
       case "clone":
@@ -651,8 +703,6 @@ const DataTable = ({
             enableStickyHeader={true}
             muiTableContainerProps={{
               sx: {
-                scrollBehavior: "smooth !important",
-                WebkitOverflowScrolling: "touch",
                 height: {
                   // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
                   xs: "calc(100vh - 236px)",
@@ -674,6 +724,13 @@ const DataTable = ({
             enableBottomToolbar={false}
             enablePagination={true}
             enableColumnResizing
+            // enableRowNumbers
+            //enableRowVirtualization
+            //enableColumnVirtualization
+            // enableMultiRowSelection={false}
+            rowVirtualizerInstanceRef={rowVirtualizerInstanceRef}
+            rowVirtualizerProps={{ overscan: 5 }}
+            columnVirtualizerProps={{ overscan: 10 }}
             muiSelectCheckboxProps={{
               color: "primary",
             }}
@@ -800,15 +857,16 @@ const DataTable = ({
                   px: { xs: 1, md: "inherit" },
                   border: 2,
                   height: 32,
-                  justifyContent: "space-between",
+                  justifyContent: "center",
                   alignItems: "center",
                   "&:hover": {
                     border: 2,
                   },
                 }}
               >
-                List actions
-                <KeyboardArrowDownIcon />
+                {/* List actions */}
+                {/* <KeyboardArrowDownIcon /> */}
+                <EditIcon />
               </Button>
             )}
             <Box

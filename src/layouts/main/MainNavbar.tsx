@@ -7,6 +7,7 @@ import {
   Toolbar,
   Container,
   Typography,
+  Link,
 } from "@mui/material";
 // hooks
 import useOffSetTop from "src/hooks/useOffSetTop";
@@ -18,10 +19,14 @@ import MenuDesktop from "./MenuDesktop";
 // import MenuMobile from './MenuMobile';
 import navConfig from "./MenuConfig";
 import { useRouter } from "next/router";
-import Link from "next/link";
+// import Link from "next/link";
 import LanguagePopover from "../LanguagePopover";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
+import MenuMobile from "./MenuMobile";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import { useState } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -53,13 +58,18 @@ const ToolbarShadowStyle = styled("div")(({ theme }) => ({
 }));
 
 const LogoStyle = styled("span")(({ theme }) => ({
-  display: "-webkit-inline-box",
+  display: "flex",
+  alignItems: "center",
   textDecoration: "none",
   fontFamily: "system-ui",
+  gap: 2,
   fontWeight: 600,
   fontSize: "30px",
   lineHeight: "40px",
   color: "#333333",
+  "& span": {
+    textDecoration: "none",
+  },
 }));
 
 const LogoTitleStyle = styled("span")(({ theme }) => ({
@@ -67,21 +77,22 @@ const LogoTitleStyle = styled("span")(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
-type ContentProps = {
+type ContentProps = {};
 
-};
-
-export default function MainNavbar({ translations }: ContentProps & { translations?: TranslationText[] }) {
+export default function MainNavbar({
+  translations,
+}: ContentProps & { translations?: TranslationText[] }) {
   const t = (key: string): string => {
     if (!translations) {
-      return key
+      return key;
     }
-    return getTranslation(key, translations)
-  }
+    return getTranslation(key, translations);
+  };
   const isOffset = useOffSetTop(100);
   const router = useRouter();
   var pathname = router.pathname;
   const isHome = pathname === "/";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const gotoSignin = async () => {
     await router.push({
       pathname: "/auth/login",
@@ -92,6 +103,9 @@ export default function MainNavbar({ translations }: ContentProps & { translatio
       pathname: "/auth/register",
     });
   };
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: "white" }}>
       <ToolbarStyle
@@ -99,7 +113,7 @@ export default function MainNavbar({ translations }: ContentProps & { translatio
         sx={{
           ...(isOffset && {
             bgcolor: "background.default",
-            height: { md: APP_BAR_DESKTOP - 16 },
+            height: { lg: APP_BAR_DESKTOP - 16 },
           }),
         }}
       >
@@ -111,41 +125,79 @@ export default function MainNavbar({ translations }: ContentProps & { translatio
             justifyContent: "space-between",
           }}
         >
-          <Link href="/">
+          <Link sx={{ textDecoration: "none" }} href="/">
             <LogoStyle>
               <Logo />
-              <LogoTitleStyle>flex</LogoTitleStyle>lists
+              <Box>
+                <LogoTitleStyle>flex</LogoTitleStyle>lists
+              </Box>
             </LogoStyle>
           </Link>
 
-          <MHidden width="mdDown">
+          <MHidden width="lgDown">
             <MenuDesktop
               isOffset={isOffset}
               isHome={isHome}
-              navConfig={navConfig.map((item) =>
-                ({ ...item, title: t(item.title) })
-
-              )}
+              navConfig={navConfig.map((item) => ({
+                ...item,
+                title: t(item.title),
+              }))}
             />
-
-            <Box sx={{ flexGrow: 1 }} />
-
-            <Button variant="contained" onClick={() => gotoSignup()}>
-              {t("Sign up, it's free")}
-            </Button>
-
-            <Typography
-              sx={{ ml: 1, color: "text.secondary", cursor: "pointer" }}
-              onClick={() => gotoSignin()}
-            >
-              {t('Sign in')}
-            </Typography>
-            <LanguagePopover translations={translations} />
           </MHidden>
 
-          {/* <MHidden width="mdUp">
-            <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
-          </MHidden> */}
+          <Box
+            sx={{
+              flexGrow: 1,
+            }}
+          ></Box>
+          <LanguagePopover translations={translations} />
+
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+              gap: 2,
+              // width: "80%",
+            }}
+          >
+            <Button variant="contained" onClick={() => gotoSignup()}>
+              {t("Sign up")}
+            </Button>
+
+            <Button variant="outlined" onClick={() => gotoSignin()}>
+              {t("Sign in")}
+            </Button>
+          </Box>
+
+          <MHidden width="lgUp">
+            {/* <MenuMobile
+              isOffset={isOffset}
+              isHome={isHome}
+              navConfig={navConfig}
+            /> */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0 }}>
+              {/* <LanguagePopover translations={translations} /> */}
+
+              <Button variant="text" size="small" onClick={()=>toggleMobileMenu()}>
+                {
+                  !isMobileMenuOpen && <MenuIcon sx={{ fontSize: 36 }}  />
+                }
+                {
+                  isMobileMenuOpen && <CloseIcon sx={{ fontSize: 36 }} />
+                }
+                
+              </Button>
+              <MenuMobile
+                isMenuMobileOpen={isMobileMenuOpen}
+                isOffset={isOffset}
+                isHome={isHome}
+                navConfig={navConfig.map((item) => ({
+                  ...item,
+                  title: t(item.title),
+                }))}
+              />
+            </Box>
+          </MHidden>
         </Container>
       </ToolbarStyle>
 
