@@ -69,3 +69,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## local development steps
+1. get latest code in master and merge to you branch
+2. run: docker-compose -f docker-compose.dev.frontendbackend.yml  down
+3. run: docker-compose -f docker-compose.dev.frontendbackend.yml  up -d
+4. run: yarn dev
+5. run http://127.0.0.1:8080/ and you have to create new account
