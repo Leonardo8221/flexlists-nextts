@@ -4,12 +4,15 @@ server {
  server_name _;
  resolver                127.0.0.11;
  client_max_body_size 0;
+ set $my_host "front.flexlists.com";
 
  location /api {
-  #proxy_ssl_server_name on;   
+   proxy_ssl_server_name on;   
    proxy_set_header X-Real-IP $remote_addr;
    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
    proxy_set_header X-NginX-Proxy true;
+   proxy_set_header X-Forwarded-Host $my_host;
+   proxy_set_header Host $my_host;
    proxy_pass https://front.flexlists.com;
    #proxy_ssl_session_reuse off;
    #proxy_set_header Connection "";

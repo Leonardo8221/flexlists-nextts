@@ -161,3 +161,8 @@ export async function createCoreView(viewId: number, name: any, description?: an
 
   return response.data;
 };
+export async function archiveView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/archiveView`+`?viewId=${viewId}`);
+
+  return response.data;
+};
