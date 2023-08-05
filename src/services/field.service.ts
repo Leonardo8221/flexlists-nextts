@@ -55,3 +55,13 @@ async function deleteField(viewId:number,fieldId:number): Promise<FlexlistsError
   var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/field/deleteField'+`?viewId=${viewId}&fieldId=${fieldId}`)
   return response.data;
 };
+export async function reorderViewFields(viewId:number,fieldsOrder:number[]): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/reorderViewFields`, {viewId,fieldsOrder})
+
+  return response.data;
+};
+export async function reorderCoreFields(viewId:number,fieldsOrder:number[]): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/field/reorderCoreFields`, {viewId,fieldsOrder})
+
+  return response.data;
+};

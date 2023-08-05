@@ -3,7 +3,7 @@ import { Box, TextField, Divider, Typography, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
-import { setColumns, setCurrentView } from "../../redux/actions/viewActions";
+import { fetchColumns, setColumns, setCurrentView } from "../../redux/actions/viewActions";
 import Checkbox from "@mui/material/Checkbox";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Modal from "@mui/material/Modal";
@@ -13,6 +13,7 @@ import { filter } from "lodash";
 import { View, ViewFieldConfig } from "src/models/SharedModels";
 import AddColumnButton from "src/components/add-button/AddColumnButton";
 import ListFields from "./ListFields";
+import { reorderViewFields } from "src/services/field.service";
 
 type ViewFieldsProps = {
   currentView: View;
@@ -21,6 +22,7 @@ type ViewFieldsProps = {
   open: boolean;
   setColumns: (columns: any) => void;
   handleClose: () => void;
+  fetchColumns: (viewId: number) => void;
 };
 
 const ViewFields = ({
@@ -30,6 +32,7 @@ const ViewFields = ({
   open,
   setColumns,
   handleClose,
+  fetchColumns
 }: ViewFieldsProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
@@ -48,6 +51,10 @@ const ViewFields = ({
   useEffect(() => {
     // searchField("");
     checkModalHeight();
+    let filterCols = filter(columns, (column) => {
+      return (searchText && column.name.includes(searchText)) || searchText === "";
+    });
+    setFilterColumns(filterCols);
   }, [columns]);
 
   const checkModalHeight = () => {
@@ -63,16 +70,17 @@ const ViewFields = ({
     setFilterColumns(newColumns);
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = async(result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination || destination.index === source.index) {
       return;
     }
-
-    const [removedColumns] = columns.splice(source.index, 1);
-    columns.splice(destination.index, 0, removedColumns);
-    setColumns([...columns]);
+    let newColumns = Object.assign([], columns);
+    const [removedColumns] = newColumns.splice(source.index, 1);
+    newColumns.splice(destination.index, 0, removedColumns);
+    await reorderViewFields(currentView.id,newColumns.map((x: any) => x.id));
+    fetchColumns(currentView.id);
   };
 
   const handleVisible = (value: boolean) => {
@@ -476,6 +484,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setColumns,
   setCurrentView,
+  fetchColumns
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewFields);
