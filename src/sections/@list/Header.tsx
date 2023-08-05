@@ -27,6 +27,8 @@ import { archiveView, unArchiveView } from "../../services/listView.service";
 import { FlexlistsError, isSucc } from "src/utils/responses";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import { useRouter } from "next/router";
+import { PATH_MAIN } from "src/routes/paths";
 
 type HeaderProps = {
   currentView: View;
@@ -35,6 +37,7 @@ type HeaderProps = {
 
 
 const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
+  const router = useRouter();
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
@@ -88,6 +91,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
      let response = await archiveView(currentView?.id);
      if(isSucc(response)){
         setFlashMessage({message:'View archived successfully',type:'success'});
+        await router.push({pathname:PATH_MAIN.views});
      }
      else
      {
@@ -99,6 +103,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
     let response = await unArchiveView(currentView?.id);
     if(isSucc(response)){
        setFlashMessage({message:'View unarchived successfully',type:'success'});
+       await router.push({pathname:PATH_MAIN.views});
     }
     else
     {
