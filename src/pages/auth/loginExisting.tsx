@@ -33,6 +33,9 @@ import {
 } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { styled } from "@mui/material/styles";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations } from "src/utils/i18n";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
@@ -492,7 +495,13 @@ const Login = ({
     </>
   );
 };
-
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  var verifyToken = await validateToken(context)
+  if(verifyToken){
+    return verifyToken
+  }
+  return await getTranslations("loginExisting", context)
+}
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
   legacyCredentials: state.auth.legacyCredentials,

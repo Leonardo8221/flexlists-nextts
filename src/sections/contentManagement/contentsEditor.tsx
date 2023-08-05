@@ -19,7 +19,6 @@ import {
 import { useTheme } from "@mui/material";
 import Scrollbar from "src/components/scrollbar";
 import { connect } from "react-redux";
-import { AuthValidate } from "src/models/AuthValidate";
 import { ContentManagementDto } from "src/models/ContentManagementDto";
 import { contentManagementService } from "src/services/admin/contentManagement.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
@@ -37,10 +36,9 @@ import { markdownToHtml } from "src/utils/parserHelper";
 import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
 
 type ContentEditorProps = {
-  authValidate: AuthValidate;
   languages: Language[];
 };
-const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
+const ContentEditor = ({ languages }: ContentEditorProps) => {
   const router = useRouter();
   const theme = useTheme();
   const [searchText, setSearchText] = useState<string>("");
@@ -565,7 +563,6 @@ const ContentEditor = ({ authValidate, languages }: ContentEditorProps) => {
   );
 };
 const mapStateToProps = (state: any) => ({
-  authValidate: state.admin.authValidate,
   languages: state.admin.languages,
 });
 

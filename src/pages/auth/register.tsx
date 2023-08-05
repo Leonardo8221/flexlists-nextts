@@ -37,6 +37,9 @@ import {
   frontendValidate,
   isFrontendError,
 } from "src/utils/validatorHelper";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations } from "src/utils/i18n";
 
 interface RegisterProps {
   message: any;
@@ -744,5 +747,11 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setMessage,
 };
-
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  var verifyToken = await validateToken(context)
+  if(verifyToken){
+    return verifyToken
+  }
+  return await getTranslations("register", context)
+}
 export default connect(mapStateToProps, mapDispatchToProps)(Register);

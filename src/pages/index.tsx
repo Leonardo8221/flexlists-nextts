@@ -14,8 +14,10 @@ import MainLayout from "src/layouts/main/MainLayout";
 import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
-import { Errors, FlexlistsError } from "src/utils/responses";
-
+import { Errors, FlexlistsError, isSucc } from "src/utils/responses";
+import { authService } from "src/services/auth.service";
+import { parse, serialize } from "cookie";
+import { validateToken } from "src/utils/tokenUtils";
 // ----------------------------------------------------------------------
 
 // const RootStyle = styled(Page)({
@@ -54,6 +56,10 @@ function Home({ translations }: ContentProps & { translations: TranslationText[]
   );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  var verifyToken = await validateToken(context)
+  if(verifyToken){
+    return verifyToken
+  }
   return await getTranslations("existing landing page", context)
 }
 export default Home;
