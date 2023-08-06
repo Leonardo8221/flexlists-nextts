@@ -51,6 +51,10 @@ async function getFields(viewId:number): Promise<FlexlistsError|FlexlistsSuccess
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<Field[]>>('/api/field/getFields'+`?viewId=${viewId}`)
   return response.data;
 };
+export async function getCoreFields(viewId:number): Promise<FlexlistsError|FlexlistsSuccess<Field[]>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<Field[]>>('/api/field/getCoreFields'+`?viewId=${viewId}`)
+  return response.data;
+};
 async function deleteField(viewId:number,fieldId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/field/deleteField'+`?viewId=${viewId}&fieldId=${fieldId}`)
   return response.data;
