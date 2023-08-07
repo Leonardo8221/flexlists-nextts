@@ -28,8 +28,8 @@ export async function registerExisting(userName: string, password: string, accep
     var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/registerExisting', { userName, password, acceptTermsAndConditions, firstName, lastName, email, phoneNumber })
     return response.data;
 };
-export async function verifyToken(): Promise<FlexlistsError | FlexlistsSuccess<any>> {
-    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/verifyToken')
+export async function verifyToken(config?:any,isSSR:boolean=true): Promise<FlexlistsError | FlexlistsSuccess<any>> {
+    var response = await axios.post<FlexlistsError | FlexlistsSuccess<any>>('/api/auth/verifyToken',undefined,config,isSSR)
     return response.data;
 };
 export async function logout(): Promise<FlexlistsError | FlexlistsSuccess<any>> {

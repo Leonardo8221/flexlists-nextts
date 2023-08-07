@@ -34,6 +34,9 @@ import {
 import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { SystemRole } from "src/enums/SystemRole";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations } from "src/utils/i18n";
 
 interface LoginProps {
   message: any;
@@ -441,7 +444,13 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
     </>
   );
 };
-
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  var verifyToken = await validateToken(context)
+  if(verifyToken){
+    return verifyToken
+  }
+  return await getTranslations("login", context)
+}
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
 });

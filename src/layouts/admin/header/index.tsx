@@ -6,7 +6,6 @@ import AccountPopover from "../../AccountPopover";
 import useResponsive from "../../../hooks/useResponsive";
 import Link from "next/link";
 import { connect } from "react-redux";
-import { AuthValidate } from "src/models/AuthValidate";
 import LanguagePopover from "src/layouts/LanguagePopover";
 
 const HEADER_MOBILE = 48;
@@ -34,10 +33,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 type HeaderProps = {
   onOpenNav: (value: any) => void;
-  authValidate: AuthValidate;
 };
 
-export function Header({ onOpenNav, authValidate }: HeaderProps) {
+export function Header({ onOpenNav }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useResponsive("down", "sm");
 
@@ -81,7 +79,7 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
         
         <Box sx={{ flexGrow: 1 }} />
         <LanguagePopover />
-        {authValidate && authValidate.isUserValidated && (
+        {(
           <Stack
             direction="row"
             alignItems="center"
@@ -99,7 +97,6 @@ export function Header({ onOpenNav, authValidate }: HeaderProps) {
   );
 }
 const mapStateToProps = (state: any) => ({
-  authValidate: state.admin.authValidate,
 });
 const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

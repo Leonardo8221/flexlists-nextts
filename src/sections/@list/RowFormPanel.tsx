@@ -1508,6 +1508,8 @@ const RowFormPanel = ({
             )}
         </Box>
         <YesNoDialog
+          title="Delete Selected Data"
+          submitText="Delete"
           message="Are you sure you want to delete selected data?"
           open={openBulkDeleteDialog}
           handleClose={() => setOpenBulkDeleteDialog(false)}

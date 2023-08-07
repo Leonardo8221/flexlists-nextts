@@ -12,18 +12,18 @@ import {
   FlexlistsSuccess,
   isSucc,
 } from "src/models/ApiResponse";
-import { AuthValidate } from "src/models/AuthValidate";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { UserProfile } from "src/models/UserProfile";
 interface ChatFormProps {
   chatType: ChatType;
   id: number;
   currentView: View;
-  authValidate: AuthValidate;
+  userProfile: UserProfile;
 }
 
 const ChatForm = ({
   currentView,
-  authValidate,
+  userProfile,
   chatType,
   id,
 }: ChatFormProps) => {
@@ -118,7 +118,7 @@ const ChatForm = ({
       : `${min} min${min > 1 ? "s" : ""} ago`;
   };
   const isOwner = (userId: number): boolean => {
-    return userId === authValidate.user?.userId;
+    return userId === userProfile?.id;
   };
   const getTime = (date?: Date) => {
     return date != null ? new Date(date).getTime() : 0;
@@ -347,7 +347,7 @@ const ChatForm = ({
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
-  authValidate: state.admin.authValidate,
+  userProfile: state.user.userProfile
 });
 
 const mapDispatchToProps = {};

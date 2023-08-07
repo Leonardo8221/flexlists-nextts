@@ -25,31 +25,31 @@ export function AuthGuard({ children, isLoading, setLoading, setAuthValidate }: 
 
   useEffect(() => {
     async function initialize() {
-      const path = url.split('/')[1];
-      let authValidate = getAuthValidatePayLoad();
-      setAuthValidate(authValidate);
-      if ((path == 'auth' && !url.includes('/auth/login')) || path == '') {
-        var isValidated: Boolean = false;
-        try {
-          var verifyTokenResponse = await authService.verifyToken();
-          isValidated = isSucc(verifyTokenResponse) && verifyTokenResponse.data && verifyTokenResponse.data.isValidated;
-        }
-        catch (error) {
-          console.log('unauthorize')
-        }
-        if (isValidated) {
-          await router.push({
-            pathname: getRolePathDefault(authValidate?.user?.systemRole ?? SystemRole.User)
-          });
-        }
-      }
-      // else {
-      //   if (!isValidated) {
+      // const path = url.split('/')[1];
+      // let authValidate = getAuthValidatePayLoad();
+      // setAuthValidate(authValidate);
+      // if ((path == 'auth' && !url.includes('/auth/login')) || path == '') {
+      //   var isValidated: Boolean = false;
+      //   try {
+      //     var verifyTokenResponse = await authService.verifyToken();
+      //     isValidated = isSucc(verifyTokenResponse) && verifyTokenResponse.data && verifyTokenResponse.data.isValidated;
+      //   }
+      //   catch (error) {
+      //     console.log('unauthorize')
+      //   }
+      //   if (isValidated) {
       //     await router.push({
-      //       pathname: '/'
+      //       pathname: getRolePathDefault(authValidate?.user?.systemRole ?? SystemRole.User)
       //     });
       //   }
       // }
+      // // else {
+      // //   if (!isValidated) {
+      // //     await router.push({
+      // //       pathname: '/'
+      // //     });
+      // //   }
+      // // }
 
 
     }

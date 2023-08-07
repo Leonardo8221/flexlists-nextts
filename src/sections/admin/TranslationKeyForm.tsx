@@ -7,11 +7,11 @@ import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { contentManagementService } from "src/services/admin/contentManagement.service";
 import { TranslationKeyDto } from "src/models/TranslationKeyDto";
 import { translationKeyService } from "src/services/admin/translationKey.service";
-import { AuthValidate } from "src/models/AuthValidate";
 import { TranslationKeyType } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { use } from "passport";
 import { all } from "axios";
+import { UserProfile } from "src/models/UserProfile";
 
 type TranslationKeyFormProps = {
   open: boolean;
@@ -19,7 +19,7 @@ type TranslationKeyFormProps = {
   currentTranslationKey: TranslationKeyDto;
   onAdd: (newTranslationKey: TranslationKeyDto) => void;
   onUpdate: (editTranslationKey: TranslationKeyDto) => void;
-  authValidate: AuthValidate,
+  userProfile: UserProfile,
   contentTranslationKeys: TranslationKeyDto[]
 };
 
@@ -29,7 +29,7 @@ const TranslationKeyForm = ({
   currentTranslationKey,
   onAdd,
   onUpdate,
-  authValidate,
+  userProfile,
   contentTranslationKeys
 }: TranslationKeyFormProps) => {
   const theme = useTheme();
@@ -103,7 +103,7 @@ const TranslationKeyForm = ({
       }
     }
     else {
-      let response = await translationKeyService.updateTranslationKey(translationKey.id, translationKey.name, translationKey.type, authValidate.user ? authValidate.user.userId : 0, translationKey.reusable, translationKey.config);
+      let response = await translationKeyService.updateTranslationKey(translationKey.id, translationKey.name, translationKey.type, userProfile ? userProfile.id : 0, translationKey.reusable, translationKey.config);
       if (isSucc(response)) {
         onUpdate(translationKey);
         handleClose();
@@ -224,7 +224,7 @@ const TranslationKeyForm = ({
 };
 
 const mapStateToProps = (state: any) => ({
-  authValidate: state.admin.authValidate
+  userProfile: state.user.userProfile
 });
 
 const mapDispatchToProps = {

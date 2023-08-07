@@ -79,7 +79,8 @@ export type View = {
     query?: string,
     conditions?: FlatWhere[],
     description?: string,
-    role: Role
+    role: Role,
+    isArchived: boolean
 }
 export type FieldUIType = {
     name: string;

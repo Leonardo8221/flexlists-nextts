@@ -16,7 +16,6 @@ import {
 import Scrollbar from "src/components/scrollbar";
 import ContentMangementForm from "src/sections/admin/ContentMangementForm";
 import { connect } from "react-redux";
-import { AuthValidate } from "src/models/AuthValidate";
 import CommonMoreMenu from "src/components/menu/CommonMoreMenu";
 import { ContentManagementDto } from "src/models/ContentManagementDto";
 import { contentManagementService } from "src/services/admin/contentManagement.service";
@@ -29,11 +28,12 @@ import TranslationKeyForm from "src/sections/admin/TranslationKeyForm";
 import { TranslationKeyDto } from "src/models/TranslationKeyDto";
 import { TranslationKeyType } from "src/enums/SharedEnums";
 import { useTheme } from "@mui/material/styles";
+import { UserProfile } from "src/models/UserProfile";
 
 type ContentBuilderProps = {
-  authValidate: AuthValidate;
+  userProfile: UserProfile;
 };
-const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
+const ContentBuilder = ({ userProfile }: ContentBuilderProps) => {
   const theme = useTheme();
   const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
@@ -119,8 +119,8 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
   };
   const handleAddContentManagement = () => {
     let contentMangement = Object.assign({}, newContentManagement);
-    if (authValidate.user) {
-      contentMangement.ownerId = authValidate.user.userId;
+    if (userProfile) {
+      contentMangement.ownerId = userProfile.id;
     }
     setSelectedContentManagement(contentMangement);
     setIsContentMangementFormOpen(true);
@@ -432,7 +432,7 @@ const ContentBuilder = ({ authValidate }: ContentBuilderProps) => {
   );
 };
 const mapStateToProps = (state: any) => ({
-  authValidate: state.admin.authValidate,
+  userProfile: state.user.userProfile,
 });
 
 const mapDispatchToProps = {};

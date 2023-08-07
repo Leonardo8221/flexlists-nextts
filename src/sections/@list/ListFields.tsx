@@ -23,7 +23,7 @@ import {
 } from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
 import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
-import { fieldService } from "src/services/field.service";
+import { fieldService, reorderCoreFields } from "src/services/field.service";
 import { isErr } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { filter } from "lodash";
@@ -92,25 +92,17 @@ const ListFields = ({
 
     return result;
   };
-  const onDragEnd = (result: any) => {
+  const onDragEnd = async(result: any) => {
     const { destination, source, draggableId } = result;
 
-    if (!destination) {
+    if (!destination || destination.index === source.index) {
       return;
     }
-
-    if (destination.index === result.source.index) {
-      return;
-    }
-    var newFields = reorder(fields, source.index, destination.index);
-    setFields(newFields);
-    // const [removed] = fields.splice(source.index, 1);
-    // fields.splice(destination.index, 0, removed);
-    // setFields(fields);
-
-    // const [removedColumns] = fields.splice(source.index, 1);
-    // fields.splice(destination.index, 0, removedColumns);
-    // setFields([...fields]);
+    let newFields = Object.assign([], fields);
+    const [removedFields] = newFields.splice(source.index, 1);
+    newFields.splice(destination.index, 0, removedFields);
+    await reorderCoreFields(currentView.id,newFields.map((x: any) => x.id));
+    fetchFields(currentView.id);
   };
   const reloadViewData = () => {
     fetchColumns(currentView.id);
@@ -232,10 +224,11 @@ const ListFields = ({
                       minHeight: "360px",
                     }}
                   >
-                    {filter(
+                    {/* {filter(
                       fields,
                       (x) => x.system !== true || x.name !== "id"
-                    ).map((field: any, index: number) => (
+                    ).map((field: any, index: number) => ( */}
+                     {fields.map((field: any, index: number) => (
                       <Draggable
                         key={field.id}
                         draggableId={`${field.id}`}
@@ -323,31 +316,34 @@ const ListFields = ({
                                   gap: { xs: 1, md: 3 },
                                 }}
                               >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 0.5,
-                                    cursor: "pointer",
-                                    fontWeight: 500,
-                                    color: "primary.main",
-                                  }}
-                                  onClick={() => handleUpdateField(field)}
-                                >
-                                  <EditIcon />
-                                  <Typography
-                                    variant="subtitle2"
-                                    component={"span"}
-                                    sx={{
-                                      display: {
-                                        xs: "none",
-                                        md: "block",
-                                      },
-                                    }}
-                                  >
-                                    Edit
-                                  </Typography>
-                                </Box>
+                                {(field.system !== true ||field.name !== "id") &&
+                                   <Box
+                                   sx={{
+                                     display: "flex",
+                                     alignItems: "center",
+                                     gap: 0.5,
+                                     cursor: "pointer",
+                                     fontWeight: 500,
+                                     color: "primary.main",
+                                   }}
+                                   onClick={() => handleUpdateField(field)}
+                                 >
+                                   <EditIcon />
+                                   <Typography
+                                     variant="subtitle2"
+                                     component={"span"}
+                                     sx={{
+                                       display: {
+                                         xs: "none",
+                                         md: "block",
+                                       },
+                                     }}
+                                   >
+                                     Edit
+                                   </Typography>
+                                 </Box>
+                                }
+                                
                                 {field.system !== true ? (
                                   <Box
                                     sx={{

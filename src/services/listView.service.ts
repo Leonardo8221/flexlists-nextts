@@ -65,8 +65,8 @@ export async function updateView(viewId: number, name: any, type: ViewType, conf
 
   return response.data;
 };
-export async function getViews(baseViewId?: number, oneViewId?: number, page?: number, limit?: number): Promise<FlexlistsError | FlexlistsSuccess<View[]>> {
-  var response = await axios.get<FlexlistsError | FlexlistsSuccess<View[]>>('/api/listView/getViews' + `?baseViewId=${baseViewId}&oneViewId=${oneViewId}&page=${page}&limit=${limit}`)
+export async function getViews(baseViewId?: number, oneViewId?: number, page?: number, limit?: number,isArchived?:boolean): Promise<FlexlistsError | FlexlistsSuccess<View[]>> {
+  var response = await axios.get<FlexlistsError | FlexlistsSuccess<View[]>>('/api/listView/getViews' + `?baseViewId=${baseViewId}&oneViewId=${oneViewId}&page=${page}&limit=${limit}&isArchived=${isArchived}`)
   return response.data;
 };
 export async function searchViews(searchText?: any, page?: number, limit?: number): Promise<FlexlistsError | FlexlistsSuccess<SearchViewsOutputDto>> {
@@ -163,6 +163,11 @@ export async function createCoreView(viewId: number, name: any, description?: an
 };
 export async function archiveView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess> {
   var response = await axios.delete<FlexlistsError|FlexlistsSuccess>(`/api/listView/archiveView`+`?viewId=${viewId}`);
+
+  return response.data;
+};
+export async function unArchiveView(viewId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess>(`/api/listView/unArchiveView`+`?viewId=${viewId}`);
 
   return response.data;
 };
