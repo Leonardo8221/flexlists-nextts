@@ -314,7 +314,11 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
-
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
   styles = {
     body: {
       background:
@@ -493,7 +497,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
           {flash?.message}
         </Alert>
       </Snackbar>
-      <Box sx={styles?.body}>
+      <Box sx={styles?.body} onKeyDown={handleKeyDown}>
         <Container maxWidth="xl" sx={styles?.container}>
           <Box sx={styles?.leftBox}>
             <Typography variant="h3">

@@ -163,7 +163,11 @@ const Login = ({
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
-
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
   styles = {
     body: {
       background:
@@ -307,7 +311,7 @@ const Login = ({
           {flash?.message}
         </Alert>
       </Snackbar>
-      <Box sx={styles?.body}>
+      <Box sx={styles?.body} onKeyDown={handleKeyDown}>
         <Container maxWidth="xl" sx={styles?.container}>
           <Box sx={styles?.leftBox}>
             <Grid container sx={styles?.leftBoxGrid}>
