@@ -105,7 +105,9 @@ type GroupDetailProps = {
 function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const router = useRouter();
   const [groupViews, setGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
+  const [filterGroupViews, setFilterGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
   const [sort, setSort] = useState<string>("");
+  const [searchViewText,setSearchViewText] = useState<string>("");
   const [currentGroup, setCurrentGroup] = useState<GetUserGroupsOutputDto>();
   const [isRenameGroupOpenModal, setIsRenameGroupOpenModal] =
     useState<boolean>(false);
@@ -117,6 +119,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
         );
         if (isSucc(getGroupViewsResponse) && getGroupViewsResponse.data) {
           setGroupViews(getGroupViewsResponse.data);
+          setFilterGroupViews(getGroupViewsResponse.data);
         }
         let groupsResponse = await groupService.getUserGroups();
         if (isSucc(groupsResponse) && groupsResponse.data) {
@@ -149,6 +152,11 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const handleUpdateGroup = (newGroup: GetUserGroupsOutputDto) => {
     setCurrentGroup(newGroup);
   };
+  const handleSearchView = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchViewText(event.target.value);
+    let filterViews = groupViews.filter((x) =>!event.target.value|| x.tableViewName.includes(event.target.value));
+    setFilterGroupViews(filterViews);
+  };
   return (
     <MainLayout>
       <Grid container>
@@ -176,13 +184,15 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
               <OutlinedInput
                 id="outlined-adornment"
                 placeholder="Search views"
+                value={searchViewText}
+                onChange={handleSearchView}
                 startAdornment={
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
                 }
               />
-              <Select
+              {/* <Select
                 value={sort}
                 variant="standard"
                 defaultValue="1"
@@ -192,7 +202,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                 <MenuItem value="1">Sort by date modifed down</MenuItem>
                 <MenuItem value="2">Sort by date modifed up</MenuItem>
                 <MenuItem value="3">Sort by 3</MenuItem>
-              </Select>
+              </Select> */}
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <GridViewButton active={isGrid} onClick={handleGridView} />
@@ -203,8 +213,8 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
 
           {isGrid ? (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {groupViews &&
-                groupViews.map((view, index) => {
+              {filterGroupViews &&
+                filterGroupViews.map((view, index) => {
                   return (
                     <Grid item md={2} key={index}>
                       <ViewCard
@@ -219,7 +229,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
             </Grid>
           ) : (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {groupViews.map((view, index) => {
+              {filterGroupViews.map((view, index) => {
                 return (
                   <Grid item md={12} key={index}>
                     <ViewCard

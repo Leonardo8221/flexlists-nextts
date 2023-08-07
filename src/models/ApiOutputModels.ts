@@ -80,6 +80,7 @@ export type GetUserContactsOutputDto = {
     userId:number
     name:any
     email:any
+    avatarUrl?:any
 }
 export type GetProfileOutputDto = {
     firstName:any
@@ -106,6 +107,7 @@ export type GetGroupUsersOutputDto = {
     userName:any
     firstName:any
     lastName:any
+    avatarUrl:string
 }
 export type AddUserToGroupOutputDto = {
     groupUserId:number

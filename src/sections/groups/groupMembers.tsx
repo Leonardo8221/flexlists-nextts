@@ -19,8 +19,13 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { GetGroupUsersOutputDto, GetUserContactsOutputDto } from "src/models/ApiOutputModels";
 import { accountService } from "src/services/account.service";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-function GroupMembers() {
+import { connect } from "react-redux";
+import { UserProfile } from "src/models/UserProfile";
+import { getAvatarUrl } from "src/utils/flexlistHelper";
+type GroupMembersProps = {
+  userProfile: UserProfile
+}
+function GroupMembers({userProfile}:GroupMembersProps) {
   const router = useRouter()
   const [groupUsers,setGroupUsers] = useState<GetGroupUsersOutputDto[]>([]);
   const [userContacts,setUserContacts] = useState<GetUserContactsOutputDto[]>([])
@@ -74,7 +79,7 @@ function GroupMembers() {
      if(isSucc(response))
      {
         var newGroupUsers = Object.assign([],groupUsers);
-        newGroupUsers.push({firstName:'',lastName:'',userId:user.userId,userName:user.name});
+        newGroupUsers.push({firstName:'',lastName:'',userId:user.userId,userName:user.name,avatarUrl:user.avatarUrl});
         setGroupUsers(newGroupUsers)
         setSelectedUserName('')
         setSubmit(false)
@@ -168,7 +173,7 @@ function GroupMembers() {
           component={"span"}
           sx={{ textTransform: "uppercase" }}
         >
-          (1)
+          ({groupUsers.length})
         </Typography>
       </Box>
       {
@@ -192,33 +197,40 @@ function GroupMembers() {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar>A</Avatar>
+              <Avatar
+                sx={{ width: 30, height: 30 }}
+                src={getAvatarUrl(user?.avatarUrl)}
+                alt="photoURL"
+              />
               <Typography variant="body1">{user.userName}</Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 1,
-                  alignItems: "center",
-                  cursor: "pointer",
-                  color: "#eb2027",
-                  fontWeight: 500,
-                }}
-                onClick={() => handleDeleteMember(user.userId)}
-              >
-                <DeleteIcon />
-                <Typography
-                  variant="subtitle2"
-                  component={"span"}
-                  sx={{
-                    display: {
-                      xs: "none",
-                      md: "block",
-                    },
-                  }}
-                >
-                  Delete
-                </Typography>
-              </Box>
+              { user.userId !== userProfile?.id &&
+                 <Box
+                 sx={{
+                   display: "flex",
+                   gap: 1,
+                   alignItems: "center",
+                   cursor: "pointer",
+                   color: "#eb2027",
+                   fontWeight: 500,
+                 }}
+                 onClick={() => handleDeleteMember(user.userId)}
+               >
+                 <DeleteIcon />
+                 <Typography
+                   variant="subtitle2"
+                   component={"span"}
+                   sx={{
+                     display: {
+                       xs: "none",
+                       md: "block",
+                     },
+                   }}
+                 >
+                   Delete
+                 </Typography>
+               </Box>
+              }
+              
               {/* <Typography variant="body1">{user.userName}</Typography> */}
             </Box>
             <CloseIcon
@@ -233,4 +245,11 @@ function GroupMembers() {
   );
 }
 
-export default GroupMembers;
+const mapStateToProps = (state: any) => ({
+  userProfile: state.user.userProfile,
+});
+
+const mapDispatchToProps = {
+  
+};
+export default connect(mapStateToProps, mapDispatchToProps)(GroupMembers);
