@@ -126,7 +126,14 @@ function FieldFormPanel({
     setFlashMessage({message:message,type:'error'})
   }
   const handleSubmit = async () => {
-    setIsSubmit(true)
+    setIsSubmit(true);
+    if(currentField.name && (currentField.name.toLowerCase() === 'id'||
+    currentField.name.toLowerCase() === 'createdat'||
+    currentField.name.toLowerCase() === 'updatedat'||
+    currentField.name.toLowerCase() === '___archived')){
+      setError(`Field name cannot be ${currentField.name}`)
+      return
+    }
     let _errors: { [key: string]: string|boolean } = {}
 
     const _setErrors = (e: { [key: string]: string|boolean }) => { 
