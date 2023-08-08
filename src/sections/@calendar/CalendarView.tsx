@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, addWeeks, compareAsc, addHours } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, addWeeks, addYears, compareAsc, addHours } from 'date-fns';
 import RowFormPanel from "src/sections/@list/RowFormPanel"
 import { connect } from 'react-redux';
 import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
@@ -12,6 +12,7 @@ import WeekBar from './WeekBar';
 import MonthlyView from './MonthlyView';
 import WeeklyView from './WeeklyView';
 import DailyView from './DailyView';
+import ListView from './ListView';
 import CalendarFooter from './CalendarFooter';
 import { getDataColumnId } from 'src/utils/flexlistHelper';
 import { FlatWhere, View } from 'src/models/SharedModels';
@@ -71,6 +72,15 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       setCycleStart(startOfWeek(currentDate));
 
       for (let i = 0; i < 7; i++) {
+        displayDays.push(day);
+        day = addDays(day, 1);
+      }
+    } else if (mode === 'list') {
+      let day = currentDate;
+
+      setCycleStart(currentDate);
+
+      while (day <= addYears(currentDate, 1)) {
         displayDays.push(day);
         day = addDays(day, 1);
       }
@@ -142,15 +152,24 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
     setCurrentDate(new Date());
   };
 
-  const handlePageDays = (flag: number) => {
+  const handleFirstPageer = (flag: number) => {
     if (mode === 'month') setCurrentDate(addMonths(currentDate, flag));
     else if (mode === 'week') setCurrentDate(addWeeks(currentDate, flag));
-    else if (mode === 'day') setCurrentDate(addDays(currentDate, flag));
+    else if (mode === 'day' || mode === 'list') setCurrentDate(addDays(currentDate, flag));
     else {}
   };
+
+  const handleSecondPageer = (flag: number) => {
+    if (mode === 'month') setCurrentDate(addYears(currentDate, flag));
+    else if (mode === 'week') setCurrentDate(addMonths(currentDate, flag));
+    else if (mode === 'day' || mode === 'list') setCurrentDate(addWeeks(currentDate, flag));
+    else {}
+  };
+
   const getTitle = (data:any):string =>{
     return data[getDataColumnId(currentView.config.titleId,columns)]
   }
+
   return (
     <Box sx={{ display: {md: 'flex'}, paddingRight: {md: 1}, height: {xs: `${windowHeight - (open ? 312 : 268)}px`, md: 'calc(100% - 160px)', lg: 'calc(100% - 104px)'}, overflow: {xs: 'auto', md: 'inherit'} }}>
       <Box
@@ -162,9 +181,9 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
           flexDirection: 'column'
         }}
       >
-        <Box sx={{ paddingLeft: mode === 'month' ? 'inherit' : isDesktop ? '64px' : '24px' }}>
-          <CalendarTitle current={format(cycleStart, 'MMMM yyyy')} handlePageDays={handlePageDays} />
-          {mode !== 'day' && <WeekBar mode={mode} />}
+        <Box sx={{ paddingLeft: mode === 'month' || mode === 'list' ? 'inherit' : isDesktop ? '64px' : '24px' }}>
+          <CalendarTitle mode={mode} current={cycleStart} handleFirstPageer={handleFirstPageer} handleSecondPageer={handleSecondPageer} />
+          {mode !== 'day' && mode !== 'list' && <WeekBar mode={mode} />}
         </Box>
         {mode === 'month' ? 
           <MonthlyView days={days} currentDate={currentDate} cycleStart={cycleStart} getData={getData} handleData={handleData} getTitle={getTitle} /> :
@@ -172,6 +191,8 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
           <WeeklyView hours={hours} days={days} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
         mode === 'day' ?
           <DailyView hours={hours} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
+        mode === 'list' ?
+          <ListView days={days} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
           <></>
         }
       </Box>

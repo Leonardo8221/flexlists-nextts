@@ -12,7 +12,7 @@ const CalendarFooter = (props: Props) => {
   const { mode, handleNewRowPanel, handleMode } = props;
   const theme = useTheme();
 
-  const modes = ['month', 'week', 'day'];
+  const modes = ['month', 'week', 'day', 'list'];
 
   return (
     <Stack
