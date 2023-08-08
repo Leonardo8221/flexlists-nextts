@@ -339,7 +339,7 @@ const RowFormPanel = ({
     if (time == null) {
       return;
     }
-    setValues({ ...values, [columnId]: time });
+    setValues({ ...values, [columnId]: `${time.hour()}:${time.minute()}:${time.second()}`});
     // if(typeof time === 'string')
     // {
     //   setValues({ ...values, [columnId]: time })
@@ -590,7 +590,7 @@ const RowFormPanel = ({
         return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <TimePicker
-              value={dayjs(values[column.id])}
+              value={values[column.id]?dayjs(new Date(`${new Date().toLocaleDateString()} ${values[column.id]}`)):null}
               label={column.name}
               onChange={(x) => {
                 setTimeValue(column.id, x);
@@ -604,20 +604,20 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <TextField
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
+            <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+            <TimePicker
+              readOnly = {true}
+              value={values[column.id]?dayjs(new Date(`${new Date().toLocaleDateString()} ${values[column.id]}`)):null}
               label={column.name}
-              value={
-                values && values[getDataColumnId(column.id, columns)]
-                  ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString()
-                  : "null"
+              onChange={(x) => {
+              }}
+              className={
+                submit && column.required && !values[column.id]
+                  ? "Mui-error"
+                  : ""
               }
             />
+          </LocalizationProvider>
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>

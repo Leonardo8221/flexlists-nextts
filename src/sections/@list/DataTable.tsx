@@ -60,6 +60,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
+import { convertToTimeAMPM } from "src/utils/convertUtils";
 
 type DataTableProps = {
   tab: boolean;
@@ -295,7 +296,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleString()
+                      ? convertToTimeAMPM((cellValue as string))
                       : ""}
                   </Box>
                 );
