@@ -95,7 +95,8 @@ export type CreateUserGroupOutputDto = {
 export type GetUserGroupsOutputDto = {
     groupId:number
     name:any
-    description?:any
+    description?:any,
+    avatarUrl?:any
 }
 export type GetGroupViewsOutputDto = {
     tableViewId:number
@@ -129,4 +130,10 @@ export type GetTranslationTextsOutputDto = {
     translationKey:any
     i18N:any
     translation?:any
+}
+export type GetUserGroupByIdOutputDto = {
+    groupId:number
+    name:any
+    description?:any
+    avatarUrl?:any
 }

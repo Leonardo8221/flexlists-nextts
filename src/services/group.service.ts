@@ -1,6 +1,6 @@
 import { FlexlistsError,FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
-import { CreateUserGroupOutputDto } from 'src/models/ApiOutputModels'
+import { CreateUserGroupOutputDto, GetUserGroupByIdOutputDto } from 'src/models/ApiOutputModels'
 import { GetUserGroupsOutputDto } from 'src/models/ApiOutputModels'
 import { GetGroupViewsOutputDto } from 'src/models/ApiOutputModels'
 import { GetGroupUsersOutputDto } from 'src/models/ApiOutputModels'
@@ -17,18 +17,22 @@ export const groupService = {
     deleteUserFromGroup,
 };
 
-async function createUserGroup(name:string,description?:string): Promise<FlexlistsError|FlexlistsSuccess<CreateUserGroupOutputDto>> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateUserGroupOutputDto>>(`/api/group/createUserGroup`, {name,description})
+async function createUserGroup(name:string,description?:string,avatarUrl?:string): Promise<FlexlistsError|FlexlistsSuccess<CreateUserGroupOutputDto>> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess<CreateUserGroupOutputDto>>(`/api/group/createUserGroup`, {name,description,avatarUrl})
 
   return response.data;
 };
-async function updateUserGroup(groupId:number,name?:string,description?:string): Promise<FlexlistsError|FlexlistsSuccess> {
-  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/group/updateUserGroup`, {groupId,name,description})
+async function updateUserGroup(groupId:number,name?:string,description?:string,avatarUrl?:string): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/group/updateUserGroup`, {groupId,name,description,avatarUrl})
 
   return response.data;
 };
 async function getUserGroups(): Promise<FlexlistsError|FlexlistsSuccess<GetUserGroupsOutputDto[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetUserGroupsOutputDto[]>>('/api/group/getUserGroups')
+  return response.data;
+};
+export async function getUserGroupById(groupId:number): Promise<FlexlistsError|FlexlistsSuccess<GetUserGroupByIdOutputDto>> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess<GetUserGroupByIdOutputDto>>('/api/group/getUserGroupById'+`?groupId=${groupId}`)
   return response.data;
 };
 async function deleteUserGroup(groupId:number): Promise<FlexlistsError|FlexlistsSuccess> {

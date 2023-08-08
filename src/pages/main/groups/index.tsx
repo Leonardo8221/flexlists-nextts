@@ -61,9 +61,9 @@ const AllGroups = ({ groups, fetchGroups }: allGroupsProps) => {
                   <Grid item xs={12} sm={6} md={2} key={index}>
                     <GroupCard
                       groupId={group.groupId}
-                      icon={<></>}
                       title={group.name}
                       description={group.description}
+                      avatarUrl={group.avatarUrl}
                     ></GroupCard>
                   </Grid>
                 );
