@@ -6,9 +6,11 @@ import ViewFooter from '../../components/view-footer/ViewFooter';
 import Pagination from '@mui/material/Pagination';
 import { View } from "src/models/SharedModels";
 import { fetchRowsByPage, setCurrentView } from "src/redux/actions/viewActions";
+import { getDataColumnId, downloadFileUrl, getChoiceField } from 'src/utils/flexlistHelper';
 
 type Props = {
   rows: any;
+  columns: any;
   open: boolean;
   currentView: View;
   count: number;
@@ -17,7 +19,7 @@ type Props = {
 };
 
 const GalleryView = (props: Props) => {
-  const { rows, open, currentView, count, fetchRowsByPage, setCurrentView } = props;
+  const { rows, columns, open, currentView, count, fetchRowsByPage, setCurrentView } = props;
   const isXL = useResponsive('up', 'xl');
   const isLG = useResponsive('up', 'lg');
   const isMD = useResponsive('up', 'md');
@@ -42,14 +44,32 @@ const GalleryView = (props: Props) => {
     fetchRowsByPage(newView.page, PAGE_SIZE);
   };
 
-  const getColorByImportance = (importance: string) => {
-    return importance === 'Very important' ? '#FFB7B7' : '#FFEBB7';
-  };
-
   const handleData = (data: any) => {
     setSelectedRowData(data);
     setVisibleAddRowPanel(true);
   };
+
+  const getAvatar = (data: any):string =>{
+    const columnData = data[getDataColumnId(currentView.config.avatarId, columns)];
+    
+    return columnData ? downloadFileUrl(columnData.fileId) : `/assets/images/users/undefined.jpg`;
+  }
+
+  const getTaskName = (data: any):string =>{
+    return data[getDataColumnId(currentView.config.nameId, columns)]
+  }
+
+  const getImportance = (data: any):string =>{
+    const importanceColumn = columns.find((column: any) => column.id === currentView.config.importanceId);
+    const columnData = data[getDataColumnId(currentView.config.importanceId, columns)];
+    const importanceColor = getChoiceField(columnData, importanceColumn);
+
+    return importanceColor.color.bg;
+  }
+
+  const getTaskDescription = (data: any):string =>{
+    return data[getDataColumnId(currentView.config.descriptionId, columns)]
+  }
 
   return (
     <Box sx={{ p: 1, overflowY: 'auto', height: `${windowHeight - (isLG ? 205 : isMD ? 260 : (open ? 306 : 262))}px` }}>
@@ -64,20 +84,20 @@ const GalleryView = (props: Props) => {
                             objectFit: 'cover'
                         }}
                         alt="User image"
-                        src={`/assets/images/users/${row.user}.jpg`}
+                        src={getAvatar(row)}
                     />
                     <Box sx={{ px: 1.5, py: 2, marginTop: 1 }}>
                         <Box sx={{ marginBottom: 1.5 }}>
                             <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>Task Name</Box>
-                            <Box sx={{ fontWeight: 'bold' }}>{row.task_name}</Box>
+                            <Box sx={{ fontWeight: 'bold' }}>{getTaskName(row)}</Box>
                         </Box>
                         <Box sx={{ marginBottom: 1.5 }}>
                             <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>Importance</Box>
-                            <Box sx={{ fontSize: '14px', backgroundColor: getColorByImportance(row.importance), borderRadius: '5px', px: 1, py: 0.2, marginTop: 0.5, marginLeft: 0.5, width: '70%' }}>{row.importance}</Box>
+                            <Box sx={{ fontSize: '14px', backgroundColor: getImportance(row), borderRadius: '5px', px: 1, py: 0.2, marginTop: 0.5, marginLeft: 0.5, width: '70%' }}>{row.importance}</Box>
                         </Box>
                         <Box sx={{ marginBottom: 1.5, maxHeight: {sm: '64px'}, overflow: 'hidden' }}>
                             <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>Task Description</Box>
-                            <Box sx={{ fontSize: '14px' }}>{row.description}</Box>
+                            <Box sx={{ fontSize: '14px' }}>{getTaskDescription(row)}</Box>
                         </Box>
                     </Box>
                 </Box>
@@ -93,6 +113,7 @@ const GalleryView = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
+  columns: state.view.columns,
   currentView: state.view.currentView,
   count: state.view.count
 });

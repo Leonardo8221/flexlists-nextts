@@ -14,8 +14,10 @@ export type KanbanConfig = {
 }
 
 export type GalleryConfig = {
-    imageId: number
-    titleId: number
+    avatarId: number
+    nameId: number
+    importanceId: number
+    descriptionId: number
 }
 
 export type MapConfigLacation = {

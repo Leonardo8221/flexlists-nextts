@@ -26,6 +26,7 @@ import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import KanbanViewConfig from "./KanbanViewConfig";
 import CalendarViewConfig from "./CalendarViewConfig";
+import GalleryViewConfig from "./GalleryViewConfig";
 
 const style = {
   position: "absolute" as "absolute",
@@ -174,6 +175,28 @@ const ListViewForm = ({
           isValidConfig = false;
         }
         break;
+      case ViewType.Gallery:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.avatarId || config.avatarId === 0) {
+          setError("Avatar field required");
+          isValidConfig = false;
+        }
+        if (!config.nameId || config.nameId === 0) {
+          setError("Task Name field required");
+          isValidConfig = false;
+        }
+        if (!config.importanceId || config.importanceId === 0) {
+          setError("Importance field required");
+          isValidConfig = false;
+        }
+        if (!config.descriptionId || config.descriptionId === 0) {
+          setError("Task Description field required");
+          isValidConfig = false;
+        }
+        break;
       case ViewType.KanBan:
         if (!config) {
           setError("Config invalid");
@@ -297,6 +320,13 @@ const ListViewForm = ({
               <Box>
                 {currentView && viewType === ViewType.Calendar && (
                   <CalendarViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+                {currentView && viewType === ViewType.Gallery && (
+                  <GalleryViewConfig
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}

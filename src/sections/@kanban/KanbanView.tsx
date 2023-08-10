@@ -52,6 +52,7 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
 
     let newView: View = Object.assign({}, currentView);
     newView.conditions = [];
+    newView.order = [];
 
     for(let i = 0; i < boardColumns.length; i++) {
       const filter: FlatWhere = {
@@ -65,6 +66,11 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
       newView.conditions.push(filter);
       if (i < boardColumns.length -1) newView.conditions.push("Or");
     }
+
+    newView.order.push({
+      fieldId: currentView.config?.orderColumnId,
+      direction: "asc"
+    });
     
     setCurrentView(newView);
     fetchRows();
@@ -122,6 +128,8 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
       }
       const [changed] = newRows.splice(sourceIndex, 1);
       newRows.splice(destIndex, 0, changed);
+
+      newRows[destIndex][currentView.config?.orderColumnId] = destTasks[destinationIndex - 1] ? destTasks[destinationIndex - 1][currentView.config?.orderColumnId] + 1 : destTasks[destinationIndex][currentView.config?.orderColumnId] - 1;
 
       const updateRowRespone = await listContentService.updateContent(
         currentView.id,
