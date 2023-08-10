@@ -12,13 +12,32 @@ const nextConfig = {
     config.experiments = config.experiments || {};
     config.experiments.topLevelAwait = true;
 
+    // config.module.rules.push({
+    //   test: /\.js$/,
+    //   exclude: /node_modules/,
+    //   use: {
+    //     loader: 'babel-loader',
+    //   },
+    // });
+
     config.module.rules.push({
       test: /\.js$/,
-      exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env'],
+        },
       },
+      include(path) {
+        if (path.includes("marked")) {
+          return true
+        }
+        if (path.includes("node_modules")) {
+          return false
+        }
+      }
     });
+
 
     return config;
   }

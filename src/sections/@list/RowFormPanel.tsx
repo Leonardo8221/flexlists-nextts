@@ -128,12 +128,11 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: `${
-        values &&
+      title: `${values &&
         values[columns.find((x) => x.system && x.name === "___archived").id]
-          ? "Unarchive"
-          : "Archive"
-      }`,
+        ? "Unarchive"
+        : "Archive"
+        }`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -166,21 +165,19 @@ const RowFormPanel = ({
 
   const handleSubmit = async () => {
     setSubmit(true);
-    if (!values)
-    {
-      setFlashMessage({message: "No values", type: "error"})
+    if (!values) {
+      setFlashMessage({ message: "No values", type: "error" })
     }
 
     let validator = true;
-    let errorFields : string[] = [];
+    let errorFields: string[] = [];
     if (values) {
       columns.forEach((column) => {
-        if (!column.system && column.required && (!values[column.id]||values[column.id]===null))
-        {
+        if (!column.system && column.required && (!values[column.id] || values[column.id] === null)) {
           validator = false;
           errorFields.push(column.name);
         }
-          
+
       });
       if (validator) {
         //update row data
@@ -192,7 +189,7 @@ const RowFormPanel = ({
           if (isSucc(updateRowRespone)) {
             onSubmit(values, "update");
           } else {
-            setFlashMessage({message: (updateRowRespone as FlexlistsError).message, type: "error"})
+            setFlashMessage({ message: (updateRowRespone as FlexlistsError).message, type: "error" })
             return;
           }
         } else {
@@ -217,16 +214,15 @@ const RowFormPanel = ({
             }
             onSubmit(values, "create");
           } else {
-            setFlashMessage({message: (createRowResponse as FlexlistsError).message, type: "error"})
+            setFlashMessage({ message: (createRowResponse as FlexlistsError).message, type: "error" })
             return;
           }
         }
 
         onClose();
       }
-      else
-      {
-        setFlashMessage({message: `${errorFields.join(',')} ${errorFields.length>1?'are':'is'} required`, type: "error"})
+      else {
+        setFlashMessage({ message: `${errorFields.join(',')} ${errorFields.length > 1 ? 'are' : 'is'} required`, type: "error" })
       }
     }
   };
@@ -318,8 +314,7 @@ const RowFormPanel = ({
   };
 
   const setDateValue = (columnId: number, date: Dayjs | Date | null) => {
-    try
-    {
+    try {
       if (date == null) {
         return;
       }
@@ -329,17 +324,16 @@ const RowFormPanel = ({
       }
       setValues({ ...values, [columnId]: date.toISOString() });
     }
-    catch(e)
-    {
+    catch (e) {
 
     }
-    
+
   };
   const setTimeValue = (columnId: number, time: Dayjs | null) => {
     if (time == null) {
       return;
     }
-    setValues({ ...values, [columnId]: `${time.hour()}:${time.minute()}:${time.second()}`});
+    setValues({ ...values, [columnId]: `${time.hour()}:${time.minute()}:${time.second()}` });
     // if(typeof time === 'string')
     // {
     //   setValues({ ...values, [columnId]: time })
@@ -506,7 +500,7 @@ const RowFormPanel = ({
         return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
-              value={values[column.id]&&values[column.id]!=null?dayjs(values[column.id]):null}
+              value={values[column.id] && values[column.id] != null ? dayjs(values[column.id]) : null}
               label={column.name}
               onChange={(x) => {
                 setDateValue(column.id, x);
@@ -529,8 +523,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleString()
                   : ""
               }
             />
@@ -571,8 +565,8 @@ const RowFormPanel = ({
               value={
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                   : ""
               }
             />
@@ -590,7 +584,7 @@ const RowFormPanel = ({
         return currentMode !== "view" && !isPrint ? (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <TimePicker
-              value={values[column.id]?dayjs(new Date(`${new Date().toLocaleDateString()} ${values[column.id]}`)):null}
+              value={values[column.id] ? dayjs(new Date(`${new Date().toLocaleDateString()} ${values[column.id]}`)) : null}
               label={column.name}
               onChange={(x) => {
                 setTimeValue(column.id, x);
@@ -605,19 +599,19 @@ const RowFormPanel = ({
         ) : (
           <div key={column.id}>
             <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
-            <TimePicker
-              readOnly = {true}
-              value={values[column.id]?dayjs(new Date(`${new Date().toLocaleDateString()} ${values[column.id]}`)):null}
-              label={column.name}
-              onChange={(x) => {
-              }}
-              className={
-                submit && column.required && !values[column.id]
-                  ? "Mui-error"
-                  : ""
-              }
-            />
-          </LocalizationProvider>
+              <TimePicker
+                readOnly={true}
+                value={values[column.id] ? dayjs(new Date(`${new Date().toLocaleDateString()} ${values[column.id]}`)) : null}
+                label={column.name}
+                onChange={(x) => {
+                }}
+                className={
+                  submit && column.required && !values[column.id]
+                    ? "Mui-error"
+                    : ""
+                }
+              />
+            </LocalizationProvider>
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
             </Typography>
