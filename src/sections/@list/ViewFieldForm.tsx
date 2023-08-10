@@ -11,26 +11,32 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ViewField } from "src/models/ViewField";
-import { isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { fieldService } from "src/services/field.service";
 import { View } from "src/models/SharedModels";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { connect } from "react-redux";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 
 interface ViewFieldFormProps {
   currentView: View;
   field: ViewField;
   onUpdate: (field: ViewField) => void;
   onClose: () => void;
+  setFlashMessage: (message: FlashMessageModel) => void;
 }
-export default function ViewFieldForm({
+ function ViewFieldForm({
   currentView,
   field,
   onUpdate,
   onClose,
+  setFlashMessage
 }: ViewFieldFormProps) {
   const theme = useTheme();
+  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
   const [currentField, setCurrentField] = useState<ViewField>(field);
-  const [error, setError] = useState<string>("");
 
   const [submit, setSubmit] = useState(false);
   const [windowHeight, setWindowHeight] = useState(0);
@@ -45,9 +51,18 @@ export default function ViewFieldForm({
       setCurrentField(field);
     }
   }, [field]);
-
+  const setError = (message:string)=>{
+    setFlashMessage({message:message,type:'error'})
+  }
   const handleSubmit = async () => {
     setSubmit(true);
+    let _errors: { [key: string]: string|boolean } = {}
+
+    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+      _errors = e
+    } 
+    let newGroupName = await frontendValidate(ModelValidatorEnum.FieldDefinition,FieldValidatorEnum.name,currentField.viewFieldName,_errors,_setErrors,true)
+        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
     var existingField = currentView.fields?.find((x)=>x.id == currentField.id)
     if(existingField)
     {
@@ -62,7 +77,7 @@ export default function ViewFieldForm({
       if (isSucc(updateViewFieldResponse)) {
         onUpdate(currentField);
       } else {
-        setError(ErrorConsts.InternalServerError);
+        setError((updateViewFieldResponse as FlexlistsError).message);
         return;
       }
     }
@@ -79,7 +94,7 @@ export default function ViewFieldForm({
       if (isSucc(createiewFieldResponse)) {
         onUpdate(currentField);
       } else {
-        setError(ErrorConsts.InternalServerError);
+        setError((createiewFieldResponse as FlexlistsError).message);
         return;
       }
     }
@@ -104,9 +119,6 @@ export default function ViewFieldForm({
   };
   return (
     <form onSubmit={(e) => e.preventDefault()}>
-      <Stack>
-        <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-      </Stack>
       <Stack
         sx={{
           // width: '100%',
@@ -121,7 +133,7 @@ export default function ViewFieldForm({
           value={currentField.viewFieldName}
           onChange={onNameChange}
           required
-          error={submit && !currentField.viewFieldName}
+          error={submit && isFrontendError(FieldValidatorEnum.name,errors)}
         />
         <FormGroup sx={{ mt: 1 }}>
           <FormControlLabel
@@ -157,3 +169,11 @@ export default function ViewFieldForm({
     </form>
   );
 }
+const mapStateToProps = (state: any) => ({
+});
+
+const mapDispatchToProps = {
+  setFlashMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewFieldForm);

@@ -11,6 +11,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import { getAvatarUrl } from "src/utils/flexlistHelper";
+import WysiwygView from "src/components/wysiwyg/wysiwygView";
 
 // const CardIconStyle = styled("img")(({ theme }) => ({
 //   width: 40,
@@ -21,19 +23,23 @@ import { PATH_MAIN } from "src/routes/paths";
 
 type GroupCard = {
   groupId: number;
-  icon: JSX.Element;
   title?: string;
   description?: string;
+  avatarUrl?: string;
 };
-
+const AvatarImg = styled("img")(({ theme }) => ({
+  width: "100%",
+  height: "100%",
+}));
 export default function GroupCard({
   groupId,
-  icon,
   title,
   description,
+  avatarUrl,
   ...other
 }: GroupCard) {
   const router = useRouter();
+  console.log(avatarUrl)
   return (
     <Link
       href=""
@@ -58,7 +64,28 @@ export default function GroupCard({
       >
         {/* <CardIconStyle src={icon} alt={title} /> */}
         <Box sx={{ pt: 3 }}>
-          <Avatar sx={{ backgroundColor: "green" }}>{icon}</Avatar>
+        <Avatar
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    border: "solid 6px #fff",
+                    boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
+                    fontSize: 40,
+                    position: "relative",
+                    "&:hover .overlay": {
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                      height: "100%",
+                      position: "absolute",
+                    },
+                  }}
+                >
+                  <AvatarImg src={avatarUrl?getAvatarUrl(avatarUrl):''} />
+                </Avatar>
         </Box>
         <CardHeader
           title={title}
@@ -74,7 +101,7 @@ export default function GroupCard({
             pt: 0,
           }}
         >
-          <Typography
+          {/* <Typography
             variant="caption"
             sx={{
               whiteSpace: "nowrap",
@@ -86,7 +113,10 @@ export default function GroupCard({
             }}
           >
             {description}
-          </Typography>
+          </Typography> */}
+          <WysiwygView
+                            value={description}
+            />
         </CardContent>
       </Card>
     </Link>

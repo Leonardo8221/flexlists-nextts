@@ -43,6 +43,11 @@ const ROOTS_ADMIN = "/admin";
 export const PATH_ADMIN = {
   contentManagement: path(ROOTS_ADMIN, "/contentManagement")
 };
+const ROOTS_ADMIN_API = "/api/admin";
+export const PATH_ADMIN_API = {
+  getSearchTypes: path(ROOTS_ADMIN_API, "/getSearchTypes"),
+  getLanguages: path(ROOTS_ADMIN_API, "/getLanguages")
+};
 
 export const getRolePathDefault = (role: string) => {
   switch (role) {

@@ -150,7 +150,11 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
-
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
   styles = {
     body: {
       background:
@@ -326,7 +330,7 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
               src="/assets/illustrations/illustration_login.png"
             />
           </Box>
-          <Box sx={styles?.rightBox}>
+          <Box sx={styles?.rightBox} onKeyDown={handleKeyDown}>
             <Box sx={styles?.circleEffect}></Box>
 
             <Grid container rowSpacing={4} sx={styles?.rightBoxGrid}>

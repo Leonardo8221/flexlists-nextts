@@ -13,6 +13,7 @@ import {
   MenuItem,
   TextField,
   Alert,
+  styled,
 } from "@mui/material";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import SearchIcon from "@mui/icons-material/Search";
@@ -24,17 +25,26 @@ import ViewCard from "src/sections/@view/ViewCard";
 import { useRouter } from "next/router";
 import {
   GetGroupViewsOutputDto,
+  GetUserGroupByIdOutputDto,
   GetUserGroupsOutputDto,
 } from "src/models/ApiOutputModels";
-import { groupService } from "src/services/group.service";
+import { getUserGroupById, groupService } from "src/services/group.service";
 import { convertToInteger } from "src/utils/convertUtils";
-import { isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { connect } from "react-redux";
 import CentralModal from "src/components/modal/CentralModal";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import WysiwygView from "src/components/wysiwyg/wysiwygView";
+import { getAvatarUrl } from "src/utils/flexlistHelper";
+import { uploadFile } from "src/services/admin/contentManagement.service";
+import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 
+const AvatarImg = styled("img")(({ theme }) => ({
+  width: "100%",
+  height: "100%",
+}));
 const activeButtonStyle: React.CSSProperties = {
   border: "1px solid #eee",
   background: "#eee",
@@ -105,8 +115,10 @@ type GroupDetailProps = {
 function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const router = useRouter();
   const [groupViews, setGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
+  const [filterGroupViews, setFilterGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
   const [sort, setSort] = useState<string>("");
-  const [currentGroup, setCurrentGroup] = useState<GetUserGroupsOutputDto>();
+  const [searchViewText,setSearchViewText] = useState<string>("");
+  const [currentGroup, setCurrentGroup] = useState<GetUserGroupByIdOutputDto>();
   const [isRenameGroupOpenModal, setIsRenameGroupOpenModal] =
     useState<boolean>(false);
   useEffect(() => {
@@ -117,13 +129,11 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
         );
         if (isSucc(getGroupViewsResponse) && getGroupViewsResponse.data) {
           setGroupViews(getGroupViewsResponse.data);
+          setFilterGroupViews(getGroupViewsResponse.data);
         }
-        let groupsResponse = await groupService.getUserGroups();
+        let groupsResponse = await getUserGroupById(convertToInteger(router.query.groupId));
         if (isSucc(groupsResponse) && groupsResponse.data) {
-          let group = groupsResponse.data.find(
-            (x: any) => x.groupId === convertToInteger(router.query.groupId)
-          );
-          setCurrentGroup(group);
+          setCurrentGroup(groupsResponse.data);
         }
       }
     }
@@ -149,21 +159,62 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const handleUpdateGroup = (newGroup: GetUserGroupsOutputDto) => {
     setCurrentGroup(newGroup);
   };
+  const handleSearchView = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchViewText(event.target.value);
+    let filterViews = groupViews.filter((x) =>!event.target.value|| x.tableViewName.includes(event.target.value));
+    setFilterGroupViews(filterViews);
+  };
   return (
     <MainLayout>
       <Grid container>
         <Grid item xs={10} sx={{ p: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography variant="h6">{currentGroup?.name}</Typography>
+          <Grid container>
+            <Grid item xs={11}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Avatar
+                  sx={{
+                    width: 128,
+                    height: 128,
+                    border: "solid 6px #fff",
+                    boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
+                    fontSize: 40,
+                    position: "relative",
+                    "&:hover .overlay": {
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                      height: "100%",
+                      position: "absolute",
+                    },
+                  }}
+                >
+                  <AvatarImg src={currentGroup?.avatarUrl?getAvatarUrl(currentGroup?.avatarUrl):''} />
+                </Avatar>
+                <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <Typography variant="h6">{currentGroup?.name}</Typography>
+                      </Box>
+                    
+                    </Box>
+                  <WysiwygView
+                            value={currentGroup?.description}
+                  />
+              </Box>
+              
             </Box>
-            <Button variant="contained" onClick={() => onOpenRenameModal()}>
-              Rename Group
-            </Button>
-          </Box>
-          <Typography component={"div"} variant="body1" sx={{ mt: 2 }}>
-            {currentGroup?.description}
-          </Typography>
+            </Grid>
+            <Grid item xs={1}>
+                 <Button variant="contained" onClick={() => onOpenRenameModal()}>
+                        Edit Group
+                </Button>
+            </Grid>
+          </Grid>
+        
+          
           <Divider light sx={{ my: 2 }}></Divider>
           <Box
             sx={{
@@ -176,13 +227,15 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
               <OutlinedInput
                 id="outlined-adornment"
                 placeholder="Search views"
+                value={searchViewText}
+                onChange={handleSearchView}
                 startAdornment={
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
                 }
               />
-              <Select
+              {/* <Select
                 value={sort}
                 variant="standard"
                 defaultValue="1"
@@ -192,7 +245,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                 <MenuItem value="1">Sort by date modifed down</MenuItem>
                 <MenuItem value="2">Sort by date modifed up</MenuItem>
                 <MenuItem value="3">Sort by 3</MenuItem>
-              </Select>
+              </Select> */}
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <GridViewButton active={isGrid} onClick={handleGridView} />
@@ -203,8 +256,8 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
 
           {isGrid ? (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {groupViews &&
-                groupViews.map((view, index) => {
+              {filterGroupViews &&
+                filterGroupViews.map((view, index) => {
                   return (
                     <Grid item md={2} key={index}>
                       <ViewCard
@@ -219,7 +272,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
             </Grid>
           ) : (
             <Grid container spacing={2} sx={{ my: 2 }}>
-              {groupViews.map((view, index) => {
+              {filterGroupViews.map((view, index) => {
                 return (
                   <Grid item md={12} key={index}>
                     <ViewCard
@@ -298,10 +351,10 @@ const RenameGroup = ({
     setCurrentGroup(newGroup);
   };
   const handleGroupDescriptionChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    newValue: string
   ) => {
     var newGroup = Object.assign({}, currentGroup);
-    newGroup.description = event.target.value;
+    newGroup.description = newValue;
     setIsUpdate(true);
     setCurrentGroup(newGroup);
   };
@@ -321,7 +374,8 @@ const RenameGroup = ({
     var response = await groupService.updateUserGroup(
       currentGroup.groupId,
       currentGroup.name,
-      currentGroup.description
+      currentGroup.description,
+      currentGroup.avatarUrl
     );
     if (isSucc(response)) {
       setIsUpdate(false);
@@ -329,10 +383,72 @@ const RenameGroup = ({
       handleClose();
     }
   };
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setIsUpdate(true);
+      const formData = new FormData();
+      formData.append("file", event.target.files[0]);
+      let response = await uploadFile(formData);
+      if (isSucc(response) && response.data && response.data.fileId) {
+        let newGroup  = Object.assign({}, currentGroup);
+        newGroup.avatarUrl = response.data.fileId;
+        setCurrentGroup(newGroup)
+      }
+      else
+      {
+        setFlashMessage({message:(response as FlexlistsError).message,type:"error"});
+      }
+    }
+  };
+ const handleDeleteAvatar = () => {
+    let newGroup  = Object.assign({}, currentGroup);
+    newGroup.avatarUrl = "";
+    setCurrentGroup(newGroup)
+  };
   return (
     <CentralModal open={open} handleClose={handleClose}>
       <Typography variant="h6">Rename Group</Typography>
       <Divider sx={{ my: 2 }}></Divider>
+      <Box sx={{ display: "flex", alignItems: "center",mt:'15px',mb:'20px' }}>
+        <Avatar
+          sx={{
+            width: 128,
+            height: 128,
+            border: "solid 6px #fff",
+            boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
+            fontSize: 40,
+            position: "relative",
+            "&:hover .overlay": {
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+            },
+          }}
+        >
+          <AvatarImg src={currentGroup?.avatarUrl?getAvatarUrl(currentGroup?.avatarUrl):''} />
+        </Avatar>
+        <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
+          <Button component="label" variant="contained">
+            Choose File
+            <input
+              type="file"
+              accept={`.jpg,.png,.jpeg`}
+              hidden
+              onChange={handleFileChange}
+            />
+          </Button>
+          <Button variant="outlined" sx={{ mt: 1 }} onClick={handleDeleteAvatar}>
+            Delete Icon
+          </Button>
+        </Box>
+      </Box>
       <Box>
         <Typography variant="subtitle2">Name</Typography>
         <TextField
@@ -348,13 +464,17 @@ const RenameGroup = ({
         <Typography variant="subtitle2" sx={{ mt: 2 }}>
           Description
         </Typography>
-        <TextField
+        <WysiwygEditor
+              value={currentGroup.description}
+              setValue={(newValue) => handleGroupDescriptionChange(newValue)}
+         />
+        {/* <TextField
           multiline
           rows={4}
           fullWidth
           value={currentGroup?.description}
           onChange={handleGroupDescriptionChange}
-        />
+        /> */}
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button

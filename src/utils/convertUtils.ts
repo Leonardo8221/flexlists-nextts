@@ -94,3 +94,21 @@ export function b64toBlob (b64Data : string, contentType='', sliceSize=512) {
   const blob = new Blob(byteArrays, {type: contentType});
   return blob;
 }
+
+export function convertToTimeAMPM(timeString: string): string {
+  let formattedTime: string = '';
+  try
+  {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    if (hours >= 12) {
+      formattedTime = `${hours === 12 ? 12 : hours - 12}:${minutes.toString().padStart(2, '0')} PM`;
+    } else {
+      formattedTime = `${hours === 0 ? 12 : hours}:${minutes.toString().padStart(2, '0')} AM`;
+    }
+  }
+  catch(err)
+  {
+
+  }
+  return formattedTime;
+}

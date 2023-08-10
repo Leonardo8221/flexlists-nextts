@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import "@coreui/coreui/dist/css/coreui.min.css";
 import { connect } from "react-redux";
@@ -6,6 +6,7 @@ import { getViewUserGroups, getViewUsers } from "src/redux/actions/viewActions";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { convertToInteger } from "src/utils/convertUtils";
+import { downloadFileUrl } from "src/utils/flexlistHelper";
 
 type ViewUsersProps = {
   users: any[];
@@ -42,10 +43,10 @@ const ViewUsersList = ({
         users.map(
           (user: any, index: number) =>
             index < 2 && (
-              <Box
-                key={user.name}
+              <Tooltip  key={user.name} title={user.name}>
+                <Box
                 component="img"
-                src={user.avatar ?? "/assets/images/avatars/avatar_1.jpg"}
+                src={downloadFileUrl(user.avatarUrl)}
                 sx={{
                   width: 32,
                   height: 32,
@@ -56,6 +57,8 @@ const ViewUsersList = ({
                   cursor: "pointer",
                 }}
               />
+              </Tooltip>
+              
             )
         )}
       <Box
