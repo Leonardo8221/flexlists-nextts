@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { setLoading } from 'src/redux/actions/adminAction';
 import store from 'src/redux/store';
-import { PATH_AUTH, PATH_AUTH_API } from 'src/routes/paths';
+import { PATH_ADMIN_API, PATH_AUTH, PATH_AUTH_API } from 'src/routes/paths';
 import { FlexlistsError, Errors, FlexlistsSuccess } from './responses';
 // ----------------------------------------------------------------------
 const ignore = [
@@ -12,7 +12,9 @@ const ignore = [
   PATH_AUTH_API.forgotPassword,
   PATH_AUTH_API.resetPassword,
   PATH_AUTH_API.registerExisting,
-  PATH_AUTH_API.loginExisting
+  PATH_AUTH_API.loginExisting,
+  PATH_ADMIN_API.getLanguages,
+  PATH_ADMIN_API.getSearchTypes
 ]
 const loadingIgnore = [
   "/",
