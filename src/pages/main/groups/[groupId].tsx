@@ -117,7 +117,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const [groupViews, setGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
   const [filterGroupViews, setFilterGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
   const [sort, setSort] = useState<string>("");
-  const [searchViewText,setSearchViewText] = useState<string>("");
+  const [searchViewText, setSearchViewText] = useState<string>("");
   const [currentGroup, setCurrentGroup] = useState<GetUserGroupByIdOutputDto>();
   const [isRenameGroupOpenModal, setIsRenameGroupOpenModal] =
     useState<boolean>(false);
@@ -142,7 +142,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
     }
   }, [router.isReady]);
 
-  const handleChange = (event: SelectChangeEvent) => {};
+  const handleChange = (event: SelectChangeEvent) => { };
 
   const [isGrid, setIsGrid] = useState<boolean>(false);
 
@@ -161,7 +161,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   };
   const handleSearchView = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchViewText(event.target.value);
-    let filterViews = groupViews.filter((x) =>!event.target.value|| x.tableViewName.includes(event.target.value));
+    let filterViews = groupViews.filter((x) => !event.target.value || x.tableViewName.includes(event.target.value));
     setFilterGroupViews(filterViews);
   };
   return (
@@ -170,7 +170,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
         <Grid item xs={10} sx={{ p: 2 }}>
           <Grid container>
             <Grid item xs={11}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Avatar
                   sx={{
                     width: 128,
@@ -191,30 +191,30 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                     },
                   }}
                 >
-                  <AvatarImg src={currentGroup?.avatarUrl?getAvatarUrl(currentGroup?.avatarUrl):''} />
+                  <AvatarImg src={currentGroup?.avatarUrl ? getAvatarUrl(currentGroup?.avatarUrl) : ''} />
                 </Avatar>
                 <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                        <Typography variant="h6">{currentGroup?.name}</Typography>
-                      </Box>
-                    
+                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Typography variant="h6">{currentGroup?.name}</Typography>
                     </Box>
+
+                  </Box>
                   <WysiwygView
-                            value={currentGroup?.description}
+                    value={currentGroup?.description}
                   />
+                </Box>
+
               </Box>
-              
-            </Box>
             </Grid>
             <Grid item xs={1}>
-                 <Button variant="contained" onClick={() => onOpenRenameModal()}>
-                        Edit Group
-                </Button>
+              <Button variant="contained" onClick={() => onOpenRenameModal()}>
+                Edit Group
+              </Button>
             </Grid>
           </Grid>
-        
-          
+
+
           <Divider light sx={{ my: 2 }}></Divider>
           <Box
             sx={{
@@ -261,7 +261,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                   return (
                     <Grid item md={2} key={index}>
                       <ViewCard
-                        isViewDefault = {view.isDefaultView}
+                        isViewDefault={view.isDefaultView}
                         id={view.tableViewId}
                         viewName={view.tableViewName}
                         viewDesc={""}
@@ -281,6 +281,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                       viewName={view.tableViewName}
                       viewDesc={""}
                       bgImage={"/assets/home/heroimg.png"}
+                      isViewDefault={view.isDefaultView}
                     />
                   </Grid>
                 );
@@ -323,7 +324,7 @@ type RenameGroupProps = {
   handleClose: () => void;
   group: GetUserGroupsOutputDto;
   onUpdate: (newGroup: GetUserGroupsOutputDto) => void;
-  setFlashMessage:(message:FlashMessageModel)=>void
+  setFlashMessage: (message: FlashMessageModel) => void
 };
 
 const RenameGroup = ({
@@ -336,8 +337,8 @@ const RenameGroup = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [currentGroup, setCurrentGroup] =
     useState<GetUserGroupsOutputDto>(group);
-  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
-  const [isSubmit,setIsSubmit] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -359,18 +360,18 @@ const RenameGroup = ({
     setIsUpdate(true);
     setCurrentGroup(newGroup);
   };
-  const setError = (message:string)=>{
-    setFlashMessage({message:message,type:'error'})
+  const setError = (message: string) => {
+    setFlashMessage({ message: message, type: 'error' })
   }
   const onSubmit = async () => {
     setIsSubmit(true)
-    let _errors: { [key: string]: string|boolean } = {}
+    let _errors: { [key: string]: string | boolean } = {}
 
-    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+    const _setErrors = (e: { [key: string]: string | boolean }) => {
       _errors = e
-    } 
-    let newGroupName = await frontendValidate(ModelValidatorEnum.Group,FieldValidatorEnum.name,currentGroup.name,_errors,_setErrors,true)
-        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+    }
+    let newGroupName = await frontendValidate(ModelValidatorEnum.Group, FieldValidatorEnum.name, currentGroup.name, _errors, _setErrors, true)
+    if (isFrontendError(FieldValidatorEnum.name, _errors, setErrors, setError)) return
 
     var response = await groupService.updateUserGroup(
       currentGroup.groupId,
@@ -393,18 +394,17 @@ const RenameGroup = ({
       formData.append("file", event.target.files[0]);
       let response = await uploadFile(formData);
       if (isSucc(response) && response.data && response.data.fileId) {
-        let newGroup  = Object.assign({}, currentGroup);
+        let newGroup = Object.assign({}, currentGroup);
         newGroup.avatarUrl = response.data.fileId;
         setCurrentGroup(newGroup)
       }
-      else
-      {
-        setFlashMessage({message:(response as FlexlistsError).message,type:"error"});
+      else {
+        setFlashMessage({ message: (response as FlexlistsError).message, type: "error" });
       }
     }
   };
- const handleDeleteAvatar = () => {
-    let newGroup  = Object.assign({}, currentGroup);
+  const handleDeleteAvatar = () => {
+    let newGroup = Object.assign({}, currentGroup);
     newGroup.avatarUrl = "";
     setCurrentGroup(newGroup)
   };
@@ -412,7 +412,7 @@ const RenameGroup = ({
     <CentralModal open={open} handleClose={handleClose}>
       <Typography variant="h6">Rename Group</Typography>
       <Divider sx={{ my: 2 }}></Divider>
-      <Box sx={{ display: "flex", alignItems: "center",mt:'15px',mb:'20px' }}>
+      <Box sx={{ display: "flex", alignItems: "center", mt: '15px', mb: '20px' }}>
         <Avatar
           sx={{
             width: 128,
@@ -433,7 +433,7 @@ const RenameGroup = ({
             },
           }}
         >
-          <AvatarImg src={currentGroup?.avatarUrl?getAvatarUrl(currentGroup?.avatarUrl):''} />
+          <AvatarImg src={currentGroup?.avatarUrl ? getAvatarUrl(currentGroup?.avatarUrl) : ''} />
         </Avatar>
         <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
           <Button component="label" variant="contained">
@@ -458,7 +458,7 @@ const RenameGroup = ({
           value={currentGroup?.name}
           placeholder="Name"
           required
-          error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
+          error={isSubmit && isFrontendError(FieldValidatorEnum.name, errors)}
         />
       </Box>
       <Box>
@@ -466,9 +466,9 @@ const RenameGroup = ({
           Description
         </Typography>
         <WysiwygEditor
-              value={currentGroup.description}
-              setValue={(newValue) => handleGroupDescriptionChange(newValue)}
-         />
+          value={currentGroup.description}
+          setValue={(newValue) => handleGroupDescriptionChange(newValue)}
+        />
         {/* <TextField
           multiline
           rows={4}
