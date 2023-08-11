@@ -96,7 +96,7 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
   }
   const handleSelectViewTemplate = (template:any) => {
     setViewTemplate(template)
-    router.push({pathname:`${PATH_MAIN.newView}`})
+    router.push({pathname:`${PATH_MAIN.newList}`})
   }
   return (
     <MainLayout removeFooter={true}>
@@ -170,7 +170,7 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
               onChange={(event, newValue) => {
                 if(newValue){
                   setViewTemplate(newValue)
-                  router.push({pathname:`${PATH_MAIN.newView}`})
+                  router.push({pathname:`${PATH_MAIN.newList}`})
                 }
               }}
               options={templates}

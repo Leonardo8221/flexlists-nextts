@@ -187,39 +187,48 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
                 key={"rename_list"}
                 onClick={() => handleOpenRenameModal()}
               >
-                Rename View
-              </CDropdownItem>
-              <CDropdownItem
-                href="#"
-                key={"duplicate_list"}
-                onClick={() => handleOpenDuplicateModal()}
-              >
-                Duplicate View
-              </CDropdownItem>
-              <CDropdownItem
-                href="#"
-                key={"delete_list"}
-                onClick={() => handleOpenDeleteModal()}
-              >
-                Delete View
+               {currentView?.isDefaultView?'Rename List':'Rename View'} 
               </CDropdownItem>
               {
-                currentView?.isArchived ? 
-                <CDropdownItem
-                href="#"
-                key={"unarchive_list"}
-                onClick={() => handleUnArchive()}
-                >
-                  UnArchive View
-                </CDropdownItem> :
-                <CDropdownItem
-                href="#"
-                key={"archive_list"}
-                onClick={() => handleOpenArchiveModal()}
-                >
-                  Archive View
-                </CDropdownItem> 
+                !currentView?.isDefaultView &&
+                (
+                  <>
+                    <CDropdownItem
+                      href="#"
+                      key={"duplicate_list"}
+                      onClick={() => handleOpenDuplicateModal()}
+                      >
+                        Duplicate View
+                      </CDropdownItem>
+                      <CDropdownItem
+                        href="#"
+                        key={"delete_list"}
+                        onClick={() => handleOpenDeleteModal()}
+                      >
+                        Delete View
+                      </CDropdownItem>
+                      {
+                        currentView?.isArchived ? 
+                        <CDropdownItem
+                        href="#"
+                        key={"unarchive_list"}
+                        onClick={() => handleUnArchive()}
+                        >
+                          UnArchive View
+                        </CDropdownItem> :
+                        <CDropdownItem
+                        href="#"
+                        key={"archive_list"}
+                        onClick={() => handleOpenArchiveModal()}
+                        >
+                          Archive View
+                        </CDropdownItem> 
+                      }
+                  </>
+                )
+                
               }
+              
               
             </CDropdownMenu>
           </CDropdown>}

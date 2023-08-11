@@ -15,6 +15,8 @@ import { isSucc } from "src/models/ApiResponse";
 import { hasPermission } from "src/utils/permissionHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
+import ListFields from "./ListFields";
+import { set } from "lodash";
 
 type ToolbBarProps = {
   open: boolean;
@@ -85,6 +87,7 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
   const [visibleImport, setVisibleImport] = useState(false);
   const [visibleExport, setVisibleExport] = useState(false);
   const [visibleFields, setVisibleFields] = useState(false);
+  const [visibleListFields, setVisibleListFields] = useState(false);
   const [isSaveViewModalOpen, setIsSaveViewModalOpen] =
     useState<boolean>(false);
   const [saveViewMessage, setSaveViewMessage] = useState<string>("");
@@ -211,7 +214,15 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
             <ActionItem
               toolbar={actions[2]}
               onClick={() => {
-                setVisibleFields(!visibleFields);
+                if(currentView.isDefaultView)
+                {
+                  setVisibleListFields(!visibleListFields);
+                }
+                else
+                {
+                  setVisibleFields(!visibleFields);
+                }
+                
               }}
             />
             <ViewFields
@@ -219,6 +230,10 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
               handleClose={() => {
                 setVisibleFields(false);
               }}
+            />
+            <ListFields
+              open={visibleListFields}
+              onClose={() => {setVisibleListFields(false)}}
             />
           </Box>
         )}

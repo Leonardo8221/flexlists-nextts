@@ -30,10 +30,18 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
     // setSelectedViewId(router.pathname.split("/")[1]);
   }, [router.pathname]);
 
-  const handleMenu = async (id: string) => {
+  const handleMenu = async (view: View) => {
     // setSelectedViewId(value);
-    await router.push(`${PATH_MAIN.views}/${id}`);
-    router.reload();
+    if(view.isDefaultView)
+    {
+      await router.push(`${PATH_MAIN.lists}/${view.id}`);
+    }
+    else
+    {
+      await router.push(`${PATH_MAIN.views}/${view.id}`);
+      router.reload();
+    }
+    
   };
   useEffect(() => {
     async function fetchData() {
@@ -119,7 +127,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
             <MenuItem
               key={index}
               menu={view}
-              setMenu={handleMenu}
+              setMenu={()=>handleMenu(view)}
               selected={selectedViewId === view.id}
             />
           ))}

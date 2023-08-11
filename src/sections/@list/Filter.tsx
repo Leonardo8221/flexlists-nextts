@@ -32,6 +32,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
+import { convertToInteger } from "src/utils/convertUtils";
 
 type FilterProps = {
   currentView: View;
@@ -92,7 +93,7 @@ const Filter = ({
   const getColumn = (column_id: any) => {
     const column = columns.filter(
       (item: any) =>
-        item.id === column_id ||
+        (!item.system && item.id === convertToInteger(column_id)) ||
         (item.system &&
           (item.name === "createdAt" || item.name === "updatedAt") &&
           item.name === column_id)

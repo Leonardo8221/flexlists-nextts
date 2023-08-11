@@ -18,32 +18,13 @@ const styles = {
     flex: 1,
   },
 };
-function ViewsPage({ message, setMessage }: ListPageProps) {
+function ListsPage({ message, setMessage }: ListPageProps) {
   const theme = useTheme();
   // error handling
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
-  const [currentTab, setCurrentTab] = useState("My Views");
-  const viewTabs: any[] = [
-    {
-      value: "My Views",
-      icon: <UnarchiveIcon />,
-      component: (
-        <Views isArchived={false} isDefaultViews = {false}  />
-      ),
-    },
-    {
-      value: "Archive Views",
-      icon: <ArchiveIcon />,
-      component: (
-        <Views isArchived={true} isDefaultViews = {false}  />
-      ),
-    },
-  ];
-  const changeTab = (value: any) => {
-    setCurrentTab(value);
-  };
+ 
 
   useEffect(() => {
     function checkMessage() {
@@ -90,30 +71,8 @@ function ViewsPage({ message, setMessage }: ListPageProps) {
           </Alert>
         </Snackbar>
         <Box borderBottom={"solid 1px"} sx={{ mb: 1 }} borderColor={"divider"}>
-          <Tabs
-            value={currentTab}
-            scrollButtons="auto"
-            variant="scrollable"
-            allowScrollButtonsMobile
-            onChange={(e, value) => changeTab(value)}
-          >
-            {viewTabs.map((tab) => (
-              <Tab
-                disableRipple
-                key={tab.value}
-                label={tab.value}
-                icon={tab.icon}
-                value={tab.value}
-                sx={styles?.tab}
-              />
-            ))}
-          </Tabs>
+          <Views isArchived = {false} isDefaultViews={true} />
         </Box>
-
-        {viewTabs.map((tab) => {
-          const isMatched = tab.value === currentTab;
-          return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-        })}
       </Box>
     </MainLayout>
   );
@@ -126,4 +85,4 @@ const mapDispatchToProps = {
   setMessage,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ListsPage);

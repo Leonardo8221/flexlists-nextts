@@ -2,7 +2,7 @@ import { PATH_MAIN } from "src/routes/paths";
 
 const navConfig = [
   {
-    title: "Create new view",
+    title: "Create new list",
     path: PATH_MAIN.chooseTemplate,
     icon: "Favourites_plus",
   },
@@ -11,6 +11,11 @@ const navConfig = [
   //   path: "/dashboard",
   //   icon: "Home",
   // },
+  {
+    title: "My Lists",
+    path: PATH_MAIN.lists,
+    icon: "List",
+  },
   {
     title: "My Views",
     path: PATH_MAIN.views,

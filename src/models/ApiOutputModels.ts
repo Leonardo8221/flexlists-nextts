@@ -101,7 +101,8 @@ export type GetUserGroupsOutputDto = {
 export type GetGroupViewsOutputDto = {
     tableViewId:number
     tableViewName:any
-    role:any
+    role:any,
+    isDefaultView:boolean
 }
 export type GetGroupUsersOutputDto = {
     userId:number

@@ -109,6 +109,47 @@ const DataTable = ({
   );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
+
+  const tableStyle = {
+    sx: {
+      WebkitOverflowScrolling: "auto",
+      height: {
+        // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+        xs: "calc(100vh - 236px)",
+        md: "calc(100vh - 200px)",
+        lg: "calc(100vh - 188px)",
+      },
+      width: { lg: "100vw" },
+      minHeight: "300px",
+      "& .MuiTableHead-root": {
+        width: "100%",
+      },
+      "& .MuiTableRow-root": {
+        boxShadow: "none",
+      },
+    }
+  }
+  // const forcedTableStyle = {
+  //   sx: {
+  //     height: {
+  //       // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
+  //       xs: "1000px",
+  //       md: "1000px",
+  //       lg: "1000px",
+  //     },
+  //     width: { lg: "100vw" },
+  //     minHeight: "300px",
+  //     "& .MuiTableHead-root": {
+  //       width: "100%",
+  //     },
+  //     "& .MuiTableRow-root": {
+  //       boxShadow: "none",
+  //     },
+  //   }
+  // }
+
+  const [tableCorrect, setTableCorrect] = useState(tableStyle);
+
   const bulkActions = [
     {
       title: "Clone",
@@ -155,6 +196,22 @@ const DataTable = ({
       }
     }
   }, [rows, router.query]);
+
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     setTimeout(() => {
+  //       setTableCorrect(forcedTableStyle)
+  //     }, 500);
+  //   }
+  // }, [router.isReady])
+
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     setTimeout(() => {
+  //       setTableCorrect(tableStyle)
+  //     }, 1000);
+  //   }
+  // }, [router.isReady])
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -316,8 +373,8 @@ const DataTable = ({
                     {!cellValue
                       ? ""
                       : sanitizeHtml(cellValue.replace(/</g, " <"), {
-                          allowedTags: [],
-                        })}
+                        allowedTags: [],
+                      })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:

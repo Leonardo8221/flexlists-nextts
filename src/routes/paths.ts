@@ -21,9 +21,10 @@ export const PATH_AUTH = {
 };
 const ROOTS_MAIN = "/main";
 export const PATH_MAIN = {
+  lists: path(ROOTS_MAIN, "/lists"),
   views: path(ROOTS_MAIN, "/views"),
-  chooseTemplate: path(ROOTS_MAIN, "/views/chooseTemplate"),
-  newView: path(ROOTS_MAIN, "/views/newView"),
+  chooseTemplate: path(ROOTS_MAIN, "/lists/chooseTemplate"),
+  newList: path(ROOTS_MAIN, "/lists/newList"),
   groups: path(ROOTS_MAIN, "/groups"),
   newGroup: path(ROOTS_MAIN, "/groups/newGroup"),
   migratedLists: path(ROOTS_MAIN, "/migrate"),
@@ -56,8 +57,8 @@ export const getRolePathDefault = (role: string) => {
     case SystemRole.ContentManager:
       return PATH_ADMIN.contentManagement;
     case "user":
-      return PATH_MAIN.views;
+      return PATH_MAIN.lists;
     default:
-      return PATH_MAIN.views;
+      return PATH_MAIN.lists;
   }
 }

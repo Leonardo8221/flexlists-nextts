@@ -80,7 +80,8 @@ export type View = {
     conditions?: FlatWhere[],
     description?: string,
     role: Role,
-    isArchived: boolean
+    isArchived: boolean,
+    isDefaultView:boolean
 }
 export type FieldUIType = {
     name: string;
