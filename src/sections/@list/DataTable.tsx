@@ -705,10 +705,9 @@ const DataTable = ({
             muiTableContainerProps={{
               sx: {
                 height: {
-                  // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
-                  xs: "calc(100vh - 236px)",
-                  md: "calc(100vh - 200px)",
-                  lg: "calc(100vh - 188px)",
+                  xs: `${windowHeight - 236}px`,
+                  md: `${windowHeight - 200}px`,
+                  lg: `${windowHeight - 188}px`,
                 },
                 width: { lg: "100vw" },
                 minHeight: "300px",
