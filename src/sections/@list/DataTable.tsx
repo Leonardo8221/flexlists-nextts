@@ -215,6 +215,7 @@ const DataTable = ({
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
+    document.body.style.overflow = "hidden";
   }, []);
 
   useEffect(() => {
