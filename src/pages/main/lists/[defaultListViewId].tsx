@@ -36,7 +36,7 @@ type ListProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
 };
 
-export function ViewDetail({
+export function DefaultListViewDetail({
   currentView,
   getCurrentView,
   columns,
@@ -47,23 +47,17 @@ export function ViewDetail({
 }: ListProps & { translations?: TranslationText[]/*, test?: string */ }) {
   const router = useRouter();
   const theme = useTheme();
-  const isDesktop = useResponsive("up", "lg");
   const [open, setOpen] = useState(false);
 
-  const t = (key: string): string => {
-    if (!translations) return key
-    return getTranslation(key, translations)
-  }
 
   useEffect(() => {
     if (
       router.isReady &&
-      router.query.viewId &&
+      router.query.defaultListViewId &&
       getCurrentView &&
-      isInteger(router.query.viewId)
+      isInteger(router.query.defaultListViewId)
     ) {
-      //console.log(translations, 'flap', test)
-      getCurrentView(convertToNumber(router.query.viewId));
+      getCurrentView(convertToNumber(router.query.defaultListViewId));
     }
   }, [router.isReady]);
 
@@ -71,28 +65,13 @@ export function ViewDetail({
     if (
       router.isReady &&
       currentView &&
-      router.query.viewId &&
-      isInteger(router.query.viewId)
+      router.query.defaultListViewId &&
+      isInteger(router.query.defaultListViewId)
     ) {
-      fetchColumns(convertToNumber(router.query.viewId));
+      fetchColumns(convertToNumber(router.query.defaultListViewId));
       fetchRowsByPage(0, currentView.limit ?? 25);
     }
   }, [router.isReady, currentView?.id]);
-  // useEffect(() => {
-  //   if(router.query.viewId)
-  //   {
-  //     const handleRouteChange = (url:string) => {
-  //       router.reload();
-  //     };
-
-  //     router.events.on('routeChangeComplete', handleRouteChange);
-
-  //     return () => {
-  //       router.events.off('routeChangeComplete', handleRouteChange);
-  //     };
-  //   }
-
-  // }, [router.query.viewId]);
   return currentView && columns && columns.length > 0 ? (
     <MainLayout>
       <Box
@@ -109,12 +88,6 @@ export function ViewDetail({
 
         {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
         {currentView.type === ViewType.List && <DataTable tab={open} />}
-        {currentView.type === ViewType.Calendar && <CalendarView open={open} />}
-        {currentView.type === ViewType.KanBan && <KanbanView open={open} />}
-        {currentView.type === ViewType.Gallery && <GalleryView open={open} />}
-        {currentView.type === ViewType.TimeLine && <TimelineView open={open} />}
-        {currentView.type === ViewType.Gantt && <GanttView open={open} />}
-        {currentView.type === ViewType.Map && <MapView open={open} />}
       </Box>
     </MainLayout>
   ) : (
@@ -132,32 +105,10 @@ const mapDispatchToProps = {
   fetchRowsByPage,
 };
 
-// TODO: make this work, there is an access issue, so probably it's not passing the JWT token to the request 
-// when requesting from the server side. 
-// -> not sure if it's even possible 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // const token = getCookieToken(context.req, context.res);
-  // var id = context.query.viewId;
-  // try {
-  //   const response = await listViewService.getView(convertToNumber(id), {
-  //     headers: {
-  //       Cookie: `token=${token};`
-  //     }
-  //   });
-  //   console.log('response', response)
-  // } catch (e: any) {
-  //   console.log(e)
-  // }
-
-  // const result = {
-  //   props: {
-  //     //currentView: response.data!,
-  //   },
-  // }
-
   const translations = await getTranslations("existing landing page", context)
 
 
   return { props: { translations: translations/*, test: 'abrikoos'*/ } }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(ViewDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(DefaultListViewDetail);

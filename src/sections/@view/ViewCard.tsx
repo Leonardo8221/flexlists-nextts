@@ -12,6 +12,7 @@ import { PATH_MAIN } from "src/routes/paths";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import WysiwygView from "src/components/wysiwyg/wysiwygView";
+import { View } from "src/models/SharedModels";
 
 const CardImage = styled("img")(({ theme }) => ({
   height: 140,
@@ -19,6 +20,7 @@ const CardImage = styled("img")(({ theme }) => ({
 }));
 
 type ViewCardProps = {
+  isViewDefault:boolean,
   id: number;
   bgImage: string;
   viewName?: string;
@@ -26,6 +28,7 @@ type ViewCardProps = {
 };
 
 export default function ViewCard({
+  isViewDefault,
   id,
   bgImage,
   viewName,
@@ -34,7 +37,15 @@ export default function ViewCard({
 }: ViewCardProps) {
   const router = useRouter();
   const openViewDetail = async (id: number) => {
-    await router.push(`${PATH_MAIN.views}/${id}`);
+    if(isViewDefault)
+    {
+      await router.push(`${PATH_MAIN.lists}/${id}`);
+    }
+    else
+    {
+      await router.push(`${PATH_MAIN.views}/${id}`);
+    }
+   
   };
   const theme = useTheme();
   return (

@@ -118,7 +118,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
       createListResponse.data.listId
     ) {
       await router.push({
-        pathname: `${PATH_MAIN.views}/${createListResponse.data.viewId}`,
+        pathname: `${PATH_MAIN.lists}/${createListResponse.data.viewId}`,
       });
     }
   };

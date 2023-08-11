@@ -261,6 +261,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                   return (
                     <Grid item md={2} key={index}>
                       <ViewCard
+                        isViewDefault = {view.isDefaultView}
                         id={view.tableViewId}
                         viewName={view.tableViewName}
                         viewDesc={""}

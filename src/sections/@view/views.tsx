@@ -4,22 +4,22 @@ import { Box, Grid, Container, Typography, Button, Snackbar, Alert, AlertColor }
 import { useState, useEffect } from "react";
 import ViewCard from "./ViewCard";
 import { View } from "src/models/SharedModels";
-import { isErr, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, FlexlistsSuccess, isErr, isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
-import { listViewService } from "src/services/listView.service";
+import { getDefaultListViews, listViewService } from "src/services/listView.service";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 
 interface ViewsProps {
+  isDefaultViews:boolean;
   isArchived: boolean;
   message: any;
   setMessage: (message: any) => void;
 }
 
-function Views({isArchived, message, setMessage }: ViewsProps) {
+function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
   const router = useRouter();
-  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
   const [visibleMask, setVisibleMask] = useState(false);
@@ -43,9 +43,6 @@ function Views({isArchived, message, setMessage }: ViewsProps) {
     setFlash(undefined)
     setMessage(null)
   }
-  function setError(message: string) {
-    setFlashMessage(message);
-  }
   function setFlashMessage(message: string, type: string = 'error') {
     setFlash({ message: message, type: type })
     setMessage({ message: message, type: type })
@@ -66,7 +63,16 @@ function Views({isArchived, message, setMessage }: ViewsProps) {
   }, [router.isReady]);
   useEffect(() => {
     async function fetchData() {
-      var response = await listViewService.getViews(undefined,undefined,undefined,undefined,isArchived);
+      let response : FlexlistsError|FlexlistsSuccess<View[]> 
+      if(isDefaultViews)
+      {
+          response = await getDefaultListViews();
+      }
+      else
+      {
+        response = await listViewService.getViews(undefined,undefined,undefined,undefined,isArchived);
+      }
+      
       if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
           setViews(response.data);
@@ -122,27 +128,7 @@ function Views({isArchived, message, setMessage }: ViewsProps) {
 
   const [maskProperty, setMaskProperty] = useState(maskProperties[0]);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-    setVisibleMask(true);
-  };
 
-  const handleClose = () => {
-    setOpen(false);
-    setSteps(0);
-    setMaskProperty(maskProperties[0]);
-    setVisibleMask(false);
-  };
-
-  const goPrevious = () => {
-    setSteps(steps - 1);
-    setMaskProperty(maskProperties[steps - 1]);
-  };
-
-  const goNext = () => {
-    setSteps(steps + 1);
-    setMaskProperty(maskProperties[steps + 1]);
-  };
   const createNewView = async () => {
     await router.push(PATH_MAIN.chooseTemplate);
   };
@@ -181,7 +167,7 @@ function Views({isArchived, message, setMessage }: ViewsProps) {
         >
           <Typography variant="h6"></Typography>
           {
-            !isArchived && <Button
+            isDefaultViews && <Button
             size="medium"
             variant="contained"
             onClick={() => createNewView()}
@@ -203,6 +189,7 @@ function Views({isArchived, message, setMessage }: ViewsProps) {
                   key={index}
                 >
                   <ViewCard
+                    isViewDefault={view.isDefaultView}
                     id={view.id}
                     bgImage={"/assets/home/heroimg.png"}
                     viewName={view.name}
