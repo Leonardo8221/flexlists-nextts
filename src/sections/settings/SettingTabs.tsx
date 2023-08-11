@@ -11,6 +11,7 @@ import {
   Select,
   Divider,
   Switch,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChangePassword from "./ChangePassword";
@@ -19,6 +20,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import GppGoodIcon from "@mui/icons-material/GppGood";
 import ProfileSetting from "./ProfileSetting";
+import useResponsive from "src/hooks/useResponsive";
 
 const ThemeChoiceImage = styled("img")(({ theme }) => ({
   width: 180,
@@ -31,7 +33,6 @@ const ThemeChoiceImage = styled("img")(({ theme }) => ({
     borderColor: "#54A6FB",
   },
 }));
-
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,7 +49,7 @@ function TabPanel(props: TabPanelProps) {
       id={`vertical-tabpanel-${index}`}
       aria-labelledby={`vertical-tab-${index}`}
       {...other}
-      style={{ width: "100%", overflowY: "scroll" }}
+      style={{ flex: 1, overflowY: "scroll" }}
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
@@ -67,6 +68,7 @@ function a11yProps(key: string) {
 }
 
 export default function SettingTabs() {
+  const isDesktop = useResponsive("up", "md");
   const [value, setValue] = React.useState("profile");
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -78,7 +80,6 @@ export default function SettingTabs() {
     <Box
       sx={{
         position: "absolute",
-        flexGrow: 1,
         bgcolor: "background.paper",
         display: "flex",
         height: "100%",
@@ -96,21 +97,28 @@ export default function SettingTabs() {
           borderRight: 1,
           borderColor: "divider",
           maxHeight: "100%",
-          width: "25%",
         }}
       >
+        {/* <Tooltip title="Profile" placement="right"> */}
         <Tab
-          label="Profile"
+          label={isDesktop ? "Profile" : ""}
           {...a11yProps("profile")}
-          icon={<GroupsIcon sx={{ mr: 1 }} />}
+          icon={<GroupsIcon />}
           sx={{
             display: "flex",
             alignItems: "center",
             flexDirection: "row",
             justifyContent: "flex-start",
+            minWidth: "unset",
+            gap: 2,
+            "& .MuiTab-iconWrapper": {
+              mb: 0,
+            },
           }}
           value="profile"
         />
+        {/* </Tooltip> */}
+
         {/* <Tab
           label="General"
           {...a11yProps("general")}
@@ -123,18 +131,26 @@ export default function SettingTabs() {
           }}
           value="general"
         /> */}
+        {/* <Tooltip title="Security" placement="right"> */}
         <Tab
-          label="Security"
+          label={isDesktop ? "Security" : ""}
           {...a11yProps("security")}
-          icon={<GppGoodIcon sx={{ mr: 1 }} />}
+          icon={<GppGoodIcon />}
           sx={{
             display: "flex",
             alignItems: "center",
             flexDirection: "row",
             justifyContent: "flex-start",
+            minWidth: "unset",
+            gap: 2,
+            "& .MuiTab-iconWrapper": {
+              mb: 0,
+            },
           }}
           value="security"
         />
+        {/* </Tooltip> */}
+
         {/* <Tab
           label="Notifications"
           {...a11yProps("notifications")}
@@ -249,10 +265,12 @@ export default function SettingTabs() {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", md: "row" },
               width: "100%",
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "flex-start", md: "center" },
               mt: 2,
+              gap: { xs: 2, md: 0 },
             }}
           >
             <Typography variant="body1">
@@ -323,7 +341,6 @@ export default function SettingTabs() {
           </Box>
         </Box>
       </TabPanel>
-      
     </Box>
   );
 }

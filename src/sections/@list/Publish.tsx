@@ -202,6 +202,9 @@ const PublishList = (props: Props) => {
   <h3>${props.name}</h3>
 
   <script>
+    const host = '${domain}'
+    const apiKey = '${key}'
+
     const widget = new EmbeddedWidget(host, apiKey, 'test');
     widget.mount();
   </script>
