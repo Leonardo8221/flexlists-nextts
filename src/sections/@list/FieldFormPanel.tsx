@@ -33,7 +33,7 @@ interface FieldFormPanelProps {
   onUpdate: (field: Field) => void;
   onDelete: (id: number) => void;
   onClose: () => void;
-  setFlashMessage : (message:FlashMessageModel)=>void
+  setFlashMessage: (message: FlashMessageModel) => void
 }
 const icons = [
   "angle_down",
@@ -104,8 +104,8 @@ function FieldFormPanel({
   const [currentFieldType, setCurrentFieldType] = useState<
     FieldUIType | undefined
   >(fieldUiTypes.find((x) => x.name === field.uiField));
-  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
-  const [isSubmit,setIsSubmit] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   const [visibleIconList, setVisibleIconList] = useState(false);
   const [windowHeight, setWindowHeight] = useState(0);
@@ -122,25 +122,25 @@ function FieldFormPanel({
       setCurrentFieldType(fieldUiTypes.find((x) => x.name === field.uiField));
     }
   }, [field]);
-  const setError = (message:string)=>{
-    setFlashMessage({message:message,type:'error'})
+  const setError = (message: string) => {
+    setFlashMessage({ message: message, type: 'error' })
   }
   const handleSubmit = async () => {
     setIsSubmit(true);
-    if(currentField.name && (currentField.name.toLowerCase() === 'id'||
-    currentField.name.toLowerCase() === 'createdat'||
-    currentField.name.toLowerCase() === 'updatedat'||
-    currentField.name.toLowerCase() === '___archived')){
+    if (currentField.name && (currentField.name.toLowerCase() === 'id' ||
+      currentField.name.toLowerCase() === 'createdat' ||
+      currentField.name.toLowerCase() === 'updatedat' ||
+      currentField.name.toLowerCase() === '___archived')) {
       setError(`Field name cannot be ${currentField.name}`)
       return
     }
-    let _errors: { [key: string]: string|boolean } = {}
+    let _errors: { [key: string]: string | boolean } = {}
 
-    const _setErrors = (e: { [key: string]: string|boolean }) => { 
+    const _setErrors = (e: { [key: string]: string | boolean }) => {
       _errors = e
-    } 
-    let newGroupName = await frontendValidate(ModelValidatorEnum.FieldDefinition,FieldValidatorEnum.name,currentField.name,_errors,_setErrors,true)
-        if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+    }
+    let newGroupName = await frontendValidate(ModelValidatorEnum.FieldDefinition, FieldValidatorEnum.name, currentField.name, _errors, _setErrors, true)
+    if (isFrontendError(FieldValidatorEnum.name, _errors, setErrors, setError)) return
     if (isCreating) {
       var createFieldResponse = await fieldService.createUIField(
         viewId,
@@ -159,7 +159,7 @@ function FieldFormPanel({
         ).fieldId;
         onAdd(currentField);
       } else {
-         setFlashMessage({message:createFieldResponse.message,type:"error"})
+        setFlashMessage({ message: createFieldResponse.message, type: "error" })
         return;
       }
     } else {
@@ -179,7 +179,7 @@ function FieldFormPanel({
       if (isSucc(updateFieldResponse)) {
         onUpdate(currentField);
       } else {
-        setFlashMessage({message:(updateFieldResponse as FlexlistsError).message,type:"error"})
+        setFlashMessage({ message: (updateFieldResponse as FlexlistsError).message, type: "error" })
         return;
       }
     }
@@ -291,7 +291,7 @@ function FieldFormPanel({
           onChange={onNameChange}
           required
           disabled={!isCreating && field.system}
-          error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
+          error={isSubmit && isFrontendError(FieldValidatorEnum.name, errors)}
         />
         <TextField
           label="Description"
@@ -304,7 +304,7 @@ function FieldFormPanel({
         <FormControl sx={{ marginTop: 2 }} required>
           <Autocomplete
             id="grouped-types"
-            filterSelectedOptions
+            filterSelectedOptions={false}
             options={fieldUiTypes}
             groupBy={(option) => option.group}
             getOptionLabel={(option) => option.name}
@@ -367,7 +367,7 @@ function FieldFormPanel({
             required
             InputLabelProps={{ shrink: currentField.icon !== "" }}
             disabled={!isCreating && field.system}
-            // error={submit && !currentField.icon}
+          // error={submit && !currentField.icon}
           />
           {visibleIconList && (
             <Box sx={{ py: 1 }}>
