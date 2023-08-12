@@ -70,7 +70,7 @@ const ViewFields = ({
     setFilterColumns(newColumns);
   };
 
-  const onDragEnd = async(result: any) => {
+  const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination || destination.index === source.index) {
@@ -79,7 +79,7 @@ const ViewFields = ({
     let newColumns = Object.assign([], columns);
     const [removedColumns] = newColumns.splice(source.index, 1);
     newColumns.splice(destination.index, 0, removedColumns);
-    await reorderViewFields(currentView.id,newColumns.map((x: any) => x.id));
+    await reorderViewFields(currentView.id, newColumns.map((x: any) => x.id));
     fetchColumns(currentView.id);
   };
 
@@ -293,7 +293,7 @@ const ViewFields = ({
                     }}
                   />
                 </Tooltip>
-                <Tooltip title="Visible on detail page only">
+                <Tooltip title="Visible on main view, not details">
                   <Box
                     component="span"
                     className="svg-color"
@@ -360,7 +360,7 @@ const ViewFields = ({
                                   }}
                                 />
                                 <Checkbox
-                                  checked={column.viewFieldDetailsOnly}
+                                  checked={!column.viewFieldDetailsOnly}
                                   sx={{
                                     color: "#CCCCCC",
                                     "&.Mui-checked": {
@@ -382,8 +382,8 @@ const ViewFields = ({
                                     display: "inline-block",
                                     bgcolor:
                                       theme.palette.palette_style.text.primary,
-                                    mask: `${column.icon?`url(/assets/icons/table/${column.icon}.svg)`:''} no-repeat center / contain`,
-                                    WebkitMask: `${column.icon?`url(/assets/icons/table/${column.icon}.svg)`:''} no-repeat center / contain`,
+                                    mask: `${column.icon ? `url(/assets/icons/table/${column.icon}.svg)` : ''} no-repeat center / contain`,
+                                    WebkitMask: `${column.icon ? `url(/assets/icons/table/${column.icon}.svg)` : ''} no-repeat center / contain`,
                                     marginRight: 1,
                                     marginTop: 0.5,
                                   }}
