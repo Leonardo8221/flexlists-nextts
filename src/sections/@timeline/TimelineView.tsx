@@ -8,6 +8,7 @@ import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
 import { FlatWhere, View } from 'src/models/SharedModels';
+import { getDataColumnId, downloadFileUrl, getChoiceField } from 'src/utils/flexlistHelper';
 
 type Props = {
   columns: any;
@@ -156,12 +157,12 @@ const TimelineView = (props: Props) => {
   const getMeeting = (date: number, level: number) => {
     let meeting = null;
 
-    for (let i = 0; i < meetings.length; i++) {
-      const from = new Date(meetings[i].from).getDate();
-      const to = new Date(meetings[i].to).getDate();
+    for (let i = 0; i < rows.length; i++) {
+      const from = rows[i][getDataColumnId(currentView.config.fromId, columns)];
+      const to = rows[i][getDataColumnId(currentView.config.toId, columns)];
 
-      if (date >= from && date <= to && meetings[i].level === level) {
-        meeting = meetings[i];
+      if (date >= from && date <= to && rows[i][getDataColumnId(currentView.config.levelId, columns)] === level) {
+        meeting = rows[i];
         break;
       }
     }

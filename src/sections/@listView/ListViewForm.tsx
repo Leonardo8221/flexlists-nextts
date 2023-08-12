@@ -27,6 +27,7 @@ import { PATH_MAIN } from "src/routes/paths";
 import KanbanViewConfig from "./KanbanViewConfig";
 import CalendarViewConfig from "./CalendarViewConfig";
 import GalleryViewConfig from "./GalleryViewConfig";
+import TimelineViewConfig from "./TimelineViewConfig";
 
 const style = {
   position: "absolute" as "absolute",
@@ -214,6 +215,32 @@ const ListViewForm = ({
           setError("Title field required");
           isValidConfig = false;
         }
+        break;
+      case ViewType.TimeLine:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.colorId || config.colorId === 0) {
+          setError("Color field required");
+          isValidConfig = false;
+        }
+        if (!config.levelId || config.levelId === 0) {
+          setError("Level field required");
+          isValidConfig = false;
+        }
+        if (!config.fromId || config.fromId === 0) {
+          setError("From field required");
+          isValidConfig = false;
+        }
+        if (!config.toId || config.toId === 0) {
+          setError("To field required");
+          isValidConfig = false;
+        }
       default:
         break;
     }
@@ -327,6 +354,13 @@ const ListViewForm = ({
                 )}
                 {currentView && viewType === ViewType.Gallery && (
                   <GalleryViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+                {currentView && viewType === ViewType.TimeLine && (
+                  <TimelineViewConfig
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
