@@ -88,6 +88,12 @@ export function DefaultListViewDetail({
 
         {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
         {currentView.type === ViewType.List && <DataTable tab={open} />}
+        {currentView.type === ViewType.Calendar && <CalendarView open={open} />}
+        {currentView.type === ViewType.KanBan && <KanbanView open={open} />}
+        {currentView.type === ViewType.Gallery && <GalleryView open={open} />}
+        {currentView.type === ViewType.TimeLine && <TimelineView open={open} />}
+        {currentView.type === ViewType.Gantt && <GanttView open={open} />}
+        {currentView.type === ViewType.Map && <MapView open={open} />}
       </Box>
     </MainLayout>
   ) : (

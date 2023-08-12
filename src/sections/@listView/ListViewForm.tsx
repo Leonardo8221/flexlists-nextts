@@ -28,6 +28,17 @@ import KanbanViewConfig from "./KanbanViewConfig";
 import CalendarViewConfig from "./CalendarViewConfig";
 import GalleryViewConfig from "./GalleryViewConfig";
 import TimelineViewConfig from "./TimelineViewConfig";
+import HTMLEditor from "src/components/rowedit/HTMLEditor";
+import dynamic from "next/dynamic";
+
+import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(
+  () => {
+    return import("react-quill");
+  },
+  { ssr: false }
+);
 
 const style = {
   position: "absolute" as "absolute",
@@ -80,22 +91,22 @@ const AddViewCards = [
   },
   {
     type: ViewType.TimeLine,
-    icon: "/assets/icons/KanbanSVG.svg",
+    icon: "/assets/icons/TimelineSVG.svg",
     title: "TimeLine View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
   {
     type: ViewType.Gantt,
-    icon: "/assets/icons/KanbanSVG.svg",
+    icon: "/assets/icons/GanttSVG.svg",
     title: "Gantt View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
   {
     type: ViewType.Map,
-    icon: "/assets/icons/KanbanSVG.svg",
+    icon: "/assets/icons/MapSVG.svg",
     title: "Map View",
     description: "Lorem ipsum dolor sit amet consectetur.",
-  }
+  },
 ];
 
 type ListViewFormProps = {
@@ -320,13 +331,16 @@ const ListViewForm = ({
           )}
 
           {steps === 1 && (
-            <Box sx={{ p: 4 }}>
+            <Box
+              sx={{ p: 4, display: "flex", flexDirection: "column", gap: 4 }}
+            >
               <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="subtitle2" gutterBottom>
+              <Box>
+                {/* <Typography variant="subtitle2" gutterBottom>
                   View Name
-                </Typography>
+                </Typography> */}
                 <TextField
+                  label="View name"
                   fullWidth
                   id="fullWidth"
                   value={viewName}
@@ -335,9 +349,33 @@ const ListViewForm = ({
                   error={submit && !viewName}
                 />
               </Box>
-              <Box>
-                <Typography variant="subtitle2" gutterBottom>
+              {/* <Typography variant="subtitle2" gutterBottom>
                   View Description
+                </Typography> */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  position: "relative",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  component={"label"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: 12,
+                    position: "absolute",
+                    top: "-10px",
+                    left: "10px",
+                    background: "#fff",
+                    zIndex: 2,
+                    px: 0.5,
+                    color: "rgba(0, 0, 0, 0.6)",
+                  }}
+                >
+                  View description
                 </Typography>
                 <WysiwygEditor
                   value={viewDescription}

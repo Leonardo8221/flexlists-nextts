@@ -3,7 +3,11 @@ import { Box, TextField, Divider, Typography, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
-import { fetchColumns, setColumns, setCurrentView } from "../../redux/actions/viewActions";
+import {
+  fetchColumns,
+  setColumns,
+  setCurrentView,
+} from "../../redux/actions/viewActions";
 import Checkbox from "@mui/material/Checkbox";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Modal from "@mui/material/Modal";
@@ -32,7 +36,7 @@ const ViewFields = ({
   open,
   setColumns,
   handleClose,
-  fetchColumns
+  fetchColumns,
 }: ViewFieldsProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
@@ -52,7 +56,9 @@ const ViewFields = ({
     // searchField("");
     checkModalHeight();
     let filterCols = filter(columns, (column) => {
-      return (searchText && column.name.includes(searchText)) || searchText === "";
+      return (
+        (searchText && column.name.includes(searchText)) || searchText === ""
+      );
     });
     setFilterColumns(filterCols);
   }, [columns]);
@@ -70,7 +76,7 @@ const ViewFields = ({
     setFilterColumns(newColumns);
   };
 
-  const onDragEnd = async(result: any) => {
+  const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination || destination.index === source.index) {
@@ -79,7 +85,10 @@ const ViewFields = ({
     let newColumns = Object.assign([], columns);
     const [removedColumns] = newColumns.splice(source.index, 1);
     newColumns.splice(destination.index, 0, removedColumns);
-    await reorderViewFields(currentView.id,newColumns.map((x: any) => x.id));
+    await reorderViewFields(
+      currentView.id,
+      newColumns.map((x: any) => x.id)
+    );
     fetchColumns(currentView.id);
   };
 
@@ -106,10 +115,8 @@ const ViewFields = ({
       if (index === i)
         column.viewFieldDetailsOnly = !column.viewFieldDetailsOnly;
       return column;
-    })
-    setColumns(
-      newColumns
-    );
+    });
+    setColumns(newColumns);
     let field = newColumns[index];
     if (field) {
       updateViewFieldConfig(field);
@@ -161,7 +168,7 @@ const ViewFields = ({
       newView.fields = [viewFieldConfig];
     }
     setCurrentView(newView);
-  }
+  };
   const handleCloseModal = () => {
     setFieldListMode(true);
     handleClose();
@@ -293,7 +300,7 @@ const ViewFields = ({
                     }}
                   />
                 </Tooltip>
-                <Tooltip title="Visible on detail page only">
+                <Tooltip title="Visible on main view, not details">
                   <Box
                     component="span"
                     className="svg-color"
@@ -360,7 +367,7 @@ const ViewFields = ({
                                   }}
                                 />
                                 <Checkbox
-                                  checked={column.viewFieldDetailsOnly}
+                                  checked={!column.viewFieldDetailsOnly}
                                   sx={{
                                     color: "#CCCCCC",
                                     "&.Mui-checked": {
@@ -380,10 +387,16 @@ const ViewFields = ({
                                     width: 15,
                                     height: 15,
                                     display: "inline-block",
-                                    bgcolor:
-                                      theme.palette.palette_style.text.primary,
-                                    mask: `${column.icon?`url(/assets/icons/table/${column.icon}.svg)`:''} no-repeat center / contain`,
-                                    WebkitMask: `${column.icon?`url(/assets/icons/table/${column.icon}.svg)`:''} no-repeat center / contain`,
+                                    mask: `${
+                                      column.icon
+                                        ? `url(/assets/icons/table/${column.icon}.svg)`
+                                        : ""
+                                    } no-repeat center / contain`,
+                                    WebkitMask: `${
+                                      column.icon
+                                        ? `url(/assets/icons/table/${column.icon}.svg)`
+                                        : ""
+                                    } no-repeat center / contain`,
                                     marginRight: 1,
                                     marginTop: 0.5,
                                   }}
@@ -484,7 +497,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setColumns,
   setCurrentView,
-  fetchColumns
+  fetchColumns,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewFields);

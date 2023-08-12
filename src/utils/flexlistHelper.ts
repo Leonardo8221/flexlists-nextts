@@ -1,6 +1,7 @@
 import { ExportType, ImportType } from "src/enums/SharedEnums";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
+import { convertToInteger } from "./convertUtils";
 
 export const getDataColumnId = (fieldId: number, columns: ViewField[]): string => {
     var field = columns.find((x) => x.id === fieldId);
@@ -10,6 +11,19 @@ export const getDataColumnId = (fieldId: number, columns: ViewField[]): string =
     return `${fieldId}`;
 
 }
+export const getColumn = (column_id: any,columns:any[]) : any => {
+
+    const column = columns.find(
+      (item: any) =>
+        item.id === convertToInteger(column_id) ||
+        item.name === column_id
+      // (!item.system && item.id === convertToInteger(column_id)) ||
+      // (item.system &&
+      //   (item.name === "createdAt" || item.name === "updatedAt") &&
+      //   item.name === column_id)
+    );
+    return column;
+  };
 export const getChoiceField = (fieldDataId: string, column: any): { label: string, font: string, color: { bg: string, fill: string } } => {
     let color = { bg: "#333", fill: "white" };
     let font = "inherit";

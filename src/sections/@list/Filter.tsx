@@ -33,6 +33,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
 import { convertToInteger } from "src/utils/convertUtils";
+import { getColumn } from "src/utils/flexlistHelper";
 
 type FilterProps = {
   currentView: View;
@@ -90,17 +91,19 @@ const Filter = ({
     setWindowHeight(window.innerHeight);
   }, []);
 
-  const getColumn = (column_id: any) => {
-    const column = columns.filter(
-      (item: any) =>
-        (!item.system && item.id === convertToInteger(column_id)) ||
-        (item.system &&
-          (item.name === "createdAt" || item.name === "updatedAt") &&
-          item.name === column_id)
-    );
+  // const getColumn = (column_id: any) => {
 
-    return column[0];
-  };
+  //   const column = columns.find(
+  //     (item: any) =>
+  //       item.id === convertToInteger(column_id) ||
+  //       item.name === column_id
+  //     // (!item.system && item.id === convertToInteger(column_id)) ||
+  //     // (item.system &&
+  //     //   (item.name === "createdAt" || item.name === "updatedAt") &&
+  //     //   item.name === column_id)
+  //   );
+  //   return column;
+  // };
 
   const handleFilters = (index: number, key: string, value: any) => {
     var newView: View = Object.assign({}, currentView);
@@ -119,7 +122,7 @@ const Filter = ({
               filter["cmp"] === FilterOperator.in ||
               filter["cmp"] === FilterOperator.nin
             ) {
-              let column = getColumn(filter.left);
+              let column = getColumn(filter.left,columns);
               if (column.uiField !== FieldUiTypeEnum.Choice) {
                 filter[key] = value;
               } else {
@@ -171,7 +174,7 @@ const Filter = ({
     return dayjs(date, "MM/DD/YYYY HH:mm:ss");
   };
   const getChoiceValues = (filter: any) => {
-    const column = getColumn(filter.left);
+    const column = getColumn(filter.left,columns);
     let choices: any[] = [];
     if (
       filter.right &&
@@ -190,7 +193,7 @@ const Filter = ({
     filter: any,
     index?: number
   ): [string, { key: string; value: string }[], any, any] => {
-    const column = getColumn(filter.left);
+    const column = getColumn(filter.left,columns);
     const columnType = column.type;
     let defaultConditionOperator: string = FilterOperator.eq;
     let conditionOperators: { key: string; value: string }[] = [];
