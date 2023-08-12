@@ -14,10 +14,11 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
   const handleEditorChange = (newValue: string) => {
     setValue(newValue);
   };
-  
+
   return (
     <Box
       sx={{
+        width: "100%",
         "& .ql-editor": {
           height: "250px",
         },
@@ -27,6 +28,7 @@ const WysiwygEditor = ({ value, setValue }: WysiwygEditorProps) => {
         // style={styles}
         modules={modules}
         formats={formats}
+        style={{ width: "100%", height: "100%" }}
         value={value}
         onChange={(newValue, delta, source) => {
           if (source === "user") {
