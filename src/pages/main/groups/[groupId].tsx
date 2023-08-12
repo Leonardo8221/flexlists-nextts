@@ -282,7 +282,6 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
                       viewName={view.tableViewName}
                       viewDesc={""}
                       bgImage={"/assets/home/heroimg.png"}
-                      isViewDefault={view.isDefaultView}
                     />
                   </Grid>
                 );
