@@ -215,6 +215,7 @@ const DataTable = ({
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
+    document.body.style.overflow = "hidden";
   }, []);
 
   useEffect(() => {
@@ -759,25 +760,23 @@ const DataTable = ({
             columns={columnsTable}
             data={rows}
             enableStickyHeader={true}
-            muiTableContainerProps={tableCorrect}
-            //   {
-            //   sx: {
-            //     height: {
-            //       // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
-            //       xs: "calc(100vh - 236px)",
-            //       md: "calc(100vh - 200px)",
-            //       lg: "calc(100vh - 188px)",
-            //     },
-            //     width: { lg: "100vw" },
-            //     minHeight: "300px",
-            //     "& .MuiTableHead-root": {
-            //       width: "100%",
-            //     },
-            //     "& .MuiTableRow-root": {
-            //       boxShadow: "none",
-            //     },
-            //   },
-            // }}
+            muiTableContainerProps={{
+              sx: {
+                height: {
+                  xs: `${windowHeight - 236}px`,
+                  md: `${windowHeight - 200}px`,
+                  lg: `${windowHeight - 188}px`,
+                },
+                width: { lg: "100vw" },
+                minHeight: "300px",
+                "& .MuiTableHead-root": {
+                  width: "100%",
+                },
+                "& .MuiTableRow-root": {
+                  boxShadow: "none",
+                },
+              },
+            }}
             enableRowSelection={true}
             enableTopToolbar={false}
             enableBottomToolbar={false}

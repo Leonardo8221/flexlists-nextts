@@ -91,15 +91,17 @@ const Filter = ({
   }, []);
 
   const getColumn = (column_id: any) => {
-    const column = columns.filter(
-      (item: any) =>
-        (!item.system && item.id === convertToInteger(column_id)) ||
-        (item.system &&
-          (item.name === "createdAt" || item.name === "updatedAt") &&
-          item.name === column_id)
-    );
 
-    return column[0];
+    const column = columns.find(
+      (item: any) =>
+        item.id === convertToInteger(column_id) ||
+        item.name === column_id
+      // (!item.system && item.id === convertToInteger(column_id)) ||
+      // (item.system &&
+      //   (item.name === "createdAt" || item.name === "updatedAt") &&
+      //   item.name === column_id)
+    );
+    return column;
   };
 
   const handleFilters = (index: number, key: string, value: any) => {
