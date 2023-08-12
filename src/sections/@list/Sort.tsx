@@ -9,6 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import { getColumn } from "src/utils/flexlistHelper";
 
 type SortProps = {
   currentView: View;
@@ -51,13 +52,9 @@ const SortPage = ({
     );
     setCurrentView(newCurrentView);
   };
-  const getColumn = (column_id: number) => {
-    const column = columns.filter((item: any) => item.id === column_id);
-
-    return column[0];
-  };
+  
   const getSorDirections = (sort: any): { key: string; value: string }[] => {
-    var column = getColumn(sort.fieldId);
+    var column = getColumn(sort.fieldId,columns);
     var directions: { key: string; value: string }[] = [
       {
         key: "asc",
