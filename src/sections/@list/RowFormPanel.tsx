@@ -40,7 +40,7 @@ import { filter, set } from "lodash";
 import { ErrorConsts } from "src/constants/errorConstants";
 import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, renderTimeViewClock } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import {
   downloadFileUrl,
@@ -528,6 +528,11 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
+              viewRenderers={{
+                hours: renderTimeViewClock,
+                minutes: renderTimeViewClock,
+                seconds: renderTimeViewClock,
+              }}
             />
           </LocalizationProvider>
         ) : (
@@ -622,6 +627,11 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
+              viewRenderers={{
+                hours: renderTimeViewClock,
+                minutes: renderTimeViewClock,
+                seconds: renderTimeViewClock,
+              }}
             />
           </LocalizationProvider>
         ) : (
