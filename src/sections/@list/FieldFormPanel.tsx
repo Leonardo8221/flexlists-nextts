@@ -127,13 +127,7 @@ function FieldFormPanel({
   }
   const handleSubmit = async () => {
     setIsSubmit(true);
-    if(currentField.name && (currentField.name.toLowerCase() === 'id'||
-    currentField.name.toLowerCase() === 'createdat'||
-    currentField.name.toLowerCase() === 'updatedat'||
-    currentField.name.toLowerCase() === '___archived')){
-      setError(`Field name cannot be ${currentField.name}`)
-      return
-    }
+   
     let _errors: { [key: string]: string|boolean } = {}
 
     const _setErrors = (e: { [key: string]: string|boolean }) => { 
@@ -142,6 +136,13 @@ function FieldFormPanel({
     let newGroupName = await frontendValidate(ModelValidatorEnum.FieldDefinition,FieldValidatorEnum.name,currentField.name,_errors,_setErrors,true)
         if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
     if (isCreating) {
+      if(currentField.name && (currentField.name.toLowerCase() === 'id'||
+      currentField.name.toLowerCase() === 'createdat'||
+      currentField.name.toLowerCase() === 'updatedat'||
+      currentField.name.toLowerCase() === '___archived')){
+        setError(`Field name cannot be ${currentField.name}`)
+        return
+      }
       var createFieldResponse = await fieldService.createUIField(
         viewId,
         currentField.name,
