@@ -17,9 +17,10 @@ export function LoadingPage({ children, isLoading }: LoadingPageProps) {
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading}
+        style={{ pointerEvents: "none" }}
       >
         <CircularProgress color="inherit" />
-       
+
       </Backdrop>
       {children}
     </>

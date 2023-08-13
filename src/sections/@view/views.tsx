@@ -12,13 +12,13 @@ import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 
 interface ViewsProps {
-  isDefaultViews:boolean;
+  isDefaultViews: boolean;
   isArchived: boolean;
   message: any;
   setMessage: (message: any) => void;
 }
 
-function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
+function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
@@ -29,7 +29,7 @@ function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
 
   // error handling 
   const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
-  
+
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -63,24 +63,20 @@ function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
   }, [router.isReady]);
   useEffect(() => {
     async function fetchData() {
-      let response : FlexlistsError|FlexlistsSuccess<View[]> 
-      if(isDefaultViews)
-      {
-          response = await getDefaultListViews();
+      let response: FlexlistsError | FlexlistsSuccess<View[]>
+      if (isDefaultViews) {
+        response = await getDefaultListViews();
       }
-      else
-      {
-        response = await listViewService.getViews(undefined,undefined,undefined,undefined,isArchived);
+      else {
+        response = await listViewService.getViews(undefined, undefined, undefined, undefined, isArchived);
       }
-      
+
       if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
           setViews(response.data);
         }
-        else
-        {
-          if(!isArchived)
-          {
+        else {
+          if (!isArchived) {
             setMessage({ message: "No views yet, click a template to create your first one!", type: "success" })
             await router.push(PATH_MAIN.chooseTemplate);
           }
@@ -140,7 +136,7 @@ function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
     width: "100%",
     height: "100%",
     backgroundColor: "rgba(84, 166, 251, 0.5)",
-    // pointerEvents: "none",
+    pointerEvents: "none",
     mask: `radial-gradient(circle at ${maskProperty.left.xs} ${maskProperty.top.xs}, transparent ${maskProperty.radius.xs}, black 0)`,
     zIndex: 10000,
     [theme.breakpoints.up("md")]: {
@@ -168,18 +164,18 @@ function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
           <Typography variant="h6"></Typography>
           {
             isDefaultViews && <Button
-            size="medium"
-            variant="contained"
-            onClick={() => createNewView()}
-          >
-            Create new
-          </Button>
+              size="medium"
+              variant="contained"
+              onClick={() => createNewView()}
+            >
+              Create new
+            </Button>
           }
-          
+
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
           {views.length > 0 &&
-            views.map((view,index) => {
+            views.map((view, index) => {
               return (
                 <Grid
                   item
