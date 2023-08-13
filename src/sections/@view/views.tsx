@@ -140,7 +140,7 @@ function Views({isArchived, message, setMessage,isDefaultViews }: ViewsProps) {
     width: "100%",
     height: "100%",
     backgroundColor: "rgba(84, 166, 251, 0.5)",
-    pointerEvents: "none",
+    // pointerEvents: "none",
     mask: `radial-gradient(circle at ${maskProperty.left.xs} ${maskProperty.top.xs}, transparent ${maskProperty.radius.xs}, black 0)`,
     zIndex: 10000,
     [theme.breakpoints.up("md")]: {
