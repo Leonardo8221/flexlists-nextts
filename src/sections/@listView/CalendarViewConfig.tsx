@@ -22,6 +22,7 @@ type CalendarViewConfigProps = {
   columns: ViewField[];
   availableFieldUiTypes: FieldUIType[];
 };
+
 function CalendarViewConfig({
   submit,
   updateConfig,
@@ -30,34 +31,18 @@ function CalendarViewConfig({
 }: CalendarViewConfigProps) {
   const [dateFieldId, setDateFieldId] = useState<number>(0);
   const [titleFieldId, setTitleFieldId] = useState<number>(0);
-  const [isOpenDateFieldModal, setIsOpenDateFieldModal] =
-    useState<boolean>(false);
-  const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] =
-    useState<boolean>(false);
-  const dateFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
-    (uiType) =>
-      uiType.name === FieldUiTypeEnum.Date ||
-      uiType.name === FieldUiTypeEnum.DateTime
-  );
-  const titleFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
-    (uiType) => uiType.name === FieldUiTypeEnum.Text
-  );
-  const getDateFields = (): ViewField[] => {
-    return columns.filter(
-      (x) =>
-        x.uiField === FieldUiTypeEnum.Date ||
-        x.uiField === FieldUiTypeEnum.DateTime
-    );
-  };
-  const getTitleFields = (): ViewField[] => {
-    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text);
-  };
+  const [isOpenDateFieldModal, setIsOpenDateFieldModal] = useState<boolean>(false);
+  const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] = useState<boolean>(false);
+  const dateFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.DateTime);
+  const titleFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
+  const getDateFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.DateTime); };
+  const getTitleFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text); };
   const [dateFields, setDateFields] = useState<ViewField[]>(getDateFields());
   const [titleFields, setTitleFields] = useState<ViewField[]>(getTitleFields());
   const newDateField: any = {
     name: "",
     required: true,
-    uiField: FieldUiTypeEnum.Date,
+    uiField: FieldUiTypeEnum.DateTime,
     description: "",
     detailsOnly: false,
     icon: "",
@@ -74,16 +59,19 @@ function CalendarViewConfig({
     config: {},
     defaultValue: "",
   };
+
   const reloadColumns = () => {
-    var newDateFields: ViewField[] = getDateFields();
-    var newTitleFields: ViewField[] = getTitleFields();
+    const newDateFields: ViewField[] = getDateFields();
+    const newTitleFields: ViewField[] = getTitleFields();
 
     if (newDateFields.length > 0) {
       setDateFieldId(newDateFields[0].id);
     }
+
     if (newTitleFields.length > 0) {
       setTitleFieldId(newTitleFields[0].id);
     }
+
     setDateFields(newDateFields);
     setTitleFields(newTitleFields);
     updateCalendarConfig(
@@ -91,28 +79,35 @@ function CalendarViewConfig({
       newTitleFields.length > 0 ? newTitleFields[0].id : 0
     );
   };
+
   useEffect(() => {
     reloadColumns();
   }, [columns]);
+
   const onDateFieldChange = (event: SelectChangeEvent) => {
-    var value = event.target.value as string;
+    const value = event.target.value as string;
+
     if (value === "-1") {
       setIsOpenDateFieldModal(true);
       return;
     }
+
     setDateFieldId(convertToInteger(value));
     updateCalendarConfig(convertToInteger(value), titleFieldId);
   };
 
   const onTitleFieldChange = (event: SelectChangeEvent) => {
-    var value = event.target.value as string;
+    const value = event.target.value as string;
+
     if (value === "-1") {
       setIsOpenTitleFieldModal(true);
       return;
     }
+
     setTitleFieldId(convertToInteger(value));
     updateCalendarConfig(dateFieldId, convertToInteger(value));
   };
+
   const updateCalendarConfig = (newDateFieldId: number, newTitleId: number) => {
     updateConfig({ dateFieldId: newDateFieldId, titleId: newTitleId });
   };
@@ -125,7 +120,7 @@ function CalendarViewConfig({
           Field
         </Typography> */}
           <InputLabel required id="select-field-label">
-            Field
+            DateTime
           </InputLabel>
           <Select
             labelId="select-field-label"
@@ -135,7 +130,6 @@ function CalendarViewConfig({
             required
             error={submit && (!dateFieldId || dateFieldId === 0)}
             fullWidth
-
             // sx={{ width: { md: "168px" }, marginLeft: { xs: "8px", md: "30px" } }}
           >
             {dateFields.map((viewColumn: ViewField) => (
@@ -198,9 +192,9 @@ function CalendarViewConfig({
     </>
   );
 }
+
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
 });
 
-const mapDispatchToProps = {};
-export default connect(mapStateToProps, mapDispatchToProps)(CalendarViewConfig);
+export default connect(mapStateToProps)(CalendarViewConfig);
