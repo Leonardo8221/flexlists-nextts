@@ -62,7 +62,7 @@ const SearchBarMin = ({
         //if (currentSearchTypes.find((x) => x.name === "CurrentView")) {
         setSearchType("CurrentView");
         //}
-        setSearch(currentView.query ?? "");
+        setSearch(currentView?.query ?? "");
       } else {
         setCurrentSearchTypes(
           searchTypes.filter((x) => x.name !== "CurrentView")

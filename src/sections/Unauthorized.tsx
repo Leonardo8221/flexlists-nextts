@@ -1,26 +1,24 @@
 import {
   Box,
   Typography,
-  TextField,
   Container,
   Grid,
-  InputAdornment,
   Button,
   Link,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import { useTheme } from "@mui/material/styles";
-import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import { setReturnUrl } from "src/redux/actions/adminAction";
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import { PATH_AUTH, PATH_MAIN } from "src/routes/paths";
+import { PATH_AUTH } from "src/routes/paths";
+import { setMessage } from "src/redux/actions/authAction";
 
 interface UnauthorizedProps {
-  setReturnUrl: (returnUrl: string) => void
+  setReturnUrl: (returnUrl: string) => void,
+  setMessage: (message: any) => void,
 }
-function Unauthorized({ setReturnUrl  }: UnauthorizedProps) {
+function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
   const router = useRouter();
   
   const theme = useTheme();
@@ -65,6 +63,7 @@ function Unauthorized({ setReturnUrl  }: UnauthorizedProps) {
   };
   const onSubmit = async() => {
     setReturnUrl(router.asPath);
+    setMessage(null)
     await router.push({pathname: PATH_AUTH.login});
   };
   const gotoHomePage = async() => {
@@ -203,7 +202,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setReturnUrl
+  setReturnUrl,
+  setMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Unauthorized);
