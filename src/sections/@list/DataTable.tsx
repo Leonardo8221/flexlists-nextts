@@ -109,6 +109,7 @@ const DataTable = ({
   );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
+  const [toggleBulkAction, setToggleBulkAction] = useState(false);
 
   const tableStyle = {
     sx: {
@@ -232,6 +233,8 @@ const DataTable = ({
         })
       );
     }
+
+    setToggleBulkAction(false);
   }, [rows, rowSelection]);
 
   const getColumnKey = (column: any): string => {
@@ -704,6 +707,11 @@ const DataTable = ({
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+
+  const handleBulkActionModal = () => {
+    setToggleBulkAction(!toggleBulkAction);
+  };
+
   return (
     <>
       <Box
@@ -909,7 +917,7 @@ const DataTable = ({
             {rowSelection && Object.keys(rowSelection).length > 0 && (
               <Button
                 variant="outlined"
-                // onClick={handleNewRowPanel}
+                onClick={handleBulkActionModal}
                 sx={{
                   display: isMobile ? "flex" : "none",
                   px: { xs: 1, md: "inherit" },
@@ -949,8 +957,7 @@ const DataTable = ({
                 boxShadow: { xs: "0 0 12px 0 rgba(0,0,0,.1)", md: "none" },
               }}
             >
-              {rowSelection &&
-                Object.keys(rowSelection).length > 0 &&
+              {toggleBulkAction &&
                 bulkActions.map(
                   (action: any) =>
                     action.allowed && (
