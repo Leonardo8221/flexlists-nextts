@@ -72,33 +72,38 @@ export function DefaultListViewDetail({
       fetchRowsByPage(0, currentView.limit ?? 25);
     }
   }, [router.isReady, currentView?.id]);
-  return currentView && columns && columns.length > 0 ? (
+  return  (
     <MainLayout>
-      <Box
-        sx={{
-          backgroundColor: theme.palette.palette_style.background.default,
-          boxShadow: "none",
-          width: "100%",
-          height: { xs: "100%", md: "100%" },
-          overflow: "hidden",
-        }}
-      >
-        <Header />
-        <MenuBar search="" />
-
-        {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
-        {currentView.type === ViewType.List && <DataTable tab={open} />}
-        {currentView.type === ViewType.Calendar && <CalendarView open={open} />}
-        {currentView.type === ViewType.KanBan && <KanbanView open={open} />}
-        {currentView.type === ViewType.Gallery && <GalleryView open={open} />}
-        {currentView.type === ViewType.TimeLine && <TimelineView open={open} />}
-        {currentView.type === ViewType.Gantt && <GanttView open={open} />}
-        {currentView.type === ViewType.Map && <MapView open={open} />}
-      </Box>
+      {
+         currentView && columns && columns.length > 0 ? 
+         (<Box
+          sx={{
+            backgroundColor: theme.palette.palette_style.background.default,
+            boxShadow: "none",
+            width: "100%",
+            height: { xs: "100%", md: "100%" },
+            overflow: "hidden",
+          }}
+        >
+          <Header />
+          <MenuBar search="" />
+  
+          {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
+          {currentView.type === ViewType.List && <DataTable tab={open} />}
+          {currentView.type === ViewType.Calendar && <CalendarView open={open} />}
+          {currentView.type === ViewType.KanBan && <KanbanView open={open} />}
+          {currentView.type === ViewType.Gallery && <GalleryView open={open} />}
+          {currentView.type === ViewType.TimeLine && <TimelineView open={open} />}
+          {currentView.type === ViewType.Gantt && <GanttView open={open} />}
+          {currentView.type === ViewType.Map && <MapView open={open} />}
+        </Box>):
+        (
+          <></>
+        )
+      }
+      
     </MainLayout>
-  ) : (
-    <></>
-  );
+  )
 }
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,

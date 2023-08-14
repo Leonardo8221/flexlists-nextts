@@ -8,6 +8,8 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { getSearchTypes } from "src/redux/actions/adminAction";
 import { View } from "src/models/SharedModels";
+import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
+import Error from 'src/sections/Error'
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -59,6 +61,7 @@ type MainLayoutProps = {
   currentView: View;
   getAvailableFieldUiTypes: () => void;
   getSearchTypes: () => void;
+  apiResponseStatus: ApiResponseStatus
 };
 
 const MainLayout = ({
@@ -68,6 +71,7 @@ const MainLayout = ({
   getAvailableFieldUiTypes,
   getSearchTypes,
   currentView,
+  apiResponseStatus
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
@@ -78,7 +82,7 @@ const MainLayout = ({
       getSearchTypes();
     }
   }, [router.isReady]);
-  return (
+  return apiResponseStatus === ApiResponseStatus.Success ?(
     <StyledRoot>
       <Header onOpenNav={() => setOpen(true)} />
 
@@ -90,10 +94,16 @@ const MainLayout = ({
       </Main>
       {removeFooter == true && currentView && <Footer />}
     </StyledRoot>
-  );
+  ):
+  (
+    <>
+    <Error errorStatus={apiResponseStatus} />
+    </>
+  )
 };
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  apiResponseStatus: state.admin.apiResponseStatus
 });
 
 const mapDispatchToProps = {

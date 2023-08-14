@@ -93,9 +93,12 @@ export function ViewDetail({
   //   }
 
   // }, [router.query.viewId]);
-  return currentView && columns && columns.length > 0 ? (
+  return (
     <MainLayout>
-      <Box
+      {
+        currentView && columns && columns.length > 0 ?
+        (
+          <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,
           boxShadow: "none",
@@ -116,10 +119,12 @@ export function ViewDetail({
         {currentView.type === ViewType.Gantt && <GanttView open={open} />}
         {currentView.type === ViewType.Map && <MapView open={open} />}
       </Box>
-    </MainLayout>
-  ) : (
-    <></>
-  );
+        ):
+        (<></>)
+
+      }
+      
+    </MainLayout>)
 }
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,

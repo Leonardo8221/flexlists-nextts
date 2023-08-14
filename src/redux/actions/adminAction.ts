@@ -4,6 +4,7 @@ import store, { RootState } from '../store';
 import { isSucc } from 'src/models/ApiResponse';
 import { fieldService } from 'src/services/field.service';
 import { adminService } from 'src/services/admin.service';
+import { ApiResponseStatus } from 'src/enums/ApiResponseStatus';
 // Define the actions
 
 export const getSearchTypes = (): ThunkAction<
@@ -67,4 +68,12 @@ export const setAuthValidate = (authValidate: any) => ({
 export const setLanguages = (languages: any) => ({  
   type: 'SET_LANGUAGES',  
   payload: languages 
+});
+export const setApiResponseStatus = (apiResponseStatus: ApiResponseStatus) => ({  
+  type: 'SET_API_RESPONSE_STATUS',  
+  payload: apiResponseStatus 
+});
+export const setReturnUrl = (returnUrl: string) => ({  
+  type: 'SET_RETURN_URL',  
+  payload: returnUrl 
 });

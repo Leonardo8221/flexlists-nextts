@@ -39,7 +39,6 @@ export default function GroupCard({
   ...other
 }: GroupCard) {
   const router = useRouter();
-  console.log(avatarUrl)
   return (
     <Link
       href=""
