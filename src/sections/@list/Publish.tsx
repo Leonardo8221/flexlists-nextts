@@ -88,7 +88,6 @@ const PublishList = (props: Props) => {
   }, [code, props.id]);
 
   async function getShareURLAsync(format: string) {
-    console.log(props);
     const url = await getShareURL(props.id, format);
     if (isErr(url)) {
       return "";

@@ -1,9 +1,13 @@
+import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
+
 // Define the initial state
 const initialState = {
     searchTypes:[],
     isLoading:false,
     authValidate:{isUserValidated:false,isKeyValidated:false,user:undefined},
-    languages:[]
+    languages:[],
+    apiResponseStatus:ApiResponseStatus.Success,
+    returnUrl:''
   };
   const adminReducer = (state = initialState, action: any) => {
       switch (action.type) {
@@ -15,6 +19,10 @@ const initialState = {
           return { ...state, authValidate: action.payload }
         case 'SET_LANGUAGES':
           return { ...state, languages: action.payload }
+        case 'SET_API_RESPONSE_STATUS':
+            return { ...state, apiResponseStatus: action.payload }
+        case 'SET_RETURN_URL':
+            return { ...state, returnUrl: action.payload }
         default:
           return state;
       }

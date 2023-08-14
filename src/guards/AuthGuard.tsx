@@ -3,11 +3,12 @@ import { Router, useRouter } from 'next/router';
 import { authService } from 'src/services/auth.service';
 import { isSucc } from 'src/models/ApiResponse';
 import { PATH_MAIN, getRolePathDefault } from 'src/routes/paths';
-import { setAuthValidate, setLoading } from 'src/redux/actions/adminAction';
+import { setApiResponseStatus, setAuthValidate, setLoading, setReturnUrl } from 'src/redux/actions/adminAction';
 import { connect } from 'react-redux';
 import { getAuthValidatePayLoad } from 'src/utils/cookieUtils';
 import { getRole } from 'src/repositories/roleRepository';
 import { SystemRole } from 'src/enums/SystemRole';
+import { ApiResponseStatus } from 'src/enums/ApiResponseStatus';
 
 // ----------------------------------------------------------------------
 
@@ -16,16 +17,21 @@ type AuthGuardProps = {
   isLoading: boolean;
   setLoading: (isLoading: boolean) => void;
   setAuthValidate: (authValidate: any) => void;
+  setApiResponseStatus: (apiResponseStatus: ApiResponseStatus) => void;
+  setReturnUrl: (returnUrl: string) => void;
 };
 
-export function AuthGuard({ children, isLoading, setLoading, setAuthValidate }: AuthGuardProps) {
+export function AuthGuard({ children, isLoading, setLoading, setAuthValidate,setApiResponseStatus,setReturnUrl }: AuthGuardProps) {
 
   const router = useRouter();
   const url = router.asPath;
 
   useEffect(() => {
     async function initialize() {
-      // const path = url.split('/')[1];
+      setApiResponseStatus(ApiResponseStatus.Success);
+      if (!url.includes('/auth/login')) {
+         setReturnUrl('')
+      }
       // let authValidate = getAuthValidatePayLoad();
       // setAuthValidate(authValidate);
       // if ((path == 'auth' && !url.includes('/auth/login')) || path == '') {
@@ -84,7 +90,9 @@ const mapStateToProps = (state: any) => ({
 });
 const mapDispatchToProps = {
   setLoading,
-  setAuthValidate
+  setAuthValidate,
+  setApiResponseStatus,
+  setReturnUrl
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AuthGuard);
 

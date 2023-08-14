@@ -37,14 +37,17 @@ import { SystemRole } from "src/enums/SystemRole";
 import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations } from "src/utils/i18n";
+import { setReturnUrl } from "src/redux/actions/adminAction";
 
 interface LoginProps {
   message: any;
   setMessage: (message: any) => void;
   styles?: any;
+  returnUrl:string,
+  setReturnUrl:(returnUrl:string)=>void
 }
 
-const Login = ({ message, setMessage, styles }: LoginProps) => {
+const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const router = useRouter();
@@ -112,9 +115,17 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
           message: "Login successful, going to your Dashboard!",
           type: "success",
         });
-        await router.push({
-          pathname: getRolePathDefault(response.data.systemRole),
-        });
+        if(returnUrl){
+          setReturnUrl('')
+          await router.push({pathname:returnUrl});
+          return;
+        }
+        else
+        {
+          await router.push({
+            pathname: getRolePathDefault(response.data.systemRole),
+          });
+        }
 
         return;
       }
@@ -449,18 +460,20 @@ const Login = ({ message, setMessage, styles }: LoginProps) => {
   );
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  var verifyToken = await validateToken(context)
-  if(verifyToken){
-    return verifyToken
-  }
+  // var verifyToken = await validateToken(context)
+  // if(verifyToken){
+  //   return verifyToken
+  // }
   return await getTranslations("login", context)
 }
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
+  returnUrl:state.admin.returnUrl
 });
 
 const mapDispatchToProps = {
   setMessage,
+  setReturnUrl
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
