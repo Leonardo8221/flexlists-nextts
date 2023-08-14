@@ -196,6 +196,8 @@ const DataTable = ({
         editRow({ original: row, index: index });
       }
     }
+
+    setToggleBulkAction(false);
   }, [rows, router.query]);
 
   // useEffect(() => {
@@ -232,9 +234,7 @@ const DataTable = ({
           }
         })
       );
-    }
-
-    setToggleBulkAction(false);
+    } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
 
   const getColumnKey = (column: any): string => {
@@ -957,7 +957,7 @@ const DataTable = ({
                 boxShadow: { xs: "0 0 12px 0 rgba(0,0,0,.1)", md: "none" },
               }}
             >
-              {toggleBulkAction &&
+              {(isDesktop ? rowSelection && Object.keys(rowSelection).length > 0 : toggleBulkAction) &&
                 bulkActions.map(
                   (action: any) =>
                     action.allowed && (
