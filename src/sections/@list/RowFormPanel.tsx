@@ -392,14 +392,14 @@ const RowFormPanel = ({
               value={values ? values[column.id]?.toString() : ""}
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                  borderWidth: "1px",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
+                  borderWidth: "1px !important",
                 },
                 "& .Mui-focused.MuiFormLabel-root": {
-                  color: "rgba(0, 0, 0, 0.6)",
+                  color: "rgba(0, 0, 0, 0.6) !important",
                 },
               }}
             />
@@ -475,14 +475,14 @@ const RowFormPanel = ({
               value={values ? values[column.id] : ""}
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                  borderWidth: "1px",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
+                  borderWidth: "1px !important",
                 },
-                ".MuiFormLabel-root": {
-                  color: "rgba(0, 0, 0, 0.6)",
+                "& .Mui-focused.MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6) !important",
                 },
               }}
             />
@@ -528,14 +528,14 @@ const RowFormPanel = ({
               value={values ? values[getDataColumnId(column.id, columns)] : ""}
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                  borderWidth: "1px",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
+                  borderWidth: "1px !important",
                 },
-                ".MuiFormLabel-root": {
-                  color: "rgba(0, 0, 0, 0.6)",
+                "& .Mui-focused.MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6) !important",
                 },
               }}
             />
@@ -589,14 +589,14 @@ const RowFormPanel = ({
               }
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                  borderWidth: "1px",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
+                  borderWidth: "1px !important",
                 },
-                ".MuiFormLabel-root": {
-                  color: "rgba(0, 0, 0, 0.6)",
+                "& .Mui-focused.MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6) !important",
                 },
               }}
             />
@@ -643,14 +643,14 @@ const RowFormPanel = ({
               }
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                  borderWidth: "1px",
+                  borderColor: "rgba(158, 158, 158, 0.32) !important",
+                  borderWidth: "1px !important",
                 },
                 ".MuiFormLabel-root": {
-                  color: "rgba(0, 0, 0, 0.6)",
+                  color: "rgba(0, 0, 0, 0.6) !important",
                 },
               }}
             />
@@ -720,14 +720,14 @@ const RowFormPanel = ({
                 }
                 sx={{
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(158, 158, 158, 0.32)",
+                    borderColor: "rgba(158, 158, 158, 0.32) !important",
                   },
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(158, 158, 158, 0.32)",
-                    borderWidth: "1px",
+                    borderColor: "rgba(158, 158, 158, 0.32) !important",
+                    borderWidth: "1px !important",
                   },
                   ".MuiFormLabel-root": {
-                    color: "rgba(0, 0, 0, 0.6)",
+                    color: "rgba(0, 0, 0, 0.6) !important",
                   },
                 }}
               />
@@ -794,14 +794,14 @@ const RowFormPanel = ({
                 value={choice?.label}
                 sx={{
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(158, 158, 158, 0.32)",
+                    borderColor: "rgba(158, 158, 158, 0.32) !important",
                   },
                   "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(158, 158, 158, 0.32)",
-                    borderWidth: "1px",
+                    borderColor: "rgba(158, 158, 158, 0.32) !important",
+                    borderWidth: "1px !important",
                   },
                   ".MuiFormLabel-root": {
-                    color: "rgba(0, 0, 0, 0.6)",
+                    color: "rgba(0, 0, 0, 0.6) !important",
                   },
                 }}
               />
