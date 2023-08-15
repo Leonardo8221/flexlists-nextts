@@ -28,6 +28,14 @@ export type TimelineConfig = {
     toId: number
 }
 
+export type GanttConfig = {
+    titleId: number
+    colorId: number
+    levelId: number
+    fromId: number
+    toId: number
+}
+
 export type MapConfigLacation = {
     latId: number
     lngId: number

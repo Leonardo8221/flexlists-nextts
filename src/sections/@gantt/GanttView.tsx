@@ -2,67 +2,24 @@ import { useState, useEffect } from "react";
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns } from '../../redux/actions/viewActions';
-import {  setRows } from '../../redux/actions/viewActions';
+import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import { format, startOfMonth, endOfMonth, subDays, eachDayOfInterval, subMonths, addMonths } from 'date-fns';
+import { FlatWhere, View } from 'src/models/SharedModels';
+import { getDataColumnId } from 'src/utils/flexlistHelper';
 
 type Props = {
   columns: any;
   rows: any;
-  setColumns: (columns: any) => void;
-  setRows: (columns: any) => void;
   open: boolean;
+  currentView: View;
+  fetchRows: () => void;
+  setCurrentView: (view: View) => void;
 };
 
-const meetings = [
-  {
-    title: 'Meeting Meeting Meeting',
-    color: '#FFB800',
-    level: 3,
-    from: '04/12/2023 08:00:00',
-    to: '04/17/2023 08:00:00'
-  },
-  {
-    title: 'Meeting',
-    color: '#FFB800',
-    level: 3,
-    from: '04/19/2023 08:00:00',
-    to: '04/25/2023 08:00:00'
-  },
-  {
-    title: 'Meeting',
-    color: '#C92929',
-    level: 4,
-    from: '04/21/2023 08:00:00',
-    to: '04/29/2023 08:00:00'
-  },
-  {
-    title: 'Meeting',
-    color: '#159639',
-    level: 5,
-    from: '04/16/2023 08:00:00',
-    to: '04/29/2023 08:00:00'
-  },
-  {
-    title: 'Meeting',
-    color: '#FFB800',
-    level: 6,
-    from: '04/14/2023 08:00:00',
-    to: '04/22/2023 08:00:00'
-  },
-  {
-    title: 'Meeting',
-    color: '#C92929',
-    level: 7,
-    from: '04/19/2023 08:00:00',
-    to: '04/26/2023 08:00:00'
-  }
-];
-
 const GanttView = (props: Props) => {
-  const { columns, rows, setRows, open } = props;
+  const { columns, rows, currentView, open, fetchRows, setCurrentView } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -76,6 +33,33 @@ const GanttView = (props: Props) => {
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
+
+    let newView: View = Object.assign({}, currentView);
+    newView.conditions = [];
+
+    const fromColumn = getDataColumnId(currentView.config.fromId, columns);
+    const toColumn = getDataColumnId(currentView.config.toId, columns);
+    const filter1: FlatWhere = {
+      left: fromColumn,
+      leftType: "Field",
+      right: `${format(thirdRange[thirdRange.length - 1], 'MM/dd/yyyy')} 00:00:00`,
+      rightType: "SearchString",
+      cmp: 'lt',
+    } as FlatWhere;
+    const filter2: FlatWhere = {
+      left: toColumn,
+      leftType: "Field",
+      right: `${format(firstRange[0], 'MM/dd/yyyy')} 23:59:59`,
+      rightType: "SearchString",
+      cmp: 'gt',
+    } as FlatWhere;
+    
+    newView.conditions.push(filter1);
+    newView.conditions.push("And");
+    newView.conditions.push(filter2);
+
+    setCurrentView(newView);
+    fetchRows();
   }, []);
 
   const getRange = (startMonth: Date, endMonth: Date, unit: number) => {
@@ -116,8 +100,8 @@ const GanttView = (props: Props) => {
       const meeting = getMeeting(ganttDays[i].getDate(), level);
       
       if (meeting) {
-        const from = new Date(meeting.from).getDate();
-        const to = new Date(meeting.to).getDate();
+        const from = new Date(meeting[getDataColumnId(currentView.config.fromId, columns)]).getDate();
+        const to = new Date(meeting[getDataColumnId(currentView.config.toId, columns)]).getDate()
         const isFirstItem = from === ganttDays[i].getDate();
         const isLastItem = to === ganttDays[i].getDate();
 
@@ -136,11 +120,11 @@ const GanttView = (props: Props) => {
           }}
         >
           <Box
-            sx={{ backgroundColor: meeting.color, width: '100%', height: '100%', zIndex: isFirstItem ? 1 : 'inherit', paddingLeft: isFirstItem ? 1 : 'inherit', whiteSpace: 'nowrap', color: 'white', display: 'flex', alignItems: 'center', borderTopLeftRadius: isFirstItem ? '5px' : 'inherit', borderBottomLeftRadius: isFirstItem ? '5px' : 'inherit', borderTopRightRadius: isLastItem ? '5px' : 'inherit', borderBottomRightRadius: isLastItem ? '5px' : 'inherit' }}
-          >{isFirstItem && meeting.title}</Box>
+            sx={{ backgroundColor: meeting[getDataColumnId(currentView.config.colorId, columns)], width: '100%', height: '100%', zIndex: isFirstItem ? 1 : 'inherit', paddingLeft: isFirstItem ? 1 : 'inherit', whiteSpace: 'nowrap', color: 'white', display: 'flex', alignItems: 'center', borderTopLeftRadius: isFirstItem ? '5px' : 'inherit', borderBottomLeftRadius: isFirstItem ? '5px' : 'inherit', borderTopRightRadius: isLastItem ? '5px' : 'inherit', borderBottomRightRadius: isLastItem ? '5px' : 'inherit' }}
+          >{isFirstItem && meeting[getDataColumnId(currentView.config.titleId, columns)]}</Box>
         </Box>);
       } else {
-        dayCells.push(<Box key={`showCell-${i}`} sx={{ width: `${100 / 30}%`, height: '60px', textAlign: 'center', fontSize: '14px', borderRight: `1px solid ${theme.palette.palette_style.border.default}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}></Box>);
+        dayCells.push(<Box key={`showCell-${i}`} sx={{ width: `${100 / ganttDays.length}%`, height: '60px', textAlign: 'center', fontSize: '14px', borderRight: `1px solid ${theme.palette.palette_style.border.default}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}></Box>);
       }      
     }
 
@@ -150,12 +134,12 @@ const GanttView = (props: Props) => {
   const getMeeting = (date: number, level: number) => {
     let meeting = null;
 
-    for (let i = 0; i < meetings.length; i++) {
-      const from = new Date(meetings[i].from).getDate();
-      const to = new Date(meetings[i].to).getDate();
+    for (let i = 0; i < rows.length; i++) {
+      const from = new Date(rows[i][getDataColumnId(currentView.config.fromId, columns)]).getDate();
+      const to = new Date(rows[i][getDataColumnId(currentView.config.toId, columns)]).getDate();
 
-      if (date >= from && date <= to && meetings[i].level === level) {
-        meeting = meetings[i];
+      if (date >= from && date <= to && rows[i][getDataColumnId(currentView.config.levelId, columns)] === level) {
+        meeting = rows[i];
         break;
       }
     }
@@ -176,13 +160,13 @@ const GanttView = (props: Props) => {
   };
 
   return (
-    <Box sx={{ p: {xs: 0.5, md: 1}, height: `${windowHeight - (open ? 307 : 262)}px`, overflow: 'auto' }}>
+    <Box sx={{ p: {xs: 0.5, md: 1}, overflow: 'auto' }}>
       <Box sx={{ textTransform: 'uppercase', backgroundColor: '#F6F8FA', px:2, py: 1.2, display: 'grid', gridTemplateColumns: `repeat(3, 1fr)`, minWidth: `${40 * ganttDays.length}px` }}>
         <Box sx={{ textAlign: 'center' }}>{format(firstRange[0], 'dd MMM')} - {format(firstRange[firstRange.length - 1], 'dd MMM')}</Box>
         <Box sx={{ textAlign: 'center' }}>{format(secondRange[0], 'dd MMM')} - {format(secondRange[secondRange.length - 1], 'dd MMM')}</Box>
         <Box sx={{ textAlign: 'center' }}>{format(thirdRange[0], 'dd MMM')} - {format(thirdRange[thirdRange.length - 1], 'dd MMM')}</Box>
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateRows: `repeat(${ROWS}, 1fr)`, border: `1px solid ${theme.palette.palette_style.border.default}`, width: {xs: 'fit-content', md: 'inherit'} }}>
+      <Box sx={{ display: 'grid', gridTemplateRows: `repeat(${ROWS}, 1fr)`, border: `1px solid ${theme.palette.palette_style.border.default}`, width: {xs: 'fit-content', md: 'inherit'}, height: `${windowHeight - (open ? 356 : 236)}px` }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(${ganttDays.length}, 1fr)` }}>
           {dayTitle()}
         </Box>
@@ -196,12 +180,13 @@ const GanttView = (props: Props) => {
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
-  rows: state.view.rows
+  rows: state.view.rows,
+  currentView:state.view.currentView
 });
 
 const mapDispatchToProps = {
-  setColumns,
-  setRows
+  fetchRows,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GanttView);

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns, fetchRows, setCurrentView } from '../../redux/actions/viewActions';
+import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
@@ -13,8 +13,7 @@ type Props = {
   columns: any;
   rows: any;
   open: boolean;
-  currentView:View,
-  setColumns: (columns: any) => void;
+  currentView: View,
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
 };
@@ -162,7 +161,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setColumns,
   fetchRows,
   setCurrentView
 };

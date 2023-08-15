@@ -28,6 +28,7 @@ import KanbanViewConfig from "./KanbanViewConfig";
 import CalendarViewConfig from "./CalendarViewConfig";
 import GalleryViewConfig from "./GalleryViewConfig";
 import TimelineViewConfig from "./TimelineViewConfig";
+import GanttViewConfig from "./GanttViewConfig";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import dynamic from "next/dynamic";
 
@@ -243,6 +244,32 @@ const ListViewForm = ({
           setError("To field required");
           isValidConfig = false;
         }
+        break;
+      case ViewType.Gantt:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.colorId || config.colorId === 0) {
+          setError("Color field required");
+          isValidConfig = false;
+        }
+        if (!config.levelId || config.levelId === 0) {
+          setError("Level field required");
+          isValidConfig = false;
+        }
+        if (!config.fromId || config.fromId === 0) {
+          setError("From field required");
+          isValidConfig = false;
+        }
+        if (!config.toId || config.toId === 0) {
+          setError("To field required");
+          isValidConfig = false;
+        }
       default:
         break;
     }
@@ -393,6 +420,13 @@ const ListViewForm = ({
                     updateConfig={(newConfig) => updateConfig(newConfig)}
                   />
                 )}
+                {currentView && viewType === ViewType.KanBan && (
+                  <KanbanViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
                 {currentView && viewType === ViewType.TimeLine && (
                   <TimelineViewConfig
                     submit={submit}
@@ -400,8 +434,8 @@ const ListViewForm = ({
                     updateConfig={(newConfig) => updateConfig(newConfig)}
                   />
                 )}
-                {currentView && viewType === ViewType.KanBan && (
-                  <KanbanViewConfig
+                {currentView && viewType === ViewType.Gantt && (
+                  <GanttViewConfig
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
