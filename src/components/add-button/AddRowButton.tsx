@@ -1,52 +1,67 @@
 import { useTheme } from '@mui/material/styles';
 import {
-  Box
+  Box, Button
 } from '@mui/material';
 import useResponsive from '../../hooks/useResponsive';
+import { connect } from 'react-redux';
+import { View } from 'src/models/SharedModels';
+import { hasPermission } from 'src/utils/permissionHelper';
+import AddIcon from "@mui/icons-material/Add";
+import { ViewField } from 'src/models/ViewField';
+import { getDefaultValues } from 'src/utils/flexlistHelper';
 
 interface Props {
-  modalHandle: (value: boolean) => void;
+  handleAddNewRow: (values:any) => void;
+  currentView:View;
+  columns:ViewField[]
 }
   
-export default function AddRowButton ({
-  modalHandle
+function AddRowButton ({
+  handleAddNewRow,
+  currentView,
+  columns
 }: Props) {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
-  
   return (
-    <Box sx={{ display: 'flex', cursor: 'pointer' }} onClick={() => { modalHandle(true) }}>
-      <Box
-        sx={{
-          backgroundColor: theme.palette.palette_style.background.table_header_footer,
-          px: 1,
-          borderRadius: '5px',
-          width: 45,
-          height: 24,
-          textAlign: 'center',
-          paddingTop: '3px',
-          marginTop: '5px',
-          marginLeft: {xs: 0, md: '10px'}
-        }}
-      >
-        <Box
-          component="span"
-          className="svg-color"
-          sx={{
-            width: 18,
-            height: 18,
-            display: 'inline-block',
-            bgcolor: theme.palette.palette_style.text.primary,
-            mask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
-            WebkitMask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
-            cursor: 'pointer'
-          }}
-          onClick={() => modalHandle(true)}
-        />
-      </Box>
-      {isDesktop && <Box sx={{ my: 0.7, mx: 2, paddingRight: 4, borderRight: `1px solid ${theme.palette.palette_style.border.default}` }}>
-        Add new row
-      </Box>}
+    <Box 
+    sx={{  
+      display: "flex",
+      px: { xs: 0, md: 2 },
+      gap: { xs: 1, md: 4 } }}
+      onClick={() => { handleAddNewRow(getDefaultValues(columns)) }}>
+      {hasPermission(currentView?.role, "Create") && (
+              <Button
+                variant="contained"
+                onClick={handleAddNewRow}
+                sx={{
+                  // position: "absolute",
+                  // top: -80,
+                  // left: 80,
+                  flex: { md: 1 },
+                  backgroundColor: theme.palette.palette_style.primary.main,
+                  color: theme.palette.palette_style.text.white,
+                  // opacity: 0.2,
+                  px: { xs: 1, md: "inherit" },
+                  height: 32,
+                  "&:hover": {
+                    backgroundColor: theme.palette.palette_style.primary.dark,
+                    // opacity: 1,
+                  },
+                }}
+              >
+                <AddIcon sx={{ mr: 0.5 }} />
+                {isDesktop ? "add new row" : ""}
+              </Button>
+            )}
     </Box>
   );
 };
+const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
+  columns: state.view.columns,
+});
+
+const mapDispatchToProps = {
+};
+export default connect(mapStateToProps, mapDispatchToProps)(AddRowButton);

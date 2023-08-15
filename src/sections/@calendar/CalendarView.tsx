@@ -135,9 +135,9 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
     else {}
   };
 
-  const handleNewRowPanel = () => {
+  const handleNewRowPanel = (values:any) => {
     setVisibleAddRowPanel(true);
-    setSelectedRowData(null);
+    setSelectedRowData(values);
   };
 
   const handleData = (data: any, date: any) => {
@@ -197,7 +197,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
         }
       </Box>
 
-      <CalendarFooter mode={mode} handleNewRowPanel={handleNewRowPanel} handleMode={handleMode} />
+      <CalendarFooter mode={mode} handleNewRowPanel={(values)=>handleNewRowPanel(values)} handleMode={handleMode} />
 
       <RowFormPanel
         rowData={selectedRowData}

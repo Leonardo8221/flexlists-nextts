@@ -4,7 +4,7 @@ import AddRowButton from "../../components/add-button/AddRowButton";
 
 type Props = {
   mode: string;
-  handleNewRowPanel: () => void;
+  handleNewRowPanel: (values:any) => void;
   handleMode: (mode: string) => void;
 };
 
@@ -30,7 +30,7 @@ const CalendarFooter = (props: Props) => {
         flexDirection: 'inherit'
       }}
     >
-      <AddRowButton modalHandle={handleNewRowPanel} />
+      <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} />
       <Box sx={{ display: 'flex', backgroundColor: theme.palette.palette_style.background.selected, borderRadius: '8px', overflow: 'hidden', my: 0.2, textTransform: 'capitalize' }}>
         {modes.map((item: string) => (
           <Box key={item} sx={{ py: 0.3, px: {xs: 2, md: 4}, backgroundColor: mode === item ? theme.palette.palette_style.text.selected : 'inherit', color: mode === item ? 'white' : 'inherit', cursor: 'pointer' }} onClick={() => { handleMode(item); }}>{item}</Box>
