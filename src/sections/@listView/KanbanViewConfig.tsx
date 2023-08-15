@@ -174,7 +174,7 @@ function KanbanViewConfig({
       <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <FormControl fullWidth>
           <InputLabel required id="select-board-label">
-            Board Field
+            Board
           </InputLabel>
           <Select
             label="Board Field"
@@ -198,7 +198,7 @@ function KanbanViewConfig({
         </FormControl>
         <FormControl fullWidth>
           <InputLabel required id="select-order-label">
-            Order Field
+            Order
           </InputLabel>
           <Select
             label="Order Field"

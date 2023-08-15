@@ -16,10 +16,6 @@ const WeeklyView = ({ hours, days, currentDate, getData, handleData,getTitle }: 
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
-  const getColorByImportance = (importance: string) => {
-    return importance === 'Very important' ? '#FFB7B7' : '#FFEBB7';
-  };
-
   return (
     <Box sx={{ height: '100%', display: 'grid', gridTemplateColumns: `${isDesktop ? '64px' : '24px'} repeat(7, 1fr)`, overflowY: 'auto' }}>
       <Box sx={{ width: {xs: '24px', md: '64px'}, fontSize: {xs: '12px', md: '16px'} }}>
@@ -34,7 +30,7 @@ const WeeklyView = ({ hours, days, currentDate, getData, handleData,getTitle }: 
           {hours.map((hour: string) => (
             <Box key={`${hour}-right`} sx={{ height: {xs: '88px', md: '98px'}, border: '1px solid rgba(0, 0, 0, 0.1)', px: {xs: 0.3, md: 1}, py: 0.5, cursor: 'pointer' }} onClick={(e: any) => { if(!e.target.classList.contains('edit_row')) handleData({date: format(day, 'MM/dd/yyyy') + ' ' + hour + ':00'}, day) }}>
               {getData(new Date(format(day, 'MM/dd/yyyy') + ' ' + hour + ':00'), 'hour').map((data: any) => (
-                <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '42px', sm: '75px', md: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: getColorByImportance(data.importance), px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, day)}>
+                <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '42px', sm: '75px', md: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, day)}>
                   {getTitle(data)}
                 </Box>
               ))}
