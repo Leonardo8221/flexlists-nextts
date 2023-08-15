@@ -394,9 +394,6 @@ const RowFormPanel = ({
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                 },
-                "&:hover.MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
@@ -478,9 +475,6 @@ const RowFormPanel = ({
               value={values ? values[column.id] : ""}
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                },
-                "&:hover.MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -704,9 +698,6 @@ const RowFormPanel = ({
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                 },
-                "&:hover.MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
@@ -768,9 +759,6 @@ const RowFormPanel = ({
                 "&:hover .MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                 },
-                "&:hover.MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
@@ -823,9 +811,6 @@ const RowFormPanel = ({
               }
               sx={{
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(158, 158, 158, 0.32)",
-                },
-                "&:hover.MuiOutlinedInput-notchedOutline": {
                   borderColor: "rgba(158, 158, 158, 0.32)",
                 },
                 "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
