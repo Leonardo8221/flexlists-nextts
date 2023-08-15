@@ -88,7 +88,7 @@ function NavItem({ item, open, pathname }: NavItemProps) {
               "& .MuiSvgIcon-root": {
                 color:
                   pathname === path
-                    ? theme.palette.palette_style.text.main
+                    ? theme.palette.palette_style.text.white
                     : theme.palette.palette_style.primary.main,
               },
             }}

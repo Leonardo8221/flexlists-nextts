@@ -27,7 +27,7 @@ const navConfig = [
     title: "My Views",
     path: PATH_MAIN.views,
     // icon: "List",
-    icon: <GridViewIcon sx={{ color: "#fff" }} />,
+    icon: <GridViewIcon />,
   },
   // {
   //   title: "Calendar",
