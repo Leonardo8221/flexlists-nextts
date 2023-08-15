@@ -398,7 +398,7 @@ const RowFormPanel = ({
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
                 },
-                ".MuiFormLabel-root": {
+                "& .Mui-focused.MuiFormLabel-root": {
                   color: "rgba(0, 0, 0, 0.6)",
                 },
               }}
@@ -481,7 +481,7 @@ const RowFormPanel = ({
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
                 },
-                ".MuiFormLabel-root": {
+                "& .Mui-focused.MuiFormLabel-root": {
                   color: "rgba(0, 0, 0, 0.6)",
                 },
               }}
@@ -492,6 +492,174 @@ const RowFormPanel = ({
             <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
               {values ? values[column.id] : ""}
             </Typography> */}
+          </div>
+        );
+
+        if (currentMode !== "view" && !isPrint) {
+          return (
+            <FormControl key={column.id} required={column.required}>
+              <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
+                {column.name}
+              </InputLabel>
+              <Select
+                key={column.id}
+                label={column.name}
+                id={`${column.id}`}
+                value={values[column.id]}
+                onChange={(e) =>
+                  setValues({ ...values, [column.id]: e.target.value })
+                }
+                size="small"
+                error={submit && column.required && !values[column.id]}
+              >
+                {column?.config?.values &&
+                  column.config.values.map((choice: any) => (
+                    <MenuItem
+                      key={choice.id}
+                      value={choice.id}
+                      sx={{
+                        backgroundColor: choice.color?.bg ?? "white",
+                        color: choice.color?.fill ?? "black",
+                        "&:hover": {
+                          backgroundColor: choice.color?.bg ?? "white",
+                        },
+                      }}
+                    >
+                      {choice.label}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          );
+        } else {
+          const choice = getChoiceField(values[column.id], column);
+          return (
+            <div key={column.id}>
+              <TextField
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+                label={column.name}
+                value={choice?.label}
+                sx={{
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(158, 158, 158, 0.32)",
+                  },
+                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(158, 158, 158, 0.32)",
+                    borderWidth: "1px",
+                  },
+                  "& .Mui-focused.MuiFormLabel-root": {
+                    color: "rgba(0, 0, 0, 0.6)",
+                  },
+                }}
+              />
+              {/* <Typography
+                  variant="subtitle2"
+                  sx={{ textTransform: "uppercase" }}
+                >
+                  {column.name}
+                </Typography>
+                <Box
+                  key={column.id}
+                  sx={{
+                    // textAlign: "center",
+                    bgcolor: choice?.color.bg,
+                    borderRadius: "20px",
+                    color: choice?.color.fill,
+                    // fontFamily: choice?.font,
+                    px: 1,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    width: "fit-content",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {choice?.label}
+                </Box> */}
+            </div>
+          );
+        }
+        // return (<>
+        //   <FormControl>
+        //     <InputLabel sx={{ top: '-50px' }}>{column.name}</InputLabel>
+        //     <TextareaAutosize
+        //       minRows={5}
+        //       key={column.id}
+        //       name={`${column.id}`}
+        //       aria-label={column.name}
+        //       //label={column.name}
+        //       value={values ? values[column.id] : ''}
+        //       onChange={(e) => {
+        //         setValues({ ...values, [column.id]: e.target.value })
+        //       }}
+        //       required={column.required}
+        //     // error={submit && column.required && !values[column.id]}
+        //     />
+        //   </FormControl>
+        // </>)
+        // return <TextareaAutosize
+        //   minRows={5}
+        //   key={column.id}
+        //   name={`${column.id}`}
+        //   aria-label={column.name}
+        //   //label={column.name}
+        //   value={values ? values[column.id] : ''}
+        //   onChange={(e) => {
+        //     setValues({ ...values, [column.id]: e.target.value })
+        //   }}
+        //   required={column.required}
+        // // error={submit && column.required && !values[column.id]}
+        // />
+        return currentMode !== "view" && !isPrint ? (
+          <TextField
+            key={column.id}
+            label={column.name}
+            name={`${column.id}`}
+            size="small"
+            type={"text"}
+            onChange={(e) => {
+              setValues({ ...values, [column.id]: e.target.value });
+            }}
+            value={values ? values[column.id] : ""}
+            // rows={4}
+            minRows={4}
+            maxRows={Infinity}
+            multiline={true}
+            required={column.required}
+            error={submit && column.required && !values[column.id]}
+          />
+        ) : (
+          <div key={column.id}>
+            <TextField
+              fullWidth
+              multiline
+              minRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+              label={column.name}
+              value={values ? values[column.id] : ""}
+              sx={{
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                },
+                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderWidth: "1px",
+                },
+                "& .Mui-focused.MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6)",
+                },
+              }}
+            />
+            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+                {column.name}
+              </Typography>
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                {values ? values[column.id] : ""}
+              </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Integer:
@@ -534,7 +702,7 @@ const RowFormPanel = ({
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
                 },
-                ".MuiFormLabel-root": {
+                "& .Mui-focused.MuiFormLabel-root": {
                   color: "rgba(0, 0, 0, 0.6)",
                 },
               }}
@@ -595,7 +763,7 @@ const RowFormPanel = ({
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
                 },
-                ".MuiFormLabel-root": {
+                "& .Mui-focused.MuiFormLabel-root": {
                   color: "rgba(0, 0, 0, 0.6)",
                 },
               }}
@@ -649,7 +817,7 @@ const RowFormPanel = ({
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
                 },
-                ".MuiFormLabel-root": {
+                "& .Mui-focused.MuiFormLabel-root": {
                   color: "rgba(0, 0, 0, 0.6)",
                 },
               }}
@@ -726,7 +894,7 @@ const RowFormPanel = ({
                     borderColor: "rgba(158, 158, 158, 0.32)",
                     borderWidth: "1px",
                   },
-                  ".MuiFormLabel-root": {
+                  "& .Mui-focused.MuiFormLabel-root": {
                     color: "rgba(0, 0, 0, 0.6)",
                   },
                 }}
@@ -800,7 +968,7 @@ const RowFormPanel = ({
                     borderColor: "rgba(158, 158, 158, 0.32)",
                     borderWidth: "1px",
                   },
-                  ".MuiFormLabel-root": {
+                  "& .Mui-focused.MuiFormLabel-root": {
                     color: "rgba(0, 0, 0, 0.6)",
                   },
                 }}
