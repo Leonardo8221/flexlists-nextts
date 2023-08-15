@@ -32,16 +32,12 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
 
   const handleMenu = async (view: View) => {
     // setSelectedViewId(value);
-    if(view.isDefaultView)
-    {
+    if (view.isDefaultView) {
       await router.push(`${PATH_MAIN.lists}/${view.id}`);
-    }
-    else
-    {
+    } else {
       await router.push(`${PATH_MAIN.views}/${view.id}`);
       router.reload();
     }
-    
   };
   useEffect(() => {
     async function fetchData() {
@@ -77,41 +73,44 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
           p: 1,
         }}
       >
-        {hasPermission(currentView?.role, 'All') && <Box
-          onClick={handleOpen}
-          sx={{
-            backgroundColor: theme.palette.palette_style.background.selected,
-            borderRadius: 1,
-            px: { xs: 0.5, lg: 1 },
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            width: { xs: "95px", lg: "125px" },
-          }}
-        >
+        {hasPermission(currentView?.role, "All") && (
           <Box
-            component="span"
-            className="svg-color"
+            onClick={handleOpen}
             sx={{
-              width: { xs: 18, lg: 24 },
-              height: { xs: 18, lg: 24 },
-              display: "inline-block",
-              bgcolor: theme.palette.palette_style.text.selected,
-              mask: `url(/assets/icons/menu/plus.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/menu/plus.svg) no-repeat center / contain`,
-              marginRight: { xs: 0.5, lg: 1 },
-            }}
-          />
-          <Box
-            sx={{
-              color: "#666",
-              fontSize: { xs: "14px", lg: "16px" },
-              minWidth: "64px",
+              backgroundColor: theme.palette.palette_style.background.selected,
+              borderRadius: 1,
+              px: 1,
+              cursor: "pointer",
+              display: "flex",
+              gap: { xs: 0.5, md: 1 },
+              alignItems: "center",
+              // width: { xs: "95px", lg: "125px" },
             }}
           >
-            Add View
+            <Box
+              component="span"
+              className="svg-color"
+              sx={{
+                width: { xs: 18, lg: 24 },
+                height: { xs: 18, lg: 24 },
+                display: "inline-block",
+                bgcolor: theme.palette.palette_style.text.selected,
+                mask: `url(/assets/icons/menu/plus.svg) no-repeat center / contain`,
+                WebkitMask: `url(/assets/icons/menu/plus.svg) no-repeat center / contain`,
+                marginRight: { xs: 0.5, lg: 1 },
+              }}
+            />
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: { xs: "14px", lg: "16px" },
+                width: "max-content",
+              }}
+            >
+              Add View
+            </Typography>
           </Box>
-        </Box>}
+        )}
         <Box
           sx={{
             display: "flex",
@@ -121,13 +120,16 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
             width: { xs: "calc(100vw - 120px)", lg: "calc(100vw - 280px)" },
             overflow: "auto",
             marginRight: { xs: 5, md: "inherit" },
+            "::-webkit-scrollbar": {
+              display: { xs: "none", md: "block" },
+            },
           }}
         >
           {filterViews.map((view, index) => (
             <MenuItem
               key={index}
               menu={view}
-              setMenu={()=>handleMenu(view)}
+              setMenu={() => handleMenu(view)}
               selected={selectedViewId === view.id}
             />
           ))}
@@ -240,7 +242,9 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
         display: "flex",
         py: 0.5,
         px: { xs: 1, lg: 2 },
-        overflow: "hidden",
+        // overflow: "hidden",
+        alignItems: "center",
+        gap: 1,
       }}
       onClick={() => {
         setMenu(id.toString());
@@ -269,8 +273,8 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
           WebkitMask: `url(/assets/icons/${getIcon(
             type
           )}.svg) no-repeat center / contain`,
-          marginRight: 1,
-          marginTop: 0.2,
+          // marginRight: 1,
+          // marginTop: 0.2,
         }}
       />
       <Typography

@@ -368,6 +368,7 @@ const RowFormPanel = ({
             key={column.id}
             style={{ width: "100%" }}
             label={column.name}
+            InputLabelProps={{ shrink: true }}
             name={`${column.id}`}
             size="small"
             type={"text"}
@@ -389,6 +390,18 @@ const RowFormPanel = ({
               }}
               label={column.name}
               value={values ? values[column.id]?.toString() : ""}
+              sx={{
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                },
+                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderWidth: "1px",
+                },
+                ".MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6)",
+                },
+              }}
             />
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
@@ -460,6 +473,18 @@ const RowFormPanel = ({
               }}
               label={column.name}
               value={values ? values[column.id] : ""}
+              sx={{
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                },
+                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderWidth: "1px",
+                },
+                ".MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6)",
+                },
+              }}
             />
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
@@ -501,6 +526,18 @@ const RowFormPanel = ({
               }}
               label={column.name}
               value={values ? values[getDataColumnId(column.id, columns)] : ""}
+              sx={{
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                },
+                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderWidth: "1px",
+                },
+                ".MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6)",
+                },
+              }}
             />
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
               {column.name}
@@ -550,6 +587,18 @@ const RowFormPanel = ({
                     ).toLocaleString()
                   : ""
               }
+              sx={{
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                },
+                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderWidth: "1px",
+                },
+                ".MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6)",
+                },
+              }}
             />
             {/* <Typography variant="subtitle1">{column.name}</Typography>
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
@@ -592,6 +641,18 @@ const RowFormPanel = ({
                     ).toLocaleDateString()
                   : ""
               }
+              sx={{
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                },
+                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(158, 158, 158, 0.32)",
+                  borderWidth: "1px",
+                },
+                ".MuiFormLabel-root": {
+                  color: "rgba(0, 0, 0, 0.6)",
+                },
+              }}
             />
             {/* <Typography variant="subtitle1">{column.name}</Typography>
             <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
@@ -657,6 +718,18 @@ const RowFormPanel = ({
                     ? "Mui-error"
                     : ""
                 }
+                sx={{
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(158, 158, 158, 0.32)",
+                  },
+                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(158, 158, 158, 0.32)",
+                    borderWidth: "1px",
+                  },
+                  ".MuiFormLabel-root": {
+                    color: "rgba(0, 0, 0, 0.6)",
+                  },
+                }}
               />
             </LocalizationProvider>
             {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
@@ -719,6 +792,18 @@ const RowFormPanel = ({
                 }}
                 label={column.name}
                 value={choice?.label}
+                sx={{
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(158, 158, 158, 0.32)",
+                  },
+                  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(158, 158, 158, 0.32)",
+                    borderWidth: "1px",
+                  },
+                  ".MuiFormLabel-root": {
+                    color: "rgba(0, 0, 0, 0.6)",
+                  },
+                }}
               />
               {/* <Typography
                 variant="subtitle2"
@@ -822,10 +907,10 @@ const RowFormPanel = ({
                 position: "relative",
                 borderRadius: "6px",
                 ".focusedNeed:focus &": {
-                  border: "2px solid #1976d2",
+                  // border: "2px solid #1976d2",
                 },
                 "&:hover": {
-                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                  border: "1px solid rgba(158, 158, 158, 0.32)",
                 },
               }}
             >
@@ -842,11 +927,11 @@ const RowFormPanel = ({
                   zIndex: 2,
                   px: 0.5,
                   color: "rgba(0, 0, 0, 0.6)",
-                  ".focusedNeed:focus &": {
-                    color: "#1976d2",
-                    top: "-11px",
-                    left: "9px",
-                  },
+                  // ".focusedNeed:focus &": {
+                  //   color: "#1976d2",
+                  //   top: "-11px",
+                  //   left: "9px",
+                  // },
                 }}
               >
                 {column.name}
@@ -855,7 +940,7 @@ const RowFormPanel = ({
                 className="booleanWrapper"
                 sx={{
                   ".focusedNeed:focus &": {
-                    margin: "-1px",
+                    // margin: "-1px",
                   },
                 }}
               >
