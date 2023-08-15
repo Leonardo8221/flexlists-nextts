@@ -1,8 +1,32 @@
-import { ExportType, ImportType } from "src/enums/SharedEnums";
+import { ExportType, FieldType, ImportType } from "src/enums/SharedEnums";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "./convertUtils";
+import { filter } from "lodash";
 
+export const getDefaultValues = (columns: ViewField[]): any => {
+    var defautValues: any = {};
+    for (const column of filter(columns, (x) => !x.system)) {
+      var defaultValue: any = "";
+      switch (column.type) {
+        case FieldType.Date:
+        case FieldType.DateTime:
+        case FieldType.Time:
+          defaultValue = new Date().toISOString();
+          break;
+        case FieldType.Choice:
+          defaultValue = column.config?.values[0]?.label;
+          break;
+        case FieldType.Boolean:
+          defaultValue = false;
+          break;
+        default:
+          break;
+      }
+      defautValues[column.id] = defaultValue;
+    }
+    return defautValues;
+}
 export const getDataColumnId = (fieldId: number, columns: ViewField[]): string => {
     var field = columns.find((x) => x.id === fieldId);
     if (field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt')) {

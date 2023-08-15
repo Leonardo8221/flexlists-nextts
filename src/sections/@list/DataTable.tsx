@@ -61,6 +61,7 @@ import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
 import { convertToTimeAMPM } from "src/utils/convertUtils";
+import AddRowButton from "src/components/add-button/AddRowButton";
 
 type DataTableProps = {
   tab: boolean;
@@ -561,30 +562,10 @@ const DataTable = ({
     fetchRowsByPage(0, newView.limit);
   };
 
-  const handleNewRowPanel = () => {
-    var newValues: any = {};
+  const handleNewRowPanel = (values:any) => {
     setMode("create");
-    for (const column of filter(columns, (x) => !x.system)) {
-      var defaultValue: any = "";
-      switch (column.type) {
-        case FieldType.Date:
-        case FieldType.DateTime:
-        case FieldType.Time:
-          defaultValue = new Date().toISOString();
-          break;
-        case FieldType.Choice:
-          defaultValue = column.config?.values[0]?.label;
-          break;
-        case FieldType.Boolean:
-          defaultValue = false;
-          break;
-        default:
-          break;
-      }
-      newValues[column.id] = defaultValue;
-    }
     setVisibleAddRowPanel(true);
-    setSelectedRowData(newValues);
+    setSelectedRowData(values);
     setRowSelection({});
   };
 
@@ -889,31 +870,7 @@ const DataTable = ({
               gap: { xs: 1, md: 4 },
             }}
           >
-            {hasPermission(currentView?.role, "Create") && (
-              <Button
-                variant="contained"
-                onClick={handleNewRowPanel}
-                sx={{
-                  // position: "absolute",
-                  // top: -80,
-                  // left: 80,
-                  flex: { md: 1 },
-                  backgroundColor: theme.palette.palette_style.primary.main,
-                  color: theme.palette.palette_style.text.white,
-                  // opacity: 0.2,
-                  px: { xs: 1, md: "inherit" },
-                  height: 32,
-                  "&:hover": {
-                    backgroundColor: theme.palette.palette_style.primary.dark,
-                    // opacity: 1,
-                  },
-                }}
-              >
-                <AddIcon sx={{ mr: 0.5 }} />
-                {isDesktop ? "add new row" : "new row"}
-                {/* Add new row */}
-              </Button>
-            )}
+            <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} />
             {rowSelection && Object.keys(rowSelection).length > 0 && (
               <Button
                 variant="outlined"

@@ -23,8 +23,8 @@ const ViewFooter = (props: Props) => {
   const { columns, rows, visibleAddRowPanel, rowData, setRows, setVisibleAddRowPanel, setRowData, children } = props;
   const theme = useTheme();
 
-  const handleNewRowPanel = () => {
-    setRowData(null);
+  const handleNewRowPanel = (values:any) => {
+    setRowData(values);
     setVisibleAddRowPanel(true);
   };
 
@@ -55,7 +55,7 @@ const ViewFooter = (props: Props) => {
           flexDirection: 'inherit'
         }}
       >
-        <AddRowButton modalHandle={handleNewRowPanel} />
+        <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} />
         {children}
       </Stack>
 
