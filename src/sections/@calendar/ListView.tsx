@@ -11,13 +11,9 @@ type Props = {
   getTitle:(data:any) =>string
 };
 
-const DailyView = ({ days, currentDate, getData, handleData,getTitle }: Props) => {
+const ListView = ({ days, currentDate, getData, handleData,getTitle }: Props) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
-
-  const getColorByImportance = (importance: string) => {
-    return importance === 'Very important' ? '#FFB7B7' : '#FFEBB7';
-  };
 
   return (
     <Box sx={{ height: '100%', overflowY: 'auto' }}>
@@ -34,7 +30,7 @@ const DailyView = ({ days, currentDate, getData, handleData,getTitle }: Props) =
           </Box>
           <Box sx={{ ml: 4 }}>
             {getData(day, 'day').map((data: any) => (
-              <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: getColorByImportance(data.importance), px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
+              <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
                 {getTitle(data)}
               </Box>
             ))}
@@ -45,4 +41,4 @@ const DailyView = ({ days, currentDate, getData, handleData,getTitle }: Props) =
   );
 };
 
-export default DailyView;
+export default ListView;

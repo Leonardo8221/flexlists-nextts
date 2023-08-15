@@ -27,6 +27,8 @@ import { PATH_MAIN } from "src/routes/paths";
 import KanbanViewConfig from "./KanbanViewConfig";
 import CalendarViewConfig from "./CalendarViewConfig";
 import GalleryViewConfig from "./GalleryViewConfig";
+import TimelineViewConfig from "./TimelineViewConfig";
+import GanttViewConfig from "./GanttViewConfig";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import dynamic from "next/dynamic";
 
@@ -65,23 +67,12 @@ const AddViewCards = [
     title: "Calendar View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
-  // {
-  //   type: ViewType.,
-  //   icon: "/assets/icons/tour/ic_project_m.svg",
-  //   title: "Chart View",
-  //   description: "Lorem ipsum dolor sit amet consectetur.",
-  // },
   {
     type: ViewType.Gallery,
     icon: "/assets/icons/GallerySVG.svg",
     title: "Gallery View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
-  // {
-  //   icon: "/assets/icons/tour/ic_bug.svg",
-  //   title: "Timeline View",
-  //   description: "Lorem ipsum dolor sit amet consectetur.",
-  // },
   {
     type: ViewType.KanBan,
     icon: "/assets/icons/KanbanSVG.svg",
@@ -91,7 +82,7 @@ const AddViewCards = [
   {
     type: ViewType.TimeLine,
     icon: "/assets/icons/TimelineSVG.svg",
-    title: "TimeLine View",
+    title: "Timeline View",
     description: "Lorem ipsum dolor sit amet consectetur.",
   },
   {
@@ -139,6 +130,7 @@ const ListViewForm = ({
   const goNext = () => {
     setSteps(steps + 1);
   };
+
   const handleSubmit = async () => {
     setSubmit(true);
     if (!viewName) {
@@ -169,6 +161,7 @@ const ListViewForm = ({
       setError(ErrorConsts.InternalServerError);
     }
   };
+
   const validateConfig = (): boolean => {
     let isValidConfig: boolean = true;
     switch (viewType) {
@@ -225,26 +218,83 @@ const ListViewForm = ({
           setError("Title field required");
           isValidConfig = false;
         }
+        break;
+      case ViewType.TimeLine:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.colorId || config.colorId === 0) {
+          setError("Color field required");
+          isValidConfig = false;
+        }
+        if (!config.levelId || config.levelId === 0) {
+          setError("Level field required");
+          isValidConfig = false;
+        }
+        if (!config.fromId || config.fromId === 0) {
+          setError("From field required");
+          isValidConfig = false;
+        }
+        if (!config.toId || config.toId === 0) {
+          setError("To field required");
+          isValidConfig = false;
+        }
+        break;
+      case ViewType.Gantt:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.colorId || config.colorId === 0) {
+          setError("Color field required");
+          isValidConfig = false;
+        }
+        if (!config.levelId || config.levelId === 0) {
+          setError("Level field required");
+          isValidConfig = false;
+        }
+        if (!config.fromId || config.fromId === 0) {
+          setError("From field required");
+          isValidConfig = false;
+        }
+        if (!config.toId || config.toId === 0) {
+          setError("To field required");
+          isValidConfig = false;
+        }
       default:
         break;
     }
     return isValidConfig;
   };
+
   const closeModal = () => {
     setSteps(0);
     handleClose();
   };
+
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setViewName(event.target.value);
   };
+
   const onDescriptionChange = (newValue: string) => {
     setViewDescription(newValue);
   };
+
   const onTypeSelect = (type: ViewType) => {
     setViewType(type);
     setSteps(1);
     //  reloadColumns(type)
   };
+
   const updateConfig = (newConfig: any) => {
     setConfig(newConfig);
   };
@@ -377,6 +427,20 @@ const ListViewForm = ({
                     updateConfig={(newConfig) => updateConfig(newConfig)}
                   />
                 )}
+                {currentView && viewType === ViewType.TimeLine && (
+                  <TimelineViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+                {currentView && viewType === ViewType.Gantt && (
+                  <GanttViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
               </Box>
             </Box>
           )}
@@ -426,6 +490,7 @@ const ListViewForm = ({
     </>
   );
 };
+
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   columns: state.view.columns,

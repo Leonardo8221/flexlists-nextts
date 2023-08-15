@@ -20,6 +20,22 @@ export type GalleryConfig = {
     descriptionId: number
 }
 
+export type TimelineConfig = {
+    titleId: number
+    colorId: number
+    levelId: number
+    fromId: number
+    toId: number
+}
+
+export type GanttConfig = {
+    titleId: number
+    colorId: number
+    levelId: number
+    fromId: number
+    toId: number
+}
+
 export type MapConfigLacation = {
     latId: number
     lngId: number
