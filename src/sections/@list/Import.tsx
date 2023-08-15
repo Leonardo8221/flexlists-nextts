@@ -47,12 +47,12 @@ const imports = [
   {
     name: ImportType.XML,
     label: "XML",
-    icon: "toolbar/jira",
+    icon: "toolbar/xml",
   },
   {
     name: ImportType.YML,
     label: "YML",
-    icon: "toolbar/jira",
+    icon: "toolbar/yaml",
   },
 ];
 const style = {

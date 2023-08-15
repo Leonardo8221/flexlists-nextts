@@ -1,10 +1,16 @@
 import { PATH_MAIN } from "src/routes/paths";
+import GridViewIcon from "@mui/icons-material/GridView";
+import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
+import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
+import AddIcon from "@mui/icons-material/Add";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const navConfig = [
   {
     title: "Create new list",
     path: PATH_MAIN.chooseTemplate,
-    icon: "Favourites_plus",
+    icon: <AddIcon />,
+    // icon: "Favourites_plus",
   },
   // {
   //   title: "Dashboard",
@@ -14,12 +20,14 @@ const navConfig = [
   {
     title: "My Lists",
     path: PATH_MAIN.lists,
-    icon: "List",
+    // icon: "List",
+    icon: <ListAltOutlinedIcon />,
   },
   {
     title: "My Views",
     path: PATH_MAIN.views,
-    icon: "List",
+    // icon: "List",
+    icon: <GridViewIcon sx={{ color: "#fff" }} />,
   },
   // {
   //   title: "Calendar",
@@ -34,7 +42,8 @@ const navConfig = [
   {
     title: "Groups",
     path: PATH_MAIN.groups,
-    icon: "Groups",
+    // icon: "Groups",
+    icon: <Groups2OutlinedIcon />,
   },
   // {
   //   title: "Favorites",
@@ -44,7 +53,8 @@ const navConfig = [
   {
     title: "Information",
     path: "/",
-    icon: "Info",
+    // icon: "Info",
+    icon: <InfoOutlinedIcon />,
   },
 ];
 

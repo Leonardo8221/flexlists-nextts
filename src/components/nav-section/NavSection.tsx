@@ -2,6 +2,8 @@ import { NavLink as RouterLink } from "react-router-dom";
 import { Box, List, ListItemText, Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
 import { StyledNavItem, StyledNavItemIcon } from "./styles";
+import { useTheme } from "@mui/material/styles";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 type NavSectionProps = {
   data: any[];
@@ -48,15 +50,15 @@ type NavItemProps = {
 
 function NavItem({ item, open, pathname }: NavItemProps) {
   const { title, path, icon } = item;
-
+  const theme = useTheme();
   return (
     <StyledNavItem
       // component={RouterLink}
       to={path}
       sx={{
-        position: icon === "Info" ? "absolute" : "relative",
-        bottom: icon === "Info" ? "20px" : "inherit",
-        marginBottom: icon === "Info" ? 0 : 3,
+        position: title === "Information" ? "absolute" : "relative",
+        bottom: title === "Information" ? "20px" : "inherit",
+        marginBottom: title === "Information" ? 0 : 3,
         width: !open ? 42 : "inherit",
       }}
     >
@@ -65,22 +67,34 @@ function NavItem({ item, open, pathname }: NavItemProps) {
       ) : (
         <Tooltip title={title}>
           <Box
-            component="span"
+            // component="span"
             className="svg-color"
             sx={{
               width: 42,
               height: 42,
               display: "flex",
               alignItems: "center",
-              justifyContent: "flex-start",
-              backgroundImage: `url(/assets/icons/navbar/${
-                pathname === path ? icon + "Active" : icon
-              }.svg)`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
+              justifyContent: "center",
+              // backgroundImage: `url(/assets/icons/navbar/${
+              //   pathname === path ? icon + "Active" : icon
+              // }.svg)`,
+              // backgroundSize: "cover",
+              // backgroundRepeat: "no-repeat",
               borderRadius: "8px",
+              backgroundColor:
+                pathname === path
+                  ? theme.palette.palette_style.primary.main
+                  : theme.palette.palette_style.primary.lighter,
+              "& .MuiSvgIcon-root": {
+                color:
+                  pathname === path
+                    ? theme.palette.palette_style.text.main
+                    : theme.palette.palette_style.primary.main,
+              },
             }}
-          />
+          >
+            {icon}
+          </Box>
         </Tooltip>
       )}
 
