@@ -398,7 +398,7 @@ const RowFormPanel = ({
                   borderColor: "rgba(158, 158, 158, 0.32)",
                   borderWidth: "1px",
                 },
-                ".MuiFormLabel-root": {
+                "& .Mui-focused.MuiFormLabel-root": {
                   color: "rgba(0, 0, 0, 0.6)",
                 },
               }}
