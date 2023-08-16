@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Box,
-  Typography,
   Select,
   MenuItem,
   SelectChangeEvent,
@@ -29,17 +28,40 @@ function CalendarViewConfig({
   columns,
   availableFieldUiTypes,
 }: CalendarViewConfigProps) {
-  const [dateFieldId, setDateFieldId] = useState<number>(0);
   const [titleFieldId, setTitleFieldId] = useState<number>(0);
-  const [isOpenDateFieldModal, setIsOpenDateFieldModal] = useState<boolean>(false);
+  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(0);
+  const [endDateTimeId, setEndDateTimeId] = useState<number>(0);
+  const [colorId, setColorId] = useState<number>(0);
+
   const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] = useState<boolean>(false);
-  const dateFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.DateTime);
+  const [isOpenBeginDateTimeModal, setIsOpenBeginDateTimeModal] = useState<boolean>(false);
+  const [isOpenEndDateTimeModal, setIsOpenEndDateTimeModal] = useState<boolean>(false);
+  const [isOpenColorModal, setIsOpenColorModal] = useState<boolean>(false);
+
   const titleFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
-  const getDateFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.DateTime); };
+  const dateTimeUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.DateTime);
+  const colorUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
+
   const getTitleFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text); };
-  const [dateFields, setDateFields] = useState<ViewField[]>(getDateFields());
+  const getDateTimeFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.DateTime); };
+  const getColorFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text); };
+
   const [titleFields, setTitleFields] = useState<ViewField[]>(getTitleFields());
-  const newDateField: any = {
+  const [beginDateTimeFields, setBeginDateTimeFields] = useState<ViewField[]>(getDateTimeFields());
+  const [endDateTimeFields, setEndDateTimeFields] = useState<ViewField[]>(getDateTimeFields());
+  const [colorFields, setColorFields] = useState<ViewField[]>(getColorFields());
+
+  const newTitleField: any = {
+    name: "",
+    required: true,
+    uiField: FieldUiTypeEnum.Text,
+    description: "",
+    detailsOnly: false,
+    icon: "",
+    config: {},
+    defaultValue: "",
+  };
+  const newBeginDateTimeField: any = {
     name: "",
     required: true,
     uiField: FieldUiTypeEnum.DateTime,
@@ -49,7 +71,17 @@ function CalendarViewConfig({
     config: {},
     defaultValue: "",
   };
-  const newTitleField: any = {
+  const newEndDateTimeField: any = {
+    name: "",
+    required: true,
+    uiField: FieldUiTypeEnum.DateTime,
+    description: "",
+    detailsOnly: false,
+    icon: "",
+    config: {},
+    defaultValue: "",
+  };
+  const newColorField: any = {
     name: "",
     required: true,
     uiField: FieldUiTypeEnum.Text,
@@ -61,40 +93,43 @@ function CalendarViewConfig({
   };
 
   const reloadColumns = () => {
-    const newDateFields: ViewField[] = getDateFields();
     const newTitleFields: ViewField[] = getTitleFields();
-
-    if (newDateFields.length > 0) {
-      setDateFieldId(newDateFields[0].id);
-    }
+    const newDateTimeFields: ViewField[] = getDateTimeFields();
+    const newColorFields: ViewField[] = getColorFields();
 
     if (newTitleFields.length > 0) {
       setTitleFieldId(newTitleFields[0].id);
     }
 
-    setDateFields(newDateFields);
+    if (newDateTimeFields.length > 0) {
+      setBeginDateTimeId(newDateTimeFields[0].id);
+      setEndDateTimeId(newDateTimeFields[1].id);
+    }
+
+    if (newDateTimeFields.length > 1) {
+      setEndDateTimeId(newDateTimeFields[1].id);
+    }
+
+    if (newColorFields.length > 0) {
+      setColorId(newColorFields[0].id);
+    }
+
     setTitleFields(newTitleFields);
+    setBeginDateTimeFields(newDateTimeFields);
+    setEndDateTimeFields(newDateTimeFields.length > 1 ? newDateTimeFields.slice(1) : []);
+    setColorFields(newColorFields);
+
     updateCalendarConfig(
-      newDateFields.length > 0 ? newDateFields[0].id : 0,
-      newTitleFields.length > 0 ? newTitleFields[0].id : 0
+      newTitleFields.length > 0 ? newTitleFields[0].id : 0,
+      newDateTimeFields.length > 0 ? newDateTimeFields[0].id : 0,
+      newDateTimeFields.length > 1 ? newDateTimeFields[1].id : 0,
+      newColorFields.length > 0 ? newColorFields[0].id : 0
     );
   };
 
   useEffect(() => {
     reloadColumns();
   }, [columns]);
-
-  const onDateFieldChange = (event: SelectChangeEvent) => {
-    const value = event.target.value as string;
-
-    if (value === "-1") {
-      setIsOpenDateFieldModal(true);
-      return;
-    }
-
-    setDateFieldId(convertToInteger(value));
-    updateCalendarConfig(convertToInteger(value), titleFieldId);
-  };
 
   const onTitleFieldChange = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
@@ -105,62 +140,71 @@ function CalendarViewConfig({
     }
 
     setTitleFieldId(convertToInteger(value));
-    updateCalendarConfig(dateFieldId, convertToInteger(value));
+    updateCalendarConfig(convertToInteger(value), beginDateTimeId, endDateTimeId, colorId);
   };
 
-  const updateCalendarConfig = (newDateFieldId: number, newTitleId: number) => {
-    updateConfig({ dateFieldId: newDateFieldId, titleId: newTitleId });
+  const onBeginDateTimeChange = (event: SelectChangeEvent) => {
+    const value = event.target.value as string;
+    const newEndDateTimeFields = getDateTimeFields().filter((dateTimeField: ViewField) => dateTimeField.id !== convertToInteger(value));
+
+    if (value === "-1") {
+      setIsOpenBeginDateTimeModal(true);
+      return;
+    }
+
+    setBeginDateTimeId(convertToInteger(value));
+    setEndDateTimeFields(newEndDateTimeFields);
+
+    if (convertToInteger(value) === endDateTimeId) {
+      setEndDateTimeId(newEndDateTimeFields.length ? newEndDateTimeFields[0].id : 0);
+    }
+    
+    updateCalendarConfig(titleFieldId, convertToInteger(value), endDateTimeId, colorId);
+  };
+
+  const onEndDateTimeChange = (event: SelectChangeEvent) => {
+    const value = event.target.value as string;
+
+    if (value === "-1") {
+      setIsOpenEndDateTimeModal(true);
+      return;
+    }
+
+    setEndDateTimeId(convertToInteger(value));
+    updateCalendarConfig(titleFieldId, beginDateTimeId, convertToInteger(value), colorId);
+  };
+
+  const onColorChange = (event: SelectChangeEvent) => {
+    const value = event.target.value as string;
+
+    if (value === "-1") {
+      setIsOpenColorModal(true);
+      return;
+    }
+
+    setColorId(convertToInteger(value));
+    updateCalendarConfig(titleFieldId, beginDateTimeId, endDateTimeId, convertToInteger(value));
+  };
+
+  const updateCalendarConfig = (newTitleId: number, newBeginDateTimeId: number, newEndDateTimeId: number, newColorId: number) => {
+    updateConfig({ titleId: newTitleId, beginDateTimeId: newBeginDateTimeId, endDateTimeId: newEndDateTimeId, colorId: newColorId });
   };
 
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <FormControl fullWidth>
-          {/* <Typography variant="subtitle2" gutterBottom>
-          Field
-        </Typography> */}
-          <InputLabel required id="select-field-label">
-            DateTime
-          </InputLabel>
-          <Select
-            labelId="select-field-label"
-            label="Field"
-            value={`${dateFieldId}`}
-            onChange={onDateFieldChange}
-            required
-            error={submit && (!dateFieldId || dateFieldId === 0)}
-            fullWidth
-            // sx={{ width: { md: "168px" }, marginLeft: { xs: "8px", md: "30px" } }}
-          >
-            {dateFields.map((viewColumn: ViewField) => (
-              <MenuItem key={`${viewColumn.id}`} value={`${viewColumn.id}`}>
-                {viewColumn.name}
-              </MenuItem>
-            ))}
-            <MenuItem key={"-1"} value={"-1"}>
-              create a new field
-            </MenuItem>
-          </Select>
-        </FormControl>
-        {/* <Typography variant="subtitle2" gutterBottom>
-          Title
-        </Typography> */}
-        <FormControl fullWidth>
-          <InputLabel required id="select-title-label">
+          <InputLabel required id="calendar_title_label">
             Title
           </InputLabel>
           <Select
-            labelId="select-title-label"
+            labelId="calendar_title_label"
             label="Title"
             value={`${titleFieldId}`}
             required
             error={submit && (!titleFieldId || titleFieldId === 0)}
             onChange={onTitleFieldChange}
             fullWidth
-            // sx={{
-            //   width: { md: "168px" },
-            //   marginLeft: { xs: "8px", md: "30px" },
-            // }}
           >
             {titleFields.map((titleColumn: ViewField) => (
               <MenuItem key={`${titleColumn.id}`} value={`${titleColumn.id}`}>
@@ -172,21 +216,104 @@ function CalendarViewConfig({
             </MenuItem>
           </Select>
         </FormControl>
+        <FormControl fullWidth>
+          <InputLabel required id="calendar_begindatetime_label">
+            Begin Date
+          </InputLabel>
+          <Select
+            labelId="calendar_begindatetime_label"
+            label="Field"
+            value={`${beginDateTimeId}`}
+            onChange={onBeginDateTimeChange}
+            required
+            error={submit && (!beginDateTimeId || beginDateTimeId === 0)}
+            fullWidth
+          >
+            {beginDateTimeFields.map((dateTimeField: ViewField) => (
+              <MenuItem key={`${dateTimeField.id}`} value={`${dateTimeField.id}`}>
+                {dateTimeField.name}
+              </MenuItem>
+            ))}
+            <MenuItem key={"-1"} value={"-1"}>
+              create a new field
+            </MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel required id="calendar_enddatetime_label">
+            End Date
+          </InputLabel>
+          <Select
+            labelId="calendar_enddatetime_label"
+            label="Field"
+            value={`${endDateTimeId}`}
+            onChange={onEndDateTimeChange}
+            error={submit && (!endDateTimeId || endDateTimeId === 0)}
+            fullWidth
+          >
+            {endDateTimeFields.map((dateTimeField: ViewField) => (
+              <MenuItem key={`${dateTimeField.id}`} value={`${dateTimeField.id}`}>
+                {dateTimeField.name}
+              </MenuItem>
+            ))}
+            <MenuItem key={"-1"} value={"-1"}>
+              create a new field
+            </MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel required id="calendar_color_label">
+            Color
+          </InputLabel>
+          <Select
+            labelId="calendar_color_label"
+            label="Field"
+            value={`${colorId}`}
+            onChange={onColorChange}
+            error={submit && (!colorId || colorId === 0)}
+            fullWidth
+          >
+            {colorFields.map((colorField: ViewField) => (
+              <MenuItem key={`${colorField.id}`} value={`${colorField.id}`}>
+                {colorField.name}
+              </MenuItem>
+            ))}
+            <MenuItem key={"-1"} value={"-1"}>
+              create a new field
+            </MenuItem>
+          </Select>
+        </FormControl>
       </Box>
-      {isOpenDateFieldModal && (
-        <CreateFieldModal
-          field={newDateField}
-          fieldUiTypes={dateFieldUiTypes}
-          open={isOpenDateFieldModal}
-          handleClose={() => setIsOpenDateFieldModal(false)}
-        />
-      )}
       {isOpenTitleFieldModal && (
         <CreateFieldModal
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open={isOpenTitleFieldModal}
           handleClose={() => setIsOpenTitleFieldModal(false)}
+        />
+      )}
+      {isOpenBeginDateTimeModal && (
+        <CreateFieldModal
+          field={newBeginDateTimeField}
+          fieldUiTypes={dateTimeUiTypes}
+          open={isOpenBeginDateTimeModal}
+          handleClose={() => setIsOpenBeginDateTimeModal(false)}
+        />
+      )}
+      {isOpenEndDateTimeModal && (
+        <CreateFieldModal
+          field={newEndDateTimeField}
+          fieldUiTypes={dateTimeUiTypes}
+          open={isOpenEndDateTimeModal}
+          handleClose={() => setIsOpenEndDateTimeModal(false)}
+        />
+      )}
+      {isOpenColorModal && (
+        <CreateFieldModal
+          field={newColorField}
+          fieldUiTypes={colorUiTypes}
+          open={isOpenColorModal}
+          handleClose={() => setIsOpenColorModal(false)}
         />
       )}
     </>

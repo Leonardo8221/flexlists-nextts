@@ -8,10 +8,11 @@ type Props = {
   currentDate: Date;
   getData: (date: Date, flag: string) => any[];
   handleData: (data: any, date: any) => void;
-  getTitle:(data:any) =>string
+  getFieldData: (data: any, field: string) => string;
+  getDataStatus: (item: any, data: any, field: string) => string;
 };
 
-const DailyView = ({ hours, currentDate, getData, handleData,getTitle }: Props) => {
+const DailyView = ({ hours, currentDate, getData, handleData, getFieldData, getDataStatus }: Props) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
@@ -27,7 +28,7 @@ const DailyView = ({ hours, currentDate, getData, handleData,getTitle }: Props) 
           <Box key={`${hour}-left`} sx={{ height: {xs: '88px', md: '98px'}, p: {xs: 0.5, md: 1}, textAlign: 'right' }}>{isDesktop ? hour : hour.split(':')[0]}</Box>
         ))}
       </Box>
-      <Box sx={{  }}>
+      <Box sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.1)' }}>
         <Box sx={{ fontSize: {xs: '18px', md: '24px'}, height: {xs: '60px', md: '98px'}, px: 2, display: 'flex', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.1)', marginBottom: 0.8 }}>
           <Box sx={{ backgroundColor: theme.palette.palette_style.text.selected, color: 'white', py: 0.8, px: 1, borderRadius: '8px' }}>{format(currentDate, 'd')}</Box>
           <Box sx={{ mx: 2 }}>{format(currentDate, 'EEEE')}</Box>
@@ -35,8 +36,12 @@ const DailyView = ({ hours, currentDate, getData, handleData,getTitle }: Props) 
         {hours.map((hour: string) => (
           <Box key={`${hour}-right`} sx={{ height: {xs: '88px', md: '98px'}, border: '1px solid rgba(0, 0, 0, 0.1)', px: {xs: 0.3, md: 1}, py: 0.5, cursor: 'pointer' }} onClick={(e: any) => { if(!e.target.classList.contains('edit_row')) handleData({date: getCurrentDateString(currentDate) + ' ' + hour + ':00'}, currentDate) }}>
             {getData(new Date(getCurrentDateString(currentDate) + ' ' + hour + ':00'), 'hour').map((data: any) => (
-              <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
-                {getTitle(data)}
+              <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
+                <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderRadius: 1.5, textTransform: 'capitalize', backgroundColor: theme.palette.palette_style.background.selected }} className="edit_row">
+                  <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.5, marginRight: 0.5 }}></Box>
+                  <Box>{getDataStatus(data, new Date(getCurrentDateString(currentDate) + ' ' + hour + ':00'), 'hour') === 'begin' ? getFieldData(data, 'begin') : hour}</Box>
+                  <Box sx={{ marginLeft: 0.5 }}>{getFieldData(data, 'title')}</Box>
+                </Box>
               </Box>
             ))}
           </Box>

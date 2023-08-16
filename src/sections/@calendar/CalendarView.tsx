@@ -95,7 +95,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       filterEndDate = displayDays[displayDays.length - 1];      
     }
 
-    const dateColumn = getDataColumnId(currentView.config.dateFieldId,columns);
+    const dateColumn = getDataColumnId(currentView.config.beginDateTimeId, columns);
     const filter1: FlatWhere = {
       left: dateColumn,
       leftType: "Field",
@@ -120,9 +120,15 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
   }, [currentDate, mode]);
 
   const getData = (date: Date, action: string) => {
-    const selected = rows.filter((item: any) => (compareAsc(new Date(item[getDataColumnId(currentView.config.dateFieldId,columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.dateFieldId,columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1));
+    const selected = rows.filter((item: any) => (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) || (compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) || (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) <= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) >= 0));
 
     return selected;
+  };
+
+  const getDataStatus = (item: any, date: Date, action: string) => {
+    if (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) return 'begin';
+    else if (compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) return 'end';
+    else return 'normal';
   };
 
   const handleNewRow = (values: any, action: string) => {
@@ -166,8 +172,48 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
     else {}
   };
 
-  const getTitle = (data:any):string =>{
-    return data[getDataColumnId(currentView.config.titleId,columns)]
+  const formatNumber = (num: number) => {
+    return num > 9 ? num : `0${num}`;
+  };
+
+  const getFieldData = (data: any, field: string) => {
+    let fieldId = 0;
+    let fieldData = '';
+
+    switch (field) {
+      case 'title':
+        fieldId = currentView.config.titleId;
+        fieldData = data[getDataColumnId(fieldId, columns)];
+        break;
+
+      case 'begin':
+        fieldId = currentView.config.beginDateTimeId;
+        const beginDate = new Date(data[getDataColumnId(fieldId, columns)]);
+        fieldData = `${formatNumber(beginDate.getHours())}:${formatNumber(beginDate.getMinutes())}`;
+        break;
+
+      case 'end':
+        fieldId = currentView.config.endDateTimeId;
+
+        if (fieldId && data[getDataColumnId(fieldId, columns)]) {
+          const endDate = new Date(data[getDataColumnId(fieldId, columns)]);
+          fieldData = `${endDate.getHours()}:${endDate.getMinutes()}`;
+        }
+        
+        break;
+
+      case 'color':
+        fieldId = currentView.config.colorId;
+
+        if (fieldId && data[getDataColumnId(fieldId, columns)]) fieldData = data[getDataColumnId(fieldId, columns)];
+        
+        break;
+
+      default:
+        break;
+    }
+
+    return fieldData;
   }
 
   return (
@@ -186,13 +232,13 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
           {mode !== 'day' && mode !== 'list' && <WeekBar mode={mode} />}
         </Box>
         {mode === 'month' ? 
-          <MonthlyView days={days} currentDate={currentDate} cycleStart={cycleStart} getData={getData} handleData={handleData} getTitle={getTitle} /> :
+          <MonthlyView days={days} currentDate={currentDate} cycleStart={cycleStart} getData={getData} handleData={handleData} getFieldData={getFieldData} getDataStatus={getDataStatus} /> :
         mode === 'week' ?
-          <WeeklyView hours={hours} days={days} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
+          <WeeklyView hours={hours} days={days} currentDate={currentDate} getData={getData} handleData={handleData} getFieldData={getFieldData} getDataStatus={getDataStatus} /> :
         mode === 'day' ?
-          <DailyView hours={hours} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
+          <DailyView hours={hours} currentDate={currentDate} getData={getData} handleData={handleData} getFieldData={getFieldData} getDataStatus={getDataStatus} /> :
         mode === 'list' ?
-          <ListView days={days} currentDate={currentDate} getData={getData} handleData={handleData} getTitle={getTitle} /> :
+          <ListView days={days} currentDate={currentDate} getData={getData} handleData={handleData} getFieldData={getFieldData} getDataStatus={getDataStatus} /> :
           <></>
         }
       </Box>
