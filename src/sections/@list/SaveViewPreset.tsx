@@ -25,11 +25,13 @@ function SaveViewPreset({currentView,getCurrentView,setCurrentView,setDefaultPre
     const [name,setName] = useState<string>("");
     const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
     const [isSubmit,setIsSubmit] = useState<boolean>(false);
+    const [isNameValid,setIsNameValid] = useState<boolean>(true);
     const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setType((event.target as HTMLInputElement).value as PresetType);
     };
     const handleViewNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
+        setIsNameValid(true)
     };
     const setError = (message:string)=>{
         setFlashMessage({message:message,type:'error'})
@@ -47,6 +49,12 @@ function SaveViewPreset({currentView,getCurrentView,setCurrentView,setDefaultPre
         {
             newName = await frontendValidate(ModelValidatorEnum.TableView,FieldValidatorEnum.name,name,_errors,_setErrors,true)
             if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+            if(newName?.trim().toLowerCase() === 'default'|| newName?.trim().toLowerCase() === 'show all' || newName?.trim().toLowerCase() === 'archived' || newName?.trim().toLowerCase() === 'unarchived')
+            {
+                setIsNameValid(false)
+                setFlashMessage({message: "Name already exist", type: "error"})
+                return
+            }
             if(currentView && currentView.presets && currentView.presets.length > 0)
             {
                 const isExist = currentView.presets.find(p=>p.name.toLowerCase() === newName?.toLowerCase())
@@ -167,7 +175,7 @@ function SaveViewPreset({currentView,getCurrentView,setCurrentView,setDefaultPre
                 value={name}
                 placeholder="Name"
                 required
-                error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
+                error = {isSubmit && (!isNameValid||isFrontendError(FieldValidatorEnum.name,errors))}
                 />
           }
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
