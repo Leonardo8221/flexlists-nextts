@@ -3,8 +3,10 @@ export type ListConfig = {
 }
 
 export type CalendarConfig = {
-    dateFieldId: number
     titleId: number
+    beginDateTimeId: number
+    endDateTimeId: number
+    colorId: number
 }
 
 export type KanbanConfig = {

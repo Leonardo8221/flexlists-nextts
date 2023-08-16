@@ -170,12 +170,12 @@ const ListViewForm = ({
           setError("Config invalid");
           isValidConfig = false;
         }
-        if (!config.dateFieldId || config.dateFieldId === 0) {
-          setError("Date field required");
-          isValidConfig = false;
-        }
         if (!config.titleId || config.titleId === 0) {
           setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.beginDateTimeId || config.beginDateTimeId === 0) {
+          setError("Begin Date field required");
           isValidConfig = false;
         }
         break;
