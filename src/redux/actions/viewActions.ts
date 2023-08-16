@@ -8,6 +8,7 @@ import { listContentService } from 'src/services/listContent.service'
 import { FieldUIType } from 'src/models/SharedModels'
 import { adminService } from 'src/services/admin.service';
 import { hasPermission } from 'src/utils/permissionHelper';
+import { cloneDeep } from 'lodash';
 // Define the actions
 export const getAvailableFieldUiTypes = (): ThunkAction<
   void,
@@ -59,6 +60,15 @@ export const getCurrentView = (viewId: number): ThunkAction<
       const response = await listViewService.getView(viewId);
       if (isSucc(response)) {
         dispatch(setCurrentView(response.data));
+        let viewData = cloneDeep(response.data)
+        dispatch(setDefaultPreset({
+           name:'Default',
+           order:viewData.order,
+           conditions:viewData.conditions,
+           query:viewData.query,
+           page:viewData.page,
+           limit:viewData.limit
+        }))
       }
     } catch (error) {
       console.log(error)
@@ -249,4 +259,8 @@ export const setMessage = (message: any) => ({
 export const setViewTemplate = (viewTemplate: any) => ({
   type: 'SET_VIEW_TEMPLATE',
   payload: viewTemplate
+});
+export const setDefaultPreset = (defaultPreset: any) => ({
+  type: 'SET_DEFAULT_PRESET',
+  payload: defaultPreset
 });

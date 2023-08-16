@@ -2,7 +2,7 @@ import { FlexlistsError, FlexlistsSuccess } from "src/models/ApiResponse";
 import axios from "src/utils/axios";
 import { GetViewUsersOutputDto } from 'src/models/ApiOutputModels'
 import { CreateViewOutputDto } from 'src/models/ApiOutputModels'
-import { ViewType } from 'src/enums/SharedEnums'
+import { PresetType, ViewType } from 'src/enums/SharedEnums'
 import { ListCategory } from 'src/enums/SharedEnums'
 import { Sort } from 'src/models/SharedModels'
 import { View } from 'src/models/SharedModels'
@@ -57,6 +57,11 @@ export async function createView(listId: number, name: any, type: ViewType, conf
 };
 export async function renameView(viewId: number, name: any, description?: any): Promise<FlexlistsError | FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listView/renameView`, { viewId, name, description })
+
+  return response.data;
+};
+export async function saveViewPreset(viewId:number,type:PresetType,name?:any,page?:number,limit?:number,order?:Sort[],query?:any,conditions?:any,fields?:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/saveViewPreset`, {viewId,type,name,page,limit,order,query,conditions,fields})
 
   return response.data;
 };

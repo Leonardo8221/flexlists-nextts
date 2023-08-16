@@ -130,3 +130,8 @@ export enum TranslationKeyType {
     Markdown = 'Markdown',
     Image = 'Image',
 }
+export enum PresetType {
+    View = 'View',
+    Everyone = 'Everyone',
+    Yourself = 'Yourself',
+}

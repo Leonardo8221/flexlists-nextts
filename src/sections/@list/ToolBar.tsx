@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, MenuItem, Popover, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import ActionItem from "../../components/toolbar/ActionItem";
@@ -17,6 +17,8 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import ListFields from "./ListFields";
 import { set } from "lodash";
+import SaveViewPreset from "./SaveViewPreset";
+import ViewPresets from "./ViewPresets";
 
 type ToolbBarProps = {
   open: boolean;
@@ -41,6 +43,12 @@ const dos = [
 ];
 
 const actions = [
+  {
+    title: "Presets",
+    icon: "toolbar/filter",
+    active: true,
+    leftIcon: true,
+  },
   {
     title: "Filter",
     icon: "toolbar/filter",
@@ -91,26 +99,20 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
   const [isSaveViewModalOpen, setIsSaveViewModalOpen] =
     useState<boolean>(false);
   const [saveViewMessage, setSaveViewMessage] = useState<string>("");
-  const saveView = async () => {
-    var response = await listViewService.updateView(
-      currentView.id,
-      currentView.name,
-      currentView.type,
-      currentView.config,
-      currentView.page,
-      currentView.limit,
-      currentView.order,
-      currentView.query,
-      currentView.description,
-      currentView.conditions,
-      currentView.fields
-    );
-    if (isSucc(response)) {
-      setFlashMessage({message: "Save view success", type: "success"})
-    } else {
-      setFlashMessage({message: "Save view failed", type: "error"})
-    }
+  const [saveViewPopoverOpen,setSaveViewPopoverOpen] = useState(null);
+  const [viewPresetsPopoverOpen,setViewPresetsPopoverOpen] = useState(null);
+  const handleSaveViewPopoverClose = () => {
+    setSaveViewPopoverOpen(null);
   };
+  const handleSaveViewPopoverOpen = (event:any) => {
+    setSaveViewPopoverOpen(event.currentTarget);
+  }
+  const handleViewPresetsPopoverClose = () => {
+    setViewPresetsPopoverOpen(null);
+  };
+  const handleViewPresetsPopoverOpen = (event:any) => {
+    setViewPresetsPopoverOpen(event.currentTarget);
+  }
   return (
     <Box
       sx={{
@@ -179,9 +181,45 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
               alignItems: "center",
             }}
           >
+            <ActionItem toolbar={actions[0]} onClick={handleViewPresetsPopoverOpen} />
+            <Popover
+              open={Boolean(viewPresetsPopoverOpen)}
+              anchorEl={viewPresetsPopoverOpen}
+              onClose={handleViewPresetsPopoverClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                sx: {
+                  p: 1,
+                  mt: 1.5,
+                  ml: 0.75,
+                  width: 250,
+                  "& .MuiMenuItem-root": {
+                    px: 1,
+                    typography: "body2",
+                    borderRadius: 0.75,
+                  },
+                },
+              }}
+            >
+              <Stack spacing={0.75}>
+                 <ViewPresets handleClose={handleViewPresetsPopoverClose} />
+              </Stack>
+            </Popover>
+          </Box>
+        )}
+        {hasPermission(currentView?.role, "Read") && (
+          <Box
+            sx={{
+              position: "relative",
+              marginRight: 2,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <ActionItem
-              toolbar={actions[0]}
-              onClick={() => {
+              toolbar={actions[1]}
+              onClick={(e) => {
                 setVisibleFilter(!visibleFilter);
               }}
             />
@@ -196,8 +234,8 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
         {hasPermission(currentView?.role, "Read") && (
           <Box sx={{ position: "relative", marginRight: 2 }}>
             <ActionItem
-              toolbar={actions[1]}
-              onClick={() => {
+              toolbar={actions[2]}
+              onClick={(e) => {
                 setVisibleSort(!visibleSort);
               }}
             />
@@ -212,8 +250,8 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
         {hasPermission(currentView?.role, "All") && (
           <Box sx={{ position: "relative", marginRight: 2 }}>
             <ActionItem
-              toolbar={actions[2]}
-              onClick={() => {
+              toolbar={actions[3]}
+              onClick={(e) => {
                 if(currentView.isDefaultView)
                 {
                   setVisibleListFields(!visibleListFields);
@@ -240,8 +278,8 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
         {hasPermission(currentView?.role, "Update") && (
           <Box sx={{ position: "relative", marginRight: 2 }}>
             <ActionItem
-              toolbar={actions[3]}
-              onClick={() => {
+              toolbar={actions[4]}
+              onClick={(e) => {
                 setVisibleImport(!visibleImport);
               }}
             />
@@ -256,8 +294,8 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
         {hasPermission(currentView?.role, "Read") && (
           <Box sx={{ position: "relative", marginRight: 2 }}>
             <ActionItem
-              toolbar={actions[4]}
-              onClick={() => {
+              toolbar={actions[5]}
+              onClick={(e) => {
                 setVisibleExport(!visibleExport);
               }}
             />
@@ -271,7 +309,31 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
         )}
         {hasPermission(currentView?.role, "All") && (
           <Box sx={{ position: "relative", marginRight: 2 }}>
-            <ActionItem toolbar={actions[5]} onClick={() => saveView()} />
+            <ActionItem toolbar={actions[6]} onClick={handleSaveViewPopoverOpen} />
+            <Popover
+              open={Boolean(saveViewPopoverOpen)}
+              anchorEl={saveViewPopoverOpen}
+              onClose={handleSaveViewPopoverClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                sx: {
+                  p: 1,
+                  mt: 1.5,
+                  ml: 0.75,
+                  width: 400,
+                  "& .MuiMenuItem-root": {
+                    px: 1,
+                    typography: "body2",
+                    borderRadius: 0.75,
+                  },
+                },
+              }}
+            >
+              <Stack spacing={0.75}>
+                 <SaveViewPreset handleClose={handleSaveViewPopoverClose} />
+              </Stack>
+            </Popover>
           </Box>
         )}
       </Box>

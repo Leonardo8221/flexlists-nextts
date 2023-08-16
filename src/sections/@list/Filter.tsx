@@ -581,7 +581,7 @@ const Filter = ({
             Submit
           </Button>
         </Box>
-        <Box>
+        {/* <Box>
           <Typography variant="subtitle2">Predefined & Saved filters:</Typography>
           <Box>
             <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -634,7 +634,7 @@ const Filter = ({
               </Typography>
             </Box>
           </Box>
-        </Box>
+        </Box> */}
       </Box>
     </Modal >
   );
