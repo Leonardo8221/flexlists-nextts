@@ -12,7 +12,7 @@ export const getDefaultValues = (columns: ViewField[]): any => {
         case FieldType.Date:
         case FieldType.DateTime:
         case FieldType.Time:
-          defaultValue = new Date().toISOString();
+        //   defaultValue = new Date().toISOString();
           break;
         case FieldType.Choice:
           defaultValue = column.config?.values[0]?.label;

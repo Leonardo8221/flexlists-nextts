@@ -8,10 +8,11 @@ type Props = {
   currentDate: Date;
   getData: (date: Date, flag: string) => any[];
   handleData: (data: any, date: any) => void;
-  getTitle:(data:any) =>string
+  getFieldData: (data: any, field: string) => string;
+  getDataStatus: (item: any, data: any, field: string) => string;
 };
 
-const ListView = ({ days, currentDate, getData, handleData,getTitle }: Props) => {
+const ListView = ({ days, currentDate, getData, handleData, getFieldData, getDataStatus }: Props) => {
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
 
@@ -24,16 +25,25 @@ const ListView = ({ days, currentDate, getData, handleData,getTitle }: Props) =>
       </Box>
       {days.map((day: any) => (
         getData(day, 'day').length ? <Box key={`${day}-right`} sx={{ border: '1px solid rgba(0, 0, 0, 0.1)', px: {xs: 0.3, md: 1}, py: 0.5, display: 'flex' }}>
-          <Box sx={{ display: 'flex', ml: 1 }}>
+          <Box sx={{ display: 'flex', ml: 1, width: '110px' }}>
             <Box sx={{ fontSize: '24px', fontWeight: 900 }}>{format(day, 'd')}</Box>
             <Box sx={{ ml: 1, mt: 1 }}>{format(day, 'MMM')}, {format(day, 'iii')}</Box>            
           </Box>
-          <Box sx={{ ml: 4 }}>
-            {getData(day, 'day').map((data: any) => (
-              <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', px: {xs: 0.5, md: 1.5}, marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
-                {getTitle(data)}
-              </Box>
-            ))}
+          <Box sx={{ ml: 4, display: 'flex', alignItems: 'center' }}>
+            <Box>
+              {getData(day, 'day').map((data: any) => (
+                <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
+                  <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderRadius: 1.5, textTransform: 'capitalize', backgroundColor: theme.palette.palette_style.background.selected }} className="edit_row">
+                    <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.5, marginRight: 0.5 }}></Box>
+                    {getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' ?
+                      <Box>{getFieldData(data, 'begin')}</Box> :
+                      <Box>All day</Box>
+                    }
+                    <Box sx={{ marginLeft: 0.5 }}>{getFieldData(data, 'title')}</Box>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
           </Box>
         </Box> : <></>
       ))}

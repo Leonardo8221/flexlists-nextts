@@ -39,6 +39,7 @@ export enum FieldType {
     Float = 'Float',
     Double = 'Double',
     Percentage = 'Percentage',
+    Color = 'Color'
 }
 export enum FieldUiTypeEnum {
     Text = 'Text',
@@ -58,7 +59,8 @@ export enum FieldUiTypeEnum {
     Choice = 'Choice',
     Percentage = 'Percentage',
     Markdown = 'Markdown',
-    HTML = 'HTML'
+    HTML = 'HTML',
+    Color = 'Color'
 }
 export enum SearchType {
     List = 'List',
