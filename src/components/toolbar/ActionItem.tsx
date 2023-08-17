@@ -5,7 +5,7 @@ import useResponsive from "../../hooks/useResponsive";
 
 type Props = {
   toolbar: any;
-  onClick?: () => void;
+  onClick?: (e:any) => void;
 };
 
 export default function ToolBarItem({ toolbar, onClick }: Props) {

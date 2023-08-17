@@ -78,6 +78,7 @@ export type View = {
     order?: Sort[],
     query?: string,
     conditions?: FlatWhere[],
+    presets:any[],
     description?: string,
     role: Role,
     isArchived: boolean,
