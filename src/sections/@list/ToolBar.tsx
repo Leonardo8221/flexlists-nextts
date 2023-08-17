@@ -101,6 +101,7 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
   const [saveViewMessage, setSaveViewMessage] = useState<string>("");
   const [saveViewPopoverOpen,setSaveViewPopoverOpen] = useState(null);
   const [viewPresetsPopoverOpen,setViewPresetsPopoverOpen] = useState(null);
+  const [selectedPreset,setSelectedPreset] = useState<any>();
   const handleSaveViewPopoverClose = () => {
     setSaveViewPopoverOpen(null);
   };
@@ -181,6 +182,9 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
               alignItems: "center",
             }}
           >
+            <Typography variant="subtitle2" sx={{mr:1,color: theme.palette.palette_style.text.selected, cursor: "pointer"}}>
+              {selectedPreset?selectedPreset.name:'Default'}
+            </Typography>
             <ActionItem toolbar={actions[0]} onClick={handleViewPresetsPopoverOpen} />
             <Popover
               open={Boolean(viewPresetsPopoverOpen)}
@@ -203,7 +207,7 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
               }}
             >
               <Stack spacing={0.75}>
-                 <ViewPresets handleClose={handleViewPresetsPopoverClose} />
+                 <ViewPresets selectedPreset={selectedPreset} setSelectedPreset={(newPreset)=>{setSelectedPreset(newPreset)}} handleClose={handleViewPresetsPopoverClose} />
               </Stack>
             </Popover>
           </Box>

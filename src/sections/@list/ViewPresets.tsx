@@ -1,16 +1,16 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography, useTheme } from "@mui/material";
-import { clone, cloneDeep } from "lodash";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
+import { cloneDeep, set } from "lodash";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { PresetType } from "src/enums/SharedEnums";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { View } from "src/models/SharedModels"
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { fetchRows, setCurrentView } from "src/redux/actions/viewActions";
-import { saveViewPreset } from "src/services/listView.service";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
+import { deleteViewPreset } from "src/services/listView.service";
 import { FlexlistsError, isSucc } from "src/utils/responses";
-import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 
 type ViewPresetsProps = {
     columns: any[],
@@ -19,14 +19,18 @@ type ViewPresetsProps = {
     handleClose:()=>void,
     setFlashMessage : (message:FlashMessageModel)=>void
     fetchRows: () => void;
-    defaultPreset:any
+    defaultPreset:any,
+    selectedPreset : any;
+    setSelectedPreset:(preset:any)=>void;
 }
-function ViewPresets({columns,defaultPreset,currentView,setCurrentView,handleClose,fetchRows,setFlashMessage}:ViewPresetsProps)
+function ViewPresets({selectedPreset,setSelectedPreset,columns,defaultPreset,currentView,setCurrentView,handleClose,fetchRows,setFlashMessage}:ViewPresetsProps)
 {
     const router = useRouter()
     const theme = useTheme();
     const [presets,setPresets] = useState<any[]>([]);
-
+    
+    const [deletePreset,setDeletePreset] = useState<any>();
+    const [isDeletePresetDialogOpen, setOpenDeletePresetDialog] = useState(false);
     useEffect(()=>{
         let newPresets : any[]=[
             cloneDeep(defaultPreset),
@@ -45,8 +49,8 @@ function ViewPresets({columns,defaultPreset,currentView,setCurrentView,handleClo
 
     const onSubmit = async(preset:any)=>
     {
-        var newView: View = Object.assign({}, currentView);
-       
+       var newView: View = Object.assign({}, currentView);
+       setSelectedPreset(preset);
        if(preset.name === "Show All")
        {
         const archived = columns.find((x: any) => x.name === "___archived");
@@ -85,6 +89,55 @@ function ViewPresets({columns,defaultPreset,currentView,setCurrentView,handleClo
        handleClose();
        return;
     }
+    const handleDeletePreset = async (preset: any) => {
+        if (preset.name === "Default"||preset.name === "Show All" || preset.name === "Archived" || preset.name === "Unarchived") {
+          return;
+        }
+        setDeletePreset(preset);
+        setOpenDeletePresetDialog(true);
+    }
+    const deletePresets = async () => {
+        setOpenDeletePresetDialog(false);
+        if(!deletePreset)
+        {
+            return;
+        }
+        let deletePresetRespone = await deleteViewPreset(currentView.id,deletePreset.type,deletePreset.name);
+        if(isSucc(deletePresetRespone))
+        {
+          console.log(deletePreset.name)
+          if(deletePreset.name === selectedPreset?.name)
+          {
+            const defaultPreset = presets.find((x: any) => x.name === "Default");
+            const newView: View = Object.assign({}, currentView);
+            newView.presets = newView.presets.filter((x: any) => x.name?.toLowerCase() !== deletePreset.name?.toLowerCase());
+            newView.page = undefined;
+            newView.limit = undefined;
+            newView.order = defaultPreset.order;
+            newView.query = defaultPreset.query;
+            newView.conditions = defaultPreset.conditions;
+            setSelectedPreset(defaultPreset);
+            setCurrentView(newView);
+            fetchRows();
+            handleClose();
+          }
+          else
+          {
+            const newView: View = Object.assign({}, currentView);
+            newView.presets = newView.presets.filter((x: any) => x.name?.toLowerCase() !== deletePreset.name?.toLowerCase());
+            setCurrentView(newView);
+            handleClose();
+          }
+          
+          setFlashMessage({ message: "Preset deleted successfully", type: "success" });
+        }
+        else
+        {
+          setFlashMessage({ message: (deletePresetRespone as FlexlistsError).message, type: "error" });
+        }
+        
+        
+    }
     return(
         <>
           <Box
@@ -103,18 +156,68 @@ function ViewPresets({columns,defaultPreset,currentView,setCurrentView,handleClo
                 presets.map((preset,index)=>{
                     return(
                         <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
-                        <Typography
-                            variant="body1"
-                            sx={{ color: theme.palette.palette_style.text.selected, cursor: "pointer", }}
-                            onClick={() =>onSubmit(preset)}
-                        >
-                            {preset.name}
-                        </Typography>
+                          <Grid container>
+                              <Grid item xs={8}>
+                                <Typography
+                                variant="body1"
+                                sx={{ color: theme.palette.palette_style.text.selected, cursor: "pointer", }}
+                                onClick={() =>onSubmit(preset)}
+                                >
+                                    {preset.name}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={4}>
+                                {
+                                    preset.name !== "Default" && preset.name !== "Show All" && preset.name !== "Archived" && preset.name !== "Unarchived" &&
+                                    <Box
+                                    sx={{
+                                      display: "flex",
+                                      gap: 0.5,
+                                      alignItems: "center",
+                                      cursor: "pointer",
+                                      color:
+                                        theme.palette.palette_style.error.dark,
+                                      fontWeight: 500,
+                                    }}
+                                    onClick={() => handleDeletePreset(preset)}
+                                  >
+                                    <DeleteIcon />
+                                    <Typography
+                                      variant="subtitle2"
+                                      component={"span"}
+                                      sx={{
+                                        display: {
+                                          xs: "none",
+                                          md: "block",
+                                        },
+                                      }}
+                                    >
+                                      Delete
+                                    </Typography>
+                                  </Box>
+                                }
+                                
+                              </Grid>
+                          </Grid>
+                           
+                          
+                        
                         </Box>
+                        
                     )
                 })   
             }
           </Box>
+          <YesNoDialog
+            title="Delete Preset"
+            submitText="Delete"
+            message="Are you sure you want to delete the preset?"
+            open={isDeletePresetDialogOpen}
+            handleClose={() => setOpenDeletePresetDialog(false)}
+            onSubmit={() => {
+              deletePresets();
+            }}
+          />
         </>
     )
 }

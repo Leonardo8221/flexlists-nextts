@@ -65,6 +65,11 @@ export async function saveViewPreset(viewId:number,type:PresetType,name?:any,pag
 
   return response.data;
 };
+export async function deleteViewPreset(viewId:number,type:PresetType,name:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/deleteViewPreset`, {viewId,type,name})
+
+  return response.data;
+};
 export async function updateView(viewId: number, name: any, type: ViewType, config?: any, page?: number, limit?: number, order?: Sort[], query?: any, description?: any, conditions?: any, fields?: any): Promise<FlexlistsError | FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listView/updateView`, { viewId, name, type, config, page, limit, order, query, description, conditions, fields })
 
