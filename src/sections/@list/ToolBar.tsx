@@ -19,6 +19,7 @@ import ListFields from "./ListFields";
 import { set } from "lodash";
 import SaveViewPreset from "./SaveViewPreset";
 import ViewPresets from "./ViewPresets";
+import TuneIcon from "@mui/icons-material/Tune";
 
 type ToolbBarProps = {
   open: boolean;
@@ -44,8 +45,8 @@ const dos = [
 
 const actions = [
   {
-    title: "Presets",
-    icon: "toolbar/filter",
+    // title: "Presets",
+    icon: "toolbar/presetTest",
     active: true,
     leftIcon: true,
   },
@@ -87,7 +88,12 @@ const actions = [
   },
 ];
 
-const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) => {
+const ToolbBar = ({
+  open,
+  onOpen,
+  currentView,
+  setFlashMessage,
+}: ToolbBarProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "lg");
   const [visibleFilter, setVisibleFilter] = useState(false);
@@ -99,21 +105,21 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
   const [isSaveViewModalOpen, setIsSaveViewModalOpen] =
     useState<boolean>(false);
   const [saveViewMessage, setSaveViewMessage] = useState<string>("");
-  const [saveViewPopoverOpen,setSaveViewPopoverOpen] = useState(null);
-  const [viewPresetsPopoverOpen,setViewPresetsPopoverOpen] = useState(null);
-  const [selectedPreset,setSelectedPreset] = useState<any>();
+  const [saveViewPopoverOpen, setSaveViewPopoverOpen] = useState(null);
+  const [viewPresetsPopoverOpen, setViewPresetsPopoverOpen] = useState(null);
+  const [selectedPreset, setSelectedPreset] = useState<any>();
   const handleSaveViewPopoverClose = () => {
     setSaveViewPopoverOpen(null);
   };
-  const handleSaveViewPopoverOpen = (event:any) => {
+  const handleSaveViewPopoverOpen = (event: any) => {
     setSaveViewPopoverOpen(event.currentTarget);
-  }
+  };
   const handleViewPresetsPopoverClose = () => {
     setViewPresetsPopoverOpen(null);
   };
-  const handleViewPresetsPopoverOpen = (event:any) => {
+  const handleViewPresetsPopoverOpen = (event: any) => {
     setViewPresetsPopoverOpen(event.currentTarget);
-  }
+  };
   return (
     <Box
       sx={{
@@ -177,15 +183,26 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
           <Box
             sx={{
               position: "relative",
+              alignItems: "center",
               marginRight: 2,
               display: "flex",
-              alignItems: "center",
             }}
           >
-            <Typography variant="subtitle2" sx={{mr:1,color: theme.palette.palette_style.text.selected, cursor: "pointer"}}>
-              {selectedPreset?selectedPreset.name:'Default'}
-            </Typography>
-            <ActionItem toolbar={actions[0]} onClick={handleViewPresetsPopoverOpen} />
+            <ActionItem
+              toolbar={actions[0]}
+              onClick={handleViewPresetsPopoverOpen}
+            />
+            <Box
+              // variant="body1"
+              onClick={handleViewPresetsPopoverOpen}
+              sx={{
+                // mr: 1,
+                color: theme.palette.palette_style.text.selected,
+                cursor: "pointer",
+              }}
+            >
+              {selectedPreset ? selectedPreset.name : "Default"}
+            </Box>
             <Popover
               open={Boolean(viewPresetsPopoverOpen)}
               anchorEl={viewPresetsPopoverOpen}
@@ -207,7 +224,13 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
               }}
             >
               <Stack spacing={0.75}>
-                 <ViewPresets selectedPreset={selectedPreset} setSelectedPreset={(newPreset)=>{setSelectedPreset(newPreset)}} handleClose={handleViewPresetsPopoverClose} />
+                <ViewPresets
+                  selectedPreset={selectedPreset}
+                  setSelectedPreset={(newPreset) => {
+                    setSelectedPreset(newPreset);
+                  }}
+                  handleClose={handleViewPresetsPopoverClose}
+                />
               </Stack>
             </Popover>
           </Box>
@@ -216,9 +239,9 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
           <Box
             sx={{
               position: "relative",
+              alignItems: "center",
               marginRight: 2,
               display: "flex",
-              alignItems: "center",
             }}
           >
             <ActionItem
@@ -236,7 +259,9 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
           </Box>
         )}
         {hasPermission(currentView?.role, "Read") && (
-          <Box sx={{ position: "relative", marginRight: 2 }}>
+          <Box
+            sx={{ position: "relative", alignItems: "center", marginRight: 2 }}
+          >
             <ActionItem
               toolbar={actions[2]}
               onClick={(e) => {
@@ -252,19 +277,17 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
           </Box>
         )}
         {hasPermission(currentView?.role, "All") && (
-          <Box sx={{ position: "relative", marginRight: 2 }}>
+          <Box
+            sx={{ position: "relative", alignItems: "center", marginRight: 2 }}
+          >
             <ActionItem
               toolbar={actions[3]}
               onClick={(e) => {
-                if(currentView.isDefaultView)
-                {
+                if (currentView.isDefaultView) {
                   setVisibleListFields(!visibleListFields);
-                }
-                else
-                {
+                } else {
                   setVisibleFields(!visibleFields);
                 }
-                
               }}
             />
             <ViewFields
@@ -275,12 +298,16 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
             />
             <ListFields
               open={visibleListFields}
-              onClose={() => {setVisibleListFields(false)}}
+              onClose={() => {
+                setVisibleListFields(false);
+              }}
             />
           </Box>
         )}
         {hasPermission(currentView?.role, "Update") && (
-          <Box sx={{ position: "relative", marginRight: 2 }}>
+          <Box
+            sx={{ position: "relative", alignItems: "center", marginRight: 2 }}
+          >
             <ActionItem
               toolbar={actions[4]}
               onClick={(e) => {
@@ -296,7 +323,9 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
           </Box>
         )}
         {hasPermission(currentView?.role, "Read") && (
-          <Box sx={{ position: "relative", marginRight: 2 }}>
+          <Box
+            sx={{ position: "relative", alignItems: "center", marginRight: 2 }}
+          >
             <ActionItem
               toolbar={actions[5]}
               onClick={(e) => {
@@ -312,8 +341,13 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
           </Box>
         )}
         {hasPermission(currentView?.role, "All") && (
-          <Box sx={{ position: "relative", marginRight: 2 }}>
-            <ActionItem toolbar={actions[6]} onClick={handleSaveViewPopoverOpen} />
+          <Box
+            sx={{ position: "relative", alignItems: "center", marginRight: 2 }}
+          >
+            <ActionItem
+              toolbar={actions[6]}
+              onClick={handleSaveViewPopoverOpen}
+            />
             <Popover
               open={Boolean(saveViewPopoverOpen)}
               anchorEl={saveViewPopoverOpen}
@@ -335,7 +369,7 @@ const ToolbBar = ({ open, onOpen, currentView,setFlashMessage }: ToolbBarProps) 
               }}
             >
               <Stack spacing={0.75}>
-                 <SaveViewPreset handleClose={handleSaveViewPopoverClose} />
+                <SaveViewPreset handleClose={handleSaveViewPopoverClose} />
               </Stack>
             </Popover>
           </Box>
@@ -374,7 +408,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setFlashMessage
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToolbBar);

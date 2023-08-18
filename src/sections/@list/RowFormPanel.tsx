@@ -449,6 +449,7 @@ const RowFormPanel = ({
             key={column.id}
             label={column.name}
             name={`${column.id}`}
+            InputLabelProps={{ shrink: true }}
             size="small"
             type={"text"}
             onChange={(e) => {
@@ -471,6 +472,7 @@ const RowFormPanel = ({
               InputProps={{
                 readOnly: true,
               }}
+              InputLabelProps={{ shrink: true }}
               label={column.name}
               value={values ? values[column.id] : ""}
               sx={{
@@ -505,6 +507,7 @@ const RowFormPanel = ({
           <TextField
             key={column.id}
             label={column.name}
+            InputLabelProps={{ shrink: true }}
             name={`${column.id}`}
             size="small"
             type={"number"}
@@ -524,6 +527,7 @@ const RowFormPanel = ({
               InputProps={{
                 readOnly: true,
               }}
+              InputLabelProps={{ shrink: true }}
               label={column.name}
               value={values ? values[getDataColumnId(column.id, columns)] : ""}
               sx={{
@@ -580,6 +584,7 @@ const RowFormPanel = ({
               InputProps={{
                 readOnly: true,
               }}
+              InputLabelProps={{ shrink: true }}
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
@@ -634,6 +639,7 @@ const RowFormPanel = ({
               InputProps={{
                 readOnly: true,
               }}
+              InputLabelProps={{ shrink: true }}
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
@@ -791,6 +797,7 @@ const RowFormPanel = ({
                 InputProps={{
                   readOnly: true,
                 }}
+                InputLabelProps={{ shrink: true }}
                 label={column.name}
                 value={choice?.label}
                 sx={{
@@ -1163,10 +1170,10 @@ const RowFormPanel = ({
                 position: "relative",
                 borderRadius: "6px",
                 ".focusedNeed:focus &": {
-                  border: "2px solid #1976d2",
+                  // border: "2px solid #1976d2",
                 },
                 "&:hover": {
-                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                  // border: "1px solid rgba(0, 0, 0, 0.87)",
                 },
               }}
             >
@@ -1184,9 +1191,9 @@ const RowFormPanel = ({
                   px: 0.5,
                   color: "rgba(0, 0, 0, 0.6)",
                   ".focusedNeed:focus &": {
-                    color: "#1976d2",
-                    top: "-11px",
-                    left: "9px",
+                    // color: "#1976d2",
+                    // top: "-11px",
+                    // left: "9px",
                   },
                 }}
               >
@@ -1198,7 +1205,7 @@ const RowFormPanel = ({
                   maxWidth: "100%",
                   maxHeight: "100%",
                   ".focusedNeed:focus &": {
-                    margin: "-1px",
+                    // margin: "-1px",
                   },
                 }}
                 component="img"
@@ -1214,8 +1221,33 @@ const RowFormPanel = ({
         );
       case FieldUiTypeEnum.Video:
         return currentMode !== "view" && !isPrint ? (
-          <Box key={column.id}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+          <Box
+            key={column.id}
+            sx={{
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              p: 2,
+              position: "relative",
+              borderRadius: "6px",
+              "&:hover": {
+                border: "1px solid rgba(0, 0, 0, 0.87)",
+              },
+            }}
+          >
+            <Typography
+              variant="body2"
+              component={"label"}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: 12,
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
+              }}
+            >
               {column.name}
             </Typography>
             <UploadButton
@@ -1260,10 +1292,10 @@ const RowFormPanel = ({
                 position: "relative",
                 borderRadius: "6px",
                 ".focusedNeed:focus &": {
-                  border: "2px solid #1976d2",
+                  // border: "2px solid #1976d2",
                 },
                 "&:hover": {
-                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                  // border: "1px solid rgba(0, 0, 0, 0.87)",
                 },
               }}
             >
@@ -1281,9 +1313,9 @@ const RowFormPanel = ({
                   px: 0.5,
                   color: "rgba(0, 0, 0, 0.6)",
                   ".focusedNeed:focus &": {
-                    color: "#1976d2",
-                    top: "-11px",
-                    left: "9px",
+                    // color: "#1976d2",
+                    // top: "-11px",
+                    // left: "9px",
                   },
                 }}
               >
@@ -1293,7 +1325,7 @@ const RowFormPanel = ({
                 className="markdownWrapper"
                 sx={{
                   ".focusedNeed:focus &": {
-                    margin: "-1px",
+                    // margin: "-1px",
                   },
                 }}
               >
@@ -1361,10 +1393,10 @@ const RowFormPanel = ({
                 position: "relative",
                 borderRadius: "6px",
                 ".focusedNeed:focus &": {
-                  border: "2px solid #1976d2",
+                  // border: "2px solid #1976d2",
                 },
                 "&:hover": {
-                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                  // border: "1px solid rgba(0, 0, 0, 0.87)",
                 },
               }}
             >
@@ -1382,9 +1414,9 @@ const RowFormPanel = ({
                   px: 0.5,
                   color: "rgba(0, 0, 0, 0.6)",
                   ".focusedNeed:focus &": {
-                    color: "#1976d2",
-                    top: "-11px",
-                    left: "9px",
+                    // color: "#1976d2",
+                    // top: "-11px",
+                    // left: "9px",
                   },
                 }}
               >
