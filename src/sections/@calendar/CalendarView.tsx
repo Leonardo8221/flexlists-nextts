@@ -37,6 +37,9 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
   const [days, setDays] = useState<any>([]);
   const [cycleStart, setCycleStart] = useState(startOfMonth(currentDate));
   const [windowHeight, setWindowHeight] = useState(0);
+  const [detailMode, setDetailMode] = useState<"view" | "create" | "update" | "comment">(
+    "view"
+  );
 
   const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 
@@ -141,12 +144,16 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
     else {}
   };
 
-  const handleNewRowPanel = (values:any) => {
+  const handleNewRowPanel = (values: any) => {
+    setDetailMode('create');
     setVisibleAddRowPanel(true);
     setSelectedRowData(values);
   };
 
   const handleData = (data: any, date: any) => {
+    if (data.id) setDetailMode('view');
+    else setDetailMode('create');
+
     setCurrentDate(date);
 
     setSelectedRowData(data);
@@ -228,7 +235,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
         }}
       >
         <Box sx={{ paddingLeft: mode === 'month' || mode === 'list' ? 'inherit' : isDesktop ? '64px' : '24px' }}>
-          <CalendarTitle mode={mode} current={cycleStart} handleFirstPageer={handleFirstPageer} handleSecondPageer={handleSecondPageer} />
+          <CalendarTitle mode={mode} current={cycleStart} currentDate={currentDate} handleFirstPageer={handleFirstPageer} handleSecondPageer={handleSecondPageer} />
           {mode !== 'day' && mode !== 'list' && <WeekBar mode={mode} />}
         </Box>
         {mode === 'month' ? 
@@ -245,14 +252,14 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
 
       <CalendarFooter mode={mode} handleNewRowPanel={(values)=>handleNewRowPanel(values)} handleMode={handleMode} />
 
-      <RowFormPanel
+      {detailMode && <RowFormPanel
         rowData={selectedRowData}
         columns={columns}
         onSubmit={handleNewRow}
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
-        mode={'update'}
-      />
+        mode={detailMode}
+      />}
     </Box>
   );
 };

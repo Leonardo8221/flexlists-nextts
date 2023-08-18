@@ -565,6 +565,7 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
+              ampm={false}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,

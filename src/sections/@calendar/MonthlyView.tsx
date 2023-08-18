@@ -29,21 +29,19 @@ const MonthlyView = ({ days, currentDate, cycleStart, getData, handleData, getFi
             <Box sx={{ color: isSameDay(day, currentDate) ? 'white' : '', display: 'flex', justifyContent: 'center', padding: '2px 0' }}>
               <Box sx={{ p: '2px', borderRadius: '50%', width: '28px', backgroundColor: isSameDay(day, currentDate) ? 'rgb(26,115,232)' : '', textAlign: 'center' }}>{format(day, 'd')}</Box>
             </Box>
-            <Box sx={{ overflowY: 'auto', maxHeight: '95px' }}>
-              {getData(new Date(format(day, 'MM/dd/yyyy')), 'day').map((data: any) => (
-                <Box key={`${data.id}-month`} sx={{ width: '100%', display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, fontSize: '12px', marginBottom: '2px' }} onClick={() => handleData(data, day)} className="edit_row">
-                  <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderBottomLeftRadius: getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' ? '10px' : '', borderTopLeftRadius: getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' ? '10px' : '', borderTopRightRadius: getFieldData(data, 'end') === '' || getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'end' ? '10px' : '', borderBottomRightRadius: getFieldData(data, 'end') === '' || getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'end' ? '10px' : '', textTransform: 'capitalize', backgroundColor: getFieldData(data, 'end') === '' ? theme.palette.palette_style.background.selected : getFieldData(data, 'color') === '' ? theme.palette.palette_style.background.selected : getFieldData(data, 'color'), height: '23px' }} className="edit_row">
-                    {getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' &&
-                    <>
-                      {getFieldData(data, 'end') === '' && <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.6, marginRight: 0.5 }}></Box>}
-                      {getFieldData(data, 'end') === '' && <Box>{getFieldData(data, 'begin')}</Box>}
-                      <Box sx={{ marginLeft: 0.5 }}>{getFieldData(data, 'title')}</Box>
-                    </>
-                    }
-                  </Box>
+            {getData(new Date(format(day, 'MM/dd/yyyy')), 'day').map((data: any) => (
+              <Box key={`${data.id}-month`} sx={{ width: '100%', display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, fontSize: '12px', marginBottom: '2px' }} onClick={() => handleData(data, day)} className="edit_row">
+                <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderBottomLeftRadius: getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' ? '10px' : '', borderTopLeftRadius: getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' ? '10px' : '', borderTopRightRadius: getFieldData(data, 'end') === '' || getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'end' ? '10px' : '', borderBottomRightRadius: getFieldData(data, 'end') === '' || getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'end' ? '10px' : '', textTransform: 'capitalize', backgroundColor: getFieldData(data, 'end') === '' ? theme.palette.palette_style.background.selected : getFieldData(data, 'color') === '' ? theme.palette.palette_style.background.selected : getFieldData(data, 'color'), height: '23px' }} className="edit_row">
+                  {getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' &&
+                  <>
+                    {getFieldData(data, 'end') === '' && <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.6, marginRight: 0.5 }} className="edit_row"></Box>}
+                    {getFieldData(data, 'end') === '' && <Box className="edit_row">{getFieldData(data, 'begin')}</Box>}
+                    <Box className="edit_row" sx={{ marginLeft: 0.5 }}>{getFieldData(data, 'title')}</Box>
+                  </>
+                  }
                 </Box>
-              ))}
-            </Box>
+              </Box>
+            ))}
           </Box>
         </Box>
       ))}
