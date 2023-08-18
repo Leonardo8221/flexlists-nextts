@@ -20,6 +20,7 @@ type CalendarViewConfigProps = {
   updateConfig: (config: CalendarConfig) => void;
   columns: ViewField[];
   availableFieldUiTypes: FieldUIType[];
+  config?: CalendarConfig
 };
 
 function CalendarViewConfig({
@@ -27,6 +28,7 @@ function CalendarViewConfig({
   updateConfig,
   columns,
   availableFieldUiTypes,
+  config
 }: CalendarViewConfigProps) {
   const [titleFieldId, setTitleFieldId] = useState<number>(0);
   const [beginDateTimeId, setBeginDateTimeId] = useState<number>(0);
@@ -96,22 +98,24 @@ function CalendarViewConfig({
     const newTitleFields: ViewField[] = getTitleFields();
     const newDateTimeFields: ViewField[] = getDateTimeFields();
     const newColorFields: ViewField[] = getColorFields();
-
+    const defaultTitleId = config && config.titleId? config.titleId:(newTitleFields.length > 0 ? newTitleFields[0].id : 0);
+    const defaultBeginDateTimeId = config && config.beginDateTimeId? config.beginDateTimeId:(newDateTimeFields.length > 0 ? newDateTimeFields[0].id : 0);
+    const defaultEndDateTimeId = config && config.endDateTimeId? config.endDateTimeId:(newDateTimeFields.length > 1 ? newDateTimeFields[1].id : 0);
+    const defaultColorId = config && config.colorId? config.colorId:(newColorFields.length > 0 ? newColorFields[0].id : 0);
     if (newTitleFields.length > 0) {
-      setTitleFieldId(newTitleFields[0].id);
+      setTitleFieldId(defaultTitleId);
     }
 
     if (newDateTimeFields.length > 0) {
-      setBeginDateTimeId(newDateTimeFields[0].id);
-      setEndDateTimeId(newDateTimeFields[1].id);
+      setBeginDateTimeId(defaultBeginDateTimeId);
     }
 
     if (newDateTimeFields.length > 1) {
-      setEndDateTimeId(newDateTimeFields[1].id);
+      setEndDateTimeId(defaultEndDateTimeId);
     }
 
     if (newColorFields.length > 0) {
-      setColorId(newColorFields[0].id);
+      setColorId(defaultColorId);
     }
 
     setTitleFields(newTitleFields);
@@ -120,10 +124,10 @@ function CalendarViewConfig({
     setColorFields(newColorFields);
 
     updateCalendarConfig(
-      newTitleFields.length > 0 ? newTitleFields[0].id : 0,
-      newDateTimeFields.length > 0 ? newDateTimeFields[0].id : 0,
-      newDateTimeFields.length > 1 ? newDateTimeFields[1].id : 0,
-      newColorFields.length > 0 ? newColorFields[0].id : 0
+      defaultTitleId,
+      defaultBeginDateTimeId,
+      defaultEndDateTimeId,
+      defaultColorId
     );
   };
 

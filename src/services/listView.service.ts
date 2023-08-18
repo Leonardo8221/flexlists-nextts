@@ -75,6 +75,11 @@ export async function updateView(viewId: number, name: any, type: ViewType, conf
 
   return response.data;
 };
+export async function updateViewConfig(viewId:number,config:any): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError|FlexlistsSuccess>(`/api/listView/updateViewConfig`, {viewId,config})
+
+  return response.data;
+};
 export async function getDefaultListViews(page?:number,limit?:number): Promise<FlexlistsError|FlexlistsSuccess<View[]>> {
   var response = await axios.get<FlexlistsError|FlexlistsSuccess<View[]>>('/api/listView/getDefaultListViews'+`?page=${page}&limit=${limit}`)
   return response.data;
