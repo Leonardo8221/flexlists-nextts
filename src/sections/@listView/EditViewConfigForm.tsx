@@ -1,0 +1,180 @@
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  DialogTitle,
+  useTheme,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import { FieldUIType, View } from "src/models/SharedModels";
+import { connect } from "react-redux";
+import { ViewType } from "src/enums/SharedEnums";
+import { ViewField } from "src/models/ViewField";
+import { useRouter } from "next/router";
+import KanbanViewConfig from "./KanbanViewConfig";
+import CalendarViewConfig from "./CalendarViewConfig";
+import GalleryViewConfig from "./GalleryViewConfig";
+import TimelineViewConfig from "./TimelineViewConfig";
+import GanttViewConfig from "./GanttViewConfig";
+
+import { validateViewConfig } from "src/utils/flexlistHelper";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import RightPanel from "src/components/right-panel/RightPanel";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { updateViewConfig } from "src/services/listView.service";
+import { FlexlistsError, isSucc } from "src/utils/responses";
+import { fetchRows, setCurrentView } from "src/redux/actions/viewActions";
+
+
+
+type EditViewConfigFormProps = {
+  currentView: View;
+  setCurrentView: (newView: View) => void;
+  columns: ViewField[];
+  open: boolean;
+  handleClose: () => void;
+  availableFieldUiTypes: FieldUIType[];
+  setFlashMessage:(message:FlashMessageModel)=>void,
+  fetchRows:()=>void
+};
+
+const EditViewConfigForm = ({
+  open,
+  handleClose,
+  currentView,
+  columns,
+  availableFieldUiTypes,
+  setFlashMessage,
+  fetchRows,
+  setCurrentView
+}: EditViewConfigFormProps) => {
+  const router = useRouter();
+  const theme = useTheme();
+  const [config, setConfig] = useState<any>({});
+  const [submit, setSubmit] = useState(false);
+  
+  
+  const setError = (message:string)=>{
+    setFlashMessage({message:message, type:'error'})
+  }
+  const handleSubmit = async () => {
+    setSubmit(true);
+
+    if (!validateViewConfig(currentView.type,config, setError)) {
+      return;
+    }
+    let updateViewCongig = await updateViewConfig(currentView.id, config);
+    if(isSucc(updateViewCongig)){
+      let newView = Object.assign({}, currentView);
+      newView.config = config;
+      setCurrentView(newView);
+      fetchRows()
+      setFlashMessage({message:'View config updated', type:'success'})
+      handleClose()
+    }
+    else
+    {
+      setError((updateViewCongig as FlexlistsError).message)
+    }
+  };
+
+  const updateConfig = (newConfig: any) => {
+    setConfig(newConfig);
+  };
+
+  return (
+    <>
+    <RightPanel open={open} handleClose={handleClose} >
+        <DialogTitle
+          textAlign="left"
+          sx={{
+            borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+          }}
+        >
+          Edit view config
+        </DialogTitle>
+        <DialogContent>
+            <Box sx={{mt:3}}>
+                {currentView && currentView.type === ViewType.Calendar && (
+                  <CalendarViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                    config={currentView?.config}
+                  />
+                )}
+                {currentView && currentView.type === ViewType.Gallery && (
+                  <GalleryViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+                {currentView && currentView.type === ViewType.KanBan && (
+                  <KanbanViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+                {currentView && currentView.type === ViewType.TimeLine && (
+                  <TimelineViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+                {currentView && currentView.type === ViewType.Gantt && (
+                  <GanttViewConfig
+                    submit={submit}
+                    availableFieldUiTypes={availableFieldUiTypes}
+                    updateConfig={(newConfig) => updateConfig(newConfig)}
+                  />
+                )}
+             </Box>
+        </DialogContent>
+        <DialogActions
+        sx={{
+          p: "1.25rem",
+          borderTop: `1px solid ${theme.palette.palette_style.border.default}`,
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            bottom: 0,
+            ml: 'auto',
+            mr: 0
+          }}
+        >
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+              color="primary"
+              onClick={handleSubmit}
+              variant="contained"
+              type="submit"
+            >
+              Update
+            </Button>
+        </Box>
+        
+      </DialogActions>
+      </RightPanel>
+    </>
+  );
+};
+
+const mapStateToProps = (state: any) => ({
+  currentView: state.view.currentView,
+  columns: state.view.columns,
+  availableFieldUiTypes: state.view.availableFieldUiTypes,
+});
+
+const mapDispatchToProps = {
+  setCurrentView,
+  setFlashMessage,
+  fetchRows
+};
+export default connect(mapStateToProps, mapDispatchToProps)(EditViewConfigForm);

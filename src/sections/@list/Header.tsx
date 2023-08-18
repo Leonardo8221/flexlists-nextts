@@ -29,6 +29,8 @@ import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import EditViewConfigForm from "../@listView/EditViewConfigForm";
+import { ViewType } from "src/enums/SharedEnums";
 
 type HeaderProps = {
   currentView: View;
@@ -50,6 +52,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
     useState<boolean>(false);
   const [isDeleteOpenModal, setIsDeleteOpenModal] = useState<boolean>(false);
   const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
+  const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] = useState<boolean>(false);
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
@@ -85,6 +88,9 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
   };
   const handleOpenArchiveModal = () => {
     setIsArchiveOpenModal(true);
+  };
+  const handleOpenEditViewConfigModal = () => {
+    setIsEditViewConfigOpenModal(true);
   };
   const handleArchive = async() =>{
      setIsArchiveOpenModal(false);
@@ -228,7 +234,16 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
                 )
                 
               }
-              
+              {
+                currentView && currentView?.type !== ViewType.List &&
+                <CDropdownItem
+                  href="#"
+                  key={"edit_config"}
+                  onClick={() => handleOpenEditViewConfigModal()}
+                >
+                Edit Config
+                </CDropdownItem>
+              }
               
             </CDropdownMenu>
           </CDropdown>}
@@ -416,6 +431,10 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
             viewId={currentView.id}
             open={isDeleteOpenModal}
             handleClose={() => setIsDeleteOpenModal(false)}
+          />
+          <EditViewConfigForm
+           open = {isEditViewConfigOpenModal}
+            handleClose = {()=>setIsEditViewConfigOpenModal(false)}
           />
           <YesNoDialog
           title="Archive View"

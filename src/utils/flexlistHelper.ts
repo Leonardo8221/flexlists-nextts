@@ -1,4 +1,4 @@
-import { ExportType, FieldType, ImportType } from "src/enums/SharedEnums";
+import { ExportType, FieldType, ImportType, ViewType } from "src/enums/SharedEnums";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "./convertUtils";
@@ -126,3 +126,116 @@ export const getImportFileExtension = (importFile: ImportType): string => {
     }
     return 'csv';
 }
+export const validateViewConfig = (viewType:ViewType,config:any,setError:(message:string)=>void): boolean => {
+    let isValidConfig: boolean = true;
+    switch (viewType) {
+      case ViewType.Calendar:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.beginDateTimeId || config.beginDateTimeId === 0) {
+          setError("Begin Date field required");
+          isValidConfig = false;
+        }
+        break;
+      case ViewType.Gallery:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.avatarId || config.avatarId === 0) {
+          setError("Avatar field required");
+          isValidConfig = false;
+        }
+        if (!config.nameId || config.nameId === 0) {
+          setError("Task Name field required");
+          isValidConfig = false;
+        }
+        if (!config.importanceId || config.importanceId === 0) {
+          setError("Importance field required");
+          isValidConfig = false;
+        }
+        if (!config.descriptionId || config.descriptionId === 0) {
+          setError("Task Description field required");
+          isValidConfig = false;
+        }
+        break;
+      case ViewType.KanBan:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.boardColumnId || config.boardColumnId === 0) {
+          setError("Board field required");
+          isValidConfig = false;
+        }
+        if (!config.orderColumnId || config.orderColumnId === 0) {
+          setError("Order field required");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        break;
+      case ViewType.TimeLine:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.colorId || config.colorId === 0) {
+          setError("Color field required");
+          isValidConfig = false;
+        }
+        if (!config.levelId || config.levelId === 0) {
+          setError("Level field required");
+          isValidConfig = false;
+        }
+        if (!config.fromId || config.fromId === 0) {
+          setError("From field required");
+          isValidConfig = false;
+        }
+        if (!config.toId || config.toId === 0) {
+          setError("To field required");
+          isValidConfig = false;
+        }
+        break;
+      case ViewType.Gantt:
+        if (!config) {
+          setError("Config invalid");
+          isValidConfig = false;
+        }
+        if (!config.titleId || config.titleId === 0) {
+          setError("Title field required");
+          isValidConfig = false;
+        }
+        if (!config.colorId || config.colorId === 0) {
+          setError("Color field required");
+          isValidConfig = false;
+        }
+        if (!config.levelId || config.levelId === 0) {
+          setError("Level field required");
+          isValidConfig = false;
+        }
+        if (!config.fromId || config.fromId === 0) {
+          setError("From field required");
+          isValidConfig = false;
+        }
+        if (!config.toId || config.toId === 0) {
+          setError("To field required");
+          isValidConfig = false;
+        }
+      default:
+        break;
+    }
+    return isValidConfig;
+  };
