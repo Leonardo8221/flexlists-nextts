@@ -223,7 +223,7 @@ const ToolbBar = ({
                 },
               }}
             >
-              <Stack spacing={0.75}>
+              <Stack spacing={1}>
                 <ViewPresets
                   selectedPreset={selectedPreset}
                   setSelectedPreset={(newPreset) => {
