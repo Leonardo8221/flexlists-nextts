@@ -24,21 +24,18 @@ const ListView = ({ days, currentDate, getData, handleData, getFieldData, getDat
         <Box>{format(currentDate, 'iii')}</Box>
       </Box>
       {days.map((day: any) => (
-        getData(day, 'day').length ? <Box key={`${day}-right`} sx={{ border: '1px solid rgba(0, 0, 0, 0.1)', px: {xs: 0.3, md: 1}, py: 0.5, display: 'flex' }}>
+        getData(new Date(format(day, 'MM/dd/yyyy')), 'day').length ? <Box key={`${day}-right`} sx={{ border: '1px solid rgba(0, 0, 0, 0.1)', px: {xs: 0.3, md: 1}, py: 0.5, display: 'flex' }}>
           <Box sx={{ display: 'flex', ml: 1, width: '110px' }}>
             <Box sx={{ fontSize: '24px', fontWeight: 900 }}>{format(day, 'd')}</Box>
             <Box sx={{ ml: 1, mt: 1 }}>{format(day, 'MMM')}, {format(day, 'iii')}</Box>            
           </Box>
           <Box sx={{ ml: 4, display: 'flex', alignItems: 'center' }}>
             <Box>
-              {getData(day, 'day').map((data: any) => (
-                <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '100px', lg: '150px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
+              {getData(new Date(format(day, 'MM/dd/yyyy')), 'day').map((data: any) => (
+                <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '200px', lg: '250px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
                   <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderRadius: 1.5, textTransform: 'capitalize', backgroundColor: theme.palette.palette_style.background.selected }} className="edit_row">
                     <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.5, marginRight: 0.5 }} className="edit_row"></Box>
-                    {getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' ?
-                      <Box className="edit_row">{getFieldData(data, 'begin')}</Box> :
-                      <Box className="edit_row">All day</Box>
-                    }
+                    <Box className="edit_row">{getFieldData(data, 'begin')}</Box>
                     <Box sx={{ marginLeft: 0.5 }} className="edit_row">{getFieldData(data, 'title')}</Box>
                   </Box>
                 </Box>

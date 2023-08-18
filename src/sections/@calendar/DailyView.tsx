@@ -39,7 +39,7 @@ const DailyView = ({ hours, currentDate, getData, handleData, getFieldData, getD
               <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', backgroundColor: '#FFB7B7', marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
                 <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderRadius: 1.5, textTransform: 'capitalize', backgroundColor: theme.palette.palette_style.background.selected }} className="edit_row">
                   <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.5, marginRight: 0.5 }} className="edit_row"></Box>
-                  <Box className="edit_row">{getDataStatus(data, new Date(getCurrentDateString(currentDate) + ' ' + hour + ':00'), 'hour') === 'begin' ? getFieldData(data, 'begin') : hour}</Box>
+                  <Box className="edit_row">{getDataStatus(data, new Date(getCurrentDateString(currentDate) + ' ' + hour + ':00'), 'hour') === 'begin' ? getFieldData(data, 'begin').split(' ')[1] : hour}</Box>
                   <Box sx={{ marginLeft: 0.5 }} className="edit_row">{getFieldData(data, 'title')}</Box>
                 </Box>
               </Box>

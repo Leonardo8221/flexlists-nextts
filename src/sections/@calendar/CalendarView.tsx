@@ -98,32 +98,77 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       filterEndDate = displayDays[displayDays.length - 1];      
     }
 
-    const dateColumn = getDataColumnId(currentView.config.beginDateTimeId, columns);
+    const beginDateColumn = getDataColumnId(currentView.config.beginDateTimeId, columns);
+    const endDateColumn = getDataColumnId(currentView.config.endDateTimeId, columns);
     const filter1: FlatWhere = {
-      left: dateColumn,
+      left: beginDateColumn,
       leftType: "Field",
       right: `${format(filterStartDate, 'MM/dd/yyyy')} 00:00:00`,
       rightType: "SearchString",
       cmp: 'gte',
     } as FlatWhere;
     const filter2: FlatWhere = {
-      left: dateColumn,
+      left: beginDateColumn,
       leftType: "Field",
       right: `${format(filterEndDate, 'MM/dd/yyyy')} 23:59:59`,
       rightType: "SearchString",
       cmp: 'lte',
+    } as FlatWhere;
+    const filter3: FlatWhere = {
+      left: endDateColumn,
+      leftType: "Field",
+      right: `${format(filterStartDate, 'MM/dd/yyyy')} 00:00:00`,
+      rightType: "SearchString",
+      cmp: 'gte',
+    } as FlatWhere;
+    const filter4: FlatWhere = {
+      left: endDateColumn,
+      leftType: "Field",
+      right: `${format(filterEndDate, 'MM/dd/yyyy')} 23:59:59`,
+      rightType: "SearchString",
+      cmp: 'lte',
+    } as FlatWhere;
+    const filter5: FlatWhere = {
+      left: beginDateColumn,
+      leftType: "Field",
+      right: `${format(filterStartDate, 'MM/dd/yyyy')} 00:00:00`,
+      rightType: "SearchString",
+      cmp: 'lte',
+    } as FlatWhere;
+    const filter6: FlatWhere = {
+      left: endDateColumn,
+      leftType: "Field",
+      right: `${format(filterEndDate, 'MM/dd/yyyy')} 23:59:59`,
+      rightType: "SearchString",
+      cmp: 'gte',
     } as FlatWhere;
     
     newView.conditions.push(filter1);
     newView.conditions.push("And");
     newView.conditions.push(filter2);
 
+    if (endDateColumn) {
+      newView.conditions.push("Or");
+      newView.conditions.push(filter3);
+      newView.conditions.push("And");
+      newView.conditions.push(filter4);
+      newView.conditions.push("Or");
+      newView.conditions.push(filter5);
+      newView.conditions.push("And");
+      newView.conditions.push(filter6);
+    }
+
     setCurrentView(newView);
     fetchRows();
   }, [currentDate, mode]);
 
   const getData = (date: Date, action: string) => {
-    const selected = rows.filter((item: any) => (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) || (compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), date) >= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) || (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) <= 0 && compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) >= 0));
+    const selected = rows.filter((item: any) => (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) >= 0 &&
+      compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), action === 'day' ? addDays(date, 1) :addHours(date, 1)) === -1) ||
+      (compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), date) >= 0 &&
+      compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) === -1) ||
+      (compareAsc(new Date(item[getDataColumnId(currentView.config.beginDateTimeId, columns)]), date) <= 0 &&
+      compareAsc(new Date(item[getDataColumnId(currentView.config.endDateTimeId, columns)]), action === 'day' ? addDays(date, 1) : addHours(date, 1)) >= 0));
 
     return selected;
   };
@@ -196,7 +241,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       case 'begin':
         fieldId = currentView.config.beginDateTimeId;
         const beginDate = new Date(data[getDataColumnId(fieldId, columns)]);
-        fieldData = `${formatNumber(beginDate.getHours())}:${formatNumber(beginDate.getMinutes())}`;
+        fieldData = `${formatNumber(beginDate.getMonth() + 1)}/${formatNumber(beginDate.getDate())}/${formatNumber(beginDate.getFullYear())} ${formatNumber(beginDate.getHours())}:${formatNumber(beginDate.getMinutes())}`;
         break;
 
       case 'end':
