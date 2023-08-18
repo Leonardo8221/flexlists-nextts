@@ -1,17 +1,24 @@
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { format, addYears } from 'date-fns';
+import { format, addYears, addDays } from 'date-fns';
 
 type Props = {
   mode: string;
   current: Date;
+  currentDate: Date;
   handleFirstPageer: (flag: number) => void;
   handleSecondPageer: (flag: number) => void;
 };
 
 const CalendarTitle = (props: Props) => {
-  const { handleFirstPageer, handleSecondPageer, current, mode } = props;
+  const { handleFirstPageer, handleSecondPageer, current, mode, currentDate } = props;
   const theme = useTheme();
+
+  const headerTitle = (mode: string, current: Date) => {
+    if (mode === 'day') return format(currentDate, 'dd MMMM yyyy');
+    else if (mode === 'week') return `${format(current, 'dd MMMM yyyy')} - ${format(addDays(current, 6), 'dd MMMM yyyy')}`;
+    else return format(current, 'MMMM yyyy');
+  };
 
   return (
     <Box
@@ -48,7 +55,7 @@ const CalendarTitle = (props: Props) => {
         />
       </Box>
       <Box>
-        {format(current, 'MMMM yyyy')}
+        {headerTitle(mode, current)}
         {mode === 'list' && <span> - {format(addYears(current, 1), 'MMMM yyyy')}</span>}
       </Box>
       <Box sx={{ paddingTop: 1 }}>

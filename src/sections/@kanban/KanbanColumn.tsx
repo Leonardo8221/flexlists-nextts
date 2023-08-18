@@ -21,13 +21,22 @@ type KanbanColumnProps = {
 const Container = styled('div')(({ theme }) => ({
   boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.1)',
   borderRadius: '16px',
-  backgroundColor: 'white'
+  backgroundColor: 'white',
+  marginRight: '30px',
+  width: 'calc(100vw - 30px)',
+  [theme.breakpoints.up('sm')]: {
+    width: '345px'
+  },
 }));
 
 const Header = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  padding: '16px 16px 0 16px'
+  padding: '16px 16px 0 16px',
+  width: 'calc(100vw - 30px)',
+  [theme.breakpoints.up('sm')]: {
+    width: '345px'
+  }
 }));
 
 const Title = styled('div')(({ theme }) => ({

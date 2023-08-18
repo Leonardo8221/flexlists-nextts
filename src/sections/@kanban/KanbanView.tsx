@@ -32,18 +32,12 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
   const [boardColumns, setBoardColumns] = useState<ChoiceModel[]>(columns.find((x)=>x.id === currentView.config?.boardColumnId)?.config?.values as ChoiceModel[]);
   const [kanbanConfig,setKanbanConfig] = useState<KanbanConfig>(currentView.config as KanbanConfig);
   const Container = styled('div')(({ theme }) => ({
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '24px',
+    display: 'flex',
     padding: '16px',
-    height: `${windowHeight - (open ? 300 : 256)}px`,
-    overflowY: 'auto',
+    height: `${windowHeight - (open ? 279 : 235)}px`,
+    overflow: 'auto',
     [theme.breakpoints.up('md')]: {
-      height: 'auto',
-      gridTemplateColumns: 'repeat(3, 1fr)'
-    },
-    [theme.breakpoints.up('xl')]: {
-      gridTemplateColumns: 'repeat(4, 1fr)'
+      height: `${windowHeight - 193}px`,
     }
   }));
 
