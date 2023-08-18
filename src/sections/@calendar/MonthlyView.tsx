@@ -35,7 +35,7 @@ const MonthlyView = ({ days, currentDate, cycleStart, getData, handleData, getFi
                   {getDataStatus(data, new Date(format(day, 'MM/dd/yyyy')), 'day') === 'begin' &&
                   <>
                     {getFieldData(data, 'end') === '' && <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.6, marginRight: 0.5 }} className="edit_row"></Box>}
-                    {getFieldData(data, 'end') === '' && <Box className="edit_row">{getFieldData(data, 'begin')}</Box>}
+                    {getFieldData(data, 'end') === '' && <Box className="edit_row">{getFieldData(data, 'begin').split(' ')[1]}</Box>}
                     <Box className="edit_row" sx={{ marginLeft: 0.5 }}>{getFieldData(data, 'title')}</Box>
                   </>
                   }
