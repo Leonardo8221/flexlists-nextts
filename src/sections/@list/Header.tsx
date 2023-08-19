@@ -53,6 +53,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
   const [isDeleteOpenModal, setIsDeleteOpenModal] = useState<boolean>(false);
   const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
   const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)); 
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
@@ -249,7 +250,10 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
           </CDropdown>}
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
-          <ToolBar open={open} onOpen={setOpen} />
+          {
+            !isMobile && <ToolBar/>
+          }
+          
         </Box>
         <Box
           sx={{
@@ -391,7 +395,9 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
       </Box>
 
       <Box sx={{ display: { md: "none", width: "100%" } }}>
-        <ToolBar open={open} onOpen={setOpen} />
+        {
+          isMobile && <ToolBar/>
+        }
       </Box>
       <ChatFormPanel
         chatType={ChatType.View}

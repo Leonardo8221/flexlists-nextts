@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, MenuItem, Popover, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -20,10 +20,11 @@ import { set } from "lodash";
 import SaveViewPreset from "./SaveViewPreset";
 import ViewPresets from "./ViewPresets";
 import TuneIcon from "@mui/icons-material/Tune";
+import { ViewField } from "src/models/ViewField";
+import { useRouter } from "next/router";
 
 type ToolbBarProps = {
-  open: boolean;
-  onOpen: (action: boolean) => void;
+  columns: ViewField[]
   currentView: View;
   setFlashMessage: (message: FlashMessageModel) => void;
 };
@@ -89,12 +90,12 @@ const actions = [
 ];
 
 const ToolbBar = ({
-  open,
-  onOpen,
+  columns,
   currentView,
   setFlashMessage,
 }: ToolbBarProps) => {
   const theme = useTheme();
+  const router = useRouter();
   const isDesktop = useResponsive("up", "lg");
   const [visibleFilter, setVisibleFilter] = useState(false);
   const [visibleSort, setVisibleSort] = useState(false);
@@ -108,6 +109,21 @@ const ToolbBar = ({
   const [saveViewPopoverOpen, setSaveViewPopoverOpen] = useState(null);
   const [viewPresetsPopoverOpen, setViewPresetsPopoverOpen] = useState(null);
   const [selectedPreset, setSelectedPreset] = useState<any>();
+  useEffect(() => {
+    if(router.isReady)
+    {
+      if(columns && columns.length > 0)
+      {
+        let noSystemFields = columns.filter((column) => !column.system);
+        if(noSystemFields.length === 0 && !visibleListFields)
+        {
+          console.log('bbbbb')
+
+          setVisibleListFields(true);
+        }
+      }
+    }
+  },[router.isReady])
   const handleSaveViewPopoverClose = () => {
     setSaveViewPopoverOpen(null);
   };
@@ -405,6 +421,7 @@ const ToolbBar = ({
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  columns: state.view.columns,
 });
 
 const mapDispatchToProps = {
