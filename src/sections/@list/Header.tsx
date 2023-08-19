@@ -53,7 +53,6 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
   const [isDeleteOpenModal, setIsDeleteOpenModal] = useState<boolean>(false);
   const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
   const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] = useState<boolean>(false);
-  const [isMobile, setIsMobile] = useState(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)); 
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
@@ -251,7 +250,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
           {
-            !isMobile && <ToolBar/>
+            isDesktop && <ToolBar/>
           }
           
         </Box>
@@ -396,7 +395,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
 
       <Box sx={{ display: { md: "none", width: "100%" } }}>
         {
-          isMobile && <ToolBar/>
+          !isDesktop && <ToolBar/>
         }
       </Box>
       <ChatFormPanel
