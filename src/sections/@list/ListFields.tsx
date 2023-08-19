@@ -92,7 +92,7 @@ const ListFields = ({
 
     return result;
   };
-  const onDragEnd = async(result: any) => {
+  const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination || destination.index === source.index) {
@@ -101,7 +101,10 @@ const ListFields = ({
     let newFields = Object.assign([], fields);
     const [removedFields] = newFields.splice(source.index, 1);
     newFields.splice(destination.index, 0, removedFields);
-    await reorderCoreFields(currentView.id,newFields.map((x: any) => x.id));
+    await reorderCoreFields(
+      currentView.id,
+      newFields.map((x: any) => x.id)
+    );
     fetchFields(currentView.id);
   };
   const reloadViewData = () => {
@@ -228,7 +231,7 @@ const ListFields = ({
                       fields,
                       (x) => x.system !== true || x.name !== "id"
                     ).map((field: any, index: number) => ( */}
-                     {fields.map((field: any, index: number) => (
+                    {fields.map((field: any, index: number) => (
                       <Draggable
                         key={field.id}
                         draggableId={`${field.id}`}
@@ -316,34 +319,35 @@ const ListFields = ({
                                   gap: { xs: 1, md: 3 },
                                 }}
                               >
-                                {(field.system !== true ||field.name !== "id") &&
-                                   <Box
-                                   sx={{
-                                     display: "flex",
-                                     alignItems: "center",
-                                     gap: 0.5,
-                                     cursor: "pointer",
-                                     fontWeight: 500,
-                                     color: "primary.main",
-                                   }}
-                                   onClick={() => handleUpdateField(field)}
-                                 >
-                                   <EditIcon />
-                                   <Typography
-                                     variant="subtitle2"
-                                     component={"span"}
-                                     sx={{
-                                       display: {
-                                         xs: "none",
-                                         md: "block",
-                                       },
-                                     }}
-                                   >
-                                     Edit
-                                   </Typography>
-                                 </Box>
-                                }
-                                
+                                {(field.system !== true ||
+                                  field.name !== "id") && (
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: 0.5,
+                                      cursor: "pointer",
+                                      fontWeight: 500,
+                                      color: "primary.main",
+                                    }}
+                                    onClick={() => handleUpdateField(field)}
+                                  >
+                                    <EditIcon />
+                                    <Typography
+                                      variant="subtitle2"
+                                      component={"span"}
+                                      sx={{
+                                        display: {
+                                          xs: "none",
+                                          md: "block",
+                                        },
+                                      }}
+                                    >
+                                      Edit
+                                    </Typography>
+                                  </Box>
+                                )}
+
                                 {field.system !== true ? (
                                   <Box
                                     sx={{
@@ -378,9 +382,10 @@ const ListFields = ({
                                       gap: 0,
                                       alignItems: "center",
                                       cursor: "pointer",
-                                      color: "#eb2027",
+                                      color:
+                                        theme.palette.palette_style.error.dark,
                                       fontWeight: 500,
-                                      ml: 10,
+                                      ml: 9,
                                     }}
                                   ></Box>
                                 )}

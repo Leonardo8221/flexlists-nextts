@@ -35,22 +35,41 @@ function CalendarViewConfig({
   const [endDateTimeId, setEndDateTimeId] = useState<number>(0);
   const [colorId, setColorId] = useState<number>(0);
 
-  const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] = useState<boolean>(false);
-  const [isOpenBeginDateTimeModal, setIsOpenBeginDateTimeModal] = useState<boolean>(false);
-  const [isOpenEndDateTimeModal, setIsOpenEndDateTimeModal] = useState<boolean>(false);
+  const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] =
+    useState<boolean>(false);
+  const [isOpenBeginDateTimeModal, setIsOpenBeginDateTimeModal] =
+    useState<boolean>(false);
+  const [isOpenEndDateTimeModal, setIsOpenEndDateTimeModal] =
+    useState<boolean>(false);
   const [isOpenColorModal, setIsOpenColorModal] = useState<boolean>(false);
 
-  const titleFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
-  const dateTimeUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.DateTime);
-  const colorUiTypes: FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
+  const titleFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
+    (uiType) => uiType.name === FieldUiTypeEnum.Text
+  );
+  const dateTimeUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
+    (uiType) => uiType.name === FieldUiTypeEnum.DateTime
+  );
+  const colorUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
+    (uiType) => uiType.name === FieldUiTypeEnum.Text
+  );
 
-  const getTitleFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text); };
-  const getDateTimeFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.DateTime); };
-  const getColorFields = (): ViewField[] => { return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text); };
+  const getTitleFields = (): ViewField[] => {
+    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text);
+  };
+  const getDateTimeFields = (): ViewField[] => {
+    return columns.filter((x) => x.uiField === FieldUiTypeEnum.DateTime);
+  };
+  const getColorFields = (): ViewField[] => {
+    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text);
+  };
 
   const [titleFields, setTitleFields] = useState<ViewField[]>(getTitleFields());
-  const [beginDateTimeFields, setBeginDateTimeFields] = useState<ViewField[]>(getDateTimeFields());
-  const [endDateTimeFields, setEndDateTimeFields] = useState<ViewField[]>(getDateTimeFields());
+  const [beginDateTimeFields, setBeginDateTimeFields] = useState<ViewField[]>(
+    getDateTimeFields()
+  );
+  const [endDateTimeFields, setEndDateTimeFields] = useState<ViewField[]>(
+    getDateTimeFields()
+  );
   const [colorFields, setColorFields] = useState<ViewField[]>(getColorFields());
 
   const newTitleField: any = {
@@ -120,7 +139,9 @@ function CalendarViewConfig({
 
     setTitleFields(newTitleFields);
     setBeginDateTimeFields(newDateTimeFields);
-    setEndDateTimeFields(newDateTimeFields.length > 1 ? newDateTimeFields.slice(1) : []);
+    setEndDateTimeFields(
+      newDateTimeFields.length > 1 ? newDateTimeFields.slice(1) : []
+    );
     setColorFields(newColorFields);
 
     updateCalendarConfig(
@@ -144,12 +165,19 @@ function CalendarViewConfig({
     }
 
     setTitleFieldId(convertToInteger(value));
-    updateCalendarConfig(convertToInteger(value), beginDateTimeId, endDateTimeId, colorId);
+    updateCalendarConfig(
+      convertToInteger(value),
+      beginDateTimeId,
+      endDateTimeId,
+      colorId
+    );
   };
 
   const onBeginDateTimeChange = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
-    const newEndDateTimeFields = getDateTimeFields().filter((dateTimeField: ViewField) => dateTimeField.id !== convertToInteger(value));
+    const newEndDateTimeFields = getDateTimeFields().filter(
+      (dateTimeField: ViewField) => dateTimeField.id !== convertToInteger(value)
+    );
 
     if (value === "-1") {
       setIsOpenBeginDateTimeModal(true);
@@ -160,10 +188,17 @@ function CalendarViewConfig({
     setEndDateTimeFields(newEndDateTimeFields);
 
     if (convertToInteger(value) === endDateTimeId) {
-      setEndDateTimeId(newEndDateTimeFields.length ? newEndDateTimeFields[0].id : 0);
+      setEndDateTimeId(
+        newEndDateTimeFields.length ? newEndDateTimeFields[0].id : 0
+      );
     }
-    
-    updateCalendarConfig(titleFieldId, convertToInteger(value), endDateTimeId, colorId);
+
+    updateCalendarConfig(
+      titleFieldId,
+      convertToInteger(value),
+      endDateTimeId,
+      colorId
+    );
   };
 
   const onEndDateTimeChange = (event: SelectChangeEvent) => {
@@ -175,7 +210,12 @@ function CalendarViewConfig({
     }
 
     setEndDateTimeId(convertToInteger(value));
-    updateCalendarConfig(titleFieldId, beginDateTimeId, convertToInteger(value), colorId);
+    updateCalendarConfig(
+      titleFieldId,
+      beginDateTimeId,
+      convertToInteger(value),
+      colorId
+    );
   };
 
   const onColorChange = (event: SelectChangeEvent) => {
@@ -187,11 +227,26 @@ function CalendarViewConfig({
     }
 
     setColorId(convertToInteger(value));
-    updateCalendarConfig(titleFieldId, beginDateTimeId, endDateTimeId, convertToInteger(value));
+    updateCalendarConfig(
+      titleFieldId,
+      beginDateTimeId,
+      endDateTimeId,
+      convertToInteger(value)
+    );
   };
 
-  const updateCalendarConfig = (newTitleId: number, newBeginDateTimeId: number, newEndDateTimeId: number, newColorId: number) => {
-    updateConfig({ titleId: newTitleId, beginDateTimeId: newBeginDateTimeId, endDateTimeId: newEndDateTimeId, colorId: newColorId });
+  const updateCalendarConfig = (
+    newTitleId: number,
+    newBeginDateTimeId: number,
+    newEndDateTimeId: number,
+    newColorId: number
+  ) => {
+    updateConfig({
+      titleId: newTitleId,
+      beginDateTimeId: newBeginDateTimeId,
+      endDateTimeId: newEndDateTimeId,
+      colorId: newColorId,
+    });
   };
 
   return (
@@ -226,7 +281,7 @@ function CalendarViewConfig({
           </InputLabel>
           <Select
             labelId="calendar_begindatetime_label"
-            label="Field"
+            label="Begin Date"
             value={`${beginDateTimeId}`}
             onChange={onBeginDateTimeChange}
             required
@@ -234,7 +289,10 @@ function CalendarViewConfig({
             fullWidth
           >
             {beginDateTimeFields.map((dateTimeField: ViewField) => (
-              <MenuItem key={`${dateTimeField.id}`} value={`${dateTimeField.id}`}>
+              <MenuItem
+                key={`${dateTimeField.id}`}
+                value={`${dateTimeField.id}`}
+              >
                 {dateTimeField.name}
               </MenuItem>
             ))}
@@ -249,14 +307,17 @@ function CalendarViewConfig({
           </InputLabel>
           <Select
             labelId="calendar_enddatetime_label"
-            label="Field"
+            label="End Date"
             value={`${endDateTimeId}`}
             onChange={onEndDateTimeChange}
             error={submit && (!endDateTimeId || endDateTimeId === 0)}
             fullWidth
           >
             {endDateTimeFields.map((dateTimeField: ViewField) => (
-              <MenuItem key={`${dateTimeField.id}`} value={`${dateTimeField.id}`}>
+              <MenuItem
+                key={`${dateTimeField.id}`}
+                value={`${dateTimeField.id}`}
+              >
                 {dateTimeField.name}
               </MenuItem>
             ))}
@@ -271,7 +332,7 @@ function CalendarViewConfig({
           </InputLabel>
           <Select
             labelId="calendar_color_label"
-            label="Field"
+            label="Color"
             value={`${colorId}`}
             onChange={onColorChange}
             error={submit && (!colorId || colorId === 0)}

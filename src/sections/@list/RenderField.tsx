@@ -28,10 +28,11 @@ import ReactPlayer from "react-player";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 
-const setDateValue = (columnId: number,
+const setDateValue = (
+  columnId: number,
   date: Dayjs | Date | null,
   values: any,
-  setValues: (values: any) => void,
+  setValues: (values: any) => void
 ) => {
   if (date == null) {
     return;
@@ -42,10 +43,11 @@ const setDateValue = (columnId: number,
   }
   setValues({ ...values, [columnId]: date.toISOString() });
 };
-const setTimeValue = (columnId: number,
+const setTimeValue = (
+  columnId: number,
   time: Dayjs | null,
   values: any,
-  setValues: (values: any) => void,
+  setValues: (values: any) => void
 ) => {
   if (time == null) {
     return;
@@ -57,13 +59,14 @@ const setTimeValue = (columnId: number,
   //   return
   // }
 };
-export const renderField = (column: ViewField,
+export const renderField = (
+  column: ViewField,
   currentMode: string,
   values: any,
   setValues: (values: any) => void,
   submit: boolean,
   columns: any[],
-  isPrint: boolean = false,
+  isPrint: boolean = false
 ) => {
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -224,9 +227,7 @@ export const renderField = (column: ViewField,
               setDateValue(column.id, x, values, setValues);
             }}
             className={
-              submit && column.required && !values[column.id]
-                ? "Mui-error"
-                : ""
+              submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
           />
         </LocalizationProvider>
@@ -241,8 +242,8 @@ export const renderField = (column: ViewField,
             value={
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleString()
                 : ""
             }
           />
@@ -266,9 +267,7 @@ export const renderField = (column: ViewField,
               setDateValue(column.id, x, values, setValues);
             }}
             className={
-              submit && column.required && !values[column.id]
-                ? "Mui-error"
-                : ""
+              submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
           />
         </LocalizationProvider>
@@ -283,8 +282,8 @@ export const renderField = (column: ViewField,
             value={
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : ""
             }
           />
@@ -308,9 +307,7 @@ export const renderField = (column: ViewField,
               setTimeValue(column.id, x, values, setValues);
             }}
             className={
-              submit && column.required && !values[column.id]
-                ? "Mui-error"
-                : ""
+              submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
           />
         </LocalizationProvider>
@@ -325,8 +322,8 @@ export const renderField = (column: ViewField,
             value={
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
-                  values[getDataColumnId(column.id, columns)]
-                ).toLocaleDateString()
+                    values[getDataColumnId(column.id, columns)]
+                  ).toLocaleDateString()
                 : "null"
             }
           />
@@ -440,9 +437,7 @@ export const renderField = (column: ViewField,
             }}
             label={column.name}
             value={
-              values && values[column.id]?.toString() === "true"
-                ? "yes"
-                : "no"
+              values && values[column.id]?.toString() === "true" ? "yes" : "no"
             }
           />
           {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
@@ -694,15 +689,7 @@ export const renderField = (column: ViewField,
             {column.name}
           </Typography>
           <UploadButton
-            fileAcceptTypes={[
-              "mp4",
-              "mov",
-              "wmv",
-              "flv",
-              "avi",
-              "mkv",
-              "webm",
-            ]}
+            fileAcceptTypes={["mp4", "mov", "wmv", "flv", "avi", "mkv", "webm"]}
             file={values[column.id]}
             onUpload={(file) => {
               setValues({ ...values, [column.id]: file });

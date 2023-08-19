@@ -5,7 +5,7 @@ import useResponsive from "../../hooks/useResponsive";
 
 type Props = {
   toolbar: any;
-  onClick?: (e:any) => void;
+  onClick?: (e: any) => void;
 };
 
 export default function ToolBarItem({ toolbar, onClick }: Props) {
@@ -20,7 +20,8 @@ export default function ToolBarItem({ toolbar, onClick }: Props) {
         display: "flex",
         cursor: "pointer",
         // marginBottom: isDesktop ? 'inherit' : 1,
-        marginRight: "6px",
+        // marginRight: "6px",
+        alignItems: "center",
       }}
       onClick={onClick}
     >
@@ -35,7 +36,7 @@ export default function ToolBarItem({ toolbar, onClick }: Props) {
           mask: `url(/assets/icons/${toolbar.icon}.svg) no-repeat center / contain`,
           WebkitMask: `url(/assets/icons/${toolbar.icon}.svg) no-repeat center / contain`,
           marginRight: 1,
-          marginTop: 0.2,
+          // marginTop: 0.2,
         }}
       />
       <Box
