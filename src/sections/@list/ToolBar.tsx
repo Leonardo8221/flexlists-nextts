@@ -117,8 +117,6 @@ const ToolbBar = ({
         let noSystemFields = columns.filter((column) => !column.system);
         if(noSystemFields.length === 0 && !visibleListFields)
         {
-          console.log('bbbbb')
-
           setVisibleListFields(true);
         }
       }
