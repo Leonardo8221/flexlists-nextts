@@ -56,6 +56,16 @@ function ViewPresets({
   }, [currentView.presets, defaultPreset]);
 
   const onSubmit = async (preset: any) => {
+    const {query} = router;
+    if(query)
+    {
+      delete query['contentId'];
+      router.replace({
+        pathname: router.pathname,
+        query: { ...query}
+      });
+    }
+    
     var newView: View = Object.assign({}, currentView);
     setSelectedPreset(preset);
     if (preset.name === "Show All") {

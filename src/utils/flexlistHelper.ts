@@ -3,6 +3,8 @@ import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "./convertUtils";
 import { filter } from "lodash";
+import { getContent } from "src/services/listContent.service";
+import { isSucc } from "./responses";
 
 export const getDefaultValues = (columns: ViewField[]): any => {
     var defautValues: any = {};
@@ -239,3 +241,21 @@ export const validateViewConfig = (viewType:ViewType,config:any,setError:(messag
     }
     return isValidConfig;
   };
+  export async function getRowContent(viewId:number,router:any,rows:any[]) : Promise<any> {
+    if(router?.query?.contentId && rows.length>0)
+    {
+      let currentRow = rows.find((row) => row.id === parseInt(router.query.contentId as string));
+      if(!currentRow)
+      {
+        let currentRowResponse = await getContent(viewId, parseInt(router.query.contentId as string));
+        if(isSucc(currentRowResponse) && currentRowResponse.data)
+        {
+          currentRow = Object.fromEntries(currentRowResponse.data);
+          return currentRow;
+        }
+      }
+      return currentRow
+      
+    }
+    return undefined;
+  }

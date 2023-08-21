@@ -219,36 +219,41 @@ const ToolbBar = ({
             >
               {selectedPreset ? selectedPreset.name : "Default"}
             </Box>
-            <Popover
-              open={Boolean(viewPresetsPopoverOpen)}
-              anchorEl={viewPresetsPopoverOpen}
-              onClose={handleViewPresetsPopoverClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              transformOrigin={{ vertical: "top", horizontal: "right" }}
-              PaperProps={{
-                sx: {
-                  p: 1,
-                  mt: 1.5,
-                  ml: 0.75,
-                  width: 250,
-                  "& .MuiMenuItem-root": {
-                    px: 1,
-                    typography: "body2",
-                    borderRadius: 0.75,
-                  },
-                },
-              }}
-            >
-              <Stack spacing={1}>
-                <ViewPresets
-                  selectedPreset={selectedPreset}
-                  setSelectedPreset={(newPreset) => {
-                    setSelectedPreset(newPreset);
-                  }}
-                  handleClose={handleViewPresetsPopoverClose}
-                />
-              </Stack>
-            </Popover>
+            {
+              viewPresetsPopoverOpen !==null && (
+                <Popover
+                    open={Boolean(viewPresetsPopoverOpen)}
+                    anchorEl={viewPresetsPopoverOpen}
+                    onClose={handleViewPresetsPopoverClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    PaperProps={{
+                      sx: {
+                        p: 1,
+                        mt: 1.5,
+                        ml: 0.75,
+                        width: 250,
+                        "& .MuiMenuItem-root": {
+                          px: 1,
+                          typography: "body2",
+                          borderRadius: 0.75,
+                        },
+                      },
+                    }}
+                  >
+                    <Stack spacing={1}>
+                      <ViewPresets
+                        selectedPreset={selectedPreset}
+                        setSelectedPreset={(newPreset) => {
+                          setSelectedPreset(newPreset);
+                        }}
+                        handleClose={handleViewPresetsPopoverClose}
+                      />
+                    </Stack>
+                  </Popover>
+              )
+            }
+            
           </Box>
         )}
         {hasPermission(currentView?.role, "Read") && (
