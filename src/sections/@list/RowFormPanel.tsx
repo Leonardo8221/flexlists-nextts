@@ -81,6 +81,7 @@ interface RowFormProps {
   columns: any[];
   open: boolean;
   mode: "view" | "create" | "update" | "comment";
+  dateFormat: string;
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
@@ -100,6 +101,7 @@ const RowFormPanel = ({
   open,
   columns,
   mode,
+  dateFormat,
   onClose,
   onSubmit,
   setFlashMessage,
@@ -566,6 +568,7 @@ const RowFormPanel = ({
                   : ""
               }
               ampm={false}
+              format={`${dateFormat} HH:mm:ss`}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
@@ -1672,6 +1675,7 @@ const RowFormPanel = ({
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  dateFormat: state.date.dateFormat
 });
 
 const mapDispatchToProps = {

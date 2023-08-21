@@ -39,6 +39,7 @@ type FilterProps = {
   currentView: View;
   columns: any[];
   open: boolean;
+  dateFormat: string;
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
@@ -48,6 +49,7 @@ const Filter = ({
   currentView,
   columns,
   open,
+  dateFormat,
   fetchRows,
   setCurrentView,
   handleClose,
@@ -243,6 +245,8 @@ const Filter = ({
                 width: { md: "168px" },
                 marginLeft: { xs: "8px", md: "30px" },
               }}
+              ampm={false}
+              format={`${dateFormat} HH:mm:ss`}
             />
           </LocalizationProvider>
         );
@@ -643,6 +647,7 @@ const Filter = ({
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   currentView: state.view.currentView,
+  dateFormat: state.date.dateFormat
 });
 
 const mapDispatchToProps = {

@@ -64,6 +64,7 @@ export const renderField = (column: ViewField,
   submit: boolean,
   columns: any[],
   isPrint: boolean = false,
+  dateFormat: string
 ) => {
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -228,6 +229,8 @@ export const renderField = (column: ViewField,
                 ? "Mui-error"
                 : ""
             }
+            ampm={false}
+            format={`${dateFormat} HH:mm:ss`}
           />
         </LocalizationProvider>
       ) : (
