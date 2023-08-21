@@ -74,6 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
+import { useRouter } from "next/router";
 
 interface RowFormProps {
   currentView: View;
@@ -104,6 +105,7 @@ const RowFormPanel = ({
   onSubmit,
   setFlashMessage,
 }: RowFormProps) => {
+  const router = useRouter();
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const [values, setValues] = useState(rowData);
@@ -158,11 +160,18 @@ const RowFormPanel = ({
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
-
   useEffect(() => {
     setValues(rowData);
     setSubmit(false);
     setCurrentMode(mode);
+    if(router.isReady && mode === "view" && rowData && rowData.id && rowData.id>0)
+    {
+      const { query } = router;
+      router.replace({
+        pathname: router.pathname,
+        query: { ...query, ['contentId']: rowData.id },
+      });
+    }
   }, [open, rowData, mode]);
 
   const handleSubmit = async () => {
@@ -1446,7 +1455,7 @@ const RowFormPanel = ({
     }
   };
   const handleCloseModal = () => {
-    setCurrentMode("view");
+    // setCurrentMode("view");
     onClose();
   };
   const handlePrint = useReactToPrint({
