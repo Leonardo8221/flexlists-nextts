@@ -1048,7 +1048,7 @@ const DataTable = ({
       <YesNoDialog
         title="Delete Row"
         submitText="Delete"
-        message="Are you sure you want to selected rows?"
+        message="Are you sure you want to delete selected rows?"
         open={openBulkDeleteDialog}
         handleClose={() => setOpenBulkDeleteDialog(false)}
         onSubmit={() => {

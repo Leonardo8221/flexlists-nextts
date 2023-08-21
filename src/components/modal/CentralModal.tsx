@@ -1,7 +1,7 @@
 
 import { Box, Modal } from "@mui/material";
 
-type ButtonAnimateProps = {
+type CentralModalProps = {
     open: boolean;
     handleClose: () => void;
     children?: any,
@@ -19,7 +19,7 @@ const style = {
     borderRadius: '5px',
     border: 'none'
   };
-export default function CentralModal({open,handleClose, children }: ButtonAnimateProps) {
+export default function CentralModal({open,handleClose, children }: CentralModalProps) {
   return (
      <Modal
         open={open}
