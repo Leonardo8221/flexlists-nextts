@@ -90,6 +90,7 @@ const DataTable = ({
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
+  const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -196,10 +197,11 @@ const DataTable = ({
         setMode("view");
       }
     }
-    if (router.isReady) {
+    if (router.isReady && rows.length>0 && router.query.contentId && !isLoadedCurrentContent) {
       fetchContent()
+      setIsLoadedCurrentContent(true)
     }
-  }, [rows, router.query.contentId,rows]);
+  }, [router.isReady, router.query.contentId,rows]);
   useEffect(() => {
     //editRow(row) => from rows
     if (router.query.rowId) {
