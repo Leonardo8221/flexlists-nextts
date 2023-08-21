@@ -326,7 +326,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleString().replace(/\./g, '/')
+                      ? new Date(cellValue).toLocaleString(window.navigator.language).replace(/\./g, '/')
                       : ""}
                   </Box>
                 );
@@ -342,7 +342,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleDateString().replace(/\./g, '/')
+                      ? new Date(cellValue).toLocaleDateString(window.navigator.language).replace(/\./g, '/')
                       : ""}
                   </Box>
                 );
