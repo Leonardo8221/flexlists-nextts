@@ -89,6 +89,8 @@ const Filter = ({
   );
   const condtionOperators: string[] = ["And", "Or"];
   const booleanValues: string[] = ["true", "false"];
+  const timeAmPm = (new Date()).toLocaleTimeString().toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString().toLowerCase().indexOf('pm') !== -1;
+  
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -245,8 +247,8 @@ const Filter = ({
                 width: { md: "168px" },
                 marginLeft: { xs: "8px", md: "30px" },
               }}
-              ampm={false}
-              format={`${dateFormat} HH:mm:ss`}
+              ampm={timeAmPm}
+              format={`${dateFormat} ${timeAmPm ? 'hh' : 'HH'}:mm:ss${timeAmPm ? ' a' : ''}`}
             />
           </LocalizationProvider>
         );

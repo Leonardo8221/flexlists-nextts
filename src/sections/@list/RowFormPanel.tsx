@@ -156,6 +156,7 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
+  const timeAmPm = (new Date()).toLocaleTimeString().toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString().toLowerCase().indexOf('pm') !== -1;
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -571,8 +572,8 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
-              ampm={false}
-              format={`${dateFormat} HH:mm:ss`}
+              ampm={timeAmPm}
+              format={`${dateFormat} ${timeAmPm ? 'hh' : 'HH'}:mm:ss${timeAmPm ? ' a' : ''}`}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
@@ -593,7 +594,7 @@ const RowFormPanel = ({
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
                       values[getDataColumnId(column.id, columns)]
-                    ).toLocaleString()
+                    ).toLocaleString().replace(/\./g, '/')
                   : ""
               }
               sx={{
@@ -633,6 +634,7 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
+              format={dateFormat}
             />
           </LocalizationProvider>
         ) : (
@@ -648,7 +650,7 @@ const RowFormPanel = ({
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
                       values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString()
+                    ).toLocaleDateString().replace(/\./g, '/')
                   : ""
               }
               sx={{
@@ -703,6 +705,7 @@ const RowFormPanel = ({
                 minutes: renderTimeViewClock,
                 seconds: renderTimeViewClock,
               }}
+              ampm={timeAmPm}
             />
           </LocalizationProvider>
         ) : (

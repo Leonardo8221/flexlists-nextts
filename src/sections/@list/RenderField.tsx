@@ -59,6 +59,9 @@ const setTimeValue = (
   //   return
   // }
 };
+
+const timeAmPm = (new Date()).toLocaleTimeString().toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString().toLowerCase().indexOf('pm') !== -1;
+
 export const renderField = (
   column: ViewField,
   currentMode: string,
@@ -230,8 +233,8 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
-            ampm={false}
-            format={`${dateFormat} HH:mm:ss`}
+            ampm={timeAmPm}
+            format={`${dateFormat} ${timeAmPm ? 'hh' : 'HH'}:mm:ss${timeAmPm ? ' a' : ''}`}
           />
         </LocalizationProvider>
       ) : (
@@ -246,7 +249,7 @@ export const renderField = (
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
                     values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
+                  ).toLocaleString().replace(/\./g, '/')
                 : ""
             }
           />
@@ -272,6 +275,7 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
+            format={dateFormat}
           />
         </LocalizationProvider>
       ) : (
@@ -286,7 +290,7 @@ export const renderField = (
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
                     values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                  ).toLocaleDateString().replace(/\./g, '/')
                 : ""
             }
           />
@@ -312,6 +316,7 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
+            ampm={timeAmPm}
           />
         </LocalizationProvider>
       ) : (

@@ -19,7 +19,7 @@ any
       const formatter = new Intl.DateTimeFormat(locale);
       const formattedDate = formatter.format(date);
       const format = formattedDate.replace(date.getFullYear().toString(), 'YYYY').replace((date.getMonth() + 1).toString(), 'MM').replace(date.getDate().toString(), 'DD').replace(/\./g, '/');
-      console.log(locale, format, 'locale, format')
+      console.log(locale, format, date, formattedDate, date.toLocaleTimeString(), 'locale, format')
 
       dispatch(setDateFormat(format));
     } catch (error) {
