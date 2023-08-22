@@ -32,7 +32,7 @@ import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
-import { downloadFileUrl, getChoiceField } from "src/utils/flexlistHelper";
+import { downloadFileUrl, getChoiceField, getRowContent } from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -51,6 +51,7 @@ import {
   cloneContent,
   createContent,
   deleteBulkContents,
+  getContent,
   unarchiveBulkContents,
 } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
@@ -89,6 +90,7 @@ const DataTable = ({
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
+  const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -186,7 +188,21 @@ const DataTable = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-
+  useEffect(() => {
+    async function fetchContent() {
+      let currentRow = await getRowContent(currentView.id, router,rows);
+      if(currentRow)
+      {
+        setSelectedRowData(currentRow)
+        setVisibleAddRowPanel(true);
+        setMode("view");
+      }
+    }
+    if (router.isReady && rows.length>0 && router.query.contentId && !isLoadedCurrentContent) {
+      fetchContent()
+      setIsLoadedCurrentContent(true)
+    }
+  }, [router.isReady, router.query.contentId,rows]);
   useEffect(() => {
     //editRow(row) => from rows
     if (router.query.rowId) {
@@ -1030,15 +1046,17 @@ const DataTable = ({
             />
           </Box>
         </Stack>
-
-        <RowFormPanel
-          rowData={selectedRowData}
-          columns={columns}
-          onSubmit={handleRowAction}
-          open={visibleAddRowPanel}
-          onClose={() => setVisibleAddRowPanel(false)}
-          mode={mode}
-        />
+       {
+        visibleAddRowPanel && <RowFormPanel
+        rowData={selectedRowData}
+        columns={columns}
+        onSubmit={handleRowAction}
+        open={visibleAddRowPanel}
+        onClose={() => setVisibleAddRowPanel(false)}
+        mode={mode}
+      />
+       }
+        
         {currentView && (
           <ListFields
             open={visibleFieldManagementPanel}

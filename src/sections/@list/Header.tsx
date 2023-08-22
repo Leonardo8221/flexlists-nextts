@@ -249,7 +249,10 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
           </CDropdown>}
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
-          <ToolBar open={open} onOpen={setOpen} />
+          {
+            isDesktop && <ToolBar/>
+          }
+          
         </Box>
         <Box
           sx={{
@@ -391,7 +394,9 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
       </Box>
 
       <Box sx={{ display: { md: "none", width: "100%" } }}>
-        <ToolBar open={open} onOpen={setOpen} />
+        {
+          !isDesktop && <ToolBar/>
+        }
       </Box>
       <ChatFormPanel
         chatType={ChatType.View}

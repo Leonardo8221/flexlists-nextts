@@ -14,8 +14,9 @@ import WeeklyView from './WeeklyView';
 import DailyView from './DailyView';
 import ListView from './ListView';
 import CalendarFooter from './CalendarFooter';
-import { getDataColumnId } from 'src/utils/flexlistHelper';
+import { getDataColumnId, getRowContent } from 'src/utils/flexlistHelper';
 import { FlatWhere, View } from 'src/models/SharedModels';
+import { useRouter } from 'next/router';
 
 type CalendarViewProps = {
   currentView:View,
@@ -29,6 +30,8 @@ type CalendarViewProps = {
 
 const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, setCurrentView }: CalendarViewProps) => {
   const theme = useTheme();
+  const router = useRouter();
+  const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
   const isDesktop = useResponsive('up', 'md');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [mode, setMode] = useState("month");
@@ -46,7 +49,22 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
-
+  
+  useEffect(() => {
+    async function fetchContent() {
+      let currentRow = await getRowContent(currentView.id, router,rows);
+      if(currentRow)
+      {
+        setSelectedRowData(currentRow)
+        setVisibleAddRowPanel(true);
+        setDetailMode("view");
+      }
+    }
+    if (router.isReady && rows.length>0 && router.query.contentId && !isLoadedCurrentContent) {
+      fetchContent()
+      setIsLoadedCurrentContent(true)
+    }
+  }, [router.isReady, router.query.contentId,rows]);
   useEffect(() => {
     const displayDays = [];
     let newView: View = Object.assign({}, currentView);

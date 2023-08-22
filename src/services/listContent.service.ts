@@ -66,6 +66,10 @@ export async function unarchiveContent(viewId: number, contentId: number): Promi
 
   return response.data;
 };
+export async function getContent(viewId:number,contentId:number): Promise<FlexlistsError|FlexlistsSuccess> {
+  var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listContent/getContent'+`?viewId=${viewId}&contentId=${contentId}`)
+  return response.data;
+};
 export async function searchContents(viewId: number, page?: number, limit?: number, order?: Sort[], query?: any, conditions?: any, includeCount?: boolean): Promise<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, { viewId, page, limit, order, query, conditions, includeCount })
 
