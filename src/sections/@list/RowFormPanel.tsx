@@ -1494,7 +1494,7 @@ const RowFormPanel = ({
                 {column.name}
               </Typography>
               <ColorPicker
-                selectedColor={values[column.id]}
+                selectedColor={values[column.id]??"#000000"}
                 onColorChange={(color) => {
                   setValues({ ...values, [column.id]: color });
                 }}
@@ -1511,7 +1511,7 @@ const RowFormPanel = ({
                   style={{
                     width: "32px",
                     height: "32px",
-                    backgroundColor: values[column.id],
+                    backgroundColor: values[column.id]??"#000000",
                     display: "grid",
                     placeContent: "center",
                     borderRadius: "100px",
@@ -1592,7 +1592,7 @@ const RowFormPanel = ({
                   sx={{
                     // textAlign: "center",
                     // bgcolor: values[column.id],
-                    color: values[column.id],
+                    color: values[column.id]??"#000000",
                     // px: 10,
                     // maxWidth: 100,
                     display: "flex",
@@ -1604,7 +1604,7 @@ const RowFormPanel = ({
                     style={{
                       width: "32px",
                       height: "32px",
-                      backgroundColor: values[column.id],
+                      backgroundColor: values[column.id]??"#000000",
                       // display: "grid",
                       // placeContent: "center",
                       borderRadius: "100px",
@@ -1612,7 +1612,7 @@ const RowFormPanel = ({
                     }}
                     // onClick={handleColorPickerToggle}
                   ></div>
-                  <span style={{ color: values[column.id] }}>
+                  <span style={{ color: values[column.id]??"#000000" }}>
                     {values[column.id]}
                   </span>
 
