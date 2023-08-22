@@ -27,7 +27,7 @@ import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
-import { getLocal, getAmPm, getLocalDate } from "src/utils/convertUtils";
+import { getAmPm, getLocalDateTimeFromString, getLocalDateFromString, getDateFromTimeString } from "src/utils/convertUtils";
 
 const setDateValue = (
   columnId: number,
@@ -246,7 +246,7 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocal(new Date(values[getDataColumnId(column.id, columns)]))
+                ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
                 : ""
             }
           />
@@ -277,7 +277,7 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocalDate(new Date(values[getDataColumnId(column.id, columns)]))
+                ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
                 : ""
             }
           />
@@ -289,7 +289,7 @@ export const renderField = (
           <TimePicker
             value={
               values[column.id]
-                ? dayjs(`1970-01-01 ${values[column.id]}`)
+                ? dayjs(getDateFromTimeString(values[column.id]))
                 : null
             }
             label={column.name}
@@ -312,7 +312,7 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocalDate(new Date(values[getDataColumnId(column.id, columns)]))
+                ? dayjs(getDateFromTimeString(values[column.id]))
                 : "null"
             }
           />

@@ -173,9 +173,7 @@ const Filter = ({
     );
     setCurrentView(newView);
   };
-  const getDate = (date: any) => {
-    return dayjs(date, "MM/DD/YYYY HH:mm:ss");
-  };
+  
   const getChoiceValues = (filter: any) => {
     const column = getColumn(filter.left,columns);
     let choices: any[] = [];
@@ -192,6 +190,7 @@ const Filter = ({
     }
     return choices;
   };
+  
   const getFilter = (
     filter: any,
     index?: number
@@ -234,7 +233,7 @@ const Filter = ({
         render = (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
-              value={getDate(filter.right)}
+              value={dayjs(filter.right)}
               onChange={(e: any) => {
                 handleFilters(
                   index ?? 0,

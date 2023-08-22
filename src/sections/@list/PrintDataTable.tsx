@@ -3,7 +3,7 @@ import { Table, TableHead, TableRow, TableCell, TableBody, Box } from '@mui/mate
 import { ViewField } from 'src/models/ViewField';
 import { FieldUiTypeEnum } from 'src/enums/SharedEnums';
 import { downloadFileUrl, getChoiceField, getDataColumnId } from 'src/utils/flexlistHelper';
-import { getLocal, getLocalDate } from "src/utils/convertUtils";
+import { getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 
 interface PrintDataTableProps {
     columns: ViewField[];
@@ -47,7 +47,7 @@ interface PrintDataTableProps {
                 }}
               >
                 {cellValue && cellValue != null
-                  ? getLocal(new Date(cellValue))
+                  ? getLocalDateTimeFromString(cellValue)
                   : ""}
               </Box>
             );
@@ -63,7 +63,7 @@ interface PrintDataTableProps {
                 }}
               >
                 {cellValue && cellValue != null
-                  ? getLocalDate(new Date(cellValue))
+                  ? getLocalDateFromString(cellValue)
                   : ""}
               </Box>
             );
@@ -79,7 +79,7 @@ interface PrintDataTableProps {
                 }}
               >
                 {cellValue && cellValue != null
-                  ? getLocal(new Date(cellValue))
+                  ? getLocalDateTimeFromString(cellValue)
                   : ""}
               </Box>
             );
