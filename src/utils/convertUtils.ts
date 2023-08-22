@@ -139,7 +139,7 @@ export function getAmPm(): boolean {
 }
 
 export function getDateFromTimeString(time: string): Date {
-  return new Date(`01/01/1970 ${time}`);
+  return new Date(`1970-01-01 ${time}`);
 }
 
 export function getLocalTimeFromString(time: string): string {
