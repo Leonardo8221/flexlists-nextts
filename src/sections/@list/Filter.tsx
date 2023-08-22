@@ -32,7 +32,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
-import { convertToInteger } from "src/utils/convertUtils";
+import { getAmPm } from "src/utils/convertUtils";
 import { getColumn } from "src/utils/flexlistHelper";
 
 type FilterProps = {
@@ -89,7 +89,6 @@ const Filter = ({
   );
   const condtionOperators: string[] = ["And", "Or"];
   const booleanValues: string[] = ["true", "false"];
-  const timeAmPm = (new Date()).toLocaleTimeString().toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString().toLowerCase().indexOf('pm') !== -1;
   
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -174,9 +173,7 @@ const Filter = ({
     );
     setCurrentView(newView);
   };
-  const getDate = (date: any) => {
-    return dayjs(date, "MM/DD/YYYY HH:mm:ss");
-  };
+  
   const getChoiceValues = (filter: any) => {
     const column = getColumn(filter.left,columns);
     let choices: any[] = [];
@@ -193,6 +190,7 @@ const Filter = ({
     }
     return choices;
   };
+  
   const getFilter = (
     filter: any,
     index?: number
@@ -235,7 +233,7 @@ const Filter = ({
         render = (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
             <DateTimePicker
-              value={getDate(filter.right)}
+              value={dayjs(filter.right)}
               onChange={(e: any) => {
                 handleFilters(
                   index ?? 0,
@@ -247,8 +245,8 @@ const Filter = ({
                 width: { md: "168px" },
                 marginLeft: { xs: "8px", md: "30px" },
               }}
-              ampm={timeAmPm}
-              format={`${dateFormat} ${timeAmPm ? 'hh' : 'HH'}:mm:ss${timeAmPm ? ' a' : ''}`}
+              ampm={getAmPm()}
+              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
             />
           </LocalizationProvider>
         );

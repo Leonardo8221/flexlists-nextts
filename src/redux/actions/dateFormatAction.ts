@@ -1,4 +1,3 @@
-import moment from "moment";
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../store';
@@ -12,14 +11,10 @@ any
   return async (dispatch: Dispatch<any>) => {
     try {
       const locale = window.navigator.language;
-      // moment.locale(locale);
-      // const localeData = moment.localeData();
-      // const format = localeData.longDateFormat('L');
       const date = new Date();
       const formatter = new Intl.DateTimeFormat(locale);
       const formattedDate = formatter.format(date);
       const format = formattedDate.replace(date.getFullYear().toString(), 'YYYY').replace((date.getMonth() + 1).toString(), 'MM').replace(date.getDate().toString(), 'DD');
-      console.log(locale, format, date, formattedDate, date.toLocaleTimeString(), 'locale, format')
 
       dispatch(setDateFormat(format));
     } catch (error) {

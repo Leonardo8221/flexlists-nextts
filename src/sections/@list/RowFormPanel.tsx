@@ -74,7 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
-import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
+import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 
 interface RowFormProps {
@@ -119,7 +119,6 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-  //console.log('knarsterfarster', currentView)
   const actions = [
     {
       title: "Resize",
@@ -158,7 +157,6 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-  const timeAmPm = getAmPm();  // (new Date()).toLocaleTimeString(navigator.language).toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString(navigator.language).toLowerCase().indexOf('pm') !== -1;
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -580,8 +578,8 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
-              ampm={timeAmPm}
-              format={`${dateFormat} ${timeAmPm ? 'hh' : 'HH'}:mm:ss${timeAmPm ? ' a' : ''}`}
+              ampm={getAmPm()}
+              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
@@ -600,9 +598,6 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
-                  // ? new Date(
-                  //   values[getDataColumnId(column.id, columns)]
-                  // ).toLocaleString(navigator.language)
                   ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
                   : ""
               }
@@ -619,14 +614,6 @@ const RowFormPanel = ({
                 },
               }}
             />
-            {/* <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
-                : ""}
-            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Date:
@@ -657,9 +644,6 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
-                  // ? new Date(
-                  //   values[getDataColumnId(column.id, columns)]
-                  // ).toLocaleDateString(navigator.language)
                   ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
                   : ""
               }
@@ -676,14 +660,6 @@ const RowFormPanel = ({
                 },
               }}
             />
-            {/* <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
-                : ""}
-            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Time:
@@ -709,7 +685,7 @@ const RowFormPanel = ({
                 minutes: renderTimeViewClock,
                 seconds: renderTimeViewClock,
               }}
-              ampm={timeAmPm}
+              ampm={getAmPm()}
             />
           </LocalizationProvider>
         ) : (
@@ -731,7 +707,7 @@ const RowFormPanel = ({
                     ? "Mui-error"
                     : ""
                 }
-                ampm={timeAmPm}
+                ampm={getAmPm()}
                 sx={{
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "rgba(158, 158, 158, 0.32) !important",
