@@ -158,7 +158,7 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
-  const timeAmPm = (new Date()).toLocaleTimeString().toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString().toLowerCase().indexOf('pm') !== -1;
+  const timeAmPm = (new Date()).toLocaleTimeString(navigator.language).toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString(navigator.language).toLowerCase().indexOf('pm') !== -1;
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -746,7 +746,6 @@ const RowFormPanel = ({
                   minutes: renderTimeViewClock,
                   seconds: renderTimeViewClock,
                 }}
-                ampm={timeAmPm}
               />
             </LocalizationProvider>
 

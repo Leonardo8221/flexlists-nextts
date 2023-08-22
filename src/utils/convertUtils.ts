@@ -118,3 +118,16 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
 //   }
 //   return formattedTime;
 // }
+
+export function getLocalTime(date?: Date): string {
+  return (date ?? new Date()).toLocaleTimeString(navigator.language);
+}
+
+export function getLocalDate(date?: Date): string {
+  return (date ?? new Date()).toLocaleDateString(navigator.language);
+}
+
+export function getAmPm(): boolean {
+  const timeAmPm = getLocalTime().toLowerCase().indexOf('am') !== -1 || getLocalTime().toLowerCase().indexOf('pm') !== -1;
+  return timeAmPm;
+}
