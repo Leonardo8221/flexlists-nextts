@@ -61,7 +61,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
-import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalTimeFromString } from "src/utils/convertUtils";
+import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 
 type DataTableProps = {

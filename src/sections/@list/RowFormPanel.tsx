@@ -74,7 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
-import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString } from "src/utils/convertUtils";
+import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 
 interface RowFormProps {
