@@ -120,7 +120,7 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
 // }
 
 
-const useBrowserLanguage = true
+const useBrowserLanguage = false
 export function getLocalTime(date?: Date): string {
   return (date ?? new Date()).toLocaleTimeString(useBrowserLanguage ? navigator.language : undefined);
 }
