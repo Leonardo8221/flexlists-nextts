@@ -32,7 +32,11 @@ import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
 import { filter } from "lodash";
 import ListFields from "./ListFields";
-import { downloadFileUrl, getChoiceField, getRowContent } from "src/utils/flexlistHelper";
+import {
+  downloadFileUrl,
+  getChoiceField,
+  getRowContent,
+} from "src/utils/flexlistHelper";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -90,7 +94,7 @@ const DataTable = ({
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
-  const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
+  const [isLoadedCurrentContent, setIsLoadedCurrentContent] = useState(false);
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -114,6 +118,8 @@ const DataTable = ({
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
 
+  const [selectedColor, setSelectedColor] = useState<string>("#000000");
+
   const tableStyle = {
     sx: {
       WebkitOverflowScrolling: "auto",
@@ -131,8 +137,8 @@ const DataTable = ({
       "& .MuiTableRow-root": {
         boxShadow: "none",
       },
-    }
-  }
+    },
+  };
   // const forcedTableStyle = {
   //   sx: {
   //     height: {
@@ -189,19 +195,23 @@ const DataTable = ({
   ];
   useEffect(() => {
     async function fetchContent() {
-      let currentRow = await getRowContent(currentView.id, router,rows);
-      if(currentRow)
-      {
-        setSelectedRowData(currentRow)
+      let currentRow = await getRowContent(currentView.id, router, rows);
+      if (currentRow) {
+        setSelectedRowData(currentRow);
         setVisibleAddRowPanel(true);
         setMode("view");
       }
     }
-    if (router.isReady && rows.length>0 && router.query.contentId && !isLoadedCurrentContent) {
-      fetchContent()
-      setIsLoadedCurrentContent(true)
+    if (
+      router.isReady &&
+      rows.length > 0 &&
+      router.query.contentId &&
+      !isLoadedCurrentContent
+    ) {
+      fetchContent();
+      setIsLoadedCurrentContent(true);
     }
-  }, [router.isReady, router.query.contentId,rows]);
+  }, [router.isReady, router.query.contentId, rows]);
   useEffect(() => {
     //editRow(row) => from rows
     if (router.query.rowId) {
@@ -374,7 +384,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? convertToTimeAMPM((cellValue as string))
+                      ? convertToTimeAMPM(cellValue as string)
                       : ""}
                   </Box>
                 );
@@ -394,8 +404,8 @@ const DataTable = ({
                     {!cellValue
                       ? ""
                       : sanitizeHtml(cellValue.replace(/</g, " <"), {
-                        allowedTags: [],
-                      })}
+                          allowedTags: [],
+                        })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:
@@ -458,8 +468,8 @@ const DataTable = ({
                   <Box
                     component="img"
                     sx={{
-                      // height: 100,
-                      width: 100,
+                      maxHeight: 32,
+                      maxWidth: 32,
                       // maxHeight: { xs: 233, md: 167 },
                       // maxWidth: { xs: 350, md: 250 },
                     }}
@@ -505,6 +515,33 @@ const DataTable = ({
               // return cellValue? (
               //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
               // ):(<></>)
+              case FieldUiTypeEnum.Color:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      textAlign: "center",
+                      // bgcolor: cellValue,
+                      color: cellValue,
+                      // px: 10,
+                      maxWidth: 100,
+                    }}
+                  >
+                    {/* {cellValue} */}
+                    <div
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        backgroundColor: cellValue,
+                        // display: "grid",
+                        // placeContent: "center",
+                        borderRadius: "100px",
+                        // cursor: "pointer",
+                        // position: "relative",
+                      }}
+                    ></div>
+                  </Box>
+                );
               default:
                 return <></>;
             }
@@ -578,7 +615,7 @@ const DataTable = ({
     fetchRowsByPage(0, newView.limit);
   };
 
-  const handleNewRowPanel = (values:any) => {
+  const handleNewRowPanel = (values: any) => {
     setMode("create");
     setVisibleAddRowPanel(true);
     setSelectedRowData(values);
@@ -886,7 +923,9 @@ const DataTable = ({
               gap: { xs: 1, md: 4 },
             }}
           >
-            <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} />
+            <AddRowButton
+              handleAddNewRow={(values) => handleNewRowPanel(values)}
+            />
             {rowSelection && Object.keys(rowSelection).length > 0 && (
               <Button
                 variant="outlined"
@@ -930,7 +969,9 @@ const DataTable = ({
                 boxShadow: { xs: "0 0 12px 0 rgba(0,0,0,.1)", md: "none" },
               }}
             >
-              {(isDesktop ? rowSelection && Object.keys(rowSelection).length > 0 : toggleBulkAction) &&
+              {(isDesktop
+                ? rowSelection && Object.keys(rowSelection).length > 0
+                : toggleBulkAction) &&
                 bulkActions.map(
                   (action: any) =>
                     action.allowed && (
@@ -1045,17 +1086,17 @@ const DataTable = ({
             />
           </Box>
         </Stack>
-       {
-        visibleAddRowPanel && <RowFormPanel
-        rowData={selectedRowData}
-        columns={columns}
-        onSubmit={handleRowAction}
-        open={visibleAddRowPanel}
-        onClose={() => setVisibleAddRowPanel(false)}
-        mode={mode}
-      />
-       }
-        
+        {visibleAddRowPanel && (
+          <RowFormPanel
+            rowData={selectedRowData}
+            columns={columns}
+            onSubmit={handleRowAction}
+            open={visibleAddRowPanel}
+            onClose={() => setVisibleAddRowPanel(false)}
+            mode={mode}
+          />
+        )}
+
         {currentView && (
           <ListFields
             open={visibleFieldManagementPanel}
