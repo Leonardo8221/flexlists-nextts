@@ -119,6 +119,10 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
 //   return formattedTime;
 // }
 
+export function getLocal(date?: Date): string {
+  return (date ?? new Date()).toLocaleString(navigator.language);
+}
+
 export function getLocalTime(date?: Date): string {
   return (date ?? new Date()).toLocaleTimeString(navigator.language);
 }
