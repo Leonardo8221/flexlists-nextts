@@ -376,11 +376,6 @@ const RowFormPanel = ({
     return marked(markdown);
   };
 
-  const [selectedColor, setSelectedColor] = useState<string>("#000000");
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-  };
   const renderField = (column: ViewField, isPrint: boolean = false) => {
     switch (column.uiField) {
       case FieldUiTypeEnum.Text:
@@ -1499,8 +1494,10 @@ const RowFormPanel = ({
                 {column.name}
               </Typography>
               <ColorPicker
-                selectedColor={selectedColor}
-                onColorChange={handleColorChange}
+                selectedColor={values[column.id]}
+                onColorChange={(color)=>{
+                  setValues({ ...values, [column.id]: color });
+                }}
               />
               <Box
                 sx={{
@@ -1514,7 +1511,7 @@ const RowFormPanel = ({
                   style={{
                     width: "32px",
                     height: "32px",
-                    backgroundColor: selectedColor,
+                    backgroundColor: values[column.id],
                     display: "grid",
                     placeContent: "center",
                     borderRadius: "100px",
@@ -1524,14 +1521,14 @@ const RowFormPanel = ({
                 ></div>
                 <span
                   style={{
-                    color: selectedColor,
+                    color: values[column.id],
                     backgroundColor: "#fff",
                     borderRadius: "8px",
                     paddingInline: 8,
                     fontSize: 14,
                   }}
                 >
-                  {selectedColor}
+                  {values[column.id]}
                 </span>
               </Box>
 
@@ -1607,7 +1604,7 @@ const RowFormPanel = ({
                     style={{
                       width: "32px",
                       height: "32px",
-                      backgroundColor: selectedColor,
+                      backgroundColor: values[column.id],
                       // display: "grid",
                       // placeContent: "center",
                       borderRadius: "100px",
@@ -1615,7 +1612,7 @@ const RowFormPanel = ({
                     }}
                     // onClick={handleColorPickerToggle}
                   ></div>
-                  <span style={{ color: selectedColor }}>{selectedColor}</span>
+                  <span style={{ color: values[column.id] }}>{values[column.id]}</span>
 
                   {/* {values[column.id]} */}
                 </Box>

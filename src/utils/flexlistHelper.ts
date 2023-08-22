@@ -1,4 +1,4 @@
-import { ExportType, FieldType, ImportType, ViewType } from "src/enums/SharedEnums";
+import { ExportType, FieldType, FieldUiTypeEnum, ImportType, ViewType } from "src/enums/SharedEnums";
 import { ChoiceModel } from "src/models/ChoiceModel";
 import { ViewField } from "src/models/ViewField";
 import { convertToInteger } from "./convertUtils";
@@ -10,18 +10,21 @@ export const getDefaultValues = (columns: ViewField[]): any => {
     var defautValues: any = {};
     for (const column of filter(columns, (x) => !x.system)) {
       var defaultValue: any = "";
-      switch (column.type) {
-        case FieldType.Date:
-        case FieldType.DateTime:
-        case FieldType.Time:
+      let fielduiType = column.uiField;
+      switch (fielduiType) {
+        case FieldUiTypeEnum.Date:
+        case FieldUiTypeEnum.DateTime:
+        case FieldUiTypeEnum.Time:
         //   defaultValue = new Date().toISOString();
           break;
-        case FieldType.Choice:
+        case FieldUiTypeEnum.Choice:
           defaultValue = column.config?.values[0]?.label;
           break;
-        case FieldType.Boolean:
+        case FieldUiTypeEnum.Boolean:
           defaultValue = false;
           break;
+        case FieldUiTypeEnum.Color:
+          defaultValue = "#000000";
         default:
           break;
       }
