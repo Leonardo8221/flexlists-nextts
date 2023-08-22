@@ -249,7 +249,7 @@ export const renderField = (
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
                     values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString().replace(/\./g, '/')
+                  ).toLocaleString(navigator.language)
                 : ""
             }
           />
@@ -290,7 +290,7 @@ export const renderField = (
               values && values[getDataColumnId(column.id, columns)]
                 ? new Date(
                     values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString().replace(/\./g, '/')
+                  ).toLocaleDateString(navigator.language)
                 : ""
             }
           />

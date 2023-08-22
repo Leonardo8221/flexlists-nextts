@@ -74,6 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
+import { convertToTimeAMPM } from "src/utils/convertUtils";
 
 interface RowFormProps {
   currentView: View;
@@ -594,7 +595,7 @@ const RowFormPanel = ({
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
                       values[getDataColumnId(column.id, columns)]
-                    ).toLocaleString().replace(/\./g, '/')
+                    ).toLocaleString(navigator.language)
                   : ""
               }
               sx={{
@@ -650,7 +651,7 @@ const RowFormPanel = ({
                 values && values[getDataColumnId(column.id, columns)]
                   ? new Date(
                       values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString().replace(/\./g, '/')
+                    ).toLocaleDateString(navigator.language)
                   : ""
               }
               sx={{
@@ -682,13 +683,7 @@ const RowFormPanel = ({
             <TimePicker
               value={
                 values[column.id]
-                  ? dayjs(
-                      new Date(
-                        `${new Date().toLocaleDateString()} ${
-                          values[column.id]
-                        }`
-                      )
-                    )
+                  ? dayjs(`2023/08/22T${values[column.id]}`)
                   : null
               }
               label={column.name}
@@ -710,25 +705,17 @@ const RowFormPanel = ({
           </LocalizationProvider>
         ) : (
           <div key={column.id}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
-              <TimePicker
-                readOnly={true}
-                value={
-                  values[column.id]
-                    ? dayjs(
-                        new Date(
-                          `${new Date().toLocaleDateString()} ${
-                            values[column.id]
-                          }`
-                        )
-                      )
-                    : null
-                }
+            <div key={column.id}>
+              <TextField
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+                InputLabelProps={{ shrink: true }}
                 label={column.name}
-                onChange={(x) => {}}
-                className={
-                  submit && column.required && !values[column.id]
-                    ? "Mui-error"
+                value={
+                  values && values[getDataColumnId(column.id, columns)]
+                    ? (timeAmPm ? convertToTimeAMPM(values[getDataColumnId(column.id, columns)]) : values[getDataColumnId(column.id, columns)])
                     : ""
                 }
                 sx={{
@@ -744,17 +731,7 @@ const RowFormPanel = ({
                   },
                 }}
               />
-            </LocalizationProvider>
-            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
-                : "null"}
-            </Typography> */}
+            </div>
           </div>
         );
       case FieldUiTypeEnum.Choice:

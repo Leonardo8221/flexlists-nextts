@@ -111,6 +111,7 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
+  const timeAmPm = (new Date()).toLocaleTimeString().toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString().toLowerCase().indexOf('pm') !== -1;
 
   const tableStyle = {
     sx: {
@@ -326,7 +327,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleString(window.navigator.language).replace(/\./g, '/')
+                      ? new Date(cellValue).toLocaleString(navigator.language)
                       : ""}
                   </Box>
                 );
@@ -342,7 +343,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleDateString(window.navigator.language).replace(/\./g, '/')
+                      ? new Date(cellValue).toLocaleDateString(navigator.language)
                       : ""}
                   </Box>
                 );
@@ -358,7 +359,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? convertToTimeAMPM((cellValue as string))
+                      ? (timeAmPm ? convertToTimeAMPM((cellValue as string)) : cellValue)
                       : ""}
                   </Box>
                 );
