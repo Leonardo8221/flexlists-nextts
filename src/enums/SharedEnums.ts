@@ -59,6 +59,7 @@ export enum FieldUiTypeEnum {
   Percentage = "Percentage",
   Markdown = "Markdown",
   HTML = "HTML",
+  Color = "Color"
 }
 export enum SearchType {
   List = "List",

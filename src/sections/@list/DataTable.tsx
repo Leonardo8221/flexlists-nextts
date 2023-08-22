@@ -505,6 +505,21 @@ const DataTable = ({
               // return cellValue? (
               //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
               // ):(<></>)
+              case FieldUiTypeEnum.Color:
+                return(
+                  <Box
+                    key={row.id}
+                    sx={{
+                      textAlign: "center",
+                      bgcolor: cellValue,
+                      color: cellValue,
+                      px: 10,
+                      maxWidth: 100,
+                    }}
+                  >
+                    {cellValue}
+                  </Box>
+                )
               default:
                 return <></>;
             }

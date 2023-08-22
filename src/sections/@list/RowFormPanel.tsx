@@ -1450,6 +1450,82 @@ const RowFormPanel = ({
             </Box>
           </div>
         );
+        case FieldUiTypeEnum.Color:
+          if (currentMode !== "view" && !isPrint) {
+            return (
+              <FormControl key={column.id} required={column.required}>
+                <TextField
+                key={column.id}
+                style={{ width: "100%" }}
+                label={column.name}
+                InputLabelProps={{ shrink: true }}
+                name={`${column.id}`}
+                size="small"
+                type={"text"}
+                onChange={(e) => {
+                  setValues({ ...values, [column.id]: e.target.value });
+                }}
+                value={values ? values[column.id] : ""}
+                rows={4}
+                required={column.required}
+                error={submit && column.required && !values[column.id]}
+              />
+              </FormControl>
+            );
+          } else {
+            return (
+                <div className="focusedNeed" tabIndex={8}>
+                  <Box
+                    key={column.id}
+                    className="markdownBox"
+                    sx={{
+                      border: "1px solid rgba(158, 158, 158, 0.32)",
+                      p: 2,
+                      position: "relative",
+                      borderRadius: "6px",
+                      ".focusedNeed:focus &": {
+                        // border: "2px solid #1976d2",
+                      },
+                      "&:hover": {
+                        // border: "1px solid rgba(0, 0, 0, 0.87)",
+                      },
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      component={"label"}
+                      sx={{
+                        textTransform: "capitalize",
+                        fontSize: 12,
+                        position: "absolute",
+                        top: "-10px",
+                        left: "10px",
+                        background: "#fff",
+                        zIndex: 2,
+                        px: 0.5,
+                        color: "rgba(0, 0, 0, 0.6)",
+                        ".focusedNeed:focus &": {
+                        },
+                      }}
+                    >
+                      {column.name}
+                    </Typography>
+                    <Box
+                      key={column.id}
+                      sx={{
+                        textAlign: "center",
+                        bgcolor: values[column.id],
+                        color: values[column.id],
+                        px: 10,
+                        maxWidth: 100,
+                      }}
+                    >
+                      {values[column.id]}
+                    </Box>
+                  </Box>
+              </div>
+                );
+          }
       default:
         return <div key={column.id}></div>;
     }
