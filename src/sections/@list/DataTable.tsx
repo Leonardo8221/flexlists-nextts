@@ -61,7 +61,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
-import { getLocal, getLocalTime, getLocalDate } from "src/utils/convertUtils";
+import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 
 type DataTableProps = {
@@ -113,6 +113,7 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
+  const timeAmPm = getAmPm()
 
   const tableStyle = {
     sx: {
@@ -341,7 +342,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocal(new Date(cellValue))
+                      ? getLocalDateTimeFromString(cellValue)
                       : ""}
                   </Box>
                 );
@@ -357,7 +358,8 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocalDate(new Date(cellValue))
+                      ? getLocalDateFromString(cellValue)
+
                       : ""}
                   </Box>
                 );
@@ -373,7 +375,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocalTime(new Date(Date.parse(`1970-01-01 ` + cellValue)))
+                      ? getLocalTimeFromString(cellValue)
                       : ""}
                   </Box>
                 );

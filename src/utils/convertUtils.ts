@@ -119,19 +119,39 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
 //   return formattedTime;
 // }
 
-export function getLocal(date?: Date): string {
-  return (date ?? new Date()).toLocaleString(navigator.language);
-}
 
+const useBrowserLanguage = false
 export function getLocalTime(date?: Date): string {
-  return (date ?? new Date()).toLocaleTimeString(navigator.language);
+  return (date ?? new Date()).toLocaleTimeString(useBrowserLanguage ? navigator.language : undefined);
 }
 
 export function getLocalDate(date?: Date): string {
-  return (date ?? new Date()).toLocaleDateString(navigator.language);
+  return (date ?? new Date()).toLocaleDateString(useBrowserLanguage ? navigator.language : undefined);
+}
+
+export function getLocalDateTime(date?: Date): string {
+  return (date ?? new Date()).toLocaleString(useBrowserLanguage ? navigator.language : undefined);
 }
 
 export function getAmPm(): boolean {
-  const timeAmPm = getLocalTime().toLowerCase().indexOf('am') !== -1 || getLocalTime().toLowerCase().indexOf('pm') !== -1;
+  const time = getLocalTime().toLowerCase();
+  const timeAmPm = time.includes('am') || time.includes('pm');
+  //const timeAmPm = getLocalTime().toLowerCase().indexOf('am') !== -1 || getLocalTime().toLowerCase().indexOf('pm') !== -1;
   return timeAmPm;
+}
+
+export function getDateFromTimeString(time: string): Date {
+  return new Date(`1970-01-01 ${time}`);
+}
+
+export function getLocalTimeFromString(time: string): string {
+  return getLocalTime(getDateFromTimeString(time));
+}
+
+export function getLocalDateFromString(date: string): string {
+  return getLocalDate(new Date(date));
+}
+
+export function getLocalDateTimeFromString(dateTime: string): string {
+  return getLocalDateTime(new Date(dateTime))
 }

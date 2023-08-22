@@ -74,7 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
-import { getLocal, getAmPm, getLocalDate } from "src/utils/convertUtils";
+import { getLocalDate, getLocalTime, getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 
 interface RowFormProps {
@@ -157,6 +157,7 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
+  const timeAmPm = getAmPm();  // (new Date()).toLocaleTimeString(navigator.language).toLowerCase().indexOf('am') !== -1 || (new Date()).toLocaleTimeString(navigator.language).toLowerCase().indexOf('pm') !== -1;
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -597,7 +598,7 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
-                  ? getLocal(new Date(values[getDataColumnId(column.id, columns)]))
+                  ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
                   : ""
               }
               sx={{
@@ -643,7 +644,7 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
-                  ? getLocalDate(new Date(values[getDataColumnId(column.id, columns)]))
+                  ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
                   : ""
               }
               sx={{
@@ -667,7 +668,7 @@ const RowFormPanel = ({
             <TimePicker
               value={
                 values[column.id]
-                  ? dayjs(`1970-01-01 ${values[column.id]}`)
+                  ? dayjs(getDateFromTimeString(values[column.id]))
                   : null
               }
               label={column.name}
@@ -694,7 +695,7 @@ const RowFormPanel = ({
                 readOnly={true}
                 value={
                   values[column.id]
-                    ? dayjs(`1970-01-01 ${values[column.id]}`)
+                    ? dayjs(getDateFromTimeString(values[column.id]))
                     : null
                 }
                 label={column.name}
