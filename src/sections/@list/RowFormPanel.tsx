@@ -75,6 +75,7 @@ import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
 import { useRouter } from "next/router";
+import ColorPicker from "src/components/color-picker/ColorPicker";
 
 interface RowFormProps {
   currentView: View;
@@ -164,12 +165,17 @@ const RowFormPanel = ({
     setValues(rowData);
     setSubmit(false);
     setCurrentMode(mode);
-    if(router.isReady && mode === "view" && rowData && rowData.id && rowData.id>0)
-    {
+    if (
+      router.isReady &&
+      mode === "view" &&
+      rowData &&
+      rowData.id &&
+      rowData.id > 0
+    ) {
       const { query } = router;
       router.replace({
         pathname: router.pathname,
-        query: { ...query, ['contentId']: rowData.id },
+        query: { ...query, ["contentId"]: rowData.id },
       });
     }
   }, [open, rowData, mode]);
@@ -368,6 +374,12 @@ const RowFormPanel = ({
   };
   const convertMarkdownToHtml = (markdown: string): string => {
     return marked(markdown);
+  };
+
+  const [selectedColor, setSelectedColor] = useState<string>("#000000");
+
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
   };
   const renderField = (column: ViewField, isPrint: boolean = false) => {
     switch (column.uiField) {
@@ -1450,11 +1462,80 @@ const RowFormPanel = ({
             </Box>
           </div>
         );
-        case FieldUiTypeEnum.Color:
-          if (currentMode !== "view" && !isPrint) {
-            return (
-              <FormControl key={column.id} required={column.required}>
-                <TextField
+      case FieldUiTypeEnum.Color:
+        if (currentMode !== "view" && !isPrint) {
+          return (
+            <Box
+              key={column.id}
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                px: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                position: "relative",
+                borderRadius: "6px",
+                "&:hover": {
+                  border: "1px solid rgba(0, 0, 0, 0.87)",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {},
+                }}
+              >
+                {column.name}
+              </Typography>
+              <ColorPicker
+                selectedColor={selectedColor}
+                onColorChange={handleColorChange}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  px: 2,
+                }}
+              >
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    backgroundColor: selectedColor,
+                    display: "grid",
+                    placeContent: "center",
+                    borderRadius: "100px",
+                    cursor: "pointer",
+                    position: "relative",
+                  }}
+                ></div>
+                <span
+                  style={{
+                    color: selectedColor,
+                    backgroundColor: "#fff",
+                    borderRadius: "8px",
+                    paddingInline: 8,
+                    fontSize: 14,
+                  }}
+                >
+                  {selectedColor}
+                </span>
+              </Box>
+
+              {/* <TextField
                 key={column.id}
                 style={{ width: "100%" }}
                 label={column.name}
@@ -1469,63 +1550,79 @@ const RowFormPanel = ({
                 rows={4}
                 required={column.required}
                 error={submit && column.required && !values[column.id]}
-              />
-              </FormControl>
-            );
-          } else {
-            return (
-                <div className="focusedNeed" tabIndex={8}>
-                  <Box
-                    key={column.id}
-                    className="markdownBox"
-                    sx={{
-                      border: "1px solid rgba(158, 158, 158, 0.32)",
-                      p: 2,
-                      position: "relative",
-                      borderRadius: "6px",
-                      ".focusedNeed:focus &": {
-                        // border: "2px solid #1976d2",
-                      },
-                      "&:hover": {
-                        // border: "1px solid rgba(0, 0, 0, 0.87)",
-                      },
+              /> */}
+            </Box>
+          );
+        } else {
+          return (
+            <div className="focusedNeed" tabIndex={8}>
+              <Box
+                key={column.id}
+                className="markdownBox"
+                sx={{
+                  border: "1px solid rgba(158, 158, 158, 0.32)",
+                  p: 2,
+                  position: "relative",
+                  borderRadius: "6px",
+                  ".focusedNeed:focus &": {
+                    // border: "2px solid #1976d2",
+                  },
+                  "&:hover": {
+                    // border: "1px solid rgba(0, 0, 0, 0.87)",
+                  },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  component={"label"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: 12,
+                    position: "absolute",
+                    top: "-10px",
+                    left: "10px",
+                    background: "#fff",
+                    zIndex: 2,
+                    px: 0.5,
+                    color: "rgba(0, 0, 0, 0.6)",
+                    ".focusedNeed:focus &": {},
+                  }}
+                >
+                  {column.name}
+                </Typography>
+                <Box
+                  key={column.id}
+                  sx={{
+                    // textAlign: "center",
+                    bgcolor: values[column.id],
+                    color: values[column.id],
+                    // px: 10,
+                    // maxWidth: 100,
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      backgroundColor: selectedColor,
+                      // display: "grid",
+                      // placeContent: "center",
+                      borderRadius: "100px",
+                      // cursor: "pointer",
                     }}
-                  >
-                    <Typography
-                      variant="body2"
-                      component={"label"}
-                      sx={{
-                        textTransform: "capitalize",
-                        fontSize: 12,
-                        position: "absolute",
-                        top: "-10px",
-                        left: "10px",
-                        background: "#fff",
-                        zIndex: 2,
-                        px: 0.5,
-                        color: "rgba(0, 0, 0, 0.6)",
-                        ".focusedNeed:focus &": {
-                        },
-                      }}
-                    >
-                      {column.name}
-                    </Typography>
-                    <Box
-                      key={column.id}
-                      sx={{
-                        textAlign: "center",
-                        bgcolor: values[column.id],
-                        color: values[column.id],
-                        px: 10,
-                        maxWidth: 100,
-                      }}
-                    >
-                      {values[column.id]}
-                    </Box>
-                  </Box>
-              </div>
-                );
-          }
+                    // onClick={handleColorPickerToggle}
+                  ></div>
+                  <span style={{ color: selectedColor }}>{selectedColor}</span>
+
+                  {/* {values[column.id]} */}
+                </Box>
+              </Box>
+            </div>
+          );
+        }
       default:
         return <div key={column.id}></div>;
     }
