@@ -61,7 +61,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
-import { convertToTimeAMPM } from "src/utils/convertUtils";
+//import { convertToTimeAMPM } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 
 type DataTableProps = {
@@ -90,7 +90,7 @@ const DataTable = ({
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
-  const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
+  const [isLoadedCurrentContent, setIsLoadedCurrentContent] = useState(false);
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -190,19 +190,18 @@ const DataTable = ({
   ];
   useEffect(() => {
     async function fetchContent() {
-      let currentRow = await getRowContent(currentView.id, router,rows);
-      if(currentRow)
-      {
+      let currentRow = await getRowContent(currentView.id, router, rows);
+      if (currentRow) {
         setSelectedRowData(currentRow)
         setVisibleAddRowPanel(true);
         setMode("view");
       }
     }
-    if (router.isReady && rows.length>0 && router.query.contentId && !isLoadedCurrentContent) {
+    if (router.isReady && rows.length > 0 && router.query.contentId && !isLoadedCurrentContent) {
       fetchContent()
       setIsLoadedCurrentContent(true)
     }
-  }, [router.isReady, router.query.contentId,rows]);
+  }, [router.isReady, router.query.contentId, rows]);
   useEffect(() => {
     //editRow(row) => from rows
     if (router.query.rowId) {
@@ -375,7 +374,8 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? (timeAmPm ? convertToTimeAMPM((cellValue as string)) : cellValue)
+                      //? (timeAmPm ? convertToTimeAMPM((cellValue as string)) : cellValue)
+                      ? new Date(Date.parse(`1970-01-01 ` + cellValue)).toLocaleTimeString(navigator.language)
                       : ""}
                   </Box>
                 );
@@ -579,7 +579,7 @@ const DataTable = ({
     fetchRowsByPage(0, newView.limit);
   };
 
-  const handleNewRowPanel = (values:any) => {
+  const handleNewRowPanel = (values: any) => {
     setMode("create");
     setVisibleAddRowPanel(true);
     setSelectedRowData(values);
@@ -887,7 +887,7 @@ const DataTable = ({
               gap: { xs: 1, md: 4 },
             }}
           >
-            <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} />
+            <AddRowButton handleAddNewRow={(values) => handleNewRowPanel(values)} />
             {rowSelection && Object.keys(rowSelection).length > 0 && (
               <Button
                 variant="outlined"
@@ -1046,17 +1046,17 @@ const DataTable = ({
             />
           </Box>
         </Stack>
-       {
-        visibleAddRowPanel && <RowFormPanel
-        rowData={selectedRowData}
-        columns={columns}
-        onSubmit={handleRowAction}
-        open={visibleAddRowPanel}
-        onClose={() => setVisibleAddRowPanel(false)}
-        mode={mode}
-      />
-       }
-        
+        {
+          visibleAddRowPanel && <RowFormPanel
+            rowData={selectedRowData}
+            columns={columns}
+            onSubmit={handleRowAction}
+            open={visibleAddRowPanel}
+            onClose={() => setVisibleAddRowPanel(false)}
+            mode={mode}
+          />
+        }
+
         {currentView && (
           <ListFields
             open={visibleFieldManagementPanel}
