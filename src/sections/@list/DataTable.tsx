@@ -521,7 +521,7 @@ const DataTable = ({
                     key={row.id}
                     sx={{
                       textAlign: "center",
-                      bgcolor: cellValue,
+                      // bgcolor: cellValue,
                       color: cellValue,
                       // px: 10,
                       maxWidth: 100,
@@ -532,7 +532,7 @@ const DataTable = ({
                       style={{
                         width: "24px",
                         height: "24px",
-                        backgroundColor: selectedColor,
+                        backgroundColor: cellValue,
                         // display: "grid",
                         // placeContent: "center",
                         borderRadius: "100px",
