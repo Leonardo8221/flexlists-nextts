@@ -134,7 +134,9 @@ export function getLocalDateTime(date?: Date): string {
 }
 
 export function getAmPm(): boolean {
-  const timeAmPm = getLocalTime().toLowerCase().indexOf('am') !== -1 || getLocalTime().toLowerCase().indexOf('pm') !== -1;
+  const time = getLocalTime().toLowerCase();
+  const timeAmPm = time.includes('am') || time.includes('pm');
+  //const timeAmPm = getLocalTime().toLowerCase().indexOf('am') !== -1 || getLocalTime().toLowerCase().indexOf('pm') !== -1;
   return timeAmPm;
 }
 
