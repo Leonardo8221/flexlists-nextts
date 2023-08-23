@@ -354,7 +354,7 @@ const RowFormPanel = ({
     }
     setValues({
       ...values,
-      [columnId]: `${time.hour()}:${time.minute()}:${time.second()}`,
+      [columnId]: time.toISOString(),
     });
     // if(typeof time === 'string')
     // {

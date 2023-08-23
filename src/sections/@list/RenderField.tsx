@@ -53,7 +53,7 @@ const setTimeValue = (
   if (time == null) {
     return;
   }
-  setValues({ ...values, [columnId]: time });
+  setValues({ ...values, [columnId]: time.toISOString() });
   // if(typeof time === 'string')
   // {
   //   setValues({ ...values, [columnId]: time })
