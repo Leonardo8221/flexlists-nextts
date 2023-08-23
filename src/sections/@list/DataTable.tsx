@@ -65,7 +65,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
-import { convertToTimeAMPM } from "src/utils/convertUtils";
+import { getAmPm, getLocalDateTimeFromString, getLocalTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 
 type DataTableProps = {
@@ -117,6 +117,7 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
+  const timeAmPm = getAmPm()
 
   const [selectedColor, setSelectedColor] = useState<string>("#000000");
 
@@ -197,7 +198,7 @@ const DataTable = ({
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
-        setSelectedRowData(currentRow);
+        setSelectedRowData(currentRow)
         setVisibleAddRowPanel(true);
         setMode("view");
       }
@@ -352,7 +353,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleString()
+                      ? getLocalDateTimeFromString(cellValue)
                       : ""}
                   </Box>
                 );
@@ -368,7 +369,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? new Date(cellValue).toLocaleDateString()
+                      ? getLocalDateFromString(cellValue)
                       : ""}
                   </Box>
                 );
@@ -384,7 +385,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? convertToTimeAMPM(cellValue as string)
+                      ? getLocalTimeFromString(cellValue)
                       : ""}
                   </Box>
                 );

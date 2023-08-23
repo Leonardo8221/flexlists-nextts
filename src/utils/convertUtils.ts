@@ -102,18 +102,55 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
   return blob;
 }
 
-export function convertToTimeAMPM(timeString: string): string {
-  let formattedTime: string = '';
-  try {
-    const [hours, minutes] = timeString.split(':').map(Number);
-    if (hours >= 12) {
-      formattedTime = `${hours === 12 ? 12 : hours - 12}:${minutes.toString().padStart(2, '0')} PM`;
-    } else {
-      formattedTime = `${hours === 0 ? 12 : hours}:${minutes.toString().padStart(2, '0')} AM`;
-    }
-  }
-  catch (err) {
+// CRAP; don't use this, ever
+// export function convertToTimeAMPM(timeString: string): string {
+//   let formattedTime: string = '';
+//   try {
+//     const [hours, minutes] = timeString.split(':').map(Number);
+//     if (hours >= 12) {
+//       formattedTime = `${hours === 12 ? 12 : hours - 12}:${minutes.toString().padStart(2, '0')} PM`;
+//     } else {
+//       formattedTime = `${hours === 0 ? 12 : hours}:${minutes.toString().padStart(2, '0')} AM`;
+//     }
+//   }
+//   catch (err) {
 
-  }
-  return formattedTime;
+//   }
+//   return formattedTime;
+// }
+
+
+const useBrowserLanguage = false
+export function getLocalTime(date?: Date): string {
+  return (date ?? new Date()).toLocaleTimeString(useBrowserLanguage ? navigator.language : undefined);
+}
+
+export function getLocalDate(date?: Date): string {
+  return (date ?? new Date()).toLocaleDateString(useBrowserLanguage ? navigator.language : undefined);
+}
+
+export function getLocalDateTime(date?: Date): string {
+  return (date ?? new Date()).toLocaleString(useBrowserLanguage ? navigator.language : undefined);
+}
+
+export function getAmPm(): boolean {
+  const time = getLocalTime().toLowerCase();
+  const timeAmPm = time.includes('am') || time.includes('pm');
+  return timeAmPm;
+}
+
+export function getDateFromTimeString(time: string): Date {
+  return new Date(time);
+}
+
+export function getLocalTimeFromString(time: string): string {
+  return getLocalTime(getDateFromTimeString(time));
+}
+
+export function getLocalDateFromString(date: string): string {
+  return getLocalDate(new Date(date));
+}
+
+export function getLocalDateTimeFromString(dateTime: string): string {
+  return getLocalDateTime(new Date(dateTime))
 }

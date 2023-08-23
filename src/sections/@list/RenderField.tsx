@@ -27,6 +27,7 @@ import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
+import { getAmPm, getLocalDateTimeFromString, getLocalDateFromString, getDateFromTimeString } from "src/utils/convertUtils";
 
 const setDateValue = (
   columnId: number,
@@ -52,13 +53,14 @@ const setTimeValue = (
   if (time == null) {
     return;
   }
-  setValues({ ...values, [columnId]: time });
+  setValues({ ...values, [columnId]: time.toISOString() });
   // if(typeof time === 'string')
   // {
   //   setValues({ ...values, [columnId]: time })
   //   return
   // }
 };
+
 export const renderField = (
   column: ViewField,
   currentMode: string,
@@ -66,7 +68,8 @@ export const renderField = (
   setValues: (values: any) => void,
   submit: boolean,
   columns: any[],
-  isPrint: boolean = false
+  isPrint: boolean = false,
+  dateFormat: string
 ) => {
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -229,6 +232,8 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
+            ampm={getAmPm()}
+            format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
           />
         </LocalizationProvider>
       ) : (
@@ -241,20 +246,10 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
+                ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
                 : ""
             }
           />
-          {/* <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
-                : ""}
-            </Typography> */}
         </div>
       );
     case FieldUiTypeEnum.Date:
@@ -269,6 +264,7 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
+            format={dateFormat}
           />
         </LocalizationProvider>
       ) : (
@@ -281,27 +277,21 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
                 : ""
             }
           />
-          {/* <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
-                : ""}
-            </Typography> */}
         </div>
       );
     case FieldUiTypeEnum.Time:
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <TimePicker
-            value={dayjs(values[column.id])}
+            value={
+              values[column.id]
+                ? dayjs(getDateFromTimeString(values[column.id]))
+                : null
+            }
             label={column.name}
             onChange={(x) => {
               setTimeValue(column.id, x, values, setValues);
@@ -309,6 +299,7 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
+            ampm={getAmPm()}
           />
         </LocalizationProvider>
       ) : (
@@ -321,22 +312,10 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
+                ? dayjs(getDateFromTimeString(values[column.id]))
                 : "null"
             }
           />
-          {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
-                : "null"}
-            </Typography> */}
         </div>
       );
     case FieldUiTypeEnum.Choice:
