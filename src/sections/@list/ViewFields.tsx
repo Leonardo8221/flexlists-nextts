@@ -392,12 +392,12 @@ const ViewFields = ({
                                     display: "inline-block",
                                     mask: `${
                                       columnIcon
-                                        ? `url(/assets/icons/table/${columnIcon}.svg)`
+                                        ? `url(/assets/icons/table/column/${columnIcon}.svg)`
                                         : ``
                                     } no-repeat center / contain`,
                                     WebkitMask: `${
                                       columnIcon
-                                        ? `url(/assets/icons/table/${columnIcon}.svg)`
+                                        ? `url(/assets/icons/table/column/${columnIcon}.svg)`
                                         : ""
                                     } no-repeat center / contain`,
                                     marginRight: 1,
