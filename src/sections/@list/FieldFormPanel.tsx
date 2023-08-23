@@ -7,7 +7,6 @@ import {
   Autocomplete,
   FormControlLabel,
   Checkbox,
-  Alert,
   FormGroup,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -19,12 +18,11 @@ import ChoiceConfig from "./fieldConfig/ChoiceConfig";
 import { fieldService } from "src/services/field.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { CreateFieldOutputDto } from "src/models/ApiOutputModels";
-import { ErrorConsts } from "src/constants/errorConstants";
 import { connect } from "react-redux";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
-import { set } from "lodash";
+import { getFieldIcons } from "src/utils/flexlistHelper";
 interface FieldFormPanelProps {
   viewId: number;
   field: Field;
@@ -35,44 +33,6 @@ interface FieldFormPanelProps {
   onClose: () => void;
   setFlashMessage: (message: FlashMessageModel) => void
 }
-const icons = [
-  "angle_down",
-  "close",
-  "date",
-  "importance",
-  "phase",
-  "plus",
-  "price",
-  "task",
-  "user",
-  "angle_down",
-  "close",
-  "date",
-  "importance",
-  "phase",
-  "plus",
-  "price",
-  "task",
-  "user",
-  "angle_down",
-  "close",
-  "date",
-  "importance",
-  "phase",
-  "plus",
-  "price",
-  "task",
-  "user",
-  "angle_down",
-  "close",
-  "date",
-  "importance",
-  "phase",
-  "plus",
-  "price",
-  "task",
-  "user",
-];
 
 const GroupHeader = styled("div")(({ theme }) => ({
   position: "sticky",
@@ -372,7 +332,7 @@ function FieldFormPanel({
           />
           {visibleIconList && (
             <Box sx={{ py: 1 }}>
-              {icons.map((icon: string, index: number) => (
+              {getFieldIcons().map((icon: string, index: number) => (
                 <Box
                   key={icon + index}
                   component="span"

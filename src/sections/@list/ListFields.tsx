@@ -28,6 +28,7 @@ import { isErr } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
 import { filter } from "lodash";
 import { fetchColumns, fetchRows } from "src/redux/actions/viewActions";
+import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
 interface ListFieldsProps {
   currentView: View;
   fields: Field[];
@@ -231,7 +232,9 @@ const ListFields = ({
                       fields,
                       (x) => x.system !== true || x.name !== "id"
                     ).map((field: any, index: number) => ( */}
-                    {fields.map((field: any, index: number) => (
+                    {fields.map((field: any, index: number) =>{ 
+                      let fieldIcon = field.icon??getDefaultFieldIcon(field.uiField)
+                      return (
                       <Draggable
                         key={field.id}
                         draggableId={`${field.id}`}
@@ -281,7 +284,7 @@ const ListFields = ({
                                   alignItems: "center",
                                 }}
                               >
-                                {field.icon && (
+                                {fieldIcon && (
                                   <Box
                                     component="span"
                                     className="svg-color"
@@ -292,8 +295,8 @@ const ListFields = ({
                                       bgcolor:
                                         theme.palette.palette_style.text
                                           .primary,
-                                      mask: `url(/assets/icons/table/${field.icon}.svg)no-repeat center / contain`,
-                                      WebkitMask: `url(/assets/icons/table/${field.icon}.svg no-repeat center / contain`,
+                                      mask: `url(/assets/icons/table/${fieldIcon}.svg)no-repeat center / contain`,
+                                      WebkitMask: `url(/assets/icons/table/${fieldIcon}.svg no-repeat center / contain`,
                                     }}
                                   />
                                 )}
@@ -394,7 +397,8 @@ const ListFields = ({
                           </Box>
                         )}
                       </Draggable>
-                    ))}
+                    )}
+                    )}
                   </Box>
                 )}
               </Droppable>

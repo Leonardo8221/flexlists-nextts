@@ -18,6 +18,7 @@ import { View, ViewFieldConfig } from "src/models/SharedModels";
 import AddColumnButton from "src/components/add-button/AddColumnButton";
 import ListFields from "./ListFields";
 import { reorderViewFields } from "src/services/field.service";
+import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
 
 type ViewFieldsProps = {
   currentView: View;
@@ -333,7 +334,9 @@ const ViewFields = ({
                         overflow: "auto",
                       }}
                     >
-                      {filterColumns.map((column: any, index: number) => (
+                      {filterColumns.map((column: any, index: number) => { 
+                        let columnIcon = column.icon??getDefaultFieldIcon(column.uiField)
+                        return (
                         <Draggable
                           key={`${column.id}`}
                           draggableId={`${column.id}`}
@@ -388,13 +391,13 @@ const ViewFields = ({
                                     height: 15,
                                     display: "inline-block",
                                     mask: `${
-                                      column.icon
-                                        ? `url(/assets/icons/table/${column.icon}.svg)`
-                                        : ""
+                                      columnIcon
+                                        ? `url(/assets/icons/table/${columnIcon}.svg)`
+                                        : ``
                                     } no-repeat center / contain`,
                                     WebkitMask: `${
-                                      column.icon
-                                        ? `url(/assets/icons/table/${column.icon}.svg)`
+                                      columnIcon
+                                        ? `url(/assets/icons/table/${columnIcon}.svg)`
                                         : ""
                                     } no-repeat center / contain`,
                                     marginRight: 1,
@@ -425,7 +428,8 @@ const ViewFields = ({
                             </Box>
                           )}
                         </Draggable>
-                      ))}
+                      )}
+                      )}
                     </Box>
                   )}
                 </Droppable>

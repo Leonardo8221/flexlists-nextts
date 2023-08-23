@@ -262,3 +262,85 @@ export const validateViewConfig = (viewType:ViewType,config:any,setError:(messag
     }
     return undefined;
   }
+  export function getDefaultFieldIcon(fieldType:FieldUiTypeEnum) :string{
+     let icon : string = ''
+     switch(fieldType)
+     {
+        case FieldUiTypeEnum.Choice:
+          icon = 'importance'
+          break;
+        case FieldUiTypeEnum.Boolean:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Color:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Date:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.DateTime:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Decimal:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Document:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Double:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Float:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.HTML:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Image:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Integer:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.LongText:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Markdown:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Money:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Percentage:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Text:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Time:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.Video:
+          icon = ''
+          break;
+        case FieldUiTypeEnum.User:
+          icon = ''
+          break;
+        default:
+          break;
+     }
+     return icon;
+  }
+  export function getFieldIcons() : string[]{
+    return [
+      "angle_down",
+      "close",
+      "date",
+      "importance",
+      "phase",
+      "plus",
+      "price",
+      "task",
+      "user"
+    ]
+  }
