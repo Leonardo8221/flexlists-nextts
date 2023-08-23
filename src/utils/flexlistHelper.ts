@@ -267,7 +267,7 @@ export const validateViewConfig = (viewType:ViewType,config:any,setError:(messag
      switch(fieldType)
      {
         case FieldUiTypeEnum.Choice:
-          icon = 'importance'
+          icon = ''
           break;
         case FieldUiTypeEnum.Boolean:
           icon = ''
