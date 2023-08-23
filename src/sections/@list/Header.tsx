@@ -31,6 +31,7 @@ import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import EditViewConfigForm from "../@listView/EditViewConfigForm";
 import { ViewType } from "src/enums/SharedEnums";
+import { renderHTML } from "src/utils/convertUtils";
 
 type HeaderProps = {
   currentView: View;
@@ -116,7 +117,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
       setFlashMessage({message:(response as FlexlistsError).message,type:'error'});
     }
   }
-  return (
+    return (
     <Box
       sx={{
         display: "flex",
@@ -164,7 +165,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
               maxWidth: { xs: 160, lg: 88, xl: 256 },
             }}
           >
-            {currentView?.name}
+            {renderHTML(currentView?.name)}
           </Typography>
           {hasPermission(currentView?.role, 'All') && <CDropdown id="list_action" className="list_action">
             <CDropdownToggle

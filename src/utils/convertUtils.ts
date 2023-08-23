@@ -1,3 +1,5 @@
+import React from "react";
+
 export function convertToString(value: string | string[] | undefined, separator: string = ","): string {
   if (typeof value === "string") {
     return value;
@@ -117,3 +119,5 @@ export function convertToTimeAMPM(timeString: string): string {
   }
   return formattedTime;
 }
+
+export const renderHTML = (rawHTML?: string) => React.createElement("span", { dangerouslySetInnerHTML: { __html: rawHTML } });
