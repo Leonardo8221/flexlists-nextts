@@ -22,6 +22,22 @@ const StyledRoot = styled("div")(({ theme }) => ({
   overflow: "hidden",
 }));
 
+const Main = styled("div")(({ theme }) => ({
+  flexGrow: 1,
+  paddingTop: APP_BAR_MOBILE,
+  paddingBottom: 0,
+  display: "flex",
+  overflow: "hidden",
+  [theme.breakpoints.up("md")]: {
+    overflow: "hidden",
+  },
+  [theme.breakpoints.up("lg")]: {
+    paddingTop: APP_BAR_DESKTOP,
+    paddingBottom: 0,
+    overflow: "hidden",
+  },
+}));
+
 const Content = styled("div")(
   ({ theme, disableOverflow }: { theme: any; disableOverflow: boolean }) => ({
     width: "100%",
@@ -71,29 +87,11 @@ const MainLayout = ({
     }
   }, [router.isReady]);
 
-  const Main = styled("div")(({ theme }) => ({
-    flexGrow: 1,
-    paddingTop: APP_BAR_MOBILE,
-    paddingBottom: 0,
-    display: "flex",
-    height: `${windowHeight - 40}px`,
-    overflow: "hidden",
-    [theme.breakpoints.up("md")]: {
-      height: "calc(100vh - 40px)",
-      overflow: "hidden",
-    },
-    [theme.breakpoints.up("lg")]: {
-      paddingTop: APP_BAR_DESKTOP,
-      paddingBottom: 0,
-      overflow: "hidden",
-    },
-  }));
-
   return apiResponseStatus === ApiResponseStatus.Success ?(
     <StyledRoot>
       <Header onOpenNav={() => setOpen(true)} />
 
-      <Main>
+      <Main sx={{ height: `${windowHeight - 40}px` }}>
         <Nav openNav={open} onCloseNav={() => setOpen(false)} />
         <Content theme={theme} disableOverflow={disableOverflow}>
           {children}
