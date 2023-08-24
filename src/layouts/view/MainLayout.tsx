@@ -10,6 +10,7 @@ import { getSearchTypes } from "src/redux/actions/adminAction";
 import { View } from "src/models/SharedModels";
 import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
 import Error from 'src/sections/Error'
+import { getDateFormat } from "src/redux/actions/dateFormatAction";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -20,24 +21,6 @@ const StyledRoot = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.palette_style.background.default,
   color: theme.palette.palette_style.text.primary,
   overflow: "hidden",
-}));
-
-const Main = styled("div")(({ theme }) => ({
-  flexGrow: 1,
-  paddingTop: APP_BAR_MOBILE,
-  paddingBottom: 0,
-  display: "flex",
-  height: "calc(100% - 40px)",
-  overflow: "hidden",
-  [theme.breakpoints.up("md")]: {
-    height: "calc(100vh - 40px)",
-    overflow: "hidden",
-  },
-  [theme.breakpoints.up("lg")]: {
-    paddingTop: APP_BAR_DESKTOP,
-    paddingBottom: 0,
-    overflow: "hidden",
-  },
 }));
 
 const Content = styled("div")(
@@ -59,29 +42,57 @@ type MainLayoutProps = {
   removeFooter?: boolean;
   disableOverflow?: boolean;
   currentView: View;
+  apiResponseStatus: ApiResponseStatus;
   getAvailableFieldUiTypes: () => void;
   getSearchTypes: () => void;
-  apiResponseStatus: ApiResponseStatus
+  getDateFormat: () => void;
 };
 
 const MainLayout = ({
   children,
   removeFooter = false,
   disableOverflow = false,
+  currentView,
+  apiResponseStatus,
   getAvailableFieldUiTypes,
   getSearchTypes,
-  currentView,
-  apiResponseStatus
+  getDateFormat
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(0);
+
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+  }, []);
+
   useEffect(() => {
     if (router.isReady) {
       getAvailableFieldUiTypes();
       getSearchTypes();
+      getDateFormat();
     }
   }, [router.isReady]);
+
+  const Main = styled("div")(({ theme }) => ({
+    flexGrow: 1,
+    paddingTop: APP_BAR_MOBILE,
+    paddingBottom: 0,
+    display: "flex",
+    height: `${windowHeight - 40}px`,
+    overflow: "hidden",
+    [theme.breakpoints.up("md")]: {
+      height: "calc(100vh - 40px)",
+      overflow: "hidden",
+    },
+    [theme.breakpoints.up("lg")]: {
+      paddingTop: APP_BAR_DESKTOP,
+      paddingBottom: 0,
+      overflow: "hidden",
+    },
+  }));
+
   return apiResponseStatus === ApiResponseStatus.Success ?(
     <StyledRoot>
       <Header onOpenNav={() => setOpen(true)} />
@@ -101,6 +112,7 @@ const MainLayout = ({
     </>
   )
 };
+
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   apiResponseStatus: state.admin.apiResponseStatus
@@ -109,6 +121,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   getAvailableFieldUiTypes,
   getSearchTypes,
+  getDateFormat
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

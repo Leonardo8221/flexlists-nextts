@@ -74,6 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
+import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 import ColorPicker from "src/components/color-picker/ColorPicker";
 
@@ -83,6 +84,7 @@ interface RowFormProps {
   columns: any[];
   open: boolean;
   mode: "view" | "create" | "update" | "comment";
+  dateFormat: string;
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
@@ -102,6 +104,7 @@ const RowFormPanel = ({
   open,
   columns,
   mode,
+  dateFormat,
   onClose,
   onSubmit,
   setFlashMessage,
@@ -117,7 +120,6 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-  //console.log('knarsterfarster', currentView)
   const actions = [
     {
       title: "Resize",
@@ -132,12 +134,11 @@ const RowFormPanel = ({
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: `${
-        values &&
+      title: `${values &&
         values[columns.find((x) => x.system && x.name === "___archived").id]
-          ? "Unarchive"
-          : "Archive"
-      }`,
+        ? "Unarchive"
+        : "Archive"
+        }`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -248,9 +249,8 @@ const RowFormPanel = ({
         onClose();
       } else {
         setFlashMessage({
-          message: `${errorFields.join(",")} ${
-            errorFields.length > 1 ? "are" : "is"
-          } required`,
+          message: `${errorFields.join(",")} ${errorFields.length > 1 ? "are" : "is"
+            } required`,
           type: "error",
         });
       }
@@ -353,7 +353,7 @@ const RowFormPanel = ({
         return;
       }
       setValues({ ...values, [columnId]: date.toISOString() });
-    } catch (e) {}
+    } catch (e) { }
   };
   const setTimeValue = (columnId: number, time: Dayjs | null) => {
     if (time == null) {
@@ -361,7 +361,7 @@ const RowFormPanel = ({
     }
     setValues({
       ...values,
-      [columnId]: `${time.hour()}:${time.minute()}:${time.second()}`,
+      [columnId]: time.toISOString(),
     });
     // if(typeof time === 'string')
     // {
@@ -574,6 +574,7 @@ const RowFormPanel = ({
               value={
                 values[column.id] && values[column.id] != null
                   ? dayjs(values[column.id])
+                  //? dayjs(getLocalDateTimeFromString(values[column.id]))
                   : null
               }
               label={column.name}
@@ -585,7 +586,8 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
-              ampm={false}
+              ampm={getAmPm()}
+              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
@@ -604,9 +606,7 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
-                  ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleString()
+                  ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
                   : ""
               }
               sx={{
@@ -622,14 +622,6 @@ const RowFormPanel = ({
                 },
               }}
             />
-            {/* <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleString()
-                : ""}
-            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Date:
@@ -646,6 +638,7 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
+              format={dateFormat}
             />
           </LocalizationProvider>
         ) : (
@@ -659,9 +652,7 @@ const RowFormPanel = ({
               label={column.name}
               value={
                 values && values[getDataColumnId(column.id, columns)]
-                  ? new Date(
-                      values[getDataColumnId(column.id, columns)]
-                    ).toLocaleDateString()
+                  ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
                   : ""
               }
               sx={{
@@ -677,14 +668,6 @@ const RowFormPanel = ({
                 },
               }}
             />
-            {/* <Typography variant="subtitle1">{column.name}</Typography>
-            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
-                : ""}
-            </Typography> */}
           </div>
         );
       case FieldUiTypeEnum.Time:
@@ -693,13 +676,7 @@ const RowFormPanel = ({
             <TimePicker
               value={
                 values[column.id]
-                  ? dayjs(
-                      new Date(
-                        `${new Date().toLocaleDateString()} ${
-                          values[column.id]
-                        }`
-                      )
-                    )
+                  ? dayjs(getDateFromTimeString(values[column.id]))
                   : null
               }
               label={column.name}
@@ -716,31 +693,29 @@ const RowFormPanel = ({
                 minutes: renderTimeViewClock,
                 seconds: renderTimeViewClock,
               }}
+              ampm={getAmPm()}
             />
           </LocalizationProvider>
         ) : (
-          <div key={column.id}>
+          <>
             <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
               <TimePicker
                 readOnly={true}
                 value={
                   values[column.id]
-                    ? dayjs(
-                        new Date(
-                          `${new Date().toLocaleDateString()} ${
-                            values[column.id]
-                          }`
-                        )
-                      )
+                    ? dayjs(getDateFromTimeString(values[column.id]))
                     : null
                 }
                 label={column.name}
-                onChange={(x) => {}}
+                onChange={(x) => {
+                  setTimeValue(column.id, x);
+                }}
                 className={
                   submit && column.required && !values[column.id]
                     ? "Mui-error"
                     : ""
                 }
+                ampm={getAmPm()}
                 sx={{
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "rgba(158, 158, 158, 0.32) !important",
@@ -753,19 +728,15 @@ const RowFormPanel = ({
                     color: "rgba(0, 0, 0, 0.6) !important",
                   },
                 }}
+                viewRenderers={{
+                  hours: renderTimeViewClock,
+                  minutes: renderTimeViewClock,
+                  seconds: renderTimeViewClock,
+                }}
               />
             </LocalizationProvider>
-            {/* <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
-              {column.name}
-            </Typography>
-            <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
-              {values && values[getDataColumnId(column.id, columns)]
-                ? new Date(
-                    values[getDataColumnId(column.id, columns)]
-                  ).toLocaleDateString()
-                : "null"}
-            </Typography> */}
-          </div>
+
+          </>
         );
       case FieldUiTypeEnum.Choice:
         if (currentMode !== "view" && !isPrint) {
@@ -1885,6 +1856,7 @@ const RowFormPanel = ({
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  dateFormat: state.date.dateFormat
 });
 
 const mapDispatchToProps = {
