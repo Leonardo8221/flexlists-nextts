@@ -47,7 +47,6 @@ export function ViewDetail({
 }: ListProps & { translations?: TranslationText[]/*, test?: string */ }) {
   const router = useRouter();
   const theme = useTheme();
-  const isDesktop = useResponsive("up", "lg");
   const [open, setOpen] = useState(false);
 
   const t = (key: string): string => {
