@@ -1627,23 +1627,25 @@ const RowFormPanel = ({
           return currentMode !== "view" && !isPrint ? (
             <Box key={column.id}>
               <UserContacts 
-              mode={currentMode}
+              isModeView={false}
               selectedContactId={values[column.id]} 
               setSelectedContactId={(contactId: number) => {
                 setValues({ ...values, [column.id]: contactId });
               }}
               isIncludedCurrentUser={true} 
+              name={column.name}
               />
             </Box>
           ) : (
             <div key={column.id}>
                <UserContacts 
-                  mode={currentMode}
+                  isModeView={true}
                   selectedContactId={values[column.id]} 
                   setSelectedContactId={(contactId: number) => {
                     setValues({ ...values, [column.id]: contactId });
                   }}
                   isIncludedCurrentUser={true} 
+                  name={column.name}
               />
             </div>
           );

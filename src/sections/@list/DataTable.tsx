@@ -26,7 +26,7 @@ import {
   setCurrentView,
   setRows,
 } from "src/redux/actions/viewActions";
-import { View } from "src/models/SharedModels";
+import { User, View } from "src/models/SharedModels";
 import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
@@ -67,6 +67,7 @@ import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
 import { convertToTimeAMPM } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
+import { UserProfile } from "src/models/UserProfile";
 
 type DataTableProps = {
   tab: boolean;
@@ -78,6 +79,8 @@ type DataTableProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
+  userContacts: User[],
+  userProfile: UserProfile
 };
 
 const DataTable = ({
@@ -90,6 +93,8 @@ const DataTable = ({
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
+  userContacts,
+  userProfile
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -263,7 +268,18 @@ const DataTable = ({
       );
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
-
+  const getUserName = (userId: any) => {  
+    let user = userContacts.find(x=>x.userId === userId)
+    if(user)
+    {
+      return user.name
+    }
+    if(userProfile.id === userId)
+    {
+      return userProfile.name
+    }
+    return ""
+  }
   const getColumnKey = (column: any): string => {
     if (
       column.system &&
@@ -540,6 +556,14 @@ const DataTable = ({
                         // position: "relative",
                       }}
                     ></div>
+                  </Box>
+                );
+                case FieldUiTypeEnum.User:
+                return (
+                  <Box
+                    key={row.id}
+                  >
+                   {getUserName(cellValue)}
                   </Box>
                 );
               default:
@@ -1132,12 +1156,14 @@ const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
   currentView: state.view.currentView,
   count: state.view.count,
+  userProfile : state.user.userProfile,
+  userContacts: state.user.userContacts
 });
 
 const mapDispatchToProps = {
   setRows,
   fetchRowsByPage,
   setCurrentView,
-  setFlashMessage,
+  setFlashMessage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

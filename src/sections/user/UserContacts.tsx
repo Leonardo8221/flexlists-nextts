@@ -1,9 +1,11 @@
 import { Autocomplete, TextField } from "@mui/material"
+import { STATUS_CODES } from "http";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { User } from "src/models/SharedModels";
 import { UserProfile } from "src/models/UserProfile";
+import { fetchUserContacts } from "src/redux/actions/userActions";
 import { getUserContacts } from "src/services/account.service";
 import { getDistinctObjects } from "src/utils/arraryHelper";
 import { isSucc } from "src/utils/responses";
@@ -14,16 +16,23 @@ type UserContactsProps = {
     setSelectedContactId:(id:number)=>void;
     isIncludedCurrentUser?:boolean;
     userProfile: UserProfile,
-    isView : boolean
+    isModeView : boolean,
+    userContacts:User[],
+    fetchUserContacts:()=>void
 }
-function UserContacts({name,selectedContactId,setSelectedContactId,userProfile,isView,isIncludedCurrentUser=false}:UserContactsProps)
+function UserContacts({userContacts,fetchUserContacts,name,selectedContactId,setSelectedContactId,userProfile,isModeView = false,isIncludedCurrentUser=false}:UserContactsProps)
 {
     const router = useRouter();
     const [selectedContact,setSelectedContact] = useState<User>()
-    const [userContacts,setUserContacts] = useState<User[]>([])
+    const [contacts,setContacts] = useState<User[]>([])
     useEffect(()=>{
-        async function fetchData()
+        if(router.isReady)
         {
+            fetchUserContacts()
+        }
+        
+    },[router.isReady])
+    useEffect(()=>{
             let newUserContacts : User[] = [];
             if(isIncludedCurrentUser)
             {
@@ -38,22 +47,13 @@ function UserContacts({name,selectedContactId,setSelectedContactId,userProfile,i
                     membershipLevel:userProfile.membershipLevel,
                })
             }
-            let getUserContactsResponse = await getUserContacts()
-            if(isSucc(getUserContactsResponse) && getUserContactsResponse.data&& getUserContactsResponse.data.length>0)
-            {
-               newUserContacts = newUserContacts.concat(getUserContactsResponse.data)
-            }
+            newUserContacts = newUserContacts.concat(userContacts)
             if(selectedContactId)
             {
                 let newContact = newUserContacts.find(x=>x.userId===selectedContactId)
                 if(newContact)
                 {
                     setSelectedContact(newContact)
-                }
-                else
-                {
-                    setSelectedContact(newUserContacts[0])
-                    setSelectedContactId(newUserContacts[0].userId)
                 }
             }
             else
@@ -65,18 +65,13 @@ function UserContacts({name,selectedContactId,setSelectedContactId,userProfile,i
                 }
             }
            
-            setUserContacts(getDistinctObjects(newUserContacts,"userId"));
-        }
-        if(router.isReady)
-        {
-            fetchData()
-        }
+            setContacts(getDistinctObjects(newUserContacts,"userId"));
         
-    },[router.isReady])
+    },[userContacts])
     return (
         <>
           {
-            userContacts.length >0  &&
+            contacts.length >0 && selectedContact  &&
             <Autocomplete
             id="combo-box-user-contact"
             value = {selectedContact}
@@ -89,19 +84,26 @@ function UserContacts({name,selectedContactId,setSelectedContactId,userProfile,i
                 setSelectedContactId(newValue.userId)
               }
             }}
-            options={userContacts}
+            options={contacts}
             getOptionLabel={(option) => option?.name}
             fullWidth
             sx={{ my: 1 }}
             renderInput={
-                (params) => 
-                <TextField 
-                {...params} 
-                label={name?name:"contacts"}
-                InputProps={{
-                    readOnly: isView,
-                  }}
-               />
+                (params) => {
+                   return isModeView ?
+                   <TextField 
+                        {...params} 
+                        label={name?name:"contacts"}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                    />:
+                    <TextField 
+                        {...params} 
+                        label={name?name:"contacts"}
+                    />
+                }
+                
            }
           
           />
@@ -112,9 +114,10 @@ function UserContacts({name,selectedContactId,setSelectedContactId,userProfile,i
 }
 const mapStateToProps = (state: any) => ({
     userProfile: state.user.userProfile,
+    userContacts: state.user.userContacts
 });
   
 const mapDispatchToProps = {
-
+    fetchUserContacts
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UserContacts);
