@@ -98,29 +98,48 @@ function KanbanViewConfig({
   };
 
   const reloadColumns = () => {
-    var newBoardFields: ViewField[] = getBoardFields();
-    var newOrderFields: ViewField[] = getOrderFields();
-    var newTitleFields: ViewField[] = getTitleFields();
+    const newBoardFields: ViewField[] = getBoardFields();
+    const newOrderFields: ViewField[] = getOrderFields();
+    const newTitleFields: ViewField[] = getTitleFields();
+
+    const defaultBoardId =
+      boardColumnId && !isOpenBoardFieldModal
+        ? boardColumnId
+        : newBoardFields.length > 0
+        ? newBoardFields[0].id
+        : 0;
+    const defaultOrderId =
+      orderColumnId && !isOpenOrderFieldModal
+        ? orderColumnId
+        : newOrderFields.length > 0
+        ? newOrderFields[0].id
+        : 0;
+    const defaultTitleId =
+      titleFieldId && !isOpenTitleFieldModal
+        ? titleFieldId
+        : newTitleFields.length > 0
+        ? newTitleFields[0].id
+        : 0;
 
     if (newBoardFields.length > 0) {
-      setBoardColumnId(newBoardFields[0].id);
+      setBoardColumnId(defaultBoardId);
     }
 
     if (newOrderFields.length > 0) {
-      setOrderColumnId(newOrderFields[0].id);
+      setOrderColumnId(defaultOrderId);
     }
 
     if (newTitleFields.length > 0) {
-      setTitleFieldId(newTitleFields[0].id);
+      setTitleFieldId(defaultTitleId);
     }
 
     setBoardFields(newBoardFields);
     setOrderFields(newOrderFields);
     setTitleFields(newTitleFields);
     updateKanbanConfig(
-      newBoardFields.length > 0 ? newBoardFields[0].id : 0,
-      newOrderFields.length > 0 ? newOrderFields[0].id : 0,
-      newTitleFields.length > 0 ? newTitleFields[0].id : 0
+      defaultBoardId,
+      defaultOrderId,
+      defaultTitleId
     );
   };
 
@@ -129,7 +148,7 @@ function KanbanViewConfig({
   }, [columns]);
 
   const onBoardFieldChange = (event: SelectChangeEvent) => {
-    var value = event.target.value as string;
+    const value = event.target.value as string;
     if (value === "-1") {
       setIsOpenBoardFieldModal(true);
       return;
@@ -139,7 +158,7 @@ function KanbanViewConfig({
   };
 
   const onOrderFieldChange = (event: SelectChangeEvent) => {
-    var value = event.target.value as string;
+    const value = event.target.value as string;
     if (value === "-1") {
       setIsOpenOrderFieldModal(true);
       return;
@@ -149,7 +168,7 @@ function KanbanViewConfig({
   };
 
   const onTitleFieldChange = (event: SelectChangeEvent) => {
-    var value = event.target.value as string;
+    const value = event.target.value as string;
     if (value === "-1") {
       setIsOpenTitleFieldModal(true);
       return;
