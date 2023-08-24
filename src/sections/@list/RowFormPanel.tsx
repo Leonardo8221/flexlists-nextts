@@ -76,6 +76,7 @@ import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
 import { useRouter } from "next/router";
 import ColorPicker from "src/components/color-picker/ColorPicker";
+import UserContacts from "../user/UserContacts";
 
 interface RowFormProps {
   currentView: View;
@@ -1622,6 +1623,30 @@ const RowFormPanel = ({
             </div>
           );
         }
+        case FieldUiTypeEnum.User:
+          return currentMode !== "view" && !isPrint ? (
+            <Box key={column.id}>
+              <UserContacts 
+              mode={currentMode}
+              selectedContactId={values[column.id]} 
+              setSelectedContactId={(contactId: number) => {
+                setValues({ ...values, [column.id]: contactId });
+              }}
+              isIncludedCurrentUser={true} 
+              />
+            </Box>
+          ) : (
+            <div key={column.id}>
+               <UserContacts 
+                  mode={currentMode}
+                  selectedContactId={values[column.id]} 
+                  setSelectedContactId={(contactId: number) => {
+                    setValues({ ...values, [column.id]: contactId });
+                  }}
+                  isIncludedCurrentUser={true} 
+              />
+            </div>
+          );
       default:
         return <div key={column.id}></div>;
     }
