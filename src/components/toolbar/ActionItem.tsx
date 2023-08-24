@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import useResponsive from "../../hooks/useResponsive";
 
 type Props = {
   toolbar: any;
@@ -10,7 +8,6 @@ type Props = {
 
 export default function ToolBarItem({ toolbar, onClick }: Props) {
   const theme = useTheme();
-  const isDesktop = useResponsive("up", "lg");
 
   return (
     <Box

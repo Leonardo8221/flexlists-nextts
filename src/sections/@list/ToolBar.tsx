@@ -96,16 +96,12 @@ const ToolbBar = ({
 }: ToolbBarProps) => {
   const theme = useTheme();
   const router = useRouter();
-  const isDesktop = useResponsive("up", "lg");
   const [visibleFilter, setVisibleFilter] = useState(false);
   const [visibleSort, setVisibleSort] = useState(false);
   const [visibleImport, setVisibleImport] = useState(false);
   const [visibleExport, setVisibleExport] = useState(false);
   const [visibleFields, setVisibleFields] = useState(false);
   const [visibleListFields, setVisibleListFields] = useState(false);
-  const [isSaveViewModalOpen, setIsSaveViewModalOpen] =
-    useState<boolean>(false);
-  const [saveViewMessage, setSaveViewMessage] = useState<string>("");
   const [saveViewPopoverOpen, setSaveViewPopoverOpen] = useState(null);
   const [viewPresetsPopoverOpen, setViewPresetsPopoverOpen] = useState(null);
   const [selectedPreset, setSelectedPreset] = useState<any>();

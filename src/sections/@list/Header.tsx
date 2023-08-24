@@ -34,25 +34,25 @@ import { ViewType } from "src/enums/SharedEnums";
 
 type HeaderProps = {
   currentView: View;
-  setFlashMessage:(message: FlashMessageModel)=>void
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
-
-const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
+const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
   const router = useRouter();
   const theme = useTheme();
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
   const [openPublish, setOpenPublish] = useState(false);
   const [openShare, setOpenShare] = useState(false);
-  const isDesktop = useResponsive("up", "xl");
+  const isDesktop = useResponsive("up", "md");
   const [visiblePanel, setVisiblePanel] = useState(false);
   const [isRenameOpenModal, setIsRenameOpenModal] = useState<boolean>(false);
   const [isDuplicateOpenModal, setIsDuplicateOpenModal] =
     useState<boolean>(false);
   const [isDeleteOpenModal, setIsDeleteOpenModal] = useState<boolean>(false);
   const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
-  const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] = useState<boolean>(false);
+  const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] =
+    useState<boolean>(false);
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
@@ -92,30 +92,38 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
   const handleOpenEditViewConfigModal = () => {
     setIsEditViewConfigOpenModal(true);
   };
-  const handleArchive = async() =>{
-     setIsArchiveOpenModal(false);
-     let response = await archiveView(currentView?.id);
-     if(isSucc(response)){
-        setFlashMessage({message:'View archived successfully',type:'success'});
-        await router.push({pathname:PATH_MAIN.views});
-     }
-     else
-     {
-       setFlashMessage({message:(response as FlexlistsError).message,type:'error'});
-     }
-  }
-  const handleUnArchive = async() =>{
+  const handleArchive = async () => {
+    setIsArchiveOpenModal(false);
+    let response = await archiveView(currentView?.id);
+    if (isSucc(response)) {
+      setFlashMessage({
+        message: "View archived successfully",
+        type: "success",
+      });
+      await router.push({ pathname: PATH_MAIN.views });
+    } else {
+      setFlashMessage({
+        message: (response as FlexlistsError).message,
+        type: "error",
+      });
+    }
+  };
+  const handleUnArchive = async () => {
     setIsArchiveOpenModal(false);
     let response = await unArchiveView(currentView?.id);
-    if(isSucc(response)){
-       setFlashMessage({message:'View unarchived successfully',type:'success'});
-       await router.push({pathname:PATH_MAIN.views});
+    if (isSucc(response)) {
+      setFlashMessage({
+        message: "View unarchived successfully",
+        type: "success",
+      });
+      await router.push({ pathname: PATH_MAIN.views });
+    } else {
+      setFlashMessage({
+        message: (response as FlexlistsError).message,
+        type: "error",
+      });
     }
-    else
-    {
-      setFlashMessage({message:(response as FlexlistsError).message,type:'error'});
-    }
-  }
+  };
   return (
     <Box
       sx={{
@@ -166,93 +174,86 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
           >
             {currentView?.name}
           </Typography>
-          {hasPermission(currentView?.role, 'All') && <CDropdown id="list_action" className="list_action">
-            <CDropdownToggle
-              color="secondary"
-              style={{ paddingTop: 0, display: "flex" }}
-            >
-              <Box
-                component="span"
-                className="svg-color"
-                sx={{
-                  width: { xs: 12, lg: 16 },
-                  height: { xs: 12, lg: 16 },
-                  display: "inline-block",
-                  bgcolor: "#16385C",
-                  mask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
-                  marginLeft: { xs: 0.5, lg: 1 },
-                  cursor: "pointer",
-                  transform: "rotate(90deg)",
-                }}
-              />
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem
-                href="#"
-                key={"rename_list"}
-                onClick={() => handleOpenRenameModal()}
+          {hasPermission(currentView?.role, "All") && (
+            <CDropdown id="list_action" className="list_action">
+              <CDropdownToggle
+                color="secondary"
+                style={{ paddingTop: 0, display: "flex" }}
               >
-               {currentView?.isDefaultView?'Rename List':'Rename View'} 
-              </CDropdownItem>
-              {
-                !currentView?.isDefaultView &&
-                (
+                <Box
+                  component="span"
+                  className="svg-color"
+                  sx={{
+                    width: { xs: 12, lg: 16 },
+                    height: { xs: 12, lg: 16 },
+                    display: "inline-block",
+                    bgcolor: "#16385C",
+                    mask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/dots.svg) no-repeat center / contain`,
+                    marginLeft: { xs: 0.5, lg: 1 },
+                    cursor: "pointer",
+                    transform: "rotate(90deg)",
+                  }}
+                />
+              </CDropdownToggle>
+              <CDropdownMenu>
+                <CDropdownItem
+                  href="#"
+                  key={"rename_list"}
+                  onClick={() => handleOpenRenameModal()}
+                >
+                  {currentView?.isDefaultView ? "Rename List" : "Rename View"}
+                </CDropdownItem>
+                {!currentView?.isDefaultView && (
                   <>
                     <CDropdownItem
                       href="#"
                       key={"duplicate_list"}
                       onClick={() => handleOpenDuplicateModal()}
-                      >
-                        Duplicate View
-                      </CDropdownItem>
+                    >
+                      Duplicate View
+                    </CDropdownItem>
+                    <CDropdownItem
+                      href="#"
+                      key={"delete_list"}
+                      onClick={() => handleOpenDeleteModal()}
+                    >
+                      Delete View
+                    </CDropdownItem>
+                    {currentView?.isArchived ? (
                       <CDropdownItem
-                        href="#"
-                        key={"delete_list"}
-                        onClick={() => handleOpenDeleteModal()}
-                      >
-                        Delete View
-                      </CDropdownItem>
-                      {
-                        currentView?.isArchived ? 
-                        <CDropdownItem
                         href="#"
                         key={"unarchive_list"}
                         onClick={() => handleUnArchive()}
-                        >
-                          UnArchive View
-                        </CDropdownItem> :
-                        <CDropdownItem
+                      >
+                        UnArchive View
+                      </CDropdownItem>
+                    ) : (
+                      <CDropdownItem
                         href="#"
                         key={"archive_list"}
                         onClick={() => handleOpenArchiveModal()}
-                        >
-                          Archive View
-                        </CDropdownItem> 
-                      }
+                      >
+                        Archive View
+                      </CDropdownItem>
+                    )}
                   </>
-                )
-                
-              }
-              {
-                currentView && currentView?.type !== ViewType.List &&
-                <CDropdownItem
-                  href="#"
-                  key={"edit_config"}
-                  onClick={() => handleOpenEditViewConfigModal()}
-                >
-                Edit Config
-                </CDropdownItem>
-              }
-              
-            </CDropdownMenu>
-          </CDropdown>}
+                )}
+                {currentView && currentView?.type !== ViewType.List && (
+                  <CDropdownItem
+                    href="#"
+                    key={"edit_config"}
+                    onClick={() => handleOpenEditViewConfigModal()}
+                  >
+                    Edit Config
+                  </CDropdownItem>
+                )}
+              </CDropdownMenu>
+            </CDropdown>
+          )}
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
-          {
-            isDesktop && <ToolBar/>
-          }
-          
+          {isDesktop && <ToolBar />}
         </Box>
         <Box
           sx={{
@@ -262,7 +263,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
             gap: 2,
           }}
         >
-          {hasPermission(currentView?.role, 'All') && <ViewUsersList />}
+          {hasPermission(currentView?.role, "All") && <ViewUsersList />}
           <Box
             component="span"
             className="svg-color"
@@ -334,7 +335,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
               >
                 Publish
               </Button>
-              {hasPermission(currentView?.role, 'All') &&
+              {hasPermission(currentView?.role, "All") && (
                 <Button
                   onClick={handleOpenShare}
                   sx={{ mt: { xs: 1, md: 0 } }}
@@ -344,7 +345,8 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
                   startIcon={<Iconify icon={"eva:share-outline"} />}
                 >
                   Share
-                </Button>}
+                </Button>
+              )}
             </Box>
             <Box
               sx={{
@@ -394,9 +396,7 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
       </Box>
 
       <Box sx={{ display: { md: "none", width: "100%" } }}>
-        {
-          !isDesktop && <ToolBar/>
-        }
+        {!isDesktop && <ToolBar />}
       </Box>
       <ChatFormPanel
         chatType={ChatType.View}
@@ -438,18 +438,18 @@ const Header = ({ currentView,setFlashMessage }: HeaderProps) => {
             handleClose={() => setIsDeleteOpenModal(false)}
           />
           <EditViewConfigForm
-           open = {isEditViewConfigOpenModal}
-            handleClose = {()=>setIsEditViewConfigOpenModal(false)}
+            open={isEditViewConfigOpenModal}
+            handleClose={() => setIsEditViewConfigOpenModal(false)}
           />
           <YesNoDialog
-          title="Archive View"
-          submitText="Archive"
-          message="Are you sure you want to archive selected view?"
-          open={isArchiveOpenModal}
-          handleClose={() => setIsArchiveOpenModal(false)}
-          onSubmit={() => {
-            handleArchive();
-          }}
+            title="Archive View"
+            submitText="Archive"
+            message="Are you sure you want to archive selected view?"
+            open={isArchiveOpenModal}
+            handleClose={() => setIsArchiveOpenModal(false)}
+            onSubmit={() => {
+              handleArchive();
+            }}
           />
         </>
       )}
@@ -462,7 +462,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setFlashMessage
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
