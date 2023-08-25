@@ -113,3 +113,15 @@ export const BooleanFilterOperatorLabel = new Map<string, string>([
   [FilterOperator.eq, 'is'],
   [FilterOperator.neq, 'is not']
 ]);
+export const ColorFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, 'is'],
+  [FilterOperator.neq, 'is not'],
+  [FilterOperator.in, 'is any of'],
+  [FilterOperator.nin, 'is none of']
+]);
+export const UserFilterOperatorLabel = new Map<string, string>([
+  [FilterOperator.eq, 'is'],
+  [FilterOperator.neq, 'is not'],
+  [FilterOperator.in, 'is any of'],
+  [FilterOperator.nin, 'is none of']
+]);

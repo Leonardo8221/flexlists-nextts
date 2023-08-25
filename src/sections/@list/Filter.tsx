@@ -16,9 +16,11 @@ import Modal from "@mui/material/Modal";
 import {
   BooleanFilterOperatorLabel,
   ChoiceFilterOperatorLabel,
+  ColorFilterOperatorLabel,
   DateFilterOperatorLabel,
   NumberFilterOperatorLabel,
   StringFilterOperatorLabel,
+  UserFilterOperatorLabel,
 } from "src/enums/ShareEnumLabels";
 import { FlatWhere, View } from "src/models/SharedModels";
 import {
@@ -34,10 +36,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
 import { convertToInteger } from "src/utils/convertUtils";
 import { getColumn } from "src/utils/flexlistHelper";
+import { ViewField } from "src/models/ViewField";
 
 type FilterProps = {
   currentView: View;
-  columns: any[];
+  columns: ViewField[];
   open: boolean;
   fetchRows: () => void;
   handleClose: () => void;
@@ -85,6 +88,18 @@ const Filter = ({
       return { key: item[0], value: item[1] };
     }
   );
+  const colorFilterOperators: { key: string; value: string }[] = Array.from(
+    ColorFilterOperatorLabel,
+    function (item) {
+      return { key: item[0], value: item[1] };
+    }
+  );
+  const userFilterOperators: { key: string; value: string }[] = Array.from(
+    UserFilterOperatorLabel,
+    function (item) {
+      return { key: item[0], value: item[1] };
+    }
+  );
   const condtionOperators: string[] = ["And", "Or"];
   const booleanValues: string[] = ["true", "false"];
   useEffect(() => {
@@ -123,7 +138,7 @@ const Filter = ({
               filter["cmp"] === FilterOperator.nin
             ) {
               let column = getColumn(filter.left,columns);
-              if (column.uiField !== FieldUiTypeEnum.Choice) {
+              if (column?.uiField !== FieldUiTypeEnum.Choice) {
                 filter[key] = value;
               } else {
                 if (isArray(value)) {
@@ -179,7 +194,7 @@ const Filter = ({
     if (
       filter.right &&
       filter.right.length > 0 &&
-      column.type === FieldUiTypeEnum.Choice &&
+      column?.uiField === FieldUiTypeEnum.Choice &&
       column?.config?.values &&
       column?.config?.values.length > 0
     ) {
@@ -194,18 +209,18 @@ const Filter = ({
     index?: number
   ): [string, { key: string; value: string }[], any, any] => {
     const column = getColumn(filter.left,columns);
-    const columnType = column.type;
+    const columnUiType = column?.uiField;
     let defaultConditionOperator: string = FilterOperator.eq;
     let conditionOperators: { key: string; value: string }[] = [];
     let defaultValue: any = "";
     let render: any = <></>;
-    switch (columnType) {
-      case FieldType.Integer:
-      case FieldType.Float:
-      case FieldType.Decimal:
-      case FieldType.Double:
-      case FieldType.Money:
-      case FieldType.Percentage:
+    switch (columnUiType) {
+      case FieldUiTypeEnum.Integer:
+      case FieldUiTypeEnum.Float:
+      case FieldUiTypeEnum.Decimal:
+      case FieldUiTypeEnum.Double:
+      case FieldUiTypeEnum.Money:
+      case FieldUiTypeEnum.Percentage:
         defaultConditionOperator = numberFilterOperators[0].key;
         conditionOperators = numberFilterOperators;
         render = (
@@ -223,13 +238,13 @@ const Filter = ({
           />
         );
         break;
-      case FieldType.Date:
-      case FieldType.DateTime:
-      case FieldType.Time:
+      case FieldUiTypeEnum.Date:
+      case FieldUiTypeEnum.DateTime:
+      case FieldUiTypeEnum.Time:
         defaultConditionOperator = dateFilterOperators[0].key;
         conditionOperators = dateFilterOperators;
         render = (
-          <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} key={column?.id}>
             <DateTimePicker
               value={getDate(filter.right)}
               onChange={(e: any) => {
@@ -247,7 +262,7 @@ const Filter = ({
           </LocalizationProvider>
         );
         break;
-      case FieldType.Text:
+      case FieldUiTypeEnum.Text:
         defaultConditionOperator = stringFilterOperators[0].key;
         conditionOperators = stringFilterOperators;
         defaultValue = "";
@@ -266,7 +281,7 @@ const Filter = ({
           />
         );
         break;
-      case FieldType.Choice:
+      case FieldUiTypeEnum.Choice:
         defaultConditionOperator = choiceFilterOperators[0].key;
         conditionOperators = choiceFilterOperators;
         defaultValue =
@@ -314,7 +329,7 @@ const Filter = ({
             />
           );
         break;
-      case FieldType.Boolean:
+      case FieldUiTypeEnum.Boolean:
         defaultConditionOperator = "false";
         conditionOperators = booleanFilterOperators;
         defaultValue = false;

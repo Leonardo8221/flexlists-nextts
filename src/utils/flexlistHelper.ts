@@ -40,7 +40,7 @@ export const getDataColumnId = (fieldId: number, columns: ViewField[]): string =
     return `${fieldId}`;
 
 }
-export const getColumn = (column_id: any,columns:any[]) : any => {
+export const getColumn = (column_id: any,columns:any[]) : ViewField|undefined => {
 
     const column = columns.find(
       (item: any) =>
