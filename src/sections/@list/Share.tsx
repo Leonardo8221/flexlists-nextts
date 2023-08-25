@@ -38,13 +38,11 @@ import {
   GetUserGroupsOutputDto,
   GetViewGroupsOutputDto,
 } from "src/models/ApiOutputModels";
-import { convertToInteger } from "src/utils/convertUtils";
 import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
 import { groupService } from "src/services/group.service";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
-import { clone } from "lodash";
 import { View } from "src/models/SharedModels";
 
 type ShareListProps = {
@@ -553,7 +551,7 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
   const onSubmit = async () => {
     setSubmit(true);
     var response = await listViewService.addKeyToView(
-      convertToInteger(router.query.viewId),
+      currentView.id,
       role,
       keyName
     );
@@ -620,6 +618,7 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
         viewKeys={viewKeys}
         roles={roles}
         onUpdateViewKeys={(newViewKeys) => onUpdateViewKeys(newViewKeys)}
+        currentView={currentView}
       />
     </>
   );

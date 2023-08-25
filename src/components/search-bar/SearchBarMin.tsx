@@ -57,7 +57,7 @@ const SearchBarMin = ({
 
   useEffect(() => {
     if (router.isReady && searchTypes) {
-      if (router.query.viewId) {
+      if (router.query.viewId||router.query.defaultListViewId) {
         setCurrentSearchTypes(searchTypes);
         //if (currentSearchTypes.find((x) => x.name === "CurrentView")) {
         setSearchType("CurrentView");
@@ -74,7 +74,7 @@ const SearchBarMin = ({
     }
   }, [router.isReady, searchTypes]);
   useEffect(() => {
-    if (router.query.viewId) {
+    if (router.query.viewId||router.query.defaultListViewId) {
       setSearch(currentView?.query ?? "");
     }
   }, [currentView?.query]);

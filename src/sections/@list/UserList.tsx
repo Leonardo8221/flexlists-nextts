@@ -7,12 +7,14 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { convertToInteger } from "src/utils/convertUtils";
 import { downloadFileUrl } from "src/utils/flexlistHelper";
+import { View } from "src/models/SharedModels";
 
 type ViewUsersProps = {
   users: any[];
   userGroups: any[];
   getViewUsers: (viewId: number) => void;
   getViewUserGroups: (viewId: number) => void;
+  currentView:View
 };
 
 const ViewUsersList = ({
@@ -20,22 +22,16 @@ const ViewUsersList = ({
   getViewUsers,
   userGroups,
   getViewUserGroups,
+  currentView
 }: ViewUsersProps) => {
   const theme = useTheme();
   const router = useRouter();
   useEffect(() => {
-    let viewId = router.query.viewId??router.query.defaultListViewId
-    if (viewId) {
-      
-      getViewUsers(convertToInteger(viewId));
-    }
-  }, [router.query.viewId, getViewUsers]);
+    getViewUsers(currentView.id);
+  }, [router.isReady, getViewUsers]);
   useEffect(() => {
-    let viewId = router.query.viewId??router.query.defaultListViewId
-    if (viewId) {
-      getViewUserGroups(convertToInteger(viewId));
-    }
-  }, [router.query.viewId, getViewUserGroups]);
+    getViewUserGroups(currentView.id);
+  }, [router.isReady, getViewUserGroups]);
   return (
     <Box
       sx={{
@@ -85,6 +81,7 @@ const ViewUsersList = ({
 const mapStateToProps = (state: any) => ({
   users: state.view.users,
   userGroups: state.view.userGroups,
+  currentView: state.view.currentView
 });
 
 const mapDispatchToProps = {
