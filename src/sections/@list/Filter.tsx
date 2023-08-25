@@ -34,7 +34,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
-import { convertToInteger } from "src/utils/convertUtils";
+import { getAmPm } from "src/utils/convertUtils";
 import { getColumn } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
 
@@ -42,6 +42,7 @@ type FilterProps = {
   currentView: View;
   columns: ViewField[];
   open: boolean;
+  dateFormat: string;
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
@@ -51,6 +52,7 @@ const Filter = ({
   currentView,
   columns,
   open,
+  dateFormat,
   fetchRows,
   setCurrentView,
   handleClose,
@@ -102,6 +104,7 @@ const Filter = ({
   );
   const condtionOperators: string[] = ["And", "Or"];
   const booleanValues: string[] = ["true", "false"];
+  
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -185,9 +188,7 @@ const Filter = ({
     );
     setCurrentView(newView);
   };
-  const getDate = (date: any) => {
-    return dayjs(date, "MM/DD/YYYY HH:mm:ss");
-  };
+  
   const getChoiceValues = (filter: any) => {
     const column = getColumn(filter.left,columns);
     let choices: any[] = [];
@@ -204,6 +205,7 @@ const Filter = ({
     }
     return choices;
   };
+  
   const getFilter = (
     filter: any,
     index?: number
@@ -246,7 +248,7 @@ const Filter = ({
         render = (
           <LocalizationProvider dateAdapter={AdapterDayjs} key={column?.id}>
             <DateTimePicker
-              value={getDate(filter.right)}
+              value={dayjs(filter.right)}
               onChange={(e: any) => {
                 handleFilters(
                   index ?? 0,
@@ -258,6 +260,8 @@ const Filter = ({
                 width: { md: "168px" },
                 marginLeft: { xs: "8px", md: "30px" },
               }}
+              ampm={getAmPm()}
+              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
             />
           </LocalizationProvider>
         );
@@ -658,6 +662,7 @@ const Filter = ({
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   currentView: state.view.currentView,
+  dateFormat: state.date.dateFormat
 });
 
 const mapDispatchToProps = {

@@ -10,6 +10,7 @@ import { isSucc } from "src/models/ApiResponse";
 import { ViewType } from "src/enums/SharedEnums";
 import { PATH_MAIN } from "src/routes/paths";
 import { hasPermission } from "src/utils/permissionHelper";
+import { renderHTML } from "src/utils/convertUtils";
 
 type MenuBarProps = {
   search?: string;
@@ -290,7 +291,7 @@ function MenuItem({ menu, selected, setMenu }: MenuItemProps) {
               : theme.palette.palette_style.text.primary,
         }}
       >
-        {name}
+        {renderHTML(name)}
       </Typography>
     </Box>
   );

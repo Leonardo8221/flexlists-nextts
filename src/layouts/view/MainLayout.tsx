@@ -10,6 +10,7 @@ import { getSearchTypes } from "src/redux/actions/adminAction";
 import { View } from "src/models/SharedModels";
 import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
 import Error from 'src/sections/Error'
+import { getDateFormat } from "src/redux/actions/dateFormatAction";
 import { fetchUserContacts } from "src/redux/actions/userActions";
 
 const APP_BAR_MOBILE = 48;
@@ -28,10 +29,8 @@ const Main = styled("div")(({ theme }) => ({
   paddingTop: APP_BAR_MOBILE,
   paddingBottom: 0,
   display: "flex",
-  height: "calc(100% - 40px)",
   overflow: "hidden",
   [theme.breakpoints.up("md")]: {
-    height: "calc(100vh - 40px)",
     overflow: "hidden",
   },
   [theme.breakpoints.up("lg")]: {
@@ -60,9 +59,10 @@ type MainLayoutProps = {
   removeFooter?: boolean;
   disableOverflow?: boolean;
   currentView: View;
+  apiResponseStatus: ApiResponseStatus;
   getAvailableFieldUiTypes: () => void;
   getSearchTypes: () => void;
-  apiResponseStatus: ApiResponseStatus,
+  getDateFormat: () => void;
   fetchUserContacts: () => void;
 };
 
@@ -70,27 +70,36 @@ const MainLayout = ({
   children,
   removeFooter = false,
   disableOverflow = false,
-  getAvailableFieldUiTypes,
-  getSearchTypes,
   currentView,
   apiResponseStatus,
+  getAvailableFieldUiTypes,
+  getSearchTypes,
+  getDateFormat,
   fetchUserContacts
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(0);
+
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+  }, []);
+
   useEffect(() => {
     if (router.isReady) {
       getAvailableFieldUiTypes();
       getSearchTypes();
+      getDateFormat();
       fetchUserContacts();
     }
   }, [router.isReady]);
+
   return apiResponseStatus === ApiResponseStatus.Success ?(
     <StyledRoot>
       <Header onOpenNav={() => setOpen(true)} />
 
-      <Main>
+      <Main sx={{ height: `${windowHeight - 40}px` }}>
         <Nav openNav={open} onCloseNav={() => setOpen(false)} />
         <Content theme={theme} disableOverflow={disableOverflow}>
           {children}
@@ -105,6 +114,7 @@ const MainLayout = ({
     </>
   )
 };
+
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   apiResponseStatus: state.admin.apiResponseStatus
@@ -113,6 +123,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   getAvailableFieldUiTypes,
   getSearchTypes,
+  getDateFormat,
   fetchUserContacts
 };
 
