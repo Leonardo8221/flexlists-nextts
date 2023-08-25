@@ -45,6 +45,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { clone } from "lodash";
+import { View } from "src/models/SharedModels";
 
 type ShareListProps = {
   open: boolean;
@@ -55,6 +56,7 @@ type ShareListProps = {
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
   styles?: any;
   setFlashMessage: (message: FlashMessageModel) => void;
+  currentView:View
 };
 
 const style = {
@@ -103,7 +105,8 @@ const ShareList = ({
   setViewUsers,
   setViewGroups,
   styles,
-  setFlashMessage
+  setFlashMessage,
+  currentView
 }: ShareListProps) => {
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
@@ -118,7 +121,7 @@ const ShareList = ({
       value: "Users",
       icon: <PersonIcon />,
       component: (
-        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} setFlashMessage={setFlashMessage} />
+        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} setFlashMessage={setFlashMessage} currentView={currentView} />
       ),
     },
     {
@@ -130,13 +133,14 @@ const ShareList = ({
           roles={roles}
           setViewGroups={setViewGroups}
           setFlashMessage={setFlashMessage}
+          currentView={currentView}
         />
       ),
     },
     {
       value: "Keys",
       icon: <KeyIcon />,
-      component: <ShareKeys roles={roles} />,
+      component: <ShareKeys roles={roles} currentView={currentView} />,
     },
   ];
   const changeTab = (value: any) => {
@@ -218,13 +222,15 @@ type ShareUsersProps = {
   setViewUsers: (newUsers: any[]) => void;
   styles?: any;
   setFlashMessage: (message: FlashMessageModel) => void;
+  currentView:View
 };
 const ShareUsers = ({
   users,
   roles,
   setViewUsers,
   styles,
-  setFlashMessage
+  setFlashMessage,
+  currentView
 }: ShareUsersProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
@@ -254,7 +260,7 @@ const ShareUsers = ({
     setFlashMessage({message:message,type:'error'})
   }
   const onSubmit = async () => {
-    if (!router.query.viewId) {
+    if (!currentView.id) {
       setFlashMessage({ message: "View id is not valid", type: "error" });
       return;
     }
@@ -271,7 +277,7 @@ const ShareUsers = ({
     
     if (existContact) {
       let inviteToUserResponse = await listViewService.inviteUserToView(
-        convertToInteger(router.query.viewId),
+        currentView.id,
         existContact.userId,
         role
       );
@@ -282,7 +288,7 @@ const ShareUsers = ({
       }
     } else {
       let inviteToEmailResponse = await listViewService.inviteEmailToView(
-        convertToInteger(router.query.viewId),
+        currentView.id,
         invitedEmail,
         role
       );
@@ -377,13 +383,15 @@ type ShareGroupsProps = {
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
   styles?: any;
   setFlashMessage: (message: FlashMessageModel) => void;
+  currentView:View
 };
 const ShareGroups = ({
   viewGroups,
   roles,
   setViewGroups,
   styles,
-  setFlashMessage
+  setFlashMessage,
+  currentView
 }: ShareGroupsProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
@@ -421,7 +429,7 @@ const ShareGroups = ({
     }
     var response = await listViewService.addTableViewToGroup(
       currentGroup.groupId,
-      convertToInteger(router.query.viewId),
+      currentView.id,
       role
     );
     if (isSucc(response)) {
@@ -514,8 +522,9 @@ const ShareGroups = ({
 };
 type ShareKeysProps = {
   roles: { name: string; label: string }[];
+  currentView:View
 };
-const ShareKeys = ({ roles }: ShareKeysProps) => {
+const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const [keyName, setKeyName] = useState<string>("");
@@ -525,7 +534,7 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
   useEffect(() => {
     async function fetchData() {
       var response = await listViewService.getKeysForView(
-        convertToInteger(router.query.viewId)
+        currentView.id
       );
       if (isSucc(response) && response.data) {
         setViewKeys(response.data);
@@ -618,6 +627,7 @@ const ShareKeys = ({ roles }: ShareKeysProps) => {
 const mapStateToProps = (state: any) => ({
   users: state.view.users,
   viewGroups: state.view.viewGroups,
+  currentView: state.view.currentView
 });
 
 const mapDispatchToProps = {
