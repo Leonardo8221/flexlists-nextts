@@ -133,7 +133,7 @@ function CalendarViewConfig({
       endDateTimeId && !isOpenEndDateTimeModal
         ? endDateTimeId
         : newDateTimeFields.length > 1
-        ? newDateTimeFields[1].id
+        ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId)[0].id
         : 0;
     const defaultColorId =
       colorId && !isOpenColorModal
@@ -160,7 +160,7 @@ function CalendarViewConfig({
     setTitleFields(newTitleFields);
     setBeginDateTimeFields(newDateTimeFields);
     setEndDateTimeFields(
-      newDateTimeFields.length > 1 ? newDateTimeFields.slice(1) : []
+      newDateTimeFields.length > 1 ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId) : []
     );
     setColorFields(newColorFields);
 
