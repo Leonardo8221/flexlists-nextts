@@ -26,19 +26,16 @@ import {
   setCurrentView,
   setRows,
 } from "src/redux/actions/viewActions";
-import { User, View } from "src/models/SharedModels";
-import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
+import { View } from "src/models/SharedModels";
+import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
-import { filter } from "lodash";
 import ListFields from "./ListFields";
 import {
   downloadFileUrl,
   getChoiceField,
   getRowContent,
 } from "src/utils/flexlistHelper";
-import AddIcon from "@mui/icons-material/Add";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import ArchiveIcon from "@mui/icons-material/Archive";
@@ -53,12 +50,10 @@ import { hasPermission } from "src/utils/permissionHelper";
 import {
   archiveBulkContents,
   cloneContent,
-  createContent,
   deleteBulkContents,
-  getContent,
   unarchiveBulkContents,
 } from "src/services/listContent.service";
-import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
@@ -67,7 +62,6 @@ import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
 import { getAmPm, getLocalDateTimeFromString, getLocalTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
-import { UserProfile } from "src/models/UserProfile";
 
 type DataTableProps = {
   tab: boolean;
@@ -79,8 +73,7 @@ type DataTableProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
-  userContacts: User[],
-  userProfile: UserProfile
+  users: any[],
 };
 
 const DataTable = ({
@@ -93,8 +86,7 @@ const DataTable = ({
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
-  userContacts,
-  userProfile
+  users
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -123,9 +115,7 @@ const DataTable = ({
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
   const timeAmPm = getAmPm()
-
-  const [selectedColor, setSelectedColor] = useState<string>("#000000");
-
+  
   const tableStyle = {
     sx: {
       WebkitOverflowScrolling: "auto",
@@ -232,7 +222,6 @@ const DataTable = ({
 
     setToggleBulkAction(false);
   }, [rows, router.query]);
-
   // useEffect(() => {
   //   if (router.isReady) {
   //     setTimeout(() => {
@@ -270,14 +259,10 @@ const DataTable = ({
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
   const getUserName = (userId: any) => {  
-    let user = userContacts.find(x=>x.userId === userId)
+    let user = users.find(x=>x.userId === userId)
     if(user)
     {
       return user.name
-    }
-    if(userProfile.id === userId)
-    {
-      return userProfile.name
     }
     return ""
   }
@@ -561,7 +546,7 @@ const DataTable = ({
                 );
                 case FieldUiTypeEnum.User:
                 return (
-                  <Box
+                  users.length>0 &&<Box
                     key={row.id}
                   >
                    {getUserName(cellValue)}
@@ -1157,8 +1142,7 @@ const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
   currentView: state.view.currentView,
   count: state.view.count,
-  userProfile : state.user.userProfile,
-  userContacts: state.user.userContacts
+  users : state.view.users
 });
 
 const mapDispatchToProps = {

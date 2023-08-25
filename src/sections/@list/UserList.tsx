@@ -24,13 +24,16 @@ const ViewUsersList = ({
   const theme = useTheme();
   const router = useRouter();
   useEffect(() => {
-    if (router.query.viewId) {
-      getViewUsers(convertToInteger(router.query.viewId));
+    let viewId = router.query.viewId??router.query.defaultListViewId
+    if (viewId) {
+      
+      getViewUsers(convertToInteger(viewId));
     }
   }, [router.query.viewId, getViewUsers]);
   useEffect(() => {
-    if (router.query.viewId) {
-      getViewUserGroups(convertToInteger(router.query.viewId));
+    let viewId = router.query.viewId??router.query.defaultListViewId
+    if (viewId) {
+      getViewUserGroups(convertToInteger(viewId));
     }
   }, [router.query.viewId, getViewUserGroups]);
   return (

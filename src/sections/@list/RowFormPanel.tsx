@@ -77,7 +77,7 @@ import { useReactToPrint } from "react-to-print";
 import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 import ColorPicker from "src/components/color-picker/ColorPicker";
-import UserContacts from "../user/UserContacts";
+import ViewUserSelect from "../user/ViewUserSelect";
 
 interface RowFormProps {
   currentView: View;
@@ -1597,25 +1597,23 @@ const RowFormPanel = ({
         case FieldUiTypeEnum.User:
           return currentMode !== "view" && !isPrint ? (
             <Box key={column.id}>
-              <UserContacts 
+              <ViewUserSelect 
               isModeView={false}
-              selectedContactId={values[column.id]} 
-              setSelectedContactId={(contactId: number) => {
-                setValues({ ...values, [column.id]: contactId });
+              selectedUserId={values[column.id]} 
+              setSelectedUserId={(userId: number) => {
+                setValues({ ...values, [column.id]: userId });
               }}
-              isIncludedCurrentUser={true} 
               name={column.name}
               />
             </Box>
           ) : (
             <div key={column.id}>
-               <UserContacts 
+               <ViewUserSelect 
                   isModeView={true}
-                  selectedContactId={values[column.id]} 
-                  setSelectedContactId={(contactId: number) => {
-                    setValues({ ...values, [column.id]: contactId });
+                  selectedUserId={values[column.id]} 
+                  setSelectedUserId={(userId: number) => {
+                    setValues({ ...values, [column.id]: userId });
                   }}
-                  isIncludedCurrentUser={true} 
                   name={column.name}
               />
             </div>

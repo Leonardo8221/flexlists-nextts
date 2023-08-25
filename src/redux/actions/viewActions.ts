@@ -201,8 +201,8 @@ export const getViewUsers = (viewId: number): ThunkAction<
   any
 > => {
   return async (dispatch: Dispatch<any>) => {
-    var state = store.getState();
-    if (hasPermission(state.view.currentView.role, 'All')) {
+    // var state = store.getState();
+    // if (hasPermission(state.view.currentView.role, 'All')) {
       try {
         var response = await listViewService.getViewUsers(viewId);
         if (isSucc(response)) {
@@ -212,7 +212,7 @@ export const getViewUsers = (viewId: number): ThunkAction<
       } catch (error) {
         console.log(error)
       }
-    }
+    // }
   };
 };
 export const getViewUserGroups = (viewId: number): ThunkAction<

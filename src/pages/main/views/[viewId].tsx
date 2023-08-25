@@ -13,6 +13,7 @@ import {
   fetchColumns,
   fetchRowsByPage,
   getCurrentView,
+  getViewUsers,
 } from "src/redux/actions/viewActions";
 import { isInteger } from "src/utils/validateUtils";
 import { convertToNumber } from "src/utils/convertUtils";
@@ -34,6 +35,8 @@ type ListProps = {
   columns: ViewField[];
   fetchColumns: (viewId: number) => void;
   fetchRowsByPage: (page?: number, limit?: number) => void;
+  users:any[],
+  getViewUsers: (viewId: number) => void;
 };
 
 export function ViewDetail({
@@ -43,6 +46,8 @@ export function ViewDetail({
   fetchColumns,
   fetchRowsByPage,
   translations,
+  users,
+  getViewUsers
   //test
 }: ListProps & { translations?: TranslationText[]/*, test?: string */ }) {
   const router = useRouter();
@@ -63,6 +68,10 @@ export function ViewDetail({
     ) {
       //console.log(translations, 'flap', test)
       getCurrentView(convertToNumber(router.query.viewId));
+      if(users.length===0)
+      {
+        getViewUsers(convertToNumber(router.query.defaultListViewId));
+      }
     }
   }, [router.isReady]);
 
@@ -95,7 +104,7 @@ export function ViewDetail({
   return (
     <MainLayout>
       {
-        currentView && columns && columns.length > 0 ?
+        currentView && columns && columns.length > 0 && users.length>0 ?
         (
           <Box
         sx={{
@@ -128,12 +137,14 @@ export function ViewDetail({
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   columns: state.view.columns,
+  users: state.view.users,
 });
 
 const mapDispatchToProps = {
   getCurrentView,
   fetchColumns,
   fetchRowsByPage,
+  getViewUsers
 };
 
 // TODO: make this work, there is an access issue, so probably it's not passing the JWT token to the request 
