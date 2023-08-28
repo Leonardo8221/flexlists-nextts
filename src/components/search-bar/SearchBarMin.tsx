@@ -120,7 +120,11 @@ const SearchBarMin = ({
   const handleSelectView = async (view: any) => {
     if (view && view.id) {
       await router.push({ pathname: `${PATH_MAIN.views}/${view.id}` });
-      router.reload();
+      if(currentView && currentView.id)
+      {
+        router.reload();
+      }
+      
     }
   };
   return (
