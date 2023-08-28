@@ -30,10 +30,10 @@ function CalendarViewConfig({
   availableFieldUiTypes,
   config,
 }: CalendarViewConfigProps) {
-  const [titleFieldId, setTitleFieldId] = useState<number>(0);
-  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(0);
-  const [endDateTimeId, setEndDateTimeId] = useState<number>(0);
-  const [colorId, setColorId] = useState<number>(0);
+  const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId:0);
+  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(config && config.beginDateTimeId? config.beginDateTimeId:0);
+  const [endDateTimeId, setEndDateTimeId] = useState<number>(config && config.endDateTimeId? config.endDateTimeId:0);
+  const [colorId, setColorId] = useState<number>(config && config.colorId? config.colorId:0);
 
   const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] =
     useState<boolean>(false);
