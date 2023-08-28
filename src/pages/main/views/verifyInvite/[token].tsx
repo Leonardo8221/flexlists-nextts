@@ -1,12 +1,19 @@
 import { Box, Stack, Typography } from "@mui/material"
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { type } from "os";
 import { useEffect, useState } from "react"
+import { connect } from "react-redux";
+import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
 import { listViewService } from "src/services/listView.service";
+import Error from 'src/sections/Error'
 
-const VerifyInviteToken = () => {
+type VerifyInviteTokenProps = {
+  apiResponseStatus: ApiResponseStatus;
+}
+const VerifyInviteToken = ({apiResponseStatus}:VerifyInviteTokenProps) => {
   const router = useRouter();
   const [verifyResult, setVerifyResult] = useState<string>('Verifying')
   const [isValidated, setIsValidated] = useState<boolean>(false);
@@ -25,7 +32,6 @@ const VerifyInviteToken = () => {
 
       }
       catch (err) {
-        console.log('aaaa')
         console.log(err);
       }
 
@@ -34,20 +40,32 @@ const VerifyInviteToken = () => {
       verifyEmailInvite()
     }
   }, [router.query.token])
-  return (
+  return apiResponseStatus === ApiResponseStatus.Success ?(
     <>
 
       <Typography>{verifyResult}</Typography>
-      {
-        isValidated &&
+      {/* {
+        !isValidated &&
         <Stack >
           <Box>
             Please <Link href={`/auth/login`}>Login</Link>
           </Box>
         </Stack>
-      }
+      } */}
     </>
-  );
+  ):
+  (
+    <>
+    <Error errorStatus={apiResponseStatus} />
+    </>
+  )
 }
-export default VerifyInviteToken
+const mapStateToProps = (state: any) => ({
+  apiResponseStatus: state.admin.apiResponseStatus
+});
+
+const mapDispatchToProps = {
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyInviteToken);
 

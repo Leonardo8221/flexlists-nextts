@@ -13,6 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import WysiwygView from "src/components/wysiwyg/wysiwygView";
 import { View } from "src/models/SharedModels";
+import { renderHTML } from "src/utils/convertUtils";
 
 const CardImage = styled("img")(({ theme }) => ({
   height: 140,
@@ -58,7 +59,7 @@ export default function ViewCard({
       <CardImage sx={{ mt: 2 }} src={bgImage} />
       <CardContent sx={{ py: 2 }}>
         <Typography gutterBottom variant="h6" component="div">
-          {viewName}
+          {renderHTML(viewName)}
         </Typography>
         <WysiwygView
                 value={viewDesc}

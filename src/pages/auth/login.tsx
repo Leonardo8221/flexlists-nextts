@@ -43,8 +43,8 @@ interface LoginProps {
   message: any;
   setMessage: (message: any) => void;
   styles?: any;
-  returnUrl:string,
-  setReturnUrl:(returnUrl:string)=>void
+  returnUrl:any,
+  setReturnUrl:(returnUrl:any)=>void
 }
 
 const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProps) => {
@@ -116,8 +116,8 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
           type: "success",
         });
         if(returnUrl){
-          setReturnUrl('')
-          await router.push({pathname:returnUrl});
+          setReturnUrl(undefined)
+          await router.push(returnUrl);
           return;
         }
         else

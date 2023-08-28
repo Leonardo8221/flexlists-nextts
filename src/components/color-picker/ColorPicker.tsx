@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CirclePicker, ColorResult } from "react-color";
 import { Box, Popover, Button } from "@mui/material";
+import { fieldColors } from "src/constants/fieldColors";
 
 interface ColorPickerProps {
   selectedColor: string;
@@ -27,7 +28,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   return (
     <Box
       sx={{
@@ -51,7 +51,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
         }}
       >
         <Box sx={{ p: 2 }}>
-          <CirclePicker color={selectedColor} onChange={handleColorChange} />
+          <CirclePicker
+            colors={fieldColors}
+            color={selectedColor}
+            onChange={handleColorChange}
+          />
         </Box>
       </Popover>
     </Box>

@@ -22,66 +22,57 @@ export const getDefaultValues = (columns: ViewField[]): any => {
       case FieldUiTypeEnum.DateTime:
       case FieldUiTypeEnum.Time:
         //   defaultValue = new Date().toISOString();
-        break;
-      case FieldUiTypeEnum.Choice:
-        defaultValue = column.config?.values[0]?.label;
-        break;
-      case FieldUiTypeEnum.Boolean:
-        defaultValue = false;
-        break;
-      case FieldUiTypeEnum.Color:
-        defaultValue = "#000000";
-      default:
-        break;
+          break;
+        case FieldUiTypeEnum.Choice:
+          defaultValue = column.config?.values[0]?.label;
+          break;
+        case FieldUiTypeEnum.Boolean:
+          defaultValue = false;
+          break;
+        case FieldUiTypeEnum.Color:
+          defaultValue = "#000000";
+        default:
+          break;
+      }
+      defautValues[column.id] = defaultValue;
     }
-    defautValues[column.id] = defaultValue;
-  }
-  return defautValues;
-};
-export const getDataColumnId = (
-  fieldId: number,
-  columns: ViewField[]
-): string => {
-  var field = columns.find((x) => x.id === fieldId);
-  if (
-    field &&
-    field.system &&
-    (field.name === "id" ||
-      field.name === "createdAt" ||
-      field.name === "updatedAt")
-  ) {
-    return field.name;
-  }
-  return `${fieldId}`;
-};
-export const getColumn = (column_id: any, columns: any[]): any => {
-  const column = columns.find(
-    (item: any) =>
-      item.id === convertToInteger(column_id) || item.name === column_id
-    // (!item.system && item.id === convertToInteger(column_id)) ||
-    // (item.system &&
-    //   (item.name === "createdAt" || item.name === "updatedAt") &&
-    //   item.name === column_id)
-  );
-  return column;
-};
-export const getChoiceField = (
-  fieldDataId: string,
-  column: any
-): { label: string; font: string; color: { bg: string; fill: string } } => {
-  let color = { bg: "#333", fill: "white" };
-  let font = "inherit";
-  let choiceLabel: string = "";
-  let choiceValue: ChoiceModel = column.config?.values?.find(
-    (x: any) => x.id === fieldDataId
-  );
-  if (choiceValue) {
-    choiceLabel = choiceValue.label;
-    color = choiceValue.color ?? { bg: "white", fill: "black" };
-    font = choiceValue.font;
-  }
-  return { label: choiceLabel, font: font, color: color };
-};
+    return defautValues;
+}
+export const getDataColumnId = (fieldId: number, columns: ViewField[]): string => {
+    var field = columns.find((x) => x.id === fieldId);
+    if (field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt')) {
+        return field.name;
+    }
+    return `${fieldId}`;
+
+}
+export const getColumn = (column_id: any,columns:any[]) : ViewField|undefined => {
+
+    const column = columns.find(
+      (item: any) =>
+        item.id === convertToInteger(column_id) ||
+        item.name === column_id
+      // (!item.system && item.id === convertToInteger(column_id)) ||
+      // (item.system &&
+      //   (item.name === "createdAt" || item.name === "updatedAt") &&
+      //   item.name === column_id)
+    );
+    return column;
+  };
+export const getChoiceField = (fieldDataId: string, column: any): { label: string, font: string, color: { bg: string, fill: string } } => {
+    let color = { bg: "#333", fill: "white" };
+    let font = "inherit";
+    let choiceLabel: string = "";
+    let choiceValue: ChoiceModel = column.config?.values?.find(
+        (x: any) => x.id === fieldDataId
+    );
+    if (choiceValue) {
+        choiceLabel = choiceValue.label;
+        color = choiceValue.color ?? { bg: 'white', fill: 'black' };
+        font = choiceValue.font;
+    }
+    return { label: choiceLabel, font: font, color: color };
+}
 export const downloadFileUrl = (id: string) => {
   return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/contentManagement/downloadFile?id=${id}`;
 };

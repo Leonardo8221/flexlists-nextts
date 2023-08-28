@@ -20,7 +20,7 @@ type CalendarViewConfigProps = {
   updateConfig: (config: CalendarConfig) => void;
   columns: ViewField[];
   availableFieldUiTypes: FieldUIType[];
-  config?: CalendarConfig
+  config?: CalendarConfig;
 };
 
 function CalendarViewConfig({
@@ -28,12 +28,12 @@ function CalendarViewConfig({
   updateConfig,
   columns,
   availableFieldUiTypes,
-  config
+  config,
 }: CalendarViewConfigProps) {
-  const [titleFieldId, setTitleFieldId] = useState<number>(0);
-  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(0);
-  const [endDateTimeId, setEndDateTimeId] = useState<number>(0);
-  const [colorId, setColorId] = useState<number>(0);
+  const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId:0);
+  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(config && config.beginDateTimeId? config.beginDateTimeId:0);
+  const [endDateTimeId, setEndDateTimeId] = useState<number>(config && config.endDateTimeId? config.endDateTimeId:0);
+  const [colorId, setColorId] = useState<number>(config && config.colorId? config.colorId:0);
 
   const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] =
     useState<boolean>(false);
@@ -50,7 +50,7 @@ function CalendarViewConfig({
     (uiType) => uiType.name === FieldUiTypeEnum.DateTime
   );
   const colorUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
-    (uiType) => uiType.name === FieldUiTypeEnum.Text
+    (uiType) => uiType.name === FieldUiTypeEnum.Color
   );
 
   const getTitleFields = (): ViewField[] => {
@@ -60,7 +60,7 @@ function CalendarViewConfig({
     return columns.filter((x) => x.uiField === FieldUiTypeEnum.DateTime);
   };
   const getColorFields = (): ViewField[] => {
-    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text);
+    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Color);
   };
 
   const [titleFields, setTitleFields] = useState<ViewField[]>(getTitleFields());
@@ -105,7 +105,7 @@ function CalendarViewConfig({
   const newColorField: any = {
     name: "",
     required: true,
-    uiField: FieldUiTypeEnum.Text,
+    uiField: FieldUiTypeEnum.Color,
     description: "",
     detailsOnly: false,
     icon: "",
@@ -117,10 +117,30 @@ function CalendarViewConfig({
     const newTitleFields: ViewField[] = getTitleFields();
     const newDateTimeFields: ViewField[] = getDateTimeFields();
     const newColorFields: ViewField[] = getColorFields();
-    const defaultTitleId = config && config.titleId? config.titleId:(newTitleFields.length > 0 ? newTitleFields[0].id : 0);
-    const defaultBeginDateTimeId = config && config.beginDateTimeId? config.beginDateTimeId:(newDateTimeFields.length > 0 ? newDateTimeFields[0].id : 0);
-    const defaultEndDateTimeId = config && config.endDateTimeId? config.endDateTimeId:(newDateTimeFields.length > 1 ? newDateTimeFields[1].id : 0);
-    const defaultColorId = config && config.colorId? config.colorId:(newColorFields.length > 0 ? newColorFields[0].id : 0);
+    const defaultTitleId =
+      titleFieldId && !isOpenTitleFieldModal
+        ? titleFieldId
+        : newTitleFields.length > 0
+        ? newTitleFields[0].id
+        : 0;
+    const defaultBeginDateTimeId =
+      beginDateTimeId && !isOpenBeginDateTimeModal
+        ? beginDateTimeId
+        : newDateTimeFields.length > 0
+        ? newDateTimeFields[0].id
+        : 0;
+    const defaultEndDateTimeId =
+      endDateTimeId && !isOpenEndDateTimeModal
+        ? endDateTimeId
+        : newDateTimeFields.length > 1
+        ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId)[0].id
+        : 0;
+    const defaultColorId =
+      colorId && !isOpenColorModal
+        ? colorId
+        : newColorFields.length > 0
+        ? newColorFields[0].id
+        : 0;
     if (newTitleFields.length > 0) {
       setTitleFieldId(defaultTitleId);
     }
@@ -136,11 +156,11 @@ function CalendarViewConfig({
     if (newColorFields.length > 0) {
       setColorId(defaultColorId);
     }
-
+    
     setTitleFields(newTitleFields);
     setBeginDateTimeFields(newDateTimeFields);
     setEndDateTimeFields(
-      newDateTimeFields.length > 1 ? newDateTimeFields.slice(1) : []
+      newDateTimeFields.length > 1 ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId) : []
     );
     setColorFields(newColorFields);
 
