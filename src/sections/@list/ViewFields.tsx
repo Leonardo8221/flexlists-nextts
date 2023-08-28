@@ -19,6 +19,7 @@ import AddColumnButton from "src/components/add-button/AddColumnButton";
 import ListFields from "./ListFields";
 import { reorderViewFields } from "src/services/field.service";
 import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
+import { getFieldIcons } from "src/utils/flexlistHelper";
 
 type ViewFieldsProps = {
   currentView: View;
@@ -176,7 +177,9 @@ const ViewFields = ({
   };
   const style = {
     position: "absolute",
-    top: `calc(50% - ${modalHeight / 2}px)`,
+    // top: `calc(50% - ${modalHeight / 2}px)`,
+    top: "50%",
+    transform: "translateY(-50%)",
     left: { xs: 0, md: "calc(50% - 179px)" },
     width: { xs: "100%", md: "357px" },
     backgroundColor: "white",
@@ -185,6 +188,8 @@ const ViewFields = ({
     boxShadow: "0 0 10px 10px rgba(0, 0, 0, 0.05)",
     borderRadius: "5px",
     border: "none",
+    maxHeight: "95vh",
+    overflow: "hidden",
   };
 
   const handleOpenFieldManagementPanel = () => {
@@ -329,107 +334,105 @@ const ViewFields = ({
                         py: 2,
                         maxHeight: {
                           xs: `${window.innerHeight - 320}px`,
-                          md: `${window.innerHeight - 140}px`,
+                          // md: `${window.innerHeight - 140}px`,
                         },
                         overflow: "auto",
                       }}
                     >
-                      {filterColumns.map((column: any, index: number) => { 
-                        let columnIcon = column.icon??getDefaultFieldIcon(column.uiField)
+                      {filterColumns.map((column: any, index: number) => {
+                        let columnIcon =
+                          column.icon ?? getDefaultFieldIcon(column.uiField);
                         return (
-                        <Draggable
-                          key={`${column.id}`}
-                          draggableId={`${column.id}`}
-                          index={index}
-                        >
-                          {(provided: any) => (
-                            <Box
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                cursor: "pointer",
-                                py: 1,
-                              }}
-                            >
-                              <Box flexGrow={2} sx={{ display: "flex" }}>
-                                <Checkbox
-                                  checked={column.viewFieldVisible}
-                                  sx={{
-                                    color: "#CCCCCC",
-                                    "&.Mui-checked": {
-                                      color: "#54A6FB",
-                                    },
-                                    p: 0,
-                                    marginRight: 1,
-                                  }}
-                                  onChange={() => {
-                                    changeVisible(index);
-                                  }}
-                                />
-                                <Checkbox
-                                  checked={!column.viewFieldDetailsOnly}
-                                  sx={{
-                                    color: "#CCCCCC",
-                                    "&.Mui-checked": {
-                                      color: "#54A6FB",
-                                    },
-                                    p: 0,
-                                    marginRight: 1,
-                                  }}
-                                  onChange={() => {
-                                    changeDetailsOnly(index);
-                                  }}
-                                />
+                          <Draggable
+                            key={`${column.id}`}
+                            draggableId={`${column.id}`}
+                            index={index}
+                          >
+                            {(provided: any) => (
+                              <Box
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  cursor: "pointer",
+                                  p: 1,
+                                }}
+                              >
+                                <Box
+                                  flexGrow={2}
+                                  sx={{ display: "flex", alignItems: "center" }}
+                                >
+                                  <Checkbox
+                                    checked={column.viewFieldVisible}
+                                    sx={{
+                                      color: "#CCCCCC",
+                                      "&.Mui-checked": {
+                                        color: "#54A6FB",
+                                      },
+                                      p: 0,
+                                      marginRight: 1,
+                                    }}
+                                    onChange={() => {
+                                      changeVisible(index);
+                                    }}
+                                  />
+                                  <Checkbox
+                                    checked={!column.viewFieldDetailsOnly}
+                                    sx={{
+                                      color: "#CCCCCC",
+                                      "&.Mui-checked": {
+                                        color: "#54A6FB",
+                                      },
+                                      p: 0,
+                                      marginRight: 1,
+                                    }}
+                                    onChange={() => {
+                                      changeDetailsOnly(index);
+                                    }}
+                                  />
+                                  <Box
+                                    component="span"
+                                    className="svg-color"
+                                    sx={{
+                                      width: 18,
+                                      height: 18,
+                                      bgcolor: "#666",
+                                      display: "inline-block",
+                                      mask: `url(/assets/icons/table/column/${columnIcon}.svg) no-repeat center / contain`,
+                                      WebkitMask: `url(/assets/icons/table/column/${columnIcon}.svg) no-repeat center / contain`,
+                                      marginRight: 1,
+                                      // marginTop: 0.5,
+                                    }}
+                                  />
+
+                                  <Box
+                                    sx={{ cursor: "pointer" }}
+                                    flexGrow={2}
+                                    onClick={() => handleSelectField(column)}
+                                  >
+                                    {column.viewFieldName}
+                                  </Box>
+                                </Box>
                                 <Box
                                   component="span"
                                   className="svg-color"
                                   sx={{
-                                    width: 15,
-                                    height: 15,
+                                    width: 14,
+                                    height: 14,
                                     display: "inline-block",
-                                    mask: `${
-                                      columnIcon
-                                        ? `url(/assets/icons/table/column/${columnIcon}.svg)`
-                                        : ``
-                                    } no-repeat center / contain`,
-                                    WebkitMask: `${
-                                      columnIcon
-                                        ? `url(/assets/icons/table/column/${columnIcon}.svg)`
-                                        : ""
-                                    } no-repeat center / contain`,
-                                    marginRight: 1,
-                                    marginTop: 0.5,
+                                    bgcolor:
+                                      theme.palette.palette_style.text.primary,
+                                    mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
+                                    WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
                                   }}
                                 />
-                                <Box
-                                  sx={{ cursor: "pointer" }}
-                                  flexGrow={2}
-                                  onClick={() => handleSelectField(column)}
-                                >
-                                  {column.viewFieldName}
-                                </Box>
                               </Box>
-                              <Box
-                                component="span"
-                                className="svg-color"
-                                sx={{
-                                  width: 14,
-                                  height: 14,
-                                  display: "inline-block",
-                                  bgcolor:
-                                    theme.palette.palette_style.text.primary,
-                                  mask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
-                                  WebkitMask: `url(/assets/icons/toolbar/drag_indicator.svg) no-repeat center / contain`,
-                                }}
-                              />
-                            </Box>
-                          )}
-                        </Draggable>
-                      )}
-                      )}
+                            )}
+                          </Draggable>
+                        );
+                      })}
                     </Box>
                   )}
                 </Droppable>

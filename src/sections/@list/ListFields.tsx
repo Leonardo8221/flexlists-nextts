@@ -211,7 +211,10 @@ const ListFields = ({
 
       <Divider sx={{ my: 2 }}></Divider>
       <DialogContent
-        sx={{ p: 0, maxHeight: { xs: "calc(100vh - 136px)", md: "auto" } }}
+        sx={{
+          p: 0,
+          maxHeight: { xs: "calc(100vh - 136px)", md: "auto" },
+        }}
       >
         {fieldManagementMode ? (
           <>
@@ -224,7 +227,7 @@ const ListFields = ({
                     sx={{
                       py: 2,
                       maxHeight: `${window.innerHeight - 140}px`,
-                      overflow: "hidden",
+                      overflow: "auto",
                       minHeight: "360px",
                     }}
                   >

@@ -289,61 +289,61 @@ export function getDefaultFieldIcon(fieldType: FieldUiTypeEnum): string {
   let icon: string = "";
   switch (fieldType) {
     case FieldUiTypeEnum.Choice:
-      icon = "";
+      icon = "Choice";
       break;
     case FieldUiTypeEnum.Boolean:
-      icon = "";
+      icon = "Boolean";
       break;
     case FieldUiTypeEnum.Color:
-      icon = "color";
+      icon = "Color";
       break;
     case FieldUiTypeEnum.Date:
-      icon = "date";
+      icon = "Date";
       break;
     case FieldUiTypeEnum.DateTime:
-      icon = "date";
+      icon = "Date-Time";
       break;
     case FieldUiTypeEnum.Decimal:
-      icon = "";
+      icon = "Decimal";
       break;
     case FieldUiTypeEnum.Document:
-      icon = "";
+      icon = "Document";
       break;
     case FieldUiTypeEnum.Double:
       icon = "";
       break;
     case FieldUiTypeEnum.Float:
-      icon = "";
+      icon = "Float";
       break;
     case FieldUiTypeEnum.HTML:
-      icon = "html";
+      icon = "HTML";
       break;
     case FieldUiTypeEnum.Image:
-      icon = "";
+      icon = "Image";
       break;
     case FieldUiTypeEnum.Integer:
-      icon = "";
+      icon = "Integer";
       break;
     case FieldUiTypeEnum.LongText:
-      icon = "";
+      icon = "Long-Text";
       break;
     case FieldUiTypeEnum.Markdown:
-      icon = "markdown";
+      icon = "Markdown";
       break;
     case FieldUiTypeEnum.Money:
-      icon = "price";
+      icon = "Price";
       break;
     case FieldUiTypeEnum.Percentage:
       icon = "";
       break;
     case FieldUiTypeEnum.Text:
-      icon = "task";
+      icon = "Text";
       break;
     case FieldUiTypeEnum.Time:
-      icon = "time";
+      icon = "Time";
       break;
     case FieldUiTypeEnum.Video:
-      icon = "";
+      icon = "Video";
       break;
     case FieldUiTypeEnum.User:
       icon = "";
@@ -355,18 +355,28 @@ export function getDefaultFieldIcon(fieldType: FieldUiTypeEnum): string {
 }
 export function getFieldIcons(): string[] {
   return [
-    "angle_down",
-    "close",
-    "date",
-    "importance",
-    "phase",
-    "plus",
-    "price",
-    "task",
-    "user",
-    "color",
-    "markdown",
-    "html",
-    "time",
+    "Text",
+    "Long-Text",
+    "HTML",
+    "Markdown",
+    "Integer",
+    "Float",
+    "Decimal",
+    "Choice",
+    "Boolean",
+    "Color",
+    "Date",
+    "Time",
+    "Date-Time",
+    "Image",
+    "Video",
+    "Document",
+    "Price",
+    "User",
+    "Down",
+    "Close",
+    "Importance",
+    "Phase",
+    "Plus",
   ];
 }

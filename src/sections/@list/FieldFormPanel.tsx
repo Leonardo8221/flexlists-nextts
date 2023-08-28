@@ -20,7 +20,12 @@ import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { CreateFieldOutputDto } from "src/models/ApiOutputModels";
 import { connect } from "react-redux";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
-import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import {
+  FieldValidatorEnum,
+  ModelValidatorEnum,
+  frontendValidate,
+  isFrontendError,
+} from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { getFieldIcons } from "src/utils/flexlistHelper";
 interface FieldFormPanelProps {
@@ -31,7 +36,7 @@ interface FieldFormPanelProps {
   onUpdate: (field: Field) => void;
   onDelete: (id: number) => void;
   onClose: () => void;
-  setFlashMessage: (message: FlashMessageModel) => void
+  setFlashMessage: (message: FlashMessageModel) => void;
 }
 
 const GroupHeader = styled("div")(({ theme }) => ({
@@ -56,7 +61,7 @@ function FieldFormPanel({
   onUpdate,
   onDelete,
   onClose,
-  setFlashMessage
+  setFlashMessage,
 }: FieldFormPanelProps) {
   const theme = useTheme();
   const isCreating: boolean = !field.id || field.id == 0;
@@ -83,25 +88,36 @@ function FieldFormPanel({
     }
   }, [field]);
   const setError = (message: string) => {
-    setFlashMessage({ message: message, type: 'error' })
-  }
+    setFlashMessage({ message: message, type: "error" });
+  };
   const handleSubmit = async () => {
     setIsSubmit(true);
-   
-    let _errors: { [key: string]: string|boolean } = {}
+
+    let _errors: { [key: string]: string | boolean } = {};
 
     const _setErrors = (e: { [key: string]: string | boolean }) => {
-      _errors = e
-    }
-    let newGroupName = await frontendValidate(ModelValidatorEnum.FieldDefinition, FieldValidatorEnum.name, currentField.name, _errors, _setErrors, true)
-    if (isFrontendError(FieldValidatorEnum.name, _errors, setErrors, setError)) return
+      _errors = e;
+    };
+    let newGroupName = await frontendValidate(
+      ModelValidatorEnum.FieldDefinition,
+      FieldValidatorEnum.name,
+      currentField.name,
+      _errors,
+      _setErrors,
+      true
+    );
+    if (isFrontendError(FieldValidatorEnum.name, _errors, setErrors, setError))
+      return;
     if (isCreating) {
-      if(currentField.name && (currentField.name.toLowerCase() === 'id'||
-      currentField.name.toLowerCase() === 'createdat'||
-      currentField.name.toLowerCase() === 'updatedat'||
-      currentField.name.toLowerCase() === '___archived')){
-        setError(`Field name cannot be ${currentField.name}`)
-        return
+      if (
+        currentField.name &&
+        (currentField.name.toLowerCase() === "id" ||
+          currentField.name.toLowerCase() === "createdat" ||
+          currentField.name.toLowerCase() === "updatedat" ||
+          currentField.name.toLowerCase() === "___archived")
+      ) {
+        setError(`Field name cannot be ${currentField.name}`);
+        return;
       }
       var createFieldResponse = await fieldService.createUIField(
         viewId,
@@ -120,7 +136,10 @@ function FieldFormPanel({
         ).fieldId;
         onAdd(currentField);
       } else {
-        setFlashMessage({ message: createFieldResponse.message, type: "error" })
+        setFlashMessage({
+          message: createFieldResponse.message,
+          type: "error",
+        });
         return;
       }
     } else {
@@ -140,7 +159,10 @@ function FieldFormPanel({
       if (isSucc(updateFieldResponse)) {
         onUpdate(currentField);
       } else {
-        setFlashMessage({ message: (updateFieldResponse as FlexlistsError).message, type: "error" })
+        setFlashMessage({
+          message: (updateFieldResponse as FlexlistsError).message,
+          type: "error",
+        });
         return;
       }
     }
@@ -234,8 +256,7 @@ function FieldFormPanel({
     //   <DialogTitle textAlign="center" sx={{ borderBottom: `1px solid ${theme.palette.palette_style.border.default}` }}>Create New Field</DialogTitle>
     //   <DialogContent>
     <form onSubmit={(e) => e.preventDefault()}>
-      <Stack>
-      </Stack>
+      <Stack></Stack>
       <Stack
         sx={{
           width: "100%",
@@ -328,7 +349,7 @@ function FieldFormPanel({
             required
             InputLabelProps={{ shrink: currentField.icon !== "" }}
             disabled={!isCreating && field.system}
-          // error={submit && !currentField.icon}
+            // error={submit && !currentField.icon}
           />
           {visibleIconList && (
             <Box sx={{ py: 1 }}>
@@ -337,6 +358,7 @@ function FieldFormPanel({
                   key={icon + index}
                   component="span"
                   className="svg-color add_icon"
+                  title={icon}
                   sx={{
                     width: 18,
                     height: 18,
@@ -401,12 +423,10 @@ function FieldFormPanel({
 
 // };
 
-
-const mapStateToProps = (state: any) => ({
-});
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
-  setFlashMessage
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FieldFormPanel);
