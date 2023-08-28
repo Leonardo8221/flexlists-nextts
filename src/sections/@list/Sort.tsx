@@ -65,7 +65,7 @@ const SortPage = ({
         value: "Last-First",
       },
     ];
-    switch (column.type) {
+    switch (column?.type) {
       case FieldType.Text:
         directions = [
           {
