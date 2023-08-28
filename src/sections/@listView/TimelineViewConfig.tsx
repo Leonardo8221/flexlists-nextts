@@ -28,10 +28,9 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
   const [isOpenFromFieldModal, setIsOpenFromFieldModal] = useState<boolean>(false);
   const [isOpenToFieldModal, setIsOpenToFieldModal] = useState<boolean>(false);
   const titleFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
-  const colorFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Text);
+  const colorFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Color);
   const levelFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Integer);
-  const fromFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Date);
-  const toFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Date);
+  const dateFieldUiTypes : FieldUIType[] = availableFieldUiTypes.filter((uiType) => uiType.name === FieldUiTypeEnum.Date);
 
   const getTitleFields = () :ViewField[]=>
   {
@@ -40,7 +39,7 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
 
   const getColorFields = () :ViewField[] =>
   {
-    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text);
+    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Color);
   };
 
   const getLevelFields = () :ViewField[]=>
@@ -48,12 +47,7 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
     return columns.filter((x) => x.uiField === FieldUiTypeEnum.Integer);
   };
 
-  const getFromFields = () :ViewField[]=>
-  {
-    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Date);
-  };
-
-  const getToFields = () :ViewField[]=>
+  const getDateFields = () :ViewField[]=>
   {
     return columns.filter((x) => x.uiField === FieldUiTypeEnum.Date);
   };
@@ -61,8 +55,8 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
   const [titleFields, setTitleFields] = useState<ViewField[]>(getTitleFields());
   const [colorFields, setColorFields] = useState<ViewField[]>(getColorFields());
   const [levelFields, setLevelFields] = useState<ViewField[]>(getLevelFields());
-  const [fromFields, setFromFields] = useState<ViewField[]>(getFromFields());
-  const [toFields, setToFields] = useState<ViewField[]>(getToFields());
+  const [fromFields, setFromFields] = useState<ViewField[]>(getDateFields());
+  const [toFields, setToFields] = useState<ViewField[]>(getDateFields());
 
   const newTitleField : any  = {
     name: "",
@@ -77,7 +71,7 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
   const newColorField : any  = {
     name: "",
     required: true,
-    uiField: FieldUiTypeEnum.Text,
+    uiField: FieldUiTypeEnum.Color,
     description: "",
     detailsOnly: false,
     icon: "",
@@ -120,40 +114,70 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
     const newTitleFields : ViewField[] = getTitleFields();
     const newColorFields : ViewField[] = getColorFields();
     const newLevelFields : ViewField[] = getLevelFields();
-    const newFromFields : ViewField[] = getFromFields();
-    const newToFields : ViewField[] = getToFields();
+    const newDateFields : ViewField[] = getDateFields();
 
-    if(newTitleFields.length >0)
+    const defaultTitleId =
+      titleFieldId && !isOpenTitleFieldModal
+        ? titleFieldId
+        : newTitleFields.length > 0
+        ? newTitleFields[0].id
+        : 0;
+    const defaultColorId =
+      colorFieldId && !isOpenColorFieldModal
+        ? colorFieldId
+        : newColorFields.length > 0
+        ? newColorFields[0].id
+        : 0;
+    const defaultLevelId =
+      levelFieldId && !isOpenLevelFieldModal
+        ? levelFieldId
+        : newLevelFields.length > 0
+        ? newLevelFields[0].id
+        : 0;
+    const defaultFromId =
+      fromFieldId && !isOpenFromFieldModal
+        ? fromFieldId
+        : newDateFields.length > 0
+        ? newDateFields[0].id
+        : 0;
+    const defaultToId =
+      toFieldId && !isOpenToFieldModal
+        ? toFieldId
+        : newDateFields.length > 1
+        ? newDateFields.filter((dateField) => dateField.id !== defaultFromId)[0].id
+        : 0;
+
+    if(newTitleFields.length > 0)
     {
-      setTitleFieldId(newTitleFields[0].id);
+      setTitleFieldId(defaultTitleId);
     }
 
-    if(newColorFields.length>0)
+    if(newColorFields.length > 0)
     {
-      setColorFieldId(newColorFields[0].id)
+      setColorFieldId(defaultColorId);
     }
 
-    if(newLevelFields.length>0)
+    if(newLevelFields.length > 0)
     {
-      setLevelFieldId(newLevelFields[0].id)
+      setLevelFieldId(defaultLevelId);
     }
 
-    if(newFromFields.length>0)
+    if(newDateFields.length > 0)
     {
-      setFromFieldId(newFromFields[0].id)
+      setFromFieldId(defaultFromId);
     }
 
-    if(newToFields.length>0)
+    if(newDateFields.length > 1)
     {
-      setToFieldId(newToFields[0].id)
+      setToFieldId(defaultToId);
     }
 
     setTitleFields(newTitleFields);
     setColorFields(newColorFields);
     setLevelFields(newLevelFields);
-    setFromFields(newFromFields);
-    setToFields(newToFields);
-    updateTimelineConfig(newTitleFields.length > 0 ? newTitleFields[0].id : 0, newColorFields.length > 0 ? newColorFields[0].id : 0, newLevelFields.length > 0 ? newLevelFields[0].id : 0, newFromFields.length > 0 ? newFromFields[0].id : 0, newToFields.length > 0 ? newToFields[0].id : 0);
+    setFromFields(newDateFields);
+    setToFields(newDateFields.length > 1 ? newDateFields.filter((dateField) => dateField.id !== defaultFromId) : []);
+    updateTimelineConfig(defaultTitleId, defaultColorId, defaultLevelId, defaultFromId, defaultToId);
   }
 
   useEffect(()=>{
@@ -201,6 +225,9 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
 
   const onFromFieldChange = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
+    const newToDateFields = getDateFields().filter(
+      (dateField: ViewField) => dateField.id !== convertToInteger(value)
+    );
 
     if(value === "-1")
     {
@@ -209,6 +236,14 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
     }
 
     setFromFieldId(convertToInteger(value));
+    setToFields(newToDateFields);
+
+    if (convertToInteger(value) === toFieldId) {
+      setToFieldId(
+        newToDateFields.length ? newToDateFields[0].id : 0
+      );
+    }
+
     updateTimelineConfig(titleFieldId, colorFieldId, levelFieldId, convertToInteger(value), toFieldId);
   };
 
@@ -343,7 +378,7 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
         isOpenFromFieldModal && 
         <CreateFieldModal
           field={newFromField}
-          fieldUiTypes={fromFieldUiTypes}
+          fieldUiTypes={dateFieldUiTypes}
           open = {isOpenFromFieldModal}
           handleClose={()=>setIsOpenFromFieldModal(false)}
         />
@@ -352,7 +387,7 @@ function TimelineViewConfig({ submit, updateConfig, columns, availableFieldUiTyp
         isOpenToFieldModal && 
         <CreateFieldModal
           field={newToField}
-          fieldUiTypes={toFieldUiTypes}
+          fieldUiTypes={dateFieldUiTypes}
           open = {isOpenToFieldModal}
           handleClose={()=>setIsOpenToFieldModal(false)}
         />
