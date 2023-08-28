@@ -47,6 +47,7 @@ type FilterProps = {
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
+  users: any[];
 };
 
 const Filter = ({
@@ -57,6 +58,7 @@ const Filter = ({
   fetchRows,
   setCurrentView,
   handleClose,
+  users
 }: FilterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
@@ -402,6 +404,31 @@ const Filter = ({
             </Select>
           )
           break;
+        case FieldUiTypeEnum.User:
+          defaultConditionOperator = userFilterOperators[0].key;
+          conditionOperators = userFilterOperators;
+          defaultValue = users[0]?.userId
+          render =
+          (
+            <Select
+              value={filter.right}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              size="small"
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            >
+              {users.map((user: any) => (
+                <MenuItem key={user.userId} value={user.userId}>
+                  {user.name}
+                </MenuItem>
+              ))}
+            </Select>
+          )
+          break;
       default:
         break;
     }
@@ -707,7 +734,8 @@ const Filter = ({
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   currentView: state.view.currentView,
-  dateFormat: state.date.dateFormat
+  dateFormat: state.date.dateFormat,
+  users: state.view.users,
 });
 
 const mapDispatchToProps = {
