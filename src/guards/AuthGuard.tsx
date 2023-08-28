@@ -18,7 +18,7 @@ type AuthGuardProps = {
   setLoading: (isLoading: boolean) => void;
   setAuthValidate: (authValidate: any) => void;
   setApiResponseStatus: (apiResponseStatus: ApiResponseStatus) => void;
-  setReturnUrl: (returnUrl: string) => void;
+  setReturnUrl: (returnUrl: any) => void;
 };
 
 export function AuthGuard({ children, isLoading, setLoading, setAuthValidate,setApiResponseStatus,setReturnUrl }: AuthGuardProps) {
@@ -30,7 +30,7 @@ export function AuthGuard({ children, isLoading, setLoading, setAuthValidate,set
     async function initialize() {
       setApiResponseStatus(ApiResponseStatus.Success);
       if (!url.includes('/auth/login')) {
-         setReturnUrl('')
+         setReturnUrl(undefined)
       }
       // let authValidate = getAuthValidatePayLoad();
       // setAuthValidate(authValidate);
