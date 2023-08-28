@@ -37,6 +37,7 @@ import { isArray } from "lodash";
 import { getAmPm } from "src/utils/convertUtils";
 import { getColumn } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
+import { fieldColors } from "src/constants/fieldColors";
 
 type FilterProps = {
   currentView: View;
@@ -357,6 +358,50 @@ const Filter = ({
           </Select>
         );
         break;
+      case FieldUiTypeEnum.Color:
+          defaultConditionOperator = colorFilterOperators[0].key;
+          conditionOperators = colorFilterOperators;
+          defaultValue = fieldColors[0]
+          render =
+          (
+            <Select
+              value={filter.right}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              size="small"
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            >
+              {fieldColors.map((color: any) => (
+                <MenuItem key={color} value={color}>
+                  <Box
+                      sx={{
+                        color: color??"#000000",
+                        display: "flex",
+                        gap: 1,
+                        alignItems: "center",
+                      }}
+                    >
+                   <div
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      backgroundColor: color??"#000000",
+                      borderRadius: "100px",
+                    }}
+                  ></div>
+                  <span style={{ color: color??"#000000" }}>
+                    {color}
+                  </span>
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          )
+          break;
       default:
         break;
     }
