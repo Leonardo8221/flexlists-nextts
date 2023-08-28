@@ -108,6 +108,10 @@ function FieldFormPanel({
     );
     if (isFrontendError(FieldValidatorEnum.name, _errors, setErrors, setError))
       return;
+    if(!currentField.icon)
+    {
+       currentField.icon = getDefaultFieldIcon(currentField.uiField as FieldUiTypeEnum);
+    }
     if (isCreating) {
       if (
         currentField.name &&
