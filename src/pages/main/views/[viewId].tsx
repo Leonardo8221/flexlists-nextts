@@ -70,7 +70,7 @@ export function ViewDetail({
       getCurrentView(convertToNumber(router.query.viewId));
       if(users.length===0)
       {
-        getViewUsers(convertToNumber(router.query.defaultListViewId));
+        getViewUsers(convertToNumber(router.query.viewId));
       }
     }
   }, [router.isReady]);

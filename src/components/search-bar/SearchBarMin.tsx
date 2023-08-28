@@ -5,20 +5,14 @@ import TextField from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { connect } from "react-redux";
-import { type } from "os";
 import { useRouter } from "next/router";
-import { searchContents } from "src/services/listContent.service";
-import { isInteger } from "src/utils/validateUtils";
-import { convertToInteger } from "src/utils/convertUtils";
 import { isSucc } from "src/models/ApiResponse";
 import {
   fetchRowsByPage,
   setCurrentView,
-  setRows,
 } from "src/redux/actions/viewActions";
-import { is } from "date-fns/locale";
 import { searchViews } from "src/services/listView.service";
-import { debounce, set } from "lodash";
+import { debounce } from "lodash";
 import { SearchTypeModel, View } from "src/models/SharedModels";
 import { PATH_MAIN } from "src/routes/paths";
 import ClearIcon from "@mui/icons-material/Clear";
