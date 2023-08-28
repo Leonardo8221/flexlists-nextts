@@ -237,6 +237,11 @@ const RowFormPanel = ({
             if (archiveField) {
               values[archiveField.id] = false;
             }
+            const { query } = router;
+            router.replace({
+              pathname: router.pathname,
+              query: { ...query, ["contentId"]: values.id },
+            });
             onSubmit(values, "create");
           } else {
             setFlashMessage({
