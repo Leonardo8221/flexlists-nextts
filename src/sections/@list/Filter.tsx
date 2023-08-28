@@ -471,7 +471,12 @@ const Filter = ({
     borderRadius: "5px",
     border: "none",
   };
-
+  const filteredColumns = (columns:ViewField[]) => {
+     return columns.filter((column:ViewField) => {
+        return column.uiField !== FieldUiTypeEnum.Video && column.uiField !== FieldUiTypeEnum.Document && 
+        column.uiField !== FieldUiTypeEnum.Image
+     })
+  }
   return (
     <Modal
       open={open}
@@ -531,7 +536,7 @@ const Filter = ({
                       }}
                       className="sort_column"
                     >
-                      {columns.map((column: any) => {
+                      {filteredColumns(columns).map((column: any) => {
                         var columnValue =
                           column.system &&
                             (column.name === "createdAt" ||
