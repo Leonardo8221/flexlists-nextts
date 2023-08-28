@@ -77,6 +77,7 @@ import { useReactToPrint } from "react-to-print";
 import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 import ColorPicker from "src/components/color-picker/ColorPicker";
+import ViewUserSelect from "../user/ViewUserSelect";
 
 interface RowFormProps {
   currentView: View;
@@ -1593,6 +1594,30 @@ const RowFormPanel = ({
             </div>
           );
         }
+        case FieldUiTypeEnum.User:
+          return currentMode !== "view" && !isPrint ? (
+            <Box key={column.id}>
+              <ViewUserSelect 
+              isModeView={false}
+              selectedUserId={values[column.id]} 
+              setSelectedUserId={(userId: number) => {
+                setValues({ ...values, [column.id]: userId });
+              }}
+              name={column.name}
+              />
+            </Box>
+          ) : (
+            <div key={column.id}>
+               <ViewUserSelect 
+                  isModeView={true}
+                  selectedUserId={values[column.id]} 
+                  setSelectedUserId={(userId: number) => {
+                    setValues({ ...values, [column.id]: userId });
+                  }}
+                  name={column.name}
+              />
+            </div>
+          );
       default:
         return <div key={column.id}></div>;
     }

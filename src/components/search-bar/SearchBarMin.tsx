@@ -5,20 +5,14 @@ import TextField from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { connect } from "react-redux";
-import { type } from "os";
 import { useRouter } from "next/router";
-import { searchContents } from "src/services/listContent.service";
-import { isInteger } from "src/utils/validateUtils";
-import { convertToInteger } from "src/utils/convertUtils";
 import { isSucc } from "src/models/ApiResponse";
 import {
   fetchRowsByPage,
   setCurrentView,
-  setRows,
 } from "src/redux/actions/viewActions";
-import { is } from "date-fns/locale";
 import { searchViews } from "src/services/listView.service";
-import { debounce, set } from "lodash";
+import { debounce } from "lodash";
 import { SearchTypeModel, View } from "src/models/SharedModels";
 import { PATH_MAIN } from "src/routes/paths";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -57,7 +51,7 @@ const SearchBarMin = ({
 
   useEffect(() => {
     if (router.isReady && searchTypes) {
-      if (router.query.viewId) {
+      if (router.query.viewId||router.query.defaultListViewId) {
         setCurrentSearchTypes(searchTypes);
         //if (currentSearchTypes.find((x) => x.name === "CurrentView")) {
         setSearchType("CurrentView");
@@ -74,7 +68,7 @@ const SearchBarMin = ({
     }
   }, [router.isReady, searchTypes]);
   useEffect(() => {
-    if (router.query.viewId) {
+    if (router.query.viewId||router.query.defaultListViewId) {
       setSearch(currentView?.query ?? "");
     }
   }, [currentView?.query]);
@@ -126,7 +120,11 @@ const SearchBarMin = ({
   const handleSelectView = async (view: any) => {
     if (view && view.id) {
       await router.push({ pathname: `${PATH_MAIN.views}/${view.id}` });
-      router.reload();
+      if(currentView && currentView.id)
+      {
+        router.reload();
+      }
+      
     }
   };
   return (

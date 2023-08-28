@@ -21,12 +21,14 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 import { isSucc } from "src/models/ApiResponse";
 import { ThemeContext } from "@emotion/react";
+import { View } from "src/models/SharedModels";
 type ManageKeysProps = {
   viewKeys: GetKeysForViewOutputDto[];
   roles: { name: string; label: string }[];
   onUpdateViewKeys: (newViewKeys: GetKeysForViewOutputDto[]) => void;
+  currentView:View
 };
-function ManageKeys({ viewKeys, roles, onUpdateViewKeys }: ManageKeysProps) {
+function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKeysProps) {
   const theme = useTheme();
   const router = useRouter();
   const [viewKeyUpdateList, setViewKeyUpdateList] = useState<
@@ -73,7 +75,7 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys }: ManageKeysProps) {
   };
   const deleteKey = async (keyId: number) => {
     var response = await listViewService.deleteKeyFromView(
-      convertToInteger(router.query.viewId),
+      currentView.id,
       keyId
     );
     if (isSucc(response)) {

@@ -15,7 +15,7 @@ import { PATH_AUTH } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 
 interface UnauthorizedProps {
-  setReturnUrl: (returnUrl: string) => void,
+  setReturnUrl: (returnUrl: any) => void,
   setMessage: (message: any) => void,
 }
 function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
@@ -62,7 +62,7 @@ function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
     },
   };
   const onSubmit = async() => {
-    setReturnUrl(router.asPath);
+    setReturnUrl({pathname:router.pathname,query: router.query});
     setMessage(null)
     await router.push({pathname: PATH_AUTH.login});
   };

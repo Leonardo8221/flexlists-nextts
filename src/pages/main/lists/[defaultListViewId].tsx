@@ -13,6 +13,7 @@ import {
   fetchColumns,
   fetchRowsByPage,
   getCurrentView,
+  getViewUsers,
 } from "src/redux/actions/viewActions";
 import { isInteger } from "src/utils/validateUtils";
 import { convertToNumber } from "src/utils/convertUtils";
@@ -34,6 +35,8 @@ type ListProps = {
   columns: ViewField[];
   fetchColumns: (viewId: number) => void;
   fetchRowsByPage: (page?: number, limit?: number) => void;
+  users:any[],
+  getViewUsers: (viewId: number) => void;
 };
 
 export function DefaultListViewDetail({
@@ -43,6 +46,8 @@ export function DefaultListViewDetail({
   fetchColumns,
   fetchRowsByPage,
   translations,
+  users,
+  getViewUsers
   //test
 }: ListProps & { translations?: TranslationText[]/*, test?: string */ }) {
   const router = useRouter();
@@ -58,6 +63,11 @@ export function DefaultListViewDetail({
       isInteger(router.query.defaultListViewId)
     ) {
       getCurrentView(convertToNumber(router.query.defaultListViewId));
+      if(users.length===0)
+      {
+        getViewUsers(convertToNumber(router.query.defaultListViewId));
+      }
+      
     }
   }, [router.isReady]);
 
@@ -75,7 +85,7 @@ export function DefaultListViewDetail({
   return  (
     <MainLayout>
       {
-         currentView && columns && columns.length > 0 ? 
+         currentView && columns && columns.length > 0 && users.length>0 ? 
          (<Box
           sx={{
             backgroundColor: theme.palette.palette_style.background.default,
@@ -108,12 +118,14 @@ export function DefaultListViewDetail({
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   columns: state.view.columns,
+  users: state.view.users,
 });
 
 const mapDispatchToProps = {
   getCurrentView,
   fetchColumns,
   fetchRowsByPage,
+  getViewUsers
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
