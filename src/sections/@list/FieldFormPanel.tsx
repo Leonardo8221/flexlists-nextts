@@ -13,7 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import { styled, lighten, darken } from "@mui/system";
 import { FormControl } from "@mui/material";
 import { Field, FieldUIType } from "src/models/SharedModels";
-import { FieldType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
 import ChoiceConfig from "./fieldConfig/ChoiceConfig";
 import { fieldService } from "src/services/field.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
@@ -27,7 +27,7 @@ import {
   isFrontendError,
 } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
-import { getFieldIcons } from "src/utils/flexlistHelper";
+import { getDefaultFieldIcon, getFieldIcons } from "src/utils/flexlistHelper";
 interface FieldFormPanelProps {
   viewId: number;
   field: Field;
@@ -340,14 +340,14 @@ function FieldFormPanel({
             type="text"
             className="add_icon"
             label="Select icon"
-            value={currentField.icon}
+            value={currentField.icon?currentField.icon:getDefaultFieldIcon(currentField.uiField as FieldUiTypeEnum)}
             name="icon"
             size="small"
             onFocus={() => {
               setVisibleIconList(true);
             }}
             required
-            InputLabelProps={{ shrink: currentField.icon !== "" }}
+            InputLabelProps={{ shrink: true }}
             disabled={!isCreating && field.system}
             // error={submit && !currentField.icon}
           />

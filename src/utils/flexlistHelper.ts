@@ -337,7 +337,7 @@ export function getDefaultFieldIcon(fieldType: FieldUiTypeEnum): string {
       icon = "Video";
       break;
     case FieldUiTypeEnum.User:
-      icon = "";
+      icon = "User";
       break;
     default:
       break;
