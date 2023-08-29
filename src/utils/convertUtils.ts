@@ -141,7 +141,6 @@ export function getLocalDateTimeFromString(dateTime: string): string {
   return getLocalDateTime(new Date(dateTime))
 }
 export function getDateFormatString(locale = 'en-US') {
-  console.log(locale)
   const formatObj = new Intl.DateTimeFormat(locale).formatToParts(new Date());
   return formatObj
     .map(obj => {
