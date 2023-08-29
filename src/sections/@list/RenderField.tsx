@@ -27,7 +27,7 @@ import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
-import { getAmPm, getLocalDateTimeFromString, getLocalDateFromString, getDateFromTimeString } from "src/utils/convertUtils";
+import { getAmPm, getLocalDateTimeFromString, getLocalDateFromString, getDateFromTimeString, getDateFormatString } from "src/utils/convertUtils";
 
 const setDateValue = (
   columnId: number,
@@ -69,7 +69,6 @@ export const renderField = (
   submit: boolean,
   columns: any[],
   isPrint: boolean = false,
-  dateFormat: string
 ) => {
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -233,7 +232,7 @@ export const renderField = (
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
             ampm={getAmPm()}
-            format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+            format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
           />
         </LocalizationProvider>
       ) : (
@@ -264,7 +263,7 @@ export const renderField = (
             className={
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
-            format={dateFormat}
+            format={getDateFormatString(window.navigator.language)}
           />
         </LocalizationProvider>
       ) : (

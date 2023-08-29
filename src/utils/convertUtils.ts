@@ -106,7 +106,7 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
 
 export const renderHTML = (rawHTML?: string) => React.createElement("span", { dangerouslySetInnerHTML: { __html: rawHTML } });
 
-const useBrowserLanguage = false
+const useBrowserLanguage = true
 export function getLocalTime(date?: Date): string {
   return (date ?? new Date()).toLocaleTimeString(useBrowserLanguage ? navigator.language : undefined);
 }
@@ -139,4 +139,22 @@ export function getLocalDateFromString(date: string): string {
 
 export function getLocalDateTimeFromString(dateTime: string): string {
   return getLocalDateTime(new Date(dateTime))
+}
+export function getDateFormatString(locale = 'en-US') {
+  console.log(locale)
+  const formatObj = new Intl.DateTimeFormat(locale).formatToParts(new Date());
+  return formatObj
+    .map(obj => {
+      switch (obj.type) {
+        case "day":
+          return "DD";
+        case "month":
+          return "MM";
+        case "year":
+          return "YYYY";
+        default:
+          return obj.value;
+      }
+    })
+    .join("");
 }
