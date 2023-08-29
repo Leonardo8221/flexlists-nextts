@@ -16,6 +16,7 @@ import { FormControl } from "@mui/material";
 import { Field, FieldUIType } from "src/models/SharedModels";
 import { FieldType } from "src/enums/SharedEnums";
 import ChoiceConfig from "./fieldConfig/ChoiceConfig";
+import RelationConfig from "./fieldConfig/RelationConfig";
 import { fieldService } from "src/services/field.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { CreateFieldOutputDto } from "src/models/ApiOutputModels";
@@ -247,6 +248,14 @@ function FieldFormPanel({
           <ChoiceConfig
             choices={field.config?.values ?? []}
             updateChoices={(newChoices) => updateConfig(newChoices)}
+          />
+        );
+
+      case FieldType.Lookup:
+        return (
+          <RelationConfig
+            values={field.config?.values ?? []}
+            updateRelations={(newRelation) => updateConfig(newRelation)}
           />
         );
 

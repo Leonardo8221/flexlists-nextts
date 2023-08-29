@@ -39,6 +39,9 @@ export enum FieldType {
   Float = "Float",
   Double = "Double",
   Percentage = "Percentage",
+  Lookup = "Lookup",
+  Sublist = "Sublist",
+  ManyToMany = "ManyToMany"
 }
 export enum FieldUiTypeEnum {
   Text = "Text",
@@ -59,7 +62,10 @@ export enum FieldUiTypeEnum {
   Percentage = "Percentage",
   Markdown = "Markdown",
   HTML = "HTML",
-  Color = "Color"
+  Color = "Color",
+  Lookup = "Lookup",
+  Sublist = "Sublist",
+  ManyToMany = "ManyToMany"
 }
 export enum SearchType {
   List = "List",
