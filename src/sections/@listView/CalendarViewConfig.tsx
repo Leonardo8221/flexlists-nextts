@@ -30,10 +30,10 @@ function CalendarViewConfig({
   availableFieldUiTypes,
   config,
 }: CalendarViewConfigProps) {
-  const [titleFieldId, setTitleFieldId] = useState<number>(0);
-  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(0);
-  const [endDateTimeId, setEndDateTimeId] = useState<number>(0);
-  const [colorId, setColorId] = useState<number>(0);
+  const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId:0);
+  const [beginDateTimeId, setBeginDateTimeId] = useState<number>(config && config.beginDateTimeId? config.beginDateTimeId:0);
+  const [endDateTimeId, setEndDateTimeId] = useState<number>(config && config.endDateTimeId? config.endDateTimeId:0);
+  const [colorId, setColorId] = useState<number>(config && config.colorId? config.colorId:0);
 
   const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] =
     useState<boolean>(false);
@@ -133,7 +133,7 @@ function CalendarViewConfig({
       endDateTimeId && !isOpenEndDateTimeModal
         ? endDateTimeId
         : newDateTimeFields.length > 1
-        ? newDateTimeFields[1].id
+        ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId)[0].id
         : 0;
     const defaultColorId =
       colorId && !isOpenColorModal
@@ -160,7 +160,7 @@ function CalendarViewConfig({
     setTitleFields(newTitleFields);
     setBeginDateTimeFields(newDateTimeFields);
     setEndDateTimeFields(
-      newDateTimeFields.length > 1 ? newDateTimeFields.slice(1) : []
+      newDateTimeFields.length > 1 ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId) : []
     );
     setColorFields(newColorFields);
 

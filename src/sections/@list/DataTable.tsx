@@ -34,6 +34,7 @@ import ListFields from "./ListFields";
 import {
   downloadFileUrl,
   getChoiceField,
+  getDefaultFieldIcon,
   getRowContent,
 } from "src/utils/flexlistHelper";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -286,12 +287,13 @@ const DataTable = ({
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
       let uiFieldType = dataColumn.uiField;
+      let fieldIcon = dataColumn.icon??getDefaultFieldIcon(dataColumn.uiField)
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
-            {dataColumn.icon && (
+            {fieldIcon && (
               <Box
                 component="span"
                 className="svg-color"
@@ -300,8 +302,8 @@ const DataTable = ({
                   height: 16,
                   display: "inline-block",
                   bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
+                  mask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
                   marginTop: 0.5,
                   marginRight: 1,
                 }}
