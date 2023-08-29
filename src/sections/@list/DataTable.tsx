@@ -195,8 +195,12 @@ const DataTable = ({
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
         setSelectedRowData(currentRow)
-        setVisibleAddRowPanel(true);
-        setMode("view");
+        if(mode === "view")
+        {
+          setVisibleAddRowPanel(true);
+        }
+        
+        // setMode("view");
       }
     }
     if (

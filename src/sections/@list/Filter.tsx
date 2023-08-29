@@ -34,7 +34,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
-import { getAmPm } from "src/utils/convertUtils";
+import { getAmPm, getDateFormatString } from "src/utils/convertUtils";
 import { getColumn } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
 import { fieldColors } from "src/constants/fieldColors";
@@ -43,7 +43,6 @@ type FilterProps = {
   currentView: View;
   columns: ViewField[];
   open: boolean;
-  dateFormat: string;
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
@@ -54,7 +53,6 @@ const Filter = ({
   currentView,
   columns,
   open,
-  dateFormat,
   fetchRows,
   setCurrentView,
   handleClose,
@@ -264,7 +262,7 @@ const Filter = ({
                 marginLeft: { xs: "8px", md: "30px" },
               }}
               ampm={getAmPm()}
-              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+              format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
             />
           </LocalizationProvider>
         );
@@ -739,7 +737,6 @@ const Filter = ({
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   currentView: state.view.currentView,
-  dateFormat: state.date.dateFormat,
   users: state.view.users,
 });
 

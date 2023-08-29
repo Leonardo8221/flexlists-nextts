@@ -74,7 +74,7 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import { useReactToPrint } from "react-to-print";
-import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
+import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString, getDateFormatString } from "src/utils/convertUtils";
 import { useRouter } from "next/router";
 import ColorPicker from "src/components/color-picker/ColorPicker";
 import ViewUserSelect from "../user/ViewUserSelect";
@@ -85,7 +85,6 @@ interface RowFormProps {
   columns: any[];
   open: boolean;
   mode: "view" | "create" | "update" | "comment";
-  dateFormat: string;
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
@@ -105,7 +104,6 @@ const RowFormPanel = ({
   open,
   columns,
   mode,
-  dateFormat,
   onClose,
   onSubmit,
   setFlashMessage,
@@ -237,6 +235,11 @@ const RowFormPanel = ({
             if (archiveField) {
               values[archiveField.id] = false;
             }
+            const { query } = router;
+            router.replace({
+              pathname: router.pathname,
+              query: { ...query, ["contentId"]: values.id },
+            });
             onSubmit(values, "create");
           } else {
             setFlashMessage({
@@ -588,7 +591,7 @@ const RowFormPanel = ({
                   : ""
               }
               ampm={getAmPm()}
-              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+              format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
@@ -639,7 +642,7 @@ const RowFormPanel = ({
                   ? "Mui-error"
                   : ""
               }
-              format={dateFormat}
+              format={getDateFormatString(window.navigator.language)}
             />
           </LocalizationProvider>
         ) : (
@@ -1881,7 +1884,6 @@ const RowFormPanel = ({
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
-  dateFormat: state.date.dateFormat
 });
 
 const mapDispatchToProps = {
