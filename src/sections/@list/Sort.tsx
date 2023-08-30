@@ -52,9 +52,9 @@ const SortPage = ({
     );
     setCurrentView(newCurrentView);
   };
-  
+
   const getSorDirections = (sort: any): { key: string; value: string }[] => {
-    var column = getColumn(sort.fieldId,columns);
+    var column = getColumn(sort.fieldId, columns);
     var directions: { key: string; value: string }[] = [
       {
         key: "asc",

@@ -108,9 +108,10 @@ function FieldFormPanel({
     );
     if (isFrontendError(FieldValidatorEnum.name, _errors, setErrors, setError))
       return;
-    if(!currentField.icon)
-    {
-       currentField.icon = getDefaultFieldIcon(currentField.uiField as FieldUiTypeEnum);
+    if (!currentField.icon) {
+      currentField.icon = getDefaultFieldIcon(
+        currentField.uiField as FieldUiTypeEnum
+      );
     }
     if (isCreating) {
       if (
@@ -344,7 +345,11 @@ function FieldFormPanel({
             type="text"
             className="add_icon"
             label="Select icon"
-            value={currentField.icon?currentField.icon:getDefaultFieldIcon(currentField.uiField as FieldUiTypeEnum)}
+            value={
+              currentField.icon
+                ? currentField.icon
+                : getDefaultFieldIcon(currentField.uiField as FieldUiTypeEnum)
+            }
             name="icon"
             size="small"
             onFocus={() => {
@@ -368,8 +373,8 @@ function FieldFormPanel({
                     height: 18,
                     display: "inline-block",
                     bgcolor: theme.palette.palette_style.text.primary,
-                    mask: `url(/assets/icons/table/column/${icon}.svg) no-repeat center / contain`,
-                    WebkitMask: `url(/assets/icons/table/column/${icon}.svg) no-repeat center / contain`,
+                    mask: `url(/assets/icons/table/${icon}.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/table/${icon}.svg) no-repeat center / contain`,
                     mx: 1.7,
                     my: 1.5,
                     cursor: "pointer",

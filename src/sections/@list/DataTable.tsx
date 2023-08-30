@@ -61,7 +61,12 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
-import { getAmPm, getLocalDateTimeFromString, getLocalTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
+import {
+  getAmPm,
+  getLocalDateTimeFromString,
+  getLocalTimeFromString,
+  getLocalDateFromString,
+} from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 
 type DataTableProps = {
@@ -74,7 +79,7 @@ type DataTableProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
-  users: any[],
+  users: any[];
 };
 
 const DataTable = ({
@@ -87,7 +92,7 @@ const DataTable = ({
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
-  users
+  users,
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -115,8 +120,8 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
-  const timeAmPm = getAmPm()
-  
+  const timeAmPm = getAmPm();
+
   const tableStyle = {
     sx: {
       WebkitOverflowScrolling: "auto",
@@ -194,7 +199,7 @@ const DataTable = ({
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
-        setSelectedRowData(currentRow)
+        setSelectedRowData(currentRow);
         setVisibleAddRowPanel(true);
         setMode("view");
       }
@@ -259,14 +264,13 @@ const DataTable = ({
       );
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
-  const getUserName = (userId: any) => {  
-    let user = users.find(x=>x.userId === userId)
-    if(user)
-    {
-      return user.name
+  const getUserName = (userId: any) => {
+    let user = users.find((x) => x.userId === userId);
+    if (user) {
+      return user.name;
     }
-    return ""
-  }
+    return "";
+  };
   const getColumnKey = (column: any): string => {
     if (
       column.system &&
@@ -283,7 +287,8 @@ const DataTable = ({
     return dataColumns.map((dataColumn: any) => {
       var dataColumnType = dataColumn.type;
       let uiFieldType = dataColumn.uiField;
-      let fieldIcon = dataColumn.icon??getDefaultFieldIcon(dataColumn.uiField)
+      let fieldIcon =
+        dataColumn.icon ?? getDefaultFieldIcon(dataColumn.uiField);
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
@@ -298,8 +303,8 @@ const DataTable = ({
                   height: 16,
                   display: "inline-block",
                   bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
+                  mask: `url(/assets/icons/table/${fieldIcon}.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/table/${fieldIcon}.svg) no-repeat center / contain`,
                   marginTop: 0.5,
                   marginRight: 1,
                 }}
@@ -546,13 +551,11 @@ const DataTable = ({
                     ></div>
                   </Box>
                 );
-                case FieldUiTypeEnum.User:
+              case FieldUiTypeEnum.User:
                 return (
-                  users.length>0 &&<Box
-                    key={row.id}
-                  >
-                   {getUserName(cellValue)}
-                  </Box>
+                  users.length > 0 && (
+                    <Box key={row.id}>{getUserName(cellValue)}</Box>
+                  )
                 );
               default:
                 return <></>;
@@ -1144,13 +1147,13 @@ const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
   currentView: state.view.currentView,
   count: state.view.count,
-  users : state.view.users
+  users: state.view.users,
 });
 
 const mapDispatchToProps = {
   setRows,
   fetchRowsByPage,
   setCurrentView,
-  setFlashMessage
+  setFlashMessage,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);
