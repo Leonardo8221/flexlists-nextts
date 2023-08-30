@@ -16,53 +16,68 @@ import { listViewService } from "src/services/listView.service";
 import { View } from "src/models/SharedModels";
 import { Role } from "src/enums/SharedEnums";
 import { isSucc } from "src/models/ApiResponse";
+import { downloadFileUrl } from "src/utils/flexlistHelper";
 
-type UserListAccessProps = 
-{
-  currentView:View;
-  users:any[]
-  roles:{name:string,label:string}[],
-  setViewUsers:(users:any[]) => void
-}
-function UserListAccess({currentView,users,roles,setViewUsers}:UserListAccessProps) {
+type UserListAccessProps = {
+  currentView: View;
+  users: any[];
+  roles: { name: string; label: string }[];
+  setViewUsers: (users: any[]) => void;
+};
+function UserListAccess({
+  currentView,
+  users,
+  roles,
+  setViewUsers,
+}: UserListAccessProps) {
   const [role, setRole] = useState("");
-  const onRoleChange = async(userId:number,event: SelectChangeEvent) => {
-     let response = await listViewService.updateUserRoleForView(currentView.id,userId,event.target.value as Role)
-     if(isSucc(response))
-     {
-        var newUsers: any[]= Object.assign([],users)
-        setViewUsers(newUsers.map((x:any)=>{
-           if(x.userId === userId)
-           {
-              x.role = event.target.value;
-              return x;
-           }
-           return x;
-        }))
-     }
+  const onRoleChange = async (userId: number, event: SelectChangeEvent) => {
+    let response = await listViewService.updateUserRoleForView(
+      currentView.id,
+      userId,
+      event.target.value as Role
+    );
+    if (isSucc(response)) {
+      var newUsers: any[] = Object.assign([], users);
+      setViewUsers(
+        newUsers.map((x: any) => {
+          if (x.userId === userId) {
+            x.role = event.target.value;
+            return x;
+          }
+          return x;
+        })
+      );
+    }
   };
-  const onDeleteViewUser = async(userId:number) =>
-  {
-      let response = await listViewService.deleteUserFromView(currentView.id,userId);
-      if(isSucc(response))
-      {
-        var newUsers: any[]= Object.assign([],users)
-        setViewUsers(newUsers.filter((x:any)=>{
-           return x.userId != userId
-        }))
-      }
-      
-  }
+  const onDeleteViewUser = async (userId: number) => {
+    let response = await listViewService.deleteUserFromView(
+      currentView.id,
+      userId
+    );
+    if (isSucc(response)) {
+      var newUsers: any[] = Object.assign([], users);
+      setViewUsers(
+        newUsers.filter((x: any) => {
+          return x.userId != userId;
+        })
+      );
+    }
+  };
   return (
     <>
-      {
-        users && users.map((user)=>{
-           return (<>
-           <Box sx={{ my: 2, display: "flex", alignItems: "center" }}>
+      {users &&
+        users.map((user) => {
+          return (
+            <>
+              <Box
+                sx={{ my: 2, display: "flex", alignItems: "center", gap: 1 }}
+              >
                 <Box
                   key={user.name}
                   component="img"
-                  src={user.avatar??'/assets/images/avatars/avatar_1.jpg'}
+                  // src={user.avatar??'/assets/images/avatars/avatar_1.jpg'}
+                  src={downloadFileUrl(user.avatarUrl)}
                   sx={{
                     width: 32,
                     height: 32,
@@ -79,39 +94,43 @@ function UserListAccess({currentView,users,roles,setViewUsers}:UserListAccessPro
                     justifyContent: "space-between",
                   }}
                 >
-              <Box>
-                <Typography variant="body1">{user.name}</Typography>
-                <Typography variant="body2">{user.email}</Typography>
-              </Box>
-              <FormControl
-                variant="standard"
-                sx={{
-                  m: 1,
-                  minWidth: "auto",
-                }}
-              >
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={user.role}
-                  onChange={(e)=>{onRoleChange(user.userId,e)}}
-                  sx={{
-                    fontSize: 14,
-                    "&::before": { borderBottom: "none" },
-                    "&:focused": { backgroundColor: "transparent !important" },
-                  }}
-                >
-                  {roles &&
-                    roles.map((role, index) => {
-                      return (
-                        <MenuItem key={index} value={role.name}>
-                          {role.label}
-                        </MenuItem>
-                      );
-                    })}
-                </Select>
-              </FormControl> 
-              <Box
+                  <Box>
+                    <Typography variant="body1">{user.name}</Typography>
+                    <Typography variant="body2">{user.email}</Typography>
+                  </Box>
+                  <FormControl
+                    variant="standard"
+                    sx={{
+                      m: 1,
+                      minWidth: "auto",
+                    }}
+                  >
+                    <Select
+                      labelId="demo-simple-select-standard-label"
+                      id="demo-simple-select-standard"
+                      value={user.role}
+                      onChange={(e) => {
+                        onRoleChange(user.userId, e);
+                      }}
+                      sx={{
+                        fontSize: 14,
+                        "&::before": { borderBottom: "none" },
+                        "&:focused": {
+                          backgroundColor: "transparent !important",
+                        },
+                      }}
+                    >
+                      {roles &&
+                        roles.map((role, index) => {
+                          return (
+                            <MenuItem key={index} value={role.name}>
+                              {role.label}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                  </FormControl>
+                  <Box
                     sx={{
                       display: "flex",
                       gap: 1,
@@ -120,7 +139,9 @@ function UserListAccess({currentView,users,roles,setViewUsers}:UserListAccessPro
                       color: "#eb2027",
                       fontWeight: 500,
                     }}
-                    onClick={() => {onDeleteViewUser(user.userId)}}
+                    onClick={() => {
+                      onDeleteViewUser(user.userId);
+                    }}
                   >
                     <DeleteIcon />
                     <Typography
@@ -135,17 +156,17 @@ function UserListAccess({currentView,users,roles,setViewUsers}:UserListAccessPro
                     >
                       Delete
                     </Typography>
-                  </Box>           
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-           </>)
-        })
-      }
+            </>
+          );
+        })}
     </>
   );
 }
 const mapStateToProps = (state: any) => ({
-  currentView:state.view.currentView
+  currentView: state.view.currentView,
 });
 
 const mapDispatchToProps = {

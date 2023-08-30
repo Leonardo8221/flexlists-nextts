@@ -14,7 +14,7 @@ type ViewUsersProps = {
   userGroups: any[];
   getViewUsers: (viewId: number) => void;
   getViewUserGroups: (viewId: number) => void;
-  currentView:View
+  currentView: View;
 };
 
 const ViewUsersList = ({
@@ -22,7 +22,7 @@ const ViewUsersList = ({
   getViewUsers,
   userGroups,
   getViewUserGroups,
-  currentView
+  currentView,
 }: ViewUsersProps) => {
   const theme = useTheme();
   const router = useRouter();
@@ -36,44 +36,48 @@ const ViewUsersList = ({
     <Box
       sx={{
         display: "flex",
+        gap: 0.5,
+        width: "max-content",
       }}
     >
       {users &&
         users.map(
           (user: any, index: number) =>
             index < 2 && (
-              <Tooltip  key={user.name} title={user.name}>
+              <Tooltip key={user.name} title={user.name}>
                 <Box
-                component="img"
-                src={downloadFileUrl(user.avatarUrl)}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 50,
-                  border: "1px solid #C92929",
-                  marginLeft: index ? "-7px" : "inherit",
-                  zIndex: users.length - index,
-                  cursor: "pointer",
-                }}
-              />
+                  component="img"
+                  src={downloadFileUrl(user.avatarUrl)}
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 50,
+                    border: "1px solid #C92929",
+                    marginLeft: index ? "-7px" : "inherit",
+                    zIndex: users.length - index,
+                    cursor: "pointer",
+                  }}
+                />
               </Tooltip>
-              
             )
         )}
-      <Box
-        sx={{
-          width: 32,
-          height: 32,
-          borderRadius: 50,
-          border: `1px solid ${theme.palette.palette_style.text.primary}`,
-          position: "relative",
-          cursor: "pointer",
-          display: "grid",
-          placeContent: "center",
-        }}
-      >
-        <Box sx={{ fontSize: "12px" }}>+{users ? users.length - 2 : 0}</Box>
-      </Box>
+      <Tooltip title="other users names">
+        <Box
+          sx={{
+            minWidth: 32,
+            maxWidth: 32,
+            height: 32,
+            borderRadius: 50,
+            border: `1px solid ${theme.palette.palette_style.text.primary}`,
+            position: "relative",
+            cursor: "pointer",
+            display: "grid",
+            placeContent: "center",
+          }}
+        >
+          <Box sx={{ fontSize: "12px" }}>+{users ? users.length - 2 : 0}</Box>
+        </Box>
+      </Tooltip>
     </Box>
   );
 };
@@ -81,7 +85,7 @@ const ViewUsersList = ({
 const mapStateToProps = (state: any) => ({
   users: state.view.users,
   userGroups: state.view.userGroups,
-  currentView: state.view.currentView
+  currentView: state.view.currentView,
 });
 
 const mapDispatchToProps = {

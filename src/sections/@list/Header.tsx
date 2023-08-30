@@ -260,7 +260,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-around",
+            // justifyContent: "space-around",
             gap: 2,
           }}
         >
@@ -269,8 +269,8 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
             component="span"
             className="svg-color"
             sx={{
-              width: { xs: 20, md: 22 },
-              height: { xs: 20, md: 22 },
+              width: { xs: 20, md: 24 },
+              height: { xs: 20, md: 24 },
               display: "inline-block",
               bgcolor: theme.palette.palette_style.text.primary,
               mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
