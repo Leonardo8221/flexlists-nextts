@@ -246,7 +246,7 @@ const ChatForm = ({
                   <Box sx={{ display: "flex" }}>
                     <Box
                       component="img"
-                      src={"/assets/images/avatars/avatar_1.jpg"}
+                      src={getAvatarUrl(message.ownerInfo?.avatarUrl)}
                       sx={{
                         width: 24,
                         height: 24,
