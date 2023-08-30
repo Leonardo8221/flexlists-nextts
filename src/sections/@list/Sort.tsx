@@ -194,8 +194,8 @@ const SortPage = ({
                             height: 14,
                             display: "inline-block",
                             bgcolor: theme.palette.palette_style.text.primary,
-                            mask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
-                            WebkitMask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
+                            mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                            WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
                             marginRight: 1,
                           }}
                         />

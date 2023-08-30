@@ -560,8 +560,8 @@ const Filter = ({
                                 display: "inline-block",
                                 bgcolor:
                                   theme.palette.palette_style.text.primary,
-                                mask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
-                                WebkitMask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
+                                mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                                WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
                                 marginRight: { xs: 0.2, md: 1 },
                               }}
                             />
