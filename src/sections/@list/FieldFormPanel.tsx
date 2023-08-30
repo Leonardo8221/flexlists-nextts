@@ -295,6 +295,7 @@ function FieldFormPanel({
             groupBy={(option) => option.group}
             getOptionLabel={(option) => option.name}
             disabled={!isCreating && field.system}
+            disableClearable={true}
             fullWidth
             // inputValue={currentField.type}
             value={currentFieldType}

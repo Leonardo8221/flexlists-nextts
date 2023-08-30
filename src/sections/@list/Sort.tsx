@@ -9,7 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import { FieldType, SearchType } from "src/enums/SharedEnums";
 import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
-import { getColumn } from "src/utils/flexlistHelper";
+import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 
 type SortProps = {
   currentView: View;
@@ -177,7 +177,10 @@ const SortPage = ({
                     sx={{ width: { md: "168px" }, textTransform: "capitalize" }}
                     className="sort_column"
                   >
-                    {columns.map((column: any) => (
+                    {columns.map((column: any) => {
+                      let coloumIcon =
+                      column.icon ?? getDefaultFieldIcon(column.uiField);
+                      return (
                       <MenuItem
                         key={column.id}
                         value={column.id}
@@ -191,14 +194,14 @@ const SortPage = ({
                             height: 14,
                             display: "inline-block",
                             bgcolor: theme.palette.palette_style.text.primary,
-                            mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                            WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                            mask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
+                            WebkitMask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
                             marginRight: 1,
                           }}
                         />
                         <Box>{column.name}</Box>
                       </MenuItem>
-                    ))}
+                    )})}
                   </Select>
                   <Select
                     value={sort.direction}
