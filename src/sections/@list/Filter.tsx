@@ -35,7 +35,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
 import { getAmPm } from "src/utils/convertUtils";
-import { getColumn } from "src/utils/flexlistHelper";
+import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
 import { fieldColors } from "src/constants/fieldColors";
 
@@ -543,7 +543,8 @@ const Filter = ({
                               column.name === "updatedAt")
                             ? column.name
                             : column.id;
-
+                        let coloumIcon =
+                            column.icon ?? getDefaultFieldIcon(column.uiField);
                         return (
                           <MenuItem
                             key={`${column.id}`}
@@ -559,8 +560,8 @@ const Filter = ({
                                 display: "inline-block",
                                 bgcolor:
                                   theme.palette.palette_style.text.primary,
-                                mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                                WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                mask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
+                                WebkitMask: `url(/assets/icons/table/column/${coloumIcon}.svg) no-repeat center / contain`,
                                 marginRight: { xs: 0.2, md: 1 },
                               }}
                             />
