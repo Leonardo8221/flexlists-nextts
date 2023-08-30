@@ -44,6 +44,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { View } from "src/models/SharedModels";
+import RightPanel from "src/components/right-panel/RightPanel";
 
 type ShareListProps = {
   open: boolean;
@@ -168,19 +169,13 @@ const ShareList = ({
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={closeModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+    <RightPanel
+    open={open}
+    handleClose={closeModal}
+    panelWidth="700px"
     >
       <Box
-        sx={styles?.modal}
-        component={motion.div}
-        variants={scaleUp}
-        initial="hidden"
-        animate="visible"
-        exit="close"
+        sx={{mr:3,ml:3}}
       >
         <Typography gutterBottom variant="h5">
           Share
@@ -211,7 +206,7 @@ const ShareList = ({
           return isMatched && <Box key={tab.value}>{tab.component}</Box>;
         })}
       </Box>
-    </Modal>
+    </RightPanel>
   );
 };
 type ShareUsersProps = {
