@@ -10,6 +10,7 @@ import {
   InputAdornment,
   SelectChangeEvent,
   Tooltip,
+  Box,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -26,9 +27,14 @@ type ManageKeysProps = {
   viewKeys: GetKeysForViewOutputDto[];
   roles: { name: string; label: string }[];
   onUpdateViewKeys: (newViewKeys: GetKeysForViewOutputDto[]) => void;
-  currentView:View
+  currentView: View;
 };
-function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKeysProps) {
+function ManageKeys({
+  viewKeys,
+  roles,
+  onUpdateViewKeys,
+  currentView,
+}: ManageKeysProps) {
   const theme = useTheme();
   const router = useRouter();
   const [viewKeyUpdateList, setViewKeyUpdateList] = useState<
@@ -108,57 +114,58 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
       {viewKeys &&
         viewKeys.map((viewKey, index) => {
           return (
-            <Grid
-              container
-              spacing={2}
-              sx={{ alignItems: "flex-end" }}
-              key={index}
-            >
+            <>
               <Grid
-                item
-                xs={2}
-                sx={{ display: "flex", flexDirection: "column" }}
+                container
+                spacing={1}
+                sx={{ alignItems: "flex-end" }}
+                key={index}
               >
-                <FormLabel>
-                  <Typography variant="body2">Access / Role</Typography>
-                </FormLabel>
-                <Select
-                  size="small"
-                  value={viewKey.role}
-                  onChange={(e) => handleSelectRoleChange(e, index)}
-                  disabled={!isKeyEditing(viewKey.keyId)}
+                <Grid
+                  item
+                  xs={3}
+                  sx={{ display: "flex", flexDirection: "column" }}
                 >
-                  {roles &&
-                    roles.map((role, index) => {
-                      return (
-                        <MenuItem key={index} value={role.name}>
-                          {role.label}
-                        </MenuItem>
-                      );
-                    })}
-                </Select>
-              </Grid>
-              <Grid
-                item
-                xs={4}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  overflow: "hidden",
-                }}
-              >
-                <FormLabel>
-                  <Typography variant="body2">Key Link</Typography>
-                </FormLabel>
+                  <FormLabel>
+                    <Typography variant="body2">Access / Role</Typography>
+                  </FormLabel>
+                  <Select
+                    size="small"
+                    value={viewKey.role}
+                    onChange={(e) => handleSelectRoleChange(e, index)}
+                    disabled={!isKeyEditing(viewKey.keyId)}
+                  >
+                    {roles &&
+                      roles.map((role, index) => {
+                        return (
+                          <MenuItem key={index} value={role.name}>
+                            {role.label}
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </Grid>
+                <Grid
+                  item
+                  xs={3}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                  }}
+                >
+                  <FormLabel>
+                    <Typography variant="body2">Key Link</Typography>
+                  </FormLabel>
 
-                <TextField
-                  size="small"
-                  value={getKeyLink(viewKey.key)}
-                  InputProps={{
-                    readOnly: true,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {/* <Tooltip
+                  <TextField
+                    size="small"
+                    value={getKeyLink(viewKey.key)}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {/* <Tooltip
                       PopperProps={{
                         disablePortal: true,
                       }}
@@ -169,79 +176,72 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
                       disableTouchListener
                       title="Copied"
                     > */}
-                        <ContentCopyIcon
-                          sx={{ cursor: "pointer" }}
-                          onClick={() => {
-                            handleCopyKeyLink(viewKey.key);
-                          }}
-                        />
-                        {/* </Tooltip> */}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-              <Grid
-                item
-                xs={4}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <FormLabel>
-                  <Typography variant="body2">Info</Typography>
-                </FormLabel>
-                <TextField
-                  size="small"
-                  placeholder="Key name"
-                  value={viewKey.name}
-                  onChange={(e: any) => handleViewNameChange(e, index)}
-                  disabled={!isKeyEditing(viewKey.keyId)}
-                />
-              </Grid>
-              <Grid
-                item
-                xs={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end",
-                }}
-              >
-                <Button
-                  fullWidth
-                  variant="text"
+                          <Tooltip title="Copy to clipboard">
+                            <ContentCopyIcon
+                              sx={{ cursor: "pointer" }}
+                              onClick={() => {
+                                handleCopyKeyLink(viewKey.key);
+                              }}
+                            />
+                          </Tooltip>
+
+                          {/* </Tooltip> */}
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={3}
                   sx={{
-                    color: theme.palette.palette_style.primary.main,
+                    display: "flex",
+                    flexDirection: "column",
                   }}
-                  onClick={() => onSubmit(viewKey.keyId)}
                 >
-                  {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-end",
-                }}
-              >
-                <Button
-                  fullWidth
-                  variant="text"
+                  <FormLabel>
+                    <Typography variant="body2">Info</Typography>
+                  </FormLabel>
+                  <TextField
+                    size="small"
+                    placeholder="Key name"
+                    value={viewKey.name}
+                    onChange={(e: any) => handleViewNameChange(e, index)}
+                    disabled={!isKeyEditing(viewKey.keyId)}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={3}
                   sx={{
-                    borderColor: "red",
-                    color: theme.palette.palette_style.error.dark,
+                    display: "flex",
                   }}
-                  onClick={() => deleteKey(viewKey.keyId)}
                 >
-                  Delete
-                </Button>
+                  <Button
+                    fullWidth
+                    variant="text"
+                    sx={{
+                      color: theme.palette.palette_style.primary.main,
+                    }}
+                    onClick={() => onSubmit(viewKey.keyId)}
+                  >
+                    {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
+                  </Button>
+                  <Button
+                    fullWidth
+                    variant="text"
+                    sx={{
+                      borderColor: "red",
+                      color: theme.palette.palette_style.error.dark,
+                    }}
+                    onClick={() => deleteKey(viewKey.keyId)}
+                  >
+                    Delete
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
+              <Box></Box>
+            </>
           );
         })}
     </>

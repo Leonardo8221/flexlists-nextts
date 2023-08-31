@@ -95,8 +95,28 @@ function UserListAccess({
                   }}
                 >
                   <Box>
-                    <Typography variant="body1">{user.name}</Typography>
-                    <Typography variant="body2">{user.email}</Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        maxWidth: { xs: "64px", sm: "unset" },
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {user.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        maxWidth: { xs: "64px", sm: "unset" },
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {user.email}
+                    </Typography>
                   </Box>
                   <FormControl
                     variant="standard"
