@@ -183,7 +183,9 @@ const ShareList = ({
 
   return (
     <RightPanel open={open} handleClose={closeModal} panelWidth="700px">
-      <Box sx={{ mx: 2, my: 2 }}>
+      <Box
+        sx={{ mx: 2, my: 2, height: "calc(100vh - 100px)", overflowY: "auto" }}
+      >
         <Typography gutterBottom variant="h5">
           Share
         </Typography>

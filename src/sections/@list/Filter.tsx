@@ -58,7 +58,7 @@ const Filter = ({
   fetchRows,
   setCurrentView,
   handleClose,
-  users
+  users,
 }: FilterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
@@ -107,7 +107,7 @@ const Filter = ({
   );
   const condtionOperators: string[] = ["And", "Or"];
   const booleanValues: string[] = ["true", "false"];
-  
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -143,7 +143,7 @@ const Filter = ({
               filter["cmp"] === FilterOperator.in ||
               filter["cmp"] === FilterOperator.nin
             ) {
-              let column = getColumn(filter.left,columns);
+              let column = getColumn(filter.left, columns);
               if (column?.uiField !== FieldUiTypeEnum.Choice) {
                 filter[key] = value;
               } else {
@@ -191,9 +191,9 @@ const Filter = ({
     );
     setCurrentView(newView);
   };
-  
+
   const getChoiceValues = (filter: any) => {
-    const column = getColumn(filter.left,columns);
+    const column = getColumn(filter.left, columns);
     let choices: any[] = [];
     if (
       filter.right &&
@@ -208,12 +208,12 @@ const Filter = ({
     }
     return choices;
   };
-  
+
   const getFilter = (
     filter: any,
     index?: number
   ): [string, { key: string; value: string }[], any, any] => {
-    const column = getColumn(filter.left,columns);
+    const column = getColumn(filter.left, columns);
     const columnUiType = column?.uiField;
     let defaultConditionOperator: string = FilterOperator.eq;
     let conditionOperators: { key: string; value: string }[] = [];
@@ -264,7 +264,9 @@ const Filter = ({
                 marginLeft: { xs: "8px", md: "30px" },
               }}
               ampm={getAmPm()}
-              format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+              format={`${dateFormat} ${getAmPm() ? "hh" : "HH"}:mm:ss${
+                getAmPm() ? " a" : ""
+              }`}
             />
           </LocalizationProvider>
         );
@@ -296,7 +298,7 @@ const Filter = ({
 
         render =
           filter.cmp !== FilterOperator.in &&
-            filter.cmp !== FilterOperator.nin ? (
+          filter.cmp !== FilterOperator.nin ? (
             <Select
               value={filter.right}
               onChange={(e) => {
@@ -361,74 +363,70 @@ const Filter = ({
         );
         break;
       case FieldUiTypeEnum.Color:
-          defaultConditionOperator = colorFilterOperators[0].key;
-          conditionOperators = colorFilterOperators;
-          defaultValue = fieldColors[0]
-          render =
-          (
-            <Select
-              value={filter.right}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              size="small"
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            >
-              {fieldColors.map((color: any) => (
-                <MenuItem key={color} value={color}>
-                  <Box
-                      sx={{
-                        color: color??"#000000",
-                        display: "flex",
-                        gap: 1,
-                        alignItems: "center",
-                      }}
-                    >
-                   <div
+        defaultConditionOperator = colorFilterOperators[0].key;
+        conditionOperators = colorFilterOperators;
+        defaultValue = fieldColors[0];
+        render = (
+          <Select
+            value={filter.right}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            size="small"
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          >
+            {fieldColors.map((color: any) => (
+              <MenuItem key={color} value={color}>
+                <Box
+                  sx={{
+                    color: color ?? "#000000",
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <div
                     style={{
                       width: "32px",
                       height: "32px",
-                      backgroundColor: color??"#000000",
+                      backgroundColor: color ?? "#000000",
                       borderRadius: "100px",
                     }}
                   ></div>
-                  <span style={{ color: color??"#000000" }}>
-                    {color}
-                  </span>
-                  </Box>
-                </MenuItem>
-              ))}
-            </Select>
-          )
-          break;
-        case FieldUiTypeEnum.User:
-          defaultConditionOperator = userFilterOperators[0].key;
-          conditionOperators = userFilterOperators;
-          defaultValue = users[0]?.userId
-          render =
-          (
-            <Select
-              value={filter.right}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              size="small"
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            >
-              {users.map((user: any) => (
-                <MenuItem key={user.userId} value={user.userId}>
-                  {user.name}
-                </MenuItem>
-              ))}
-            </Select>
-          )
-          break;
+                  <span style={{ color: color ?? "#000000" }}>{color}</span>
+                </Box>
+              </MenuItem>
+            ))}
+          </Select>
+        );
+        break;
+      case FieldUiTypeEnum.User:
+        defaultConditionOperator = userFilterOperators[0].key;
+        conditionOperators = userFilterOperators;
+        defaultValue = users[0]?.userId;
+        render = (
+          <Select
+            value={filter.right}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            size="small"
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          >
+            {users.map((user: any) => (
+              <MenuItem key={user.userId} value={user.userId}>
+                {user.name}
+              </MenuItem>
+            ))}
+          </Select>
+        );
+        break;
       default:
         break;
     }
@@ -471,12 +469,15 @@ const Filter = ({
     borderRadius: "5px",
     border: "none",
   };
-  const filteredColumns = (columns:ViewField[]) => {
-     return columns.filter((column:ViewField) => {
-        return column.uiField !== FieldUiTypeEnum.Video && column.uiField !== FieldUiTypeEnum.Document && 
+  const filteredColumns = (columns: ViewField[]) => {
+    return columns.filter((column: ViewField) => {
+      return (
+        column.uiField !== FieldUiTypeEnum.Video &&
+        column.uiField !== FieldUiTypeEnum.Document &&
         column.uiField !== FieldUiTypeEnum.Image
-     })
-  }
+      );
+    });
+  };
   return (
     <Modal
       open={open}
@@ -502,8 +503,8 @@ const Filter = ({
               height: 18,
               display: "inline-block",
               bgcolor: theme.palette.palette_style.text.primary,
-              mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+              mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
               cursor: "pointer",
             }}
             onClick={handleClose}
@@ -539,12 +540,12 @@ const Filter = ({
                       {filteredColumns(columns).map((column: any) => {
                         var columnValue =
                           column.system &&
-                            (column.name === "createdAt" ||
-                              column.name === "updatedAt")
+                          (column.name === "createdAt" ||
+                            column.name === "updatedAt")
                             ? column.name
                             : column.id;
                         let coloumIcon =
-                            column.icon ?? getDefaultFieldIcon(column.uiField);
+                          column.icon ?? getDefaultFieldIcon(column.uiField);
                         return (
                           <MenuItem
                             key={`${column.id}`}
@@ -733,7 +734,7 @@ const Filter = ({
           </Box>
         </Box> */}
       </Box>
-    </Modal >
+    </Modal>
   );
 };
 
