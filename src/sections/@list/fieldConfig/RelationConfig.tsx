@@ -1,46 +1,89 @@
-import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from "@coreui/react";
-import { Box, FormControl, FormLabel, TextField, useTheme } from "@mui/material";
-import { ChoiceModel } from "src/models/ChoiceModel";
+import { Box, FormControl, TextField, useTheme, Autocomplete } from "@mui/material";
+import { styled, lighten, darken } from "@mui/system";
 import {
   Field,
   View
 } from "src/models/SharedModels";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { getDefaultListViews } from "src/services/listView.service";
+import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { fieldService } from 'src/services/field.service';
+import { ViewField } from "src/models/ViewField";
+import { fetchColumns } from "../../../redux/actions/viewActions";
+import InputLabel from "@mui/material/InputLabel";
 
-interface RelationConfigProps {
-  values : number[],
-  currentView: View,
-  updateRelations : (newRelation: number[]) => void
+type PresetType = {
+  viewID: number,
+  viewName: string,
+  presetName: string
 };
 
+type RelationConfigParams = {
+  viewId: number,
+  preset: string,
+  rightFieldId: number
+};
+
+interface RelationConfigProps {
+  isSubmit: boolean,
+  values : RelationConfigParams,
+  currentView: View,
+  defaultPreset: any;
+  columns: ViewField[];
+  updateRelations : (newRelation: RelationConfigParams) => void;
+  fetchColumns: (viewId: number) => void;
+};
+
+const GroupHeader = styled("div")(({ theme }) => ({
+  position: "sticky",
+  top: "-8px",
+  padding: "4px 10px",
+  color: theme.palette.primary.main,
+  backgroundColor:
+    theme.palette.mode === "light"
+      ? lighten(theme.palette.primary.light, 0.85)
+      : darken(theme.palette.primary.main, 0.8),
+}));
+
+const GroupItems = styled("ul")({
+  padding: 0,
+});
+
 const RelationConfig = ({
+  isSubmit,
   values,
   currentView,
-  updateRelations
+  defaultPreset,
+  columns,
+  updateRelations,
+  fetchColumns
 }: RelationConfigProps) => {
   const theme = useTheme();
-  const [views, setViews] = useState<View[]>([]);
-  const [view, setView] = useState<number>(0);
-  const [fields, setFields] = useState<Field[]>([]);
-  const [field, setField] = useState<number>(0);
+  const [views, setViews] = useState<PresetType[]>([]);
+  const [view, setView] = useState<PresetType>();
+  const [fields, setFields] = useState<ViewField[]>([]);
+  const [field, setField] = useState<number>();
 
   useEffect(() => {
-    if (values.length > 1) {
-      setView(values[0]);
-      setField(values[1]);
-      fetchFields(values[1]);
-    }
-
     async function fetchLists() {
-      const response = await await getDefaultListViews();
+      const response = await listViewService.getViews(currentView.id);
+
       if (isSucc(response) && response.data && response.data.length > 0) {
-        setViews(response.data);
+        const viewPresets: any[] = [];
+
+        response.data.map((view: any) => {
+          viewPresets.push({viewID: view.id, viewName: view.name, presetName: defaultPreset.name});
+          view.presets.map((preset: any) => {
+            const newView = {viewID: view.id, viewName: view.name, presetName: preset.name};
+            viewPresets.push(newView);
+            if (values && values.viewId && values.viewId === view.id) setView(newView);
+          });
+        });
+        
+        setViews(viewPresets);
       }
     }
 
@@ -49,79 +92,107 @@ const RelationConfig = ({
     }
   }, [currentView]);
 
-  const fetchFields = async (newView: number) => {
-    try {
-      const response = await fieldService.getFields(newView);
-
-      if (isSucc(response)) {
-        setFields(response.data.filter((field: Field) => !field.system));
-        if (!field) setField(0);
-      }
-    } catch (error) {
-      console.log(error)
+  useEffect(() => {
+    if (values && views.length) {
+      const oldView = views.filter((view: PresetType) => view.presetName === values.preset && view.viewID === values.viewId);
+      if (oldView.length) setView(oldView[0]);
     }
-  };
+  }, [values, views]);
 
-  const handleView = (event: SelectChangeEvent) => {
-    setView(parseInt(event.target.value));
+  useEffect(() => {
+    if (view) {
+      const allFields = columns.filter((field: ViewField) => !field.system && field.viewFieldVisible);
 
-    fetchFields(parseInt(event.target.value));
-  };
+      fetchColumns(view.viewID);
+      setFields(allFields);
+      setField(allFields[0].id)
+
+      if (values) {
+        const oldField = allFields.filter((field: ViewField) => field.id === values.rightFieldId);
+        
+        setField(oldField[0].id);
+      }
+    }
+  }, [view]);
 
   const handleField = async (event: SelectChangeEvent) => {
     setField(parseInt(event.target.value));
 
     if (view && event.target.value) {
-      updateRelations([view, parseInt(event.target.value)]);
+      updateRelations({viewId: view.viewID, preset: view.presetName, rightFieldId: parseInt(event.target.value)});
     }
+  };
+
+  const handleViewPresetChange = (newTypeInput?: PresetType | null) => {
+    if (!newTypeInput) {
+      return;
+    }
+
+    setView(newTypeInput);
   };
   
   return (
     <>
-      <FormControl required>
-        <FormLabel sx={{ my: 1 }}>List</FormLabel>
-        <Box>
-          <Select
-            value={view.toString()}
-            onChange={handleView}
-            size="small"
-            sx={{
-              width: '100%'
-            }}
-          >
-            {views.map((view: View) => (
-              <MenuItem key={view.id} value={view.id}>
-                {view.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
+      <FormControl required sx={{ marginTop: 3 }}>
+        <Autocomplete
+          id="view_preset"
+          filterSelectedOptions={false}
+          options={views}
+          groupBy={(option) => option.viewName}
+          getOptionLabel={(option) => option.presetName}
+          fullWidth
+          value={view || null}
+          onChange={(event, newInputValue) => {
+            handleViewPresetChange(newInputValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="View/Preset"
+              error={isSubmit && !view}
+            />
+          )}
+          renderGroup={(params) => (
+            <li key={params.key}>
+              <GroupHeader>{params.group}</GroupHeader>
+              <GroupItems>{params.children}</GroupItems>
+            </li>
+          )}
+        />
       </FormControl>
-      {view !== 0 && <FormControl required>
-        <FormLabel sx={{ my: 1 }}>Field</FormLabel>
-        <Box>
-          <Select
-            value={field.toString()}
-            onChange={handleField}
-            size="small"
-            sx={{
-              width: '100%'
-            }}
-          >
-            {fields.map((field: Field) => (
-              <MenuItem key={field.id} value={field.id}>
-                {field.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-      </FormControl>}
+      {fields.length > 0 ? <FormControl required>
+        <InputLabel id="fieldList" sx={{ top: "-2px" }}>Field</InputLabel>
+        <Select
+          id="fieldList"
+          label="Field"
+          value={(field || 0).toString()}
+          onChange={handleField}
+          size="medium"
+          sx={{
+            width: '100%'
+          }}
+          required
+          error={isSubmit && !field}
+        >
+          {fields.map((field: ViewField) => (
+            <MenuItem key={field.id} value={field.id}>
+              {field.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl> : <></>}
     </>
   );
 };
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  defaultPreset: state.view.defaultPreset,
+  columns: state.view.columns,
 });
 
-export default connect(mapStateToProps)(RelationConfig);
+const mapDispatchToProps = {
+  fetchColumns,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RelationConfig);

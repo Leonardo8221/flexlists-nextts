@@ -144,6 +144,12 @@ function FieldFormPanel({
         setError(`Field name cannot be ${currentField.name}`)
         return
       }
+      if (currentField.uiField == 'Lookup') {
+        if (!currentField.config.values) {
+          setError(`Empty field config`);
+          return;
+        }
+      }
       var createFieldResponse = await fieldService.createUIField(
         viewId,
         currentField.name,
@@ -254,7 +260,8 @@ function FieldFormPanel({
       case FieldType.Lookup:
         return (
           <RelationConfig
-            values={field.config?.values ?? []}
+            isSubmit={isSubmit}
+            values={field.config?.values ?? null}
             updateRelations={(newRelation) => updateConfig(newRelation)}
           />
         );
