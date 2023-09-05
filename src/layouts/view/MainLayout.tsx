@@ -10,7 +10,7 @@ import { getSearchTypes } from "src/redux/actions/adminAction";
 import { View } from "src/models/SharedModels";
 import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
 import Error from 'src/sections/Error'
-import { getDateFormat } from "src/redux/actions/dateFormatAction";
+import { fetchUserContacts } from "src/redux/actions/userActions";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -61,7 +61,7 @@ type MainLayoutProps = {
   apiResponseStatus: ApiResponseStatus;
   getAvailableFieldUiTypes: () => void;
   getSearchTypes: () => void;
-  getDateFormat: () => void;
+  fetchUserContacts: () => void;
 };
 
 const MainLayout = ({
@@ -72,7 +72,7 @@ const MainLayout = ({
   apiResponseStatus,
   getAvailableFieldUiTypes,
   getSearchTypes,
-  getDateFormat
+  fetchUserContacts
 }: MainLayoutProps) => {
   const theme = useTheme();
   const router = useRouter();
@@ -87,7 +87,7 @@ const MainLayout = ({
     if (router.isReady) {
       getAvailableFieldUiTypes();
       getSearchTypes();
-      getDateFormat();
+      fetchUserContacts();
     }
   }, [router.isReady]);
 
@@ -119,7 +119,7 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   getAvailableFieldUiTypes,
   getSearchTypes,
-  getDateFormat
+  fetchUserContacts
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainLayout);

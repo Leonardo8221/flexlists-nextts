@@ -36,8 +36,8 @@ import { hasPermission } from "src/utils/permissionHelper";
 import { View } from "src/models/SharedModels";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
-import { useRouter } from "next/router";
 import RenderFields from "./RenderFields";
+import { useRouter } from "next/router";
 
 interface RowFormProps {
   currentView: View;
@@ -188,6 +188,11 @@ const RowFormPanel = ({
             if (archiveField) {
               values[archiveField.id] = false;
             }
+            const { query } = router;
+            router.replace({
+              pathname: router.pathname,
+              query: { ...query, ["contentId"]: values.id },
+            });
             onSubmit(values, "create");
           } else {
             setFlashMessage({

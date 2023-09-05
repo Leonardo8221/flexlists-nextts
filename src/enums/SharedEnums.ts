@@ -65,7 +65,8 @@ export enum FieldUiTypeEnum {
   Color = "Color",
   Lookup = "Lookup",
   Sublist = "Sublist",
-  ManyToMany = "ManyToMany"
+  ManyToMany = "ManyToMany",
+  User = "User"
 }
 export enum SearchType {
   List = "List",

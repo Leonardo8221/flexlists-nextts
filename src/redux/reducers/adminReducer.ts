@@ -7,7 +7,7 @@ const initialState = {
     authValidate:{isUserValidated:false,isKeyValidated:false,user:undefined},
     languages:[],
     apiResponseStatus:ApiResponseStatus.Success,
-    returnUrl:''
+    returnUrl:undefined
   };
   const adminReducer = (state = initialState, action: any) => {
       switch (action.type) {

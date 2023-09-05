@@ -33,6 +33,7 @@ import ListFields from "./ListFields";
 import {
   downloadFileUrl,
   getChoiceField,
+  getDefaultFieldIcon,
   getRowContent,
 } from "src/utils/flexlistHelper";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -67,6 +68,7 @@ type DataTableProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
+  users: any[],
 };
 
 const DataTable = ({
@@ -78,6 +80,7 @@ const DataTable = ({
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
+  users
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -142,8 +145,12 @@ const DataTable = ({
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
         setSelectedRowData(currentRow)
-        setVisibleAddRowPanel(true);
-        setMode("view");
+        if(mode === "view")
+        {
+          setVisibleAddRowPanel(true);
+        }
+        
+        // setMode("view");
       }
     }
     if (
@@ -192,7 +199,14 @@ const DataTable = ({
       );
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
-
+  const getUserName = (userId: any) => {  
+    let user = users.find(x=>x.userId === userId)
+    if(user)
+    {
+      return user.name
+    }
+    return ""
+  }
   const getColumnKey = (column: any): string => {
     if (
       column.system &&
@@ -208,12 +222,14 @@ const DataTable = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
+      const fieldIcon = dataColumn.icon??getDefaultFieldIcon(dataColumn.uiField);
+
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
-            {dataColumn.icon && (
+            {fieldIcon && (
               <Box
                 component="span"
                 className="svg-color"
@@ -222,8 +238,8 @@ const DataTable = ({
                   height: 16,
                   display: "inline-block",
                   bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/table/column/${dataColumn.icon}.svg) no-repeat center / contain`,
+                  mask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
                   marginTop: 0.5,
                   marginRight: 1,
                 }}
@@ -471,6 +487,14 @@ const DataTable = ({
                 );
               case FieldUiTypeEnum.Lookup:
                 return (<Box>{cellValue}</Box>);
+              case FieldUiTypeEnum.User:
+                return (
+                  users.length>0 &&<Box
+                    key={row.id}
+                  >
+                   {getUserName(cellValue)}
+                  </Box>
+                );
               default:
                 return <></>;
             }
@@ -1061,11 +1085,12 @@ const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
   currentView: state.view.currentView,
   count: state.view.count,
+  users : state.view.users
 });
 
 const mapDispatchToProps = {
   fetchRowsByPage,
   setCurrentView,
-  setFlashMessage,
+  setFlashMessage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

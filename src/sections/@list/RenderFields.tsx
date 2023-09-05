@@ -26,7 +26,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { FormControl } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
+import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString, getDateFormatString } from "src/utils/convertUtils";
 import { DatePicker, renderTimeViewClock } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
@@ -43,7 +43,6 @@ type RenderFieldProps = {
   currentMode: string;
   values: any;
   submit: boolean;
-  dateFormat: string;
   columns: any[];
   setValues: (values: any[]) => void;
   setDateValue: (value: any, x: any) => void;
@@ -56,7 +55,6 @@ const RenderField = ({
   currentMode,
   values,
   submit,
-  dateFormat,
   columns,
   setValues,
   setDateValue,
@@ -243,7 +241,7 @@ const RenderField = ({
                 : ""
             }
             ampm={getAmPm()}
-            format={`${dateFormat} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+            format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
             viewRenderers={{
               hours: renderTimeViewClock,
               minutes: renderTimeViewClock,
@@ -294,7 +292,7 @@ const RenderField = ({
                 ? "Mui-error"
                 : ""
             }
-            format={dateFormat}
+            format={getDateFormatString(window.navigator.language)}
           />
         </LocalizationProvider>
       ) : (
@@ -1120,8 +1118,7 @@ const RenderField = ({
 
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
-  currentView: state.view.currentView,
-  dateFormat: state.date.dateFormat
+  currentView: state.view.currentView
 });
 
 const mapDispatchToProps = {

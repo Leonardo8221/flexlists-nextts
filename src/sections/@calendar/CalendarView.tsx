@@ -56,8 +56,12 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       if(currentRow)
       {
         setSelectedRowData(currentRow)
-        setVisibleAddRowPanel(true);
-        setDetailMode("view");
+        if(detailMode === "view")
+        {
+          setVisibleAddRowPanel(true);
+        }
+        
+        // setDetailMode("view");
       }
     }
     if (router.isReady && rows.length>0 && router.query.contentId && !isLoadedCurrentContent) {

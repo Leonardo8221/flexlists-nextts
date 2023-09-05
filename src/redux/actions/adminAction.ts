@@ -73,7 +73,7 @@ export const setApiResponseStatus = (apiResponseStatus: ApiResponseStatus) => ({
   type: 'SET_API_RESPONSE_STATUS',  
   payload: apiResponseStatus 
 });
-export const setReturnUrl = (returnUrl: string) => ({  
+export const setReturnUrl = (returnUrl: any) => ({  
   type: 'SET_RETURN_URL',  
   payload: returnUrl 
 });
