@@ -4,7 +4,7 @@ server {
  server_name _;
  resolver                127.0.0.11;
  client_max_body_size 0;
- set $my_host "front.flexlists.com";
+ set $my_host "newv2a2.flexlists.com";
 
  location /api {
    proxy_ssl_server_name on;   
@@ -13,7 +13,7 @@ server {
    proxy_set_header X-NginX-Proxy true;
    proxy_set_header X-Forwarded-Host $my_host;
    proxy_set_header Host $my_host;
-   proxy_pass https://front.flexlists.com;
+   proxy_pass https://newv2a2.flexlists.com;
    #proxy_ssl_session_reuse off;
    #proxy_set_header Connection "";
    proxy_set_header Host $http_host;

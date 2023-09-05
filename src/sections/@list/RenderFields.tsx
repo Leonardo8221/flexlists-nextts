@@ -82,8 +82,6 @@ const RenderField = ({
     };
 
     getFieldValues();
-
-    if (column.uiField === FieldUiTypeEnum.Lookup && values['___extra']) values[column.id] = values['___extra'];
   }, []);
 
   switch (column.uiField) {

@@ -162,7 +162,7 @@ const DataTable = ({
       fetchContent();
       setIsLoadedCurrentContent(true);
     }
-  }, [router.isReady, router.query.contentId, rows]);
+      }, [router.isReady, router.query.contentId, rows]);
 
   useEffect(() => {
     //editRow(row) => from rows
@@ -199,6 +199,7 @@ const DataTable = ({
       );
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
+
   const getUserName = (userId: any) => {  
     let user = users.find(x=>x.userId === userId)
     if(user)
@@ -206,7 +207,8 @@ const DataTable = ({
       return user.name
     }
     return ""
-  }
+  };
+
   const getColumnKey = (column: any): string => {
     if (
       column.system &&
@@ -217,6 +219,12 @@ const DataTable = ({
       return column.name;
     }
     return column.id;
+  };
+
+  const relationFieldValue = (id: number, column: ViewField) => {
+    const data = rows.filter((row: any) => row.id === id);
+
+    return data.length ? data[0][`___extra_${column.id}`] : '';
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -486,7 +494,7 @@ const DataTable = ({
                   </Box>
                 );
               case FieldUiTypeEnum.Lookup:
-                return (<Box>{cellValue}</Box>);
+                return (<Box>{relationFieldValue(row.id, dataColumn)}</Box>);
               case FieldUiTypeEnum.User:
                 return (
                   users.length>0 &&<Box
@@ -523,7 +531,7 @@ const DataTable = ({
     };
 
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
-  }, [columns]);
+  }, [columns, rows]);
 
   useEffect(() => {
     setUpdatingTable(false);
