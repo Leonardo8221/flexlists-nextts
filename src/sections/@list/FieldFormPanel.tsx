@@ -124,7 +124,7 @@ function FieldFormPanel({
         setError(`Field name cannot be ${currentField.name}`);
         return;
       }
-      if (currentField.uiField == FieldUiTypeEnum.Lookup) {
+      if (currentField.uiField == FieldUiTypeEnum.Lookup || currentField.uiField == FieldUiTypeEnum.Sublist) {
         if (!currentField.config.values) {
           setError(`Empty field config`);
           return;
@@ -244,6 +244,15 @@ function FieldFormPanel({
         );
 
       case FieldType.Lookup:
+        return (
+          <RelationConfig
+            isSubmit={isSubmit}
+            values={field.config?.values ?? null}
+            updateRelations={(newRelation) => updateConfig(newRelation)}
+          />
+        );
+
+      case FieldType.Sublist:
         return (
           <RelationConfig
             isSubmit={isSubmit}

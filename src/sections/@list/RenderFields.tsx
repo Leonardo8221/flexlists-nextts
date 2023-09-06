@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   TextField,
   Box,
@@ -34,8 +33,7 @@ import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import ColorPicker from "src/components/color-picker/ColorPicker";
-import { listContentService } from "src/services/listContent.service";
-import { isSucc } from "src/models/ApiResponse";
+import LookupField from "src/components/relation/LookupField";
 
 type RenderFieldProps = {
   column: ViewField;
@@ -61,28 +59,6 @@ const RenderField = ({
   setTimeValue
 }: RenderFieldProps) => {
   const isDesktop = useResponsive("up", "md");
-  const [relationValues, setRelationValues] = useState<any[]>([]);
-
-  useEffect(() => {
-    const getFieldValues = async () => {
-     if (column.uiField === 'Lookup') {
-      const response = await listContentService.searchContents(
-        column.config.values.viewId
-      );
-      const contents: any[] = [];
-  
-      if (isSucc(response) && response.data && response.data.content) {
-        for (const row of response.data.content) {
-          contents.push(Object.fromEntries(row))
-        }
-        
-        setRelationValues(contents);
-      }
-     }
-    };
-
-    getFieldValues();
-  }, []);
 
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -1081,33 +1057,7 @@ const RenderField = ({
       }
     case FieldUiTypeEnum.Lookup:
       return (
-        <FormControl key={column.id} required={column.required}>
-          <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
-            {column.name}
-          </InputLabel>
-          <Select
-            key={column.id}
-            disabled={currentMode === "view" || isPrint}
-            label={column.name}
-            id={`${column.id}`}
-            value={values[column.id]}
-            onChange={(e) =>
-              setValues({ ...values, [column.id]: e.target.value })
-            }
-            size="small"
-            error={submit && column.required && !values[column.id]}
-          >
-            {column?.config?.values &&
-              relationValues.map((value: any) => (
-                <MenuItem
-                  key={value.id}
-                  value={value.id}
-                >
-                  {value[column.config.values.rightFieldId]}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
+        <LookupField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
       );
     default:
       return <div key={column.id}></div>;
