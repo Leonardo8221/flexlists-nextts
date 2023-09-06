@@ -221,12 +221,6 @@ const DataTable = ({
     return column.id;
   };
 
-  const relationFieldValue = (id: number, column: ViewField) => {
-    const data = rows.filter((row: any) => row.id === id);
-
-    return data.length ? data[0][`___extra_${column.id}`] : '';
-  };
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
@@ -494,7 +488,7 @@ const DataTable = ({
                   </Box>
                 );
               case FieldUiTypeEnum.Lookup:
-                return (<Box>{relationFieldValue(row.id, dataColumn)}</Box>);
+                return (<Box>{row?.original ? row.original[`___extra_${dataColumn.id}`] : ''}</Box>);
               case FieldUiTypeEnum.User:
                 return (
                   users.length>0 &&<Box
@@ -531,7 +525,7 @@ const DataTable = ({
     };
 
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
-  }, [columns, rows]);
+  }, [columns]);
 
   useEffect(() => {
     setUpdatingTable(false);
