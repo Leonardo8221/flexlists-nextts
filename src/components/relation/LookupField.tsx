@@ -28,10 +28,10 @@ const LookupField = ({
 
   useEffect(() => {
     const getFieldValues = async () => {
-     if (column.uiField === 'Lookup') {
       const response = await listContentService.searchContents(
         column.config.values.viewId
       );
+      
       const contents: any[] = [];
   
       if (isSucc(response) && response.data && response.data.content) {
@@ -41,7 +41,6 @@ const LookupField = ({
         
         setRelationValues(contents);
       }
-     }
     };
 
     getFieldValues();

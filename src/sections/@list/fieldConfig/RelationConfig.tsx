@@ -30,7 +30,6 @@ type RelationConfigParams = {
 interface RelationConfigProps {
   isSubmit: boolean,
   values : RelationConfigParams,
-  currentView: View,
   defaultPreset: any;
   columns: ViewField[];
   updateRelations : (newRelation: RelationConfigParams) => void;
@@ -55,7 +54,6 @@ const GroupItems = styled("ul")({
 const RelationConfig = ({
   isSubmit,
   values,
-  currentView,
   defaultPreset,
   columns,
   updateRelations,
@@ -69,7 +67,7 @@ const RelationConfig = ({
 
   useEffect(() => {
     async function fetchLists() {
-      const response = await listViewService.getViews(currentView.id);
+      const response = await listViewService.getViews();
 
       if (isSucc(response) && response.data && response.data.length > 0) {
         const viewPresets: any[] = [];
@@ -87,10 +85,8 @@ const RelationConfig = ({
       }
     }
 
-    if (currentView) {
-      fetchLists();
-    }
-  }, [currentView]);
+    fetchLists();
+  }, []);
 
   useEffect(() => {
     if (values && views.length) {
@@ -186,7 +182,6 @@ const RelationConfig = ({
 };
 
 const mapStateToProps = (state: any) => ({
-  currentView: state.view.currentView,
   defaultPreset: state.view.defaultPreset,
   columns: state.view.columns,
 });
