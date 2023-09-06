@@ -105,7 +105,7 @@ const RelationConfig = ({
 
       fetchColumns(view.viewID);
       setFields(allFields);
-      setField(allFields[0].id)
+      setField(allFields[0].id);
 
       if (values) {
         const oldField = allFields.filter((field: ViewField) => field.id === values.rightFieldId);
@@ -115,12 +115,12 @@ const RelationConfig = ({
     }
   }, [view]);
 
+  useEffect(() => {
+    if (view && field) updateRelations({viewId: view.viewID, preset: view.presetName, rightFieldId: field});
+  }, [field]);
+
   const handleField = async (event: SelectChangeEvent) => {
     setField(parseInt(event.target.value));
-
-    if (view && event.target.value) {
-      updateRelations({viewId: view.viewID, preset: view.presetName, rightFieldId: parseInt(event.target.value)});
-    }
   };
 
   const handleViewPresetChange = (newTypeInput?: PresetType | null) => {
