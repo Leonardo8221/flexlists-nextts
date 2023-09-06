@@ -124,7 +124,7 @@ function FieldFormPanel({
         setError(`Field name cannot be ${currentField.name}`);
         return;
       }
-      if (currentField.uiField == 'Lookup') {
+      if (currentField.uiField == FieldUiTypeEnum.Lookup) {
         if (!currentField.config.values) {
           setError(`Empty field config`);
           return;
