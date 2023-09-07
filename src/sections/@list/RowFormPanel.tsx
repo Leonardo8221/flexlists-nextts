@@ -38,6 +38,8 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import RenderFields from "./RenderFields";
 import { useRouter } from "next/router";
+import { FieldUiTypeEnum } from "src/enums/SharedEnums";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 
 interface RowFormProps {
   currentView: View;
@@ -140,18 +142,46 @@ const RowFormPanel = ({
     }
 
     let validator = true;
-    let errorFields: string[] = [];
+    let requiredErrorFields: string[] = [];
+    let otherErrorFields: string[] = [];
     if (values) {
-      columns.forEach((column) => {
+      for (const column of columns) {
         if (
           !column.system &&
           column.required &&
           (!values[column.id] || values[column.id] === null)
         ) {
           validator = false;
-          errorFields.push(column.name);
+          requiredErrorFields.push(column.name);
         }
-      });
+        if(column.uiField === FieldUiTypeEnum.Link)
+        {
+          let linkValue = values[column.id]?.linkValue;
+          if(linkValue)
+          {
+            let _errors: { [key: string]: string|boolean } = {}
+
+            const _setErrors = (e: { [key: string]: string|boolean }) => { 
+              _errors = e
+            } 
+            await frontendValidate(ModelValidatorEnum.GenericTypes,FieldValidatorEnum.uRL,linkValue,_errors,_setErrors,true)
+            if(isFrontendError(FieldValidatorEnum.uRL,_errors)) 
+            {
+              validator = false;
+              otherErrorFields.push(`${column.name} is invalid link`);
+            }
+          }
+          else
+          {
+            if(column.required)
+            {
+              validator = false;
+              requiredErrorFields.push(column.name);
+            }
+          }
+        }
+      }
+     
       if (validator) {
         //update row data
         if (rowData && rowData.id) {
@@ -205,11 +235,23 @@ const RowFormPanel = ({
 
         onClose();
       } else {
-        setFlashMessage({
-          message: `${errorFields.join(",")} ${errorFields.length > 1 ? "are" : "is"
-            } required`,
-          type: "error",
-        });
+        if(requiredErrorFields.length > 0)
+        {
+          setFlashMessage({
+            message: `${requiredErrorFields.join(",")} ${requiredErrorFields.length > 1 ? "are" : "is"
+              } required`,
+            type: "error",
+          });
+          return;
+        }
+        if(otherErrorFields)
+        {
+          setFlashMessage({
+            message: otherErrorFields.join(','),
+            type: "error",
+          });
+          return;
+        }
       }
     }
   };
@@ -486,11 +528,11 @@ const RowFormPanel = ({
               {currentMode !== "view" &&
                 values &&
                 filter(columns, (x) => !x.system).map((column: any) =>
-                  <RenderFields column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />
+                  <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />
                 )}
               {currentMode === "view" &&
                 values &&
-                columns.map((column: any) => <RenderFields column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
+                columns.map((column: any) => <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
             </Stack>
           </form>
         )}
@@ -586,7 +628,7 @@ const RowFormPanel = ({
               }}
             >
               {values &&
-                columns.map((column: any) => <RenderFields column={column} isPrint={true} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
+                columns.map((column: any) => <RenderFields key={column.id} column={column} isPrint={true} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
             </Stack>
           </div>
         </div>

@@ -6,7 +6,7 @@ import { getViewUserGroups, getViewUsers } from "src/redux/actions/viewActions";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { convertToInteger } from "src/utils/convertUtils";
-import { downloadFileUrl } from "src/utils/flexlistHelper";
+import { getAvatarUrl } from "src/utils/flexlistHelper";
 import { View } from "src/models/SharedModels";
 
 type ViewUsersProps = {
@@ -45,7 +45,7 @@ const ViewUsersList = ({
               <Tooltip  key={user.name} title={user.name}>
                 <Box
                 component="img"
-                src={downloadFileUrl(user.avatarUrl)}
+                src={getAvatarUrl(user.avatarUrl)}
                 sx={{
                   width: 32,
                   height: 32,

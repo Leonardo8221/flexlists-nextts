@@ -34,6 +34,7 @@ import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import ColorPicker from "src/components/color-picker/ColorPicker";
 import LookupField from "src/components/relation/LookupField";
+import LinkFieldInput from "./fields/LinkFieldInput";
 
 type RenderFieldProps = {
   column: ViewField;
@@ -1059,6 +1060,16 @@ const RenderField = ({
       return (
         <LookupField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
       );
+    case FieldUiTypeEnum.Link:
+      return <LinkFieldInput 
+              isSubmit={submit} 
+              mode={(currentMode==='view'|| isPrint)?'view':currentMode} 
+              column={column}
+              selectedLink={values[column.id]??{linkValue:'',name:''}}
+              onLinkChange={(value: any) => {
+                setValues({ ...values, [column.id]: value });
+              }}
+              />
     default:
       return <div key={column.id}></div>;
   };
