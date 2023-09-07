@@ -18,6 +18,8 @@ import {
   ChoiceFilterOperatorLabel,
   ColorFilterOperatorLabel,
   DateFilterOperatorLabel,
+  LinkFilterOperatorLabel,
+  LookupFilterOperatorLabel,
   NumberFilterOperatorLabel,
   StringFilterOperatorLabel,
   UserFilterOperatorLabel,
@@ -99,6 +101,18 @@ const Filter = ({
   );
   const userFilterOperators: { key: string; value: string }[] = Array.from(
     UserFilterOperatorLabel,
+    function (item) {
+      return { key: item[0], value: item[1] };
+    }
+  );
+  const lookupFilterOperators: { key: string; value: string }[] = Array.from(
+    LookupFilterOperatorLabel,
+    function (item) {
+      return { key: item[0], value: item[1] };
+    }
+  );
+  const linkFilterOperators: { key: string; value: string }[] = Array.from(
+    LinkFilterOperatorLabel,
     function (item) {
       return { key: item[0], value: item[1] };
     }
@@ -426,6 +440,43 @@ const Filter = ({
               ))}
             </Select>
           )
+          break;
+        case FieldUiTypeEnum.Lookup:
+          defaultConditionOperator = lookupFilterOperators[0].key;
+          conditionOperators = lookupFilterOperators;
+          defaultValue = "";
+          render = (
+            <TextField
+              size="small"
+              type={"text"}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              value={filter.right}
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            />
+          );
+        case FieldUiTypeEnum.Link:
+          defaultConditionOperator = linkFilterOperators[0].key;
+          conditionOperators = linkFilterOperators;
+          defaultValue = "";
+          render = (
+            <TextField
+              size="small"
+              type={"text"}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              value={filter.right}
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            />
+          );
           break;
       default:
         break;

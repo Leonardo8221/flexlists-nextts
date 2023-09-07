@@ -7,6 +7,7 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
+  Link,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -497,6 +498,14 @@ const DataTable = ({
                    {getUserName(cellValue)}
                   </Box>
                 );
+              case FieldUiTypeEnum.Link:
+                return cellValue ? (
+                  <Link rel="noopener noreferrer" href={cellValue.linkValue} target="_blank">
+                      {cellValue.name?cellValue.name:cellValue.linkValue}
+                  </Link>
+                  ) : (
+                  <></>
+                  )
               default:
                 return <></>;
             }

@@ -7,7 +7,7 @@ import useResponsive from "../../hooks/useResponsive";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
-import { FieldType, SearchType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
 import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
 import { getColumn } from "src/utils/flexlistHelper";
 
@@ -65,8 +65,8 @@ const SortPage = ({
         value: "Last-First",
       },
     ];
-    switch (column?.type) {
-      case FieldType.Text:
+    switch (column?.uiField) {
+      case FieldUiTypeEnum.Text:
         directions = [
           {
             key: "asc",

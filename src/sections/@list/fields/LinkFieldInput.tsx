@@ -3,12 +3,12 @@ import { Box, TextField, Link, Typography } from "@mui/material";
 import { ViewField } from "src/models/ViewField";
 type LinkModel = {
     name:string,
-    link:string
+    linkValue:string
 }
 interface LinkFieldInputProps {
   isSubmit?: boolean;
   column: ViewField;
-  mode: "view" | "create" | "update"|"comment";
+  mode: string;
   selectedLink: LinkModel;
   onLinkChange: (link: LinkModel) => void;
 }
@@ -66,13 +66,13 @@ export default function LinkFieldInput ({
                     type={"text"}
                     onChange={(e) => {
                         let newLink = Object.assign({},selectedLink);
-                        newLink.link = e.target.value;
+                        newLink.linkValue = e.target.value;
                         onLinkChange(newLink);
                     }}
-                    value={selectedLink.link}
+                    value={selectedLink.linkValue}
                     rows={4}
                     required={column.required}
-                    error={isSubmit && column.required && !selectedLink.link}
+                    error={isSubmit && column.required && !selectedLink.linkValue}
                     />
                     <TextField
                     key={`${column.id}-name`}
@@ -102,8 +102,8 @@ export default function LinkFieldInput ({
                     }}
                 >
                     {selectedLink ? (
-                    <Link rel="noopener noreferrer" href={selectedLink.link} target="_blank">
-                        {selectedLink.name?selectedLink.name:selectedLink.link}
+                    <Link rel="noopener noreferrer" href={selectedLink.linkValue} target="_blank">
+                        {selectedLink.name?selectedLink.name:selectedLink.linkValue}
                     </Link>
                     ) : (
                     <></>
