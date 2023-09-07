@@ -156,9 +156,7 @@ const RowFormPanel = ({
         }
         if(column.uiField === FieldUiTypeEnum.Link)
         {
-          console.log(values[column.id])
           let linkValue = values[column.id]?.linkValue;
-          console.log(linkValue)
           if(linkValue)
           {
             let _errors: { [key: string]: string|boolean } = {}
