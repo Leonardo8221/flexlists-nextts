@@ -74,10 +74,13 @@ export const getChoiceField = (fieldDataId: string, column: any): { label: strin
     return { label: choiceLabel, font: font, color: color };
 }
 export const downloadFileUrl = (id: string) => {
+  if (!id || id === ""||id === null) {
+    return "";
+  }
   return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/contentManagement/downloadFile?id=${id}`;
 };
 export const getAvatarUrl = (avartarUrl?: string): string => {
-  if (!avartarUrl || avartarUrl === "") {
+  if (!avartarUrl || avartarUrl === ""||avartarUrl === null) {
     return "/assets/images/avatars/avatar_2.jpg";
   }
   return downloadFileUrl(avartarUrl);

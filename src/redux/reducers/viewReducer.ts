@@ -17,7 +17,8 @@ const initialState = {
   availableFieldUiTypes: [],
   message: {},
   viewTemplate:{},
-  defaultPreset:{}
+  defaultPreset:{},
+  readContents:[]
 };
 const viewReducer = (state = initialState, action: any) => {
   switch (action.type) {
@@ -50,6 +51,8 @@ const viewReducer = (state = initialState, action: any) => {
       return { ...state, viewTemplate: action.payload }
     case 'SET_DEFAULT_PRESET':
       return { ...state, defaultPreset: action.payload }
+    case 'SET_READ_CONTENTS':
+      return { ...state, readContents: action.payload }
     default:
       return state;
   }

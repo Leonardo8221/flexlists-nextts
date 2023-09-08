@@ -6,7 +6,6 @@ import listReducer from './listReducer';
 import adminReducer from './adminReducer';
 import groupReducer from './groupReducer';
 import authReducer from './authReducer';
-import dateFormatReducer from './dateFormatReducer';
 
 const rootReducer = combineReducers({
   message: messageReducer,
@@ -15,8 +14,7 @@ const rootReducer = combineReducers({
   list: listReducer,
   admin: adminReducer,
   group: groupReducer,
-  auth: authReducer,
-  date: dateFormatReducer
+  auth: authReducer
 });
 
 export default rootReducer;

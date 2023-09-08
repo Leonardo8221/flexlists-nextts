@@ -9,6 +9,7 @@ import { FieldUIType } from 'src/models/SharedModels'
 import { adminService } from 'src/services/admin.service';
 import { hasPermission } from 'src/utils/permissionHelper';
 import { cloneDeep } from 'lodash';
+import { getViewReadContents, removeViewReadContent, setViewReadContent } from 'src/utils/localStorage';
 // Define the actions
 export const getAvailableFieldUiTypes = (): ThunkAction<
   void,
@@ -69,6 +70,11 @@ export const getCurrentView = (viewId: number): ThunkAction<
            page:viewData.page,
            limit:viewData.limit
         }))
+        let readContents = getViewReadContents(viewId);
+        if(readContents.length > 0)
+        {
+          dispatch(setReadContents(readContents));
+        }
       }
     } catch (error) {
       console.log(error)
@@ -240,6 +246,36 @@ export const getViewUserGroups = (viewId: number): ThunkAction<
     }
   };
 };
+export const setReadContent = (viewId: number,contentId:number): ThunkAction<
+  void,
+  RootState,
+  null,
+  any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      let readContents = setViewReadContent(viewId,contentId)
+      dispatch(setReadContents(readContents));
+    } catch (error) {
+      console.log(error)
+    }
+  };
+};
+export const removeReadContent = (viewId: number,contentId:number): ThunkAction<
+  void,
+  RootState,
+  null,
+  any
+> => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      let readContents = removeViewReadContent(viewId,contentId)
+      dispatch(setReadContents(readContents));
+    } catch (error) {
+      console.log(error)
+    }
+  };
+};
 export const setCurrentView = (view: any) => ({
   type: 'SET_CURRENT_VIEW',
   payload: view
@@ -263,4 +299,8 @@ export const setViewTemplate = (viewTemplate: any) => ({
 export const setDefaultPreset = (defaultPreset: any) => ({
   type: 'SET_DEFAULT_PRESET',
   payload: defaultPreset
+});
+export const setReadContents = (readContents: number[]) => ({
+  type: 'SET_READ_CONTENTS',
+  payload: readContents
 });

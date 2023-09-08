@@ -7,6 +7,7 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
+  Link,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -24,7 +25,6 @@ import {
   fetchColumns,
   fetchRowsByPage,
   setCurrentView,
-  setRows,
 } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
@@ -38,14 +38,10 @@ import {
   getRowContent,
 } from "src/utils/flexlistHelper";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-
 import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
-
 import PrintIcon from "@mui/icons-material/Print";
-
 import DeleteIcon from "@mui/icons-material/Delete";
-
 import EditIcon from "@mui/icons-material/Edit";
 import { hasPermission } from "src/utils/permissionHelper";
 import {
@@ -62,7 +58,6 @@ import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
 import {
-  getAmPm,
   getLocalDateTimeFromString,
   getLocalTimeFromString,
   getLocalDateFromString,
@@ -74,12 +69,12 @@ type DataTableProps = {
   currentView: View;
   columns: ViewField[];
   rows: any[];
-  setRows: (columns: any) => void;
   count: number;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
   users: any[];
+  readContents: number[];
 };
 
 const DataTable = ({
@@ -87,12 +82,12 @@ const DataTable = ({
   currentView,
   columns,
   rows,
-  setRows,
   count,
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
   users,
+  readContents,
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -120,47 +115,6 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
-  const timeAmPm = getAmPm();
-
-  const tableStyle = {
-    sx: {
-      WebkitOverflowScrolling: "auto",
-      height: {
-        // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
-        xs: "calc(100vh - 236px)",
-        md: "calc(100vh - 200px)",
-        lg: "calc(100vh - 188px)",
-      },
-      width: { lg: "100vw" },
-      minHeight: "300px",
-      "& .MuiTableHead-root": {
-        width: "100%",
-      },
-      "& .MuiTableRow-root": {
-        boxShadow: "none",
-      },
-    },
-  };
-  // const forcedTableStyle = {
-  //   sx: {
-  //     height: {
-  //       // xs: `${windowHeight - (!tab ? 255 : 301)}px`,
-  //       xs: "1000px",
-  //       md: "1000px",
-  //       lg: "1000px",
-  //     },
-  //     width: { lg: "100vw" },
-  //     minHeight: "300px",
-  //     "& .MuiTableHead-root": {
-  //       width: "100%",
-  //     },
-  //     "& .MuiTableRow-root": {
-  //       boxShadow: "none",
-  //     },
-  //   }
-  // }
-
-  const [tableCorrect, setTableCorrect] = useState(tableStyle);
 
   const bulkActions = [
     {
@@ -195,13 +149,17 @@ const DataTable = ({
       allowed: hasPermission(currentView?.role, "Delete"),
     },
   ];
+
   useEffect(() => {
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
         setSelectedRowData(currentRow);
-        setVisibleAddRowPanel(true);
-        setMode("view");
+        if (mode === "view") {
+          setVisibleAddRowPanel(true);
+        }
+
+        // setMode("view");
       }
     }
     if (
@@ -214,6 +172,7 @@ const DataTable = ({
       setIsLoadedCurrentContent(true);
     }
   }, [router.isReady, router.query.contentId, rows]);
+
   useEffect(() => {
     //editRow(row) => from rows
     if (router.query.rowId) {
@@ -228,21 +187,6 @@ const DataTable = ({
 
     setToggleBulkAction(false);
   }, [rows, router.query]);
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     setTimeout(() => {
-  //       setTableCorrect(forcedTableStyle)
-  //     }, 500);
-  //   }
-  // }, [router.isReady])
-
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     setTimeout(() => {
-  //       setTableCorrect(tableStyle)
-  //     }, 1000);
-  //   }
-  // }, [router.isReady])
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -264,6 +208,7 @@ const DataTable = ({
       );
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
+
   const getUserName = (userId: any) => {
     let user = users.find((x) => x.userId === userId);
     if (user) {
@@ -271,6 +216,7 @@ const DataTable = ({
     }
     return "";
   };
+
   const getColumnKey = (column: any): string => {
     if (
       column.system &&
@@ -282,13 +228,15 @@ const DataTable = ({
     }
     return column.id;
   };
+  const isReadContent = (contentId: number) => {
+    return readContents.includes(contentId);
+  };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
-      var dataColumnType = dataColumn.type;
-      let uiFieldType = dataColumn.uiField;
-      let fieldIcon =
+      const fieldIcon =
         dataColumn.icon ?? getDefaultFieldIcon(dataColumn.uiField);
+
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
         header: dataColumn.viewFieldName,
@@ -324,11 +272,8 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
-          function renderFieldData(
-            columnType: FieldUiTypeEnum,
-            cellValue: any
-          ) {
-            switch (columnType) {
+          function renderFieldData(dataColumn: ViewField, cellValue: any) {
+            switch (dataColumn.uiField) {
               case FieldUiTypeEnum.Integer:
               case FieldUiTypeEnum.Float:
               case FieldUiTypeEnum.Decimal:
@@ -348,7 +293,6 @@ const DataTable = ({
                     {cellValue}
                   </Box>
                 );
-
               case FieldUiTypeEnum.DateTime:
                 return (
                   <Box
@@ -466,7 +410,16 @@ const DataTable = ({
                     <FormGroup>
                       <FormControlLabel
                         disabled
-                        control={<Switch checked={cellValue} />}
+                        control={
+                          <Switch
+                            checked={cellValue}
+                            sx={{
+                              "& ::before": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        }
                         label={cellValue?.toString() === "true" ? "Yes" : "No"}
                       />
                     </FormGroup>
@@ -551,17 +504,46 @@ const DataTable = ({
                     ></div>
                   </Box>
                 );
+              case FieldUiTypeEnum.Lookup:
+                return (
+                  <Box>
+                    {row?.original
+                      ? row.original[`___extra_${dataColumn.id}`]
+                      : ""}
+                  </Box>
+                );
               case FieldUiTypeEnum.User:
                 return (
                   users.length > 0 && (
                     <Box key={row.id}>{getUserName(cellValue)}</Box>
                   )
                 );
+              case FieldUiTypeEnum.Link:
+                return cellValue ? (
+                  <Link
+                    rel="noopener noreferrer"
+                    href={cellValue.linkValue}
+                    target="_blank"
+                  >
+                    {cellValue.name ? cellValue.name : cellValue.linkValue}
+                  </Link>
+                ) : (
+                  <></>
+                );
               default:
                 return <></>;
             }
           }
-          return renderFieldData(uiFieldType, renderedCellValue);
+          return (
+            <Box
+              sx={{
+                fontWeight: isReadContent(row.id) ? "normal" : "bold",
+                // background: isReadContent(row.id) ? "none" : "skyblue",
+              }}
+            >
+              {renderFieldData(dataColumn, renderedCellValue)}
+            </Box>
+          );
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,
@@ -583,9 +565,8 @@ const DataTable = ({
           column.viewFieldDetailsOnly === false)
       );
     };
-
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
-  }, [columns]);
+  }, [columns, readContents]);
 
   useEffect(() => {
     setUpdatingTable(false);
@@ -853,7 +834,23 @@ const DataTable = ({
               onClick: () => {
                 editRow(row);
               },
-              sx: { cursor: "pointer" },
+              sx: {
+                cursor: "pointer",
+                position: "relative",
+                "& :first-child::before": {
+                  content: "''",
+                  position: "absolute",
+                  width: "4px",
+                  height: "calc(100% - 1px)",
+                  transform: "translateX(-4px)",
+                  left: "0",
+                  top: "0",
+                  background: isReadContent(row.id)
+                    ? "none"
+                    : "rgb(84, 166, 251)",
+                  // ml: "64px",
+                },
+              },
             })}
             onPaginationChange={setPagination}
             state={{ pagination, rowSelection, showColumnFilters }}
@@ -883,15 +880,18 @@ const DataTable = ({
                 p: 0,
               }),
             }}
-            muiTableBodyCellProps={{
+            muiTableBodyCellProps={({ row }: any) => ({
               sx: (theme: any) => ({
                 color: theme.palette.palette_style.text.primary,
-                backgroundColor:
-                  theme.palette.palette_style.background.table_body,
+                // backgroundColor:
+                //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
+                background: isReadContent(row.id)
+                  ? "none"
+                  : "rgba(84, 166, 251, 0.05)",
               }),
-            }}
+            })}
             muiBottomToolbarProps={{
               sx: () => ({
                 height: "55px",
@@ -1148,10 +1148,10 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   count: state.view.count,
   users: state.view.users,
+  readContents: state.view.readContents,
 });
 
 const mapDispatchToProps = {
-  setRows,
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,

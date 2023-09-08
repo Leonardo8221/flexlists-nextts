@@ -15,6 +15,7 @@ import { FormControl } from "@mui/material";
 import { Field, FieldUIType } from "src/models/SharedModels";
 import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
 import ChoiceConfig from "./fieldConfig/ChoiceConfig";
+import RelationConfig from "./fieldConfig/RelationConfig";
 import { fieldService } from "src/services/field.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { CreateFieldOutputDto } from "src/models/ApiOutputModels";
@@ -124,6 +125,12 @@ function FieldFormPanel({
         setError(`Field name cannot be ${currentField.name}`);
         return;
       }
+      if (currentField.uiField == FieldUiTypeEnum.Lookup || currentField.uiField == FieldUiTypeEnum.Sublist) {
+        if (!currentField.config.values) {
+          setError(`Empty field config`);
+          return;
+        }
+      }
       var createFieldResponse = await fieldService.createUIField(
         viewId,
         currentField.name,
@@ -229,11 +236,29 @@ function FieldFormPanel({
   const renderFieldConfigSwitch = (field: Field) => {
     var uiType = field.uiField;
     switch (uiType) {
-      case FieldType.Choice:
+      case FieldUiTypeEnum.Choice:
         return (
           <ChoiceConfig
             choices={field.config?.values ?? []}
             updateChoices={(newChoices) => updateConfig(newChoices)}
+          />
+        );
+
+      case FieldUiTypeEnum.Lookup:
+        return (
+          <RelationConfig
+            isSubmit={isSubmit}
+            values={field.config?.values ?? null}
+            updateRelations={(newRelation) => updateConfig(newRelation)}
+          />
+        );
+
+      case FieldUiTypeEnum.Sublist:
+        return (
+          <RelationConfig
+            isSubmit={isSubmit}
+            values={field.config?.values ?? null}
+            updateRelations={(newRelation) => updateConfig(newRelation)}
           />
         );
 

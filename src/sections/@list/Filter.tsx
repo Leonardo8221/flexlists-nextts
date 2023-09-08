@@ -18,6 +18,8 @@ import {
   ChoiceFilterOperatorLabel,
   ColorFilterOperatorLabel,
   DateFilterOperatorLabel,
+  LinkFilterOperatorLabel,
+  LookupFilterOperatorLabel,
   NumberFilterOperatorLabel,
   StringFilterOperatorLabel,
   UserFilterOperatorLabel,
@@ -34,7 +36,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
-import { getAmPm } from "src/utils/convertUtils";
+import { getAmPm, getDateFormatString } from "src/utils/convertUtils";
 import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
 import { fieldColors } from "src/constants/fieldColors";
@@ -43,7 +45,6 @@ type FilterProps = {
   currentView: View;
   columns: ViewField[];
   open: boolean;
-  dateFormat: string;
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
@@ -54,7 +55,6 @@ const Filter = ({
   currentView,
   columns,
   open,
-  dateFormat,
   fetchRows,
   setCurrentView,
   handleClose,
@@ -101,6 +101,18 @@ const Filter = ({
   );
   const userFilterOperators: { key: string; value: string }[] = Array.from(
     UserFilterOperatorLabel,
+    function (item) {
+      return { key: item[0], value: item[1] };
+    }
+  );
+  const lookupFilterOperators: { key: string; value: string }[] = Array.from(
+    LookupFilterOperatorLabel,
+    function (item) {
+      return { key: item[0], value: item[1] };
+    }
+  );
+  const linkFilterOperators: { key: string; value: string }[] = Array.from(
+    LinkFilterOperatorLabel,
     function (item) {
       return { key: item[0], value: item[1] };
     }
@@ -264,9 +276,7 @@ const Filter = ({
                 marginLeft: { xs: "8px", md: "30px" },
               }}
               ampm={getAmPm()}
-              format={`${dateFormat} ${getAmPm() ? "hh" : "HH"}:mm:ss${
-                getAmPm() ? " a" : ""
-              }`}
+              format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
             />
           </LocalizationProvider>
         );
@@ -396,37 +406,77 @@ const Filter = ({
                       borderRadius: "100px",
                     }}
                   ></div>
-                  <span style={{ color: color ?? "#000000" }}>{color}</span>
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        );
-        break;
-      case FieldUiTypeEnum.User:
-        defaultConditionOperator = userFilterOperators[0].key;
-        conditionOperators = userFilterOperators;
-        defaultValue = users[0]?.userId;
-        render = (
-          <Select
-            value={filter.right}
-            onChange={(e) => {
-              handleFilters(index ?? 0, "right", e.target.value);
-            }}
-            size="small"
-            sx={{
-              width: { md: "168px" },
-              marginLeft: { xs: "8px", md: "30px" },
-            }}
-          >
-            {users.map((user: any) => (
-              <MenuItem key={user.userId} value={user.userId}>
-                {user.name}
-              </MenuItem>
-            ))}
-          </Select>
-        );
-        break;
+                  <span style={{ color: color??"#000000" }}>
+                    {color}
+                  </span>
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          )
+          break;
+        case FieldUiTypeEnum.User:
+          defaultConditionOperator = userFilterOperators[0].key;
+          conditionOperators = userFilterOperators;
+          defaultValue = users[0]?.userId
+          render =
+          (
+            <Select
+              value={filter.right}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              size="small"
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            >
+              {users.map((user: any) => (
+                <MenuItem key={user.userId} value={user.userId}>
+                  {user.name}
+                </MenuItem>
+              ))}
+            </Select>
+          )
+          break;
+        case FieldUiTypeEnum.Lookup:
+          defaultConditionOperator = lookupFilterOperators[0].key;
+          conditionOperators = lookupFilterOperators;
+          defaultValue = "";
+          render = (
+            <TextField
+              size="small"
+              type={"text"}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              value={filter.right}
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            />
+          );
+        case FieldUiTypeEnum.Link:
+          defaultConditionOperator = linkFilterOperators[0].key;
+          conditionOperators = linkFilterOperators;
+          defaultValue = "";
+          render = (
+            <TextField
+              size="small"
+              type={"text"}
+              onChange={(e) => {
+                handleFilters(index ?? 0, "right", e.target.value);
+              }}
+              value={filter.right}
+              sx={{
+                width: { md: "168px" },
+                marginLeft: { xs: "8px", md: "30px" },
+              }}
+            />
+          );
+          break;
       default:
         break;
     }
@@ -741,7 +791,6 @@ const Filter = ({
 const mapStateToProps = (state: any) => ({
   columns: state.view.columns,
   currentView: state.view.currentView,
-  dateFormat: state.date.dateFormat,
   users: state.view.users,
 });
 
