@@ -828,18 +828,18 @@ const DataTable = ({
               sx: {
                 cursor: "pointer",
                 position: "relative",
-                transform: "translateX(-60px)",
-                "&::before": {
+                "& :first-child::before": {
                   content: "''",
                   position: "absolute",
                   width: "4px",
                   height: "calc(100% - 1px)",
+                  transform: "translateX(-4px)",
                   left: "0",
                   top: "0",
                   background: isReadContent(row.id)
                     ? "none"
                     : "rgb(84, 166, 251)",
-                  ml: "64px",
+                  // ml: "64px",
                 },
               },
             })}
