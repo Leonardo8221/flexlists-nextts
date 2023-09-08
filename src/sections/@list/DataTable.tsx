@@ -70,6 +70,7 @@ type DataTableProps = {
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
   users: any[],
+  readContents:number[]
 };
 
 const DataTable = ({
@@ -81,7 +82,8 @@ const DataTable = ({
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
-  users
+  users,
+  readContents
 }: DataTableProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -221,7 +223,9 @@ const DataTable = ({
     }
     return column.id;
   };
-
+  const isReadContent = (contentId: number) => {
+    return readContents.includes(contentId);
+  }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
@@ -266,7 +270,7 @@ const DataTable = ({
             dataColumn: ViewField,
             cellValue: any
           ) {
-            switch (dataColumn.uiField) {
+            switch (dataColumn.uiField) {  
               case FieldUiTypeEnum.Integer:
               case FieldUiTypeEnum.Float:
               case FieldUiTypeEnum.Decimal:
@@ -344,14 +348,14 @@ const DataTable = ({
                       minWidth: "100px",
                       overflow: "hidden",
                       whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
+                      textOverflow: "ellipsis"              
                     }}
                   >
-                    {!cellValue
-                      ? ""
-                      : sanitizeHtml(cellValue.replace(/</g, " <"), {
-                          allowedTags: [],
-                        })}
+                      {!cellValue
+                        ? ""
+                        : sanitizeHtml(cellValue.replace(/</g, " <"), {
+                            allowedTags: [],
+                          })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:
@@ -510,9 +514,12 @@ const DataTable = ({
                 return <></>;
             }
           }
-          return renderFieldData(dataColumn, renderedCellValue);
+          return (
+          <Box sx={{fontWeight:isReadContent(row.id)?'normal':'bold'}}>
+          {renderFieldData(dataColumn, renderedCellValue)}
+          </Box>);
         },
-        minSize: dataColumn.type === "id" ? 100 : 150,
+        minSize: dataColumn.type === "id" ? 100:150 ,
         maxSize: dataColumn.type === "id" ? 100 : 400,
         size: dataColumn.type === "id" ? 100 : 200,
         filterFn: (row: any, id: number, filterValue: string) =>
@@ -532,9 +539,8 @@ const DataTable = ({
           column.viewFieldDetailsOnly === false)
       );
     };
-
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
-  }, [columns]);
+  }, [columns,readContents]);
 
   useEffect(() => {
     setUpdatingTable(false);
@@ -838,7 +844,7 @@ const DataTable = ({
                 backgroundColor:
                   theme.palette.palette_style.background.table_body,
                 py: 0,
-                height: 32,
+                height: 32
               }),
             }}
             muiBottomToolbarProps={{
@@ -858,6 +864,7 @@ const DataTable = ({
                 marginTop: "12px",
               },
             }}
+            
           />
         )}
         <Stack
@@ -1096,7 +1103,8 @@ const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
   currentView: state.view.currentView,
   count: state.view.count,
-  users : state.view.users
+  users : state.view.users,
+  readContents: state.view.readContents
 });
 
 const mapDispatchToProps = {
