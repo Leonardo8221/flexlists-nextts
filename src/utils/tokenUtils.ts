@@ -1,10 +1,9 @@
 import { authService } from "src/services/auth.service";
-import { JWT_SECRET, JWT_TOKEN_EXPIRED_IN, JWT_REFRESH_TOKEN_EXPIRED_IN } from "./secrets";
-import * as jwt from "jsonwebtoken";
 import { parse, serialize } from "cookie";
 import { isSucc } from "./responses";
 import { getRolePathDefault } from "src/routes/paths";
 import { SystemRole } from "src/enums/SystemRole";
+import { deleteCookie } from "cookies-next";
 export type TokenPayload = {
     user?: { userId: number, userName: string, email: string, systemRole: string, firstName: string, lastName: string };
     keys?: string[];
@@ -34,6 +33,7 @@ export async function validateToken(context: any): Promise<any> {
     catch (error) {
       return undefined
     }
+    
     if (isValidated) {
       return {
         redirect: {
@@ -41,6 +41,23 @@ export async function validateToken(context: any): Promise<any> {
           permanent: false, // Set this to true if the redirect is permanent
         },
       };
+    }
+    else
+    {
+      const {req,res} = context
+      deleteCookie('token', {
+        req,
+        res,
+      });
+      deleteCookie('refreshToken', {
+        req,
+        res,
+      });
+      deleteCookie('authValidate', {
+        req,
+        res,
+      });
+      
     }
     return undefined;
 }

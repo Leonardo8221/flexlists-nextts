@@ -235,7 +235,7 @@ function FieldFormPanel({
   const renderFieldConfigSwitch = (field: Field) => {
     var uiType = field.uiField;
     switch (uiType) {
-      case FieldType.Choice:
+      case FieldUiTypeEnum.Choice:
         return (
           <ChoiceConfig
             choices={field.config?.values ?? []}
@@ -243,7 +243,7 @@ function FieldFormPanel({
           />
         );
 
-      case FieldType.Lookup:
+      case FieldUiTypeEnum.Lookup:
         return (
           <RelationConfig
             isSubmit={isSubmit}
@@ -252,7 +252,7 @@ function FieldFormPanel({
           />
         );
 
-      case FieldType.Sublist:
+      case FieldUiTypeEnum.Sublist:
         return (
           <RelationConfig
             isSubmit={isSubmit}
