@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import AccountPopover from "src/layouts/AccountPopover";
 import LanguagePopover from "src/layouts/LanguagePopover";
 import MenuIcon from "@mui/icons-material/Menu";
+import { AuthValidate } from "src/models/AuthValidate";
 
 const HEADER_MOBILE = 48;
 const HEADER_DESKTOP = 48;
@@ -37,9 +38,10 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 type HeaderProps = {
   onOpenNav: (value: any) => void;
+  authValidate: AuthValidate
 };
 
-export function Header({ onOpenNav }: HeaderProps) {
+export function Header({ onOpenNav,authValidate }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useResponsive("down", "sm");
 
@@ -92,7 +94,14 @@ export function Header({ onOpenNav }: HeaderProps) {
             {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
-        {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
+        {
+          authValidate.isUserValidated && (
+            <>
+            {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
+            </>
+          )
+        }
+        
 
         <Box sx={{ flexGrow: 1 }} />
         {/* <LanguagePopover /> */}
@@ -106,7 +115,12 @@ export function Header({ onOpenNav }: HeaderProps) {
             }}
           >
             {/* <NotificationsPopover /> */}
-            <AccountPopover />
+            {
+              authValidate.isUserValidated && (
+                <AccountPopover />
+              )
+            }
+           
           </Stack>
         )}
       </StyledToolbar>
@@ -114,6 +128,7 @@ export function Header({ onOpenNav }: HeaderProps) {
   );
 }
 const mapStateToProps = (state: any) => ({
+  authValidate: state.admin.authValidate
 });
 const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

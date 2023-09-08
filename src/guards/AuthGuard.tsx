@@ -32,8 +32,8 @@ export function AuthGuard({ children, isLoading, setLoading, setAuthValidate,set
       if (!url.includes('/auth/login')) {
          setReturnUrl(undefined)
       }
-      // let authValidate = getAuthValidatePayLoad();
-      // setAuthValidate(authValidate);
+      let authValidate = getAuthValidatePayLoad();
+      setAuthValidate(authValidate);
       // if ((path == 'auth' && !url.includes('/auth/login')) || path == '') {
       //   var isValidated: Boolean = false;
       //   try {
