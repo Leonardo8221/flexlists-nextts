@@ -1,11 +1,4 @@
-import {
-  Box,
-  Typography,
-  Container,
-  Grid,
-  Button,
-  Link,
-} from "@mui/material";
+import { Box, Typography, Container, Grid, Button, Link } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import EmailIcon from "@mui/icons-material/Email";
 import { setReturnUrl } from "src/redux/actions/adminAction";
@@ -15,12 +8,12 @@ import { PATH_AUTH } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
 
 interface UnauthorizedProps {
-  setReturnUrl: (returnUrl: any) => void,
-  setMessage: (message: any) => void,
+  setReturnUrl: (returnUrl: any) => void;
+  setMessage: (message: any) => void;
 }
-function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
+function Unauthorized({ setReturnUrl, setMessage }: UnauthorizedProps) {
   const router = useRouter();
-  
+
   const theme = useTheme();
   const styles = {
     image: {
@@ -61,15 +54,15 @@ function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
       "&:hover": { textDecoration: "underline" },
     },
   };
-  const onSubmit = async() => {
-    setReturnUrl({pathname:router.pathname,query: router.query});
-    setMessage(null)
-    await router.push({pathname: PATH_AUTH.login});
+  const onSubmit = async () => {
+    setReturnUrl({ pathname: router.pathname, query: router.query });
+    setMessage(null);
+    await router.push({ pathname: PATH_AUTH.login });
   };
-  const gotoHomePage = async() => {
-    console.log('aaa')
-    await router.push({pathname: '/'})
-  }
+  const gotoHomePage = async () => {
+    console.log("aaa");
+    await router.push({ pathname: "/" });
+  };
   return (
     <Box>
       <Container
@@ -125,14 +118,14 @@ function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
             <Box
               sx={{
                 fontSize: { xs: 64, md: 96 },
-                fontWeight: 800,
+                fontWeight: 700,
                 color: theme.palette.palette_style.text.selected,
               }}
             >
-              404
+              Access denied
             </Box>
-            <Typography variant="h4" gutterBottom>
-               You currently do not have access to this page
+            <Typography variant="body1" gutterBottom>
+              You currently do not have access to this page
             </Typography>
             {/* <Typography variant="body1" gutterBottom>
               Don&apos;t worry, we&apos;ve sent out a search party to bring it back. In
@@ -152,8 +145,8 @@ function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
                   ),
                 }}
               /> */}
-               <Button onClick={onSubmit} variant="text">
-                  Click here to login
+              <Button onClick={onSubmit} variant="text">
+                Click here to login
               </Button>
             </Box>
             {/* <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 6 }}>
@@ -198,12 +191,11 @@ function Unauthorized({ setReturnUrl ,setMessage }: UnauthorizedProps) {
     </Box>
   );
 }
-const mapStateToProps = (state: any) => ({
-});
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
   setReturnUrl,
-  setMessage
+  setMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Unauthorized);

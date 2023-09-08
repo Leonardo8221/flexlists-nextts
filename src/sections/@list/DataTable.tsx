@@ -251,8 +251,8 @@ const DataTable = ({
                   height: 16,
                   display: "inline-block",
                   bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
+                  mask: `url(/assets/icons/table/${fieldIcon}.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/table/${fieldIcon}.svg) no-repeat center / contain`,
                   marginTop: 0.5,
                   marginRight: 1,
                 }}

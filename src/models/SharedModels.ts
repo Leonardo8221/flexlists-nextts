@@ -112,6 +112,7 @@ export type OwnerInfo = {
     userName: string
     firstName: string
     lastName: string
+    avatarUrl: string
 }
 export type ViewChat = {
     id: number
