@@ -410,7 +410,16 @@ const DataTable = ({
                     <FormGroup>
                       <FormControlLabel
                         disabled
-                        control={<Switch checked={cellValue} />}
+                        control={
+                          <Switch
+                            checked={cellValue}
+                            sx={{
+                              "& ::before": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        }
                         label={cellValue?.toString() === "true" ? "Yes" : "No"}
                       />
                     </FormGroup>
