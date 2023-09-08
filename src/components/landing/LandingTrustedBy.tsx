@@ -1,8 +1,6 @@
-// material
 import { useTheme, styled } from "@mui/material/styles";
 import { Box, Container, Typography } from "@mui/material";
 import FeatureCard from "src/components/cards/Card";
-// ICONS
 import SearchIcon from "@mui/icons-material/Search";
 import TaskIcon from "@mui/icons-material/Task";
 import PublicIcon from "@mui/icons-material/Public";
@@ -11,6 +9,8 @@ import SavingsIcon from "@mui/icons-material/Savings";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import TranslateIcon from "@mui/icons-material/Translate";
 import SpeedIcon from "@mui/icons-material/Speed";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 const RootStyle = styled("div")(({ theme }) => ({
   backgroundColor: "#fafafa",
@@ -24,55 +24,60 @@ const iconStyle = {
   fontSize: "32px",
 };
 
-const FeatureCards = [
-  {
-    icon: <SearchIcon sx={iconStyle} />,
-    title: "Fully Featured Search Function",
-    description: "Configurable filters, search by field...",
-  },
-  {
-    icon: <TaskIcon sx={iconStyle} />,
-    title: "Any File Format",
-    description:
-      "Store files in any format. Images, videos, documents PDFs etc",
-  },
-  {
-    icon: <PublicIcon sx={iconStyle} />,
-    title: "Pick your Region*",
-    description:
-      " *Paid accounts only. Default will be EU but you can pick US Asia etc.",
-  },
-  {
-    icon: <RecordVoiceOverIcon sx={iconStyle} />,
-    title: "User voice",
-    description:
-      "You vote on the development road map, and based on your input, developments will be prioritized",
-  },
-  {
-    icon: <SavingsIcon sx={iconStyle} />,
-    title: "Free or Paid Versions",
-    description:
-      "Three different levels of use. Free, Subscriber, or Enterprise - with your own private server. Click Here to see pricing details.",
-  },
-  {
-    icon: <DataObjectIcon sx={iconStyle} />,
-    title: "Ongoing development",
-    description:
-      "Flexlists will have continuous updates with a user-prioritized development road map.",
-  },
-  {
-    icon: <TranslateIcon sx={iconStyle} />,
-    title: "Fully Multilingual",
-    description: "Description",
-  },
-  {
-    icon: <SpeedIcon sx={iconStyle} />,
-    title: "FAST!!",
-    description: "All the while keeping the famous Flexlists speed.",
-  },
-];
+type LandingTrustedByProps = {
+  translations: TranslationText[];
+};
 
-export default function LandingTrustedBy() {
+const LandingTrustedBy = ({
+  translations
+}: LandingTrustedByProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
+  
+  const FeatureCards = [
+    {
+      icon: <SearchIcon sx={iconStyle} />,
+      title: t("Features Fully Title"),
+      description: t("Features Fully Description"),
+    },
+    {
+      icon: <TaskIcon sx={iconStyle} />,
+      title: t("Features Any Title"),
+      description: t("Features Any Description"),
+    },
+    {
+      icon: <PublicIcon sx={iconStyle} />,
+      title: t("Features Pick Title"),
+      description: t("Features Pick Description"),
+    },
+    {
+      icon: <RecordVoiceOverIcon sx={iconStyle} />,
+      title: t("Features User Title"),
+      description: t("Features User Description"),
+    },
+    {
+      icon: <SavingsIcon sx={iconStyle} />,
+      title: t("Features Free Title"),
+      description: t("Features Free Description"),
+    },
+    {
+      icon: <DataObjectIcon sx={iconStyle} />,
+      title: t("Features Ongoing Title"),
+      description: t("Features Ongoing Description"),
+    },
+    {
+      icon: <TranslateIcon sx={iconStyle} />,
+      title: t("Features Multi Title"),
+      description: t("Features Multi Description"),
+    },
+    {
+      icon: <SpeedIcon sx={iconStyle} />,
+      title: t("Features Fast Title"),
+      description: t("Features Fast Description"),
+    },
+  ];
+
   return (
     <RootStyle>
       <Container
@@ -83,7 +88,7 @@ export default function LandingTrustedBy() {
         }}
       >
         <Typography variant="h2" gutterBottom sx={{ py: 2 }}>
-          Features title
+          {t("Features Title")}
         </Typography>
         <Box
           sx={{
@@ -106,4 +111,6 @@ export default function LandingTrustedBy() {
       </Container>
     </RootStyle>
   );
-}
+};
+
+export default LandingTrustedBy;

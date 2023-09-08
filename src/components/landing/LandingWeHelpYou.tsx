@@ -1,30 +1,20 @@
-// material
-import { alpha, useTheme, styled } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { Box, Grid, Button, Container, Typography } from "@mui/material";
-// ---------------------------------------------------------------------
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-const RootStyle = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 0, 14, 0),
-  backgroundColor: "#ffffff",
-  minHeight: "100vh",
-  display: "flex",
-  alignItems: "center",
-}));
+type LandingWeHelpYouProps = {
+  translations: TranslationText[];
+};
 
-const ContentStyle = styled("div")(({ theme }) => ({
-  width: "100%",
-  textAlign: "center",
-  [theme.breakpoints.up("md")]: {
-    textAlign: "left",
-    marginBottom: 0,
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-export default function LandingWeHelpYou() {
+const LandingWeHelpYou = ({
+  translations
+}: LandingWeHelpYouProps) => {
   const theme = useTheme();
   const isLight = theme.palette.mode === "light";
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
 
   return (
     <Box
@@ -59,11 +49,11 @@ export default function LandingWeHelpYou() {
                   variant="overline"
                   sx={{ mb: 2, color: "info.main" }}
                 >
-                  Solutions
+                  {t("Solutions")}
                 </Typography>
 
                 <Typography variant="h3" sx={{ mb: 3 }}>
-                  Mobile Version
+                  {t("Mobile Version Title")}
                 </Typography>
 
                 <Typography
@@ -72,13 +62,11 @@ export default function LandingWeHelpYou() {
                     color: isLight ? "text.secondary" : "common.white",
                   }}
                 >
-                  Full use of Flexlists on mobile or on a tablet. You can do
-                  everything on the mobile that you can do on the desktop -
-                  view, search, create new tables etc
+                  {t("Mobile Version Description")}
                 </Typography>
 
                 <Button size="large" variant="contained">
-                  Discover more
+                  {t("Discover More Button")}
                 </Button>
               </Box>
             </Grid>
@@ -129,11 +117,11 @@ export default function LandingWeHelpYou() {
                 variant="overline"
                 sx={{ mb: 2, color: "info.main" }}
               >
-                Solutions
+                {t("Solutions")}
               </Typography>
 
               <Typography variant="h3" sx={{ mb: 3 }}>
-                Notifications
+                {t("Notifications Title")}
               </Typography>
 
               <Typography
@@ -142,13 +130,11 @@ export default function LandingWeHelpYou() {
                   color: isLight ? "text.secondary" : "common.white",
                 }}
               >
-                Fully configurable notifications based on parameters set by you.
-                You can be notified of any changes to data. You can be notified
-                if a field value exceeds parameters that you set.
+                {t("Notifications Description")}
               </Typography>
 
               <Button size="large" variant="contained">
-                Discover more
+                {t("Discover More Button")}
               </Button>
             </Box>
           </Grid>
@@ -197,11 +183,11 @@ export default function LandingWeHelpYou() {
                 variant="overline"
                 sx={{ mb: 2, color: "info.main" }}
               >
-                Solutions
+                {t("Solutions")}
               </Typography>
 
               <Typography variant="h3" sx={{ mb: 3 }}>
-                All new field types
+                {t("All New Field Title")}
               </Typography>
 
               <Typography
@@ -210,13 +196,11 @@ export default function LandingWeHelpYou() {
                   color: isLight ? "text.secondary" : "common.white",
                 }}
               >
-                Including: Currencies/ Financials/ Full address fields
-                including: Cities/ Countries/ Phone numbers. All with content
-                validation.
+                {t("All New Field Description")}
               </Typography>
 
               <Button size="large" variant="contained">
-                Discover more
+                {t("Discover More Button")}
               </Button>
             </Box>
           </Grid>
@@ -244,4 +228,6 @@ export default function LandingWeHelpYou() {
       </Container>
     </Box>
   );
-}
+};
+
+export default LandingWeHelpYou;

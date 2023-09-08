@@ -47,11 +47,11 @@ function Home({ translations }: ContentProps & { translations: TranslationText[]
   return (
     <MainLayout translations={translations}>
       <LandingHero translations={translations} />
-      <LandingWeHelpYou />
-      <LandingTrustedBy />
-      <LandingQuickCreate />
+      <LandingWeHelpYou translations={translations} />
+      <LandingTrustedBy translations={translations} />
+      <LandingQuickCreate translations={translations} />
       {/* <LandingPricingPlans /> */}
-      <LandingCTA />
+      <LandingCTA translations={translations} />
     </MainLayout>
   );
 }
