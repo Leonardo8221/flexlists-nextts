@@ -53,7 +53,7 @@ const LandingWeHelpYou = ({
                 </Typography>
 
                 <Typography variant="h3" sx={{ mb: 3 }}>
-                  {t("Mobile Version Title")}
+                  {t("Section1 Title")}
                 </Typography>
 
                 <Typography
@@ -62,7 +62,7 @@ const LandingWeHelpYou = ({
                     color: isLight ? "text.secondary" : "common.white",
                   }}
                 >
-                  {t("Mobile Version Description")}
+                  {t("Section1 Description")}
                 </Typography>
 
                 <Button size="large" variant="contained">
@@ -121,7 +121,7 @@ const LandingWeHelpYou = ({
               </Typography>
 
               <Typography variant="h3" sx={{ mb: 3 }}>
-                {t("Notifications Title")}
+                {t("Section2 Title")}
               </Typography>
 
               <Typography
@@ -130,7 +130,7 @@ const LandingWeHelpYou = ({
                   color: isLight ? "text.secondary" : "common.white",
                 }}
               >
-                {t("Notifications Description")}
+                {t("Section2 Description")}
               </Typography>
 
               <Button size="large" variant="contained">
@@ -187,7 +187,7 @@ const LandingWeHelpYou = ({
               </Typography>
 
               <Typography variant="h3" sx={{ mb: 3 }}>
-                {t("All New Field Title")}
+                {t("Section3 Title")}
               </Typography>
 
               <Typography
@@ -196,7 +196,7 @@ const LandingWeHelpYou = ({
                   color: isLight ? "text.secondary" : "common.white",
                 }}
               >
-                {t("All New Field Description")}
+                {t("Section3 Description")}
               </Typography>
 
               <Button size="large" variant="contained">

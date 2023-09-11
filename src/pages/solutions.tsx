@@ -6,14 +6,18 @@ import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 
-type ContentProps = {
-
+type SolutionsProps = {
+  translations: TranslationText[];
 };
-function solutions({ translations }: ContentProps & { translations?: TranslationText[] }) {
+
+const Solutions = ({
+  translations
+}: SolutionsProps) => {
   const t = (key: string): string => {
-    if (!translations) return key
-    return getTranslation(key, translations)
-  }
+    if (!translations) return key;
+    return getTranslation(key, translations);
+  };
+
   return (
     <MainLayout>
       <Box
@@ -42,14 +46,12 @@ function solutions({ translations }: ContentProps & { translations?: Translation
               }}
             >
               <Typography variant="h3" gutterBottom>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto,
-                molestiae.
+                {t("Title")}
               </Typography>
               <Typography variant="body1" gutterBottom>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Aliquam, beatae ipsa ea vitae saepe ut?
+                {t("Description")}
               </Typography>
-              <Button variant="contained">Try Demo</Button>
+              <Button variant="contained">{t("Try Demo Button")}</Button>
             </Grid>
             <Grid item xs={12} md={8}>
               <Box
@@ -67,12 +69,13 @@ function solutions({ translations }: ContentProps & { translations?: Translation
           </Grid>
         </Container>
       </Box>
-      <MainSolutions />
+      <MainSolutions translations={translations} />
     </MainLayout>
   );
-}
-export const getServerSideProps: GetServerSideProps = async (context) => {
+};
 
-  return await getTranslations("existing pricing page", context)
-}
-export default solutions;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("solutions", context);
+};
+
+export default Solutions;

@@ -34,9 +34,9 @@ const LandingCTA = ({
             px: { xs: 4, md: 8 },
           }}
         >
-          {t("Cta Description First")}
+          {t("Section6 Description1")}
           <br />
-          {t("Cta Description Second")}
+          {t("Section6 Description2")}
         </Typography>
         <Button
           size="large"
@@ -67,7 +67,7 @@ const LandingCTA = ({
           />
         </Button>
         <Typography variant="body2" sx={{ mt: 4 }}>
-          {t("Cta Footer")}
+          {t("Section6 Footer")}
         </Typography>
       </Container>
     </Box>

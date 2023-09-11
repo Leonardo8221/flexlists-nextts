@@ -38,43 +38,43 @@ const LandingTrustedBy = ({
   const FeatureCards = [
     {
       icon: <SearchIcon sx={iconStyle} />,
-      title: t("Features Fully Title"),
-      description: t("Features Fully Description"),
+      title: t("Section4 Item1 Title"),
+      description: t("Section4 Item1 Description"),
     },
     {
       icon: <TaskIcon sx={iconStyle} />,
-      title: t("Features Any Title"),
-      description: t("Features Any Description"),
+      title: t("Section4 Item2 Title"),
+      description: t("Section4 Item2 Description"),
     },
     {
       icon: <PublicIcon sx={iconStyle} />,
-      title: t("Features Pick Title"),
-      description: t("Features Pick Description"),
+      title: t("Section4 Item3 Title"),
+      description: t("Section4 Item3 Description"),
     },
     {
       icon: <RecordVoiceOverIcon sx={iconStyle} />,
-      title: t("Features User Title"),
-      description: t("Features User Description"),
+      title: t("Section4 Item4 Title"),
+      description: t("Section4 Item4 Description"),
     },
     {
       icon: <SavingsIcon sx={iconStyle} />,
-      title: t("Features Free Title"),
-      description: t("Features Free Description"),
+      title: t("Section4 Item5 Title"),
+      description: t("Section4 Item5 Description"),
     },
     {
       icon: <DataObjectIcon sx={iconStyle} />,
-      title: t("Features Ongoing Title"),
-      description: t("Features Ongoing Description"),
+      title: t("Section4 Item6 Title"),
+      description: t("Section4 Item6 Description"),
     },
     {
       icon: <TranslateIcon sx={iconStyle} />,
-      title: t("Features Multi Title"),
-      description: t("Features Multi Description"),
+      title: t("Section4 Item7 Title"),
+      description: t("Section4 Item7 Description"),
     },
     {
       icon: <SpeedIcon sx={iconStyle} />,
-      title: t("Features Fast Title"),
-      description: t("Features Fast Description"),
+      title: t("Section4 Item8 Title"),
+      description: t("Section4 Item8 Description"),
     },
   ];
 
@@ -88,7 +88,7 @@ const LandingTrustedBy = ({
         }}
       >
         <Typography variant="h2" gutterBottom sx={{ py: 2 }}>
-          {t("Features Title")}
+          {t("Section4 Title")}
         </Typography>
         <Box
           sx={{

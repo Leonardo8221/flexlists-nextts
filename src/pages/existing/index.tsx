@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return verifyToken;
   }
 
-  return await getTranslations("landing page", context);
+  return await getTranslations("existing landing page", context);
 }
 
 export default Home;

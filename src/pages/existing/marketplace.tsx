@@ -1,8 +1,7 @@
 import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
-import MainPricing from "src/components/pricing/MainPricing";
-import { LandingPricingPlans } from "src/components/landing";
+import MainMarketplace from "src/components/marketplace/MainMarketplace";
 import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
@@ -11,17 +10,16 @@ type SolutionsProps = {
   translations: TranslationText[];
 };
 
-const pricing = ({
+const marketplace = ({
   translations
-}: SolutionsProps
-) => {
+}: SolutionsProps) => {
   const t = (key: string): string => {
     if (!translations) return key;
     return getTranslation(key, translations);
   };
 
   return (
-    <MainLayout translations={translations}>
+    <MainLayout>
       <Box
         sx={{
           mt: { xs: "64px", md: "88px" },
@@ -64,20 +62,20 @@ const pricing = ({
                   maxWidth: "100%",
                   maxHeight: "100%",
                   boxShadow: "0 0 12px 0 rgba(0,0,0,.1)",
+                  mt: { xs: 2, md: 0 },
                 }}
               />
             </Grid>
           </Grid>
         </Container>
       </Box>
-      <MainPricing translations={translations} />
-      <LandingPricingPlans translations={translations} />
+      <MainMarketplace translations={translations} />
     </MainLayout>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  return await getTranslations("pricing", context);
+  return await getTranslations("existing marketplace", context);
 };
 
-export default pricing;
+export default marketplace;

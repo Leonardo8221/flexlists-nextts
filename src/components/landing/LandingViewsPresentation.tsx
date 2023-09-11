@@ -19,14 +19,14 @@ const ViewsPresentation = ({
     <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center" }}>
       <Container maxWidth="xl">
         <Typography gutterBottom variant="h2" sx={{ textAlign: "center" }}>
-          {t("Presentation Title")}
+          {t("Section5 Title")}
         </Typography>
         <Typography
           gutterBottom
           variant="body1"
           sx={{ textAlign: "center", my: { xs: 2, md: 4 } }}
         >
-          {t("Presentation Description")}
+          {t("Section5 Description")}
         </Typography>
         <TabView />
       </Container>
