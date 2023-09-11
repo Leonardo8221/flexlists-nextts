@@ -44,26 +44,32 @@ import {
 } from "src/utils/validatorHelper";
 import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
-import { getTranslations } from "src/utils/i18n";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 interface RegisterProps {
   message: any;
   legacyCredentials: LegacyCredentials;
+  translations: TranslationText[];
+  styles?: any;
   setMessage: (message: any) => void;
   setLegacyCredentials: (credentials: LegacyCredentials) => void;
-  styles?: any;
 }
 const Register = ({
   message,
   legacyCredentials,
-  setMessage,
-  setLegacyCredentials,
   styles,
+  translations,
+  setMessage,
+  setLegacyCredentials
 }: RegisterProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
-  //const [error, setError] = useState<string>();
   const router = useRouter();
+
   const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -74,14 +80,13 @@ const Register = ({
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
-
   const [userNameDisabled, setUserNameDisabled] = useState<boolean>(false);
   const [userEmailDisabled, setUserEmailDisabled] = useState<boolean>(false);
   const [passwordDisabled, setPasswordDisabled] = useState<boolean>(false);
-
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     function checkCreds() {
@@ -114,13 +119,15 @@ const Register = ({
     setFlash(undefined);
     setMessage(null);
   };
-  function setError(message: string) {
+
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
 
   const handlePhoneChange = (newPhoneNumber: string) => {
     setPhoneNumber(newPhoneNumber);
@@ -131,6 +138,7 @@ const Register = ({
   ) => {
     setFirstName(event.target.value);
   };
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserEmail(event.target.value);
   };
@@ -328,8 +336,6 @@ const Register = ({
     }
   };
 
-  const [isHovered, setIsHovered] = useState(false);
-
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -337,11 +343,13 @@ const Register = ({
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       handleSubmit();
     }
   };
+  
   styles = {
     body: {
       background:
@@ -511,13 +519,10 @@ const Register = ({
         <Container maxWidth="xl" sx={styles?.container}>
           <Box sx={styles?.leftBox}>
             <Typography variant="h3">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              {t("Title")}
             </Typography>
             <Typography variant="body1">
-              While before you did not have an account, due to several changes,
-              we now require you to create an account. Please click here for
-              more information. Your data is safe and will be taken into the new
-              version.
+              {t("Description")}
             </Typography>
           </Box>
           <Box sx={styles?.rightBox}>
@@ -535,7 +540,7 @@ const Register = ({
                   </Link>
                 </Box>
                 <Typography variant="h3" gutterBottom color={"#141E30"}>
-                  Sign Up - Existing User
+                  {t("Existing Register Subject")}
                 </Typography>
               </Grid>
 
@@ -546,7 +551,7 @@ const Register = ({
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Username"
+                  placeholder={t("Username")}
                   type="text"
                   required
                   value={userName}
@@ -568,15 +573,11 @@ const Register = ({
                             component={"div"}
                             sx={styles?.loginExisting}
                           >
-                            This is the name used for other Flexlists users to
-                            find and identify you. If you are a Flexlists member
-                            already, this is the user name you used to login to
-                            the previous Flexlists version. You can also got to{" "}
+                            {t("Name Used For Other")}{" "}
                             <Link sx={styles?.link} href="login">
-                              Login page
+                              {t("Login Page")}
                             </Link>{" "}
-                            and login with your previous user name and password
-                            and we will migrate your previous works.
+                            {t("And Login With Previous")}
                           </Typography>
                           <InfoIcon />
                         </IconButton>
@@ -590,7 +591,7 @@ const Register = ({
                   <TextField
                     sx={styles?.textField}
                     fullWidth
-                    placeholder="First Name"
+                    placeholder={t("First Name")}
                     type="text"
                     required
                     value={firstName}
@@ -606,7 +607,7 @@ const Register = ({
                   <TextField
                     sx={styles?.textField}
                     fullWidth
-                    placeholder="Last Name"
+                    placeholder={t("Last Name")}
                     type="text"
                     required
                     value={lastName}
@@ -623,7 +624,7 @@ const Register = ({
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Email"
+                  placeholder={t("Email")}
                   type="email"
                   required
                   value={userEmail}
@@ -640,7 +641,7 @@ const Register = ({
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Your current password"
+                  placeholder={t("Password")}
                   required
                   value={password}
                   onChange={handleChangePassword}
@@ -689,11 +690,11 @@ const Register = ({
                         color="primary"
                       />
                     }
-                    label="I have read and agree to the&nbsp;"
+                    label={t("I Have Read")}
                   />
 
                   <Link sx={styles?.link} href="#">
-                    Terms and conditions
+                    &nbsp;{t("Terms Conditions")}
                   </Link>
                 </FormGroup>
               </Grid>
@@ -707,7 +708,7 @@ const Register = ({
                   sx={styles?.button}
                   onClick={handleSubmit}
                 >
-                  Sign Up
+                  {t("Register Subject")}
                 </Button>
               </Grid>
               {/* <SocialLogin /> */}
@@ -716,13 +717,13 @@ const Register = ({
               </Grid>
               <Grid item xs={12} columnSpacing={1} sx={styles?.signInWrapper}>
                 <Typography variant="body1">
-                  Already have an account?{" "}
+                  {t("Already Have")}{" "}
                   <Link
                     href="/auth/loginExisting"
                     variant="body1"
                     sx={styles?.link}
                   >
-                    Sign In
+                    {t("Login Subject")}
                   </Link>
                 </Typography>
               </Grid>
@@ -733,13 +734,17 @@ const Register = ({
     </>
   );
 };
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  var verifyToken = await validateToken(context)
+  const verifyToken = await validateToken(context);
+
   if(verifyToken){
     return verifyToken
   }
-  return await getTranslations("registerExisting", context)
-}
+
+  return await getTranslations("existing register", context);
+};
+
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
   legacyCredentials: state.auth.legacyCredentials,

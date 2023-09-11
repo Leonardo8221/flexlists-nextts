@@ -39,22 +39,31 @@ import {
 } from "src/utils/validatorHelper";
 import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
-import { getTranslations } from "src/utils/i18n";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 interface RegisterProps {
   message: any;
-  setMessage: (message: any) => void;
   styles?: any;
+  translations: TranslationText[];
+  setMessage: (message: any) => void;
 }
-const Register = ({ message, setMessage, styles }: RegisterProps) => {
+const Register = ({
+  message,
+  styles,
+  translations,
+  setMessage
+}: RegisterProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
-  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
   const isDesktop = useResponsive("up", "md");
-  //const [error, setError] = useState<string>();
   const router = useRouter();
+
+  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-
   const [userEmail, setUserEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -81,13 +90,15 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
     setFlash(undefined);
     setMessage(null);
   };
-  function setError(message: string) {
+
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
 
   const handlePhoneChange = (newPhoneNumber: string) => {
     setPhoneNumber(newPhoneNumber);
@@ -98,6 +109,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   ) => {
     setFirstName(event.target.value);
   };
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserEmail(event.target.value);
   };
@@ -138,6 +150,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const handleTermsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTermsAndConditions(event.target.checked);
   };
+
   const handleSubmit = async () => {
     try {
       setIsSubmit(true);
@@ -314,11 +327,13 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       handleSubmit();
     }
   };
+  
   styles = {
     body: {
       background:
@@ -501,13 +516,10 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
         <Container maxWidth="xl" sx={styles?.container}>
           <Box sx={styles?.leftBox}>
             <Typography variant="h3">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              {t("Title")}
             </Typography>
             <Typography variant="body1">
-              If you need a lot of text you can add there and of course Lorem
-              ipsum dolor sit, amet consectetur adipisicing elit. Necessitatibus
-              quia error sunt aperiam voluptas illum aut, eum soluta, voluptate
-              sint delectus.
+              {t("Description")}
             </Typography>
           </Box>
           <Box sx={styles?.rightBox}>
@@ -525,7 +537,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   </Link>
                 </Box>
                 <Typography variant="h3" textAlign="center" color={"#141E30"}>
-                  Sign up
+                  {t("Register Subject")}
                 </Typography>
               </Grid>
 
@@ -536,12 +548,11 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                 <Grid item xs={12}>
                   <Box>
                     <Typography variant="body2" component={"div"}>
-                      User name already existed in previous version. please pick
-                      another or click{" "}
+                      {t("UserName Already Existed")}{" "}
                       <Link sx={styles?.link} href="/auth/loginExisting">
-                        Login
+                        {t("Login")}
                       </Link>{" "}
-                      to login to an existing account
+                      {t("To Login")}
                     </Typography>
                   </Box>
                 </Grid>
@@ -551,7 +562,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   <TextField
                     sx={styles?.textField}
                     fullWidth
-                    placeholder="First Name"
+                    placeholder={t("First Name")}
                     type="text"
                     required
                     value={firstName}
@@ -567,7 +578,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   <TextField
                     sx={styles?.textField}
                     fullWidth
-                    placeholder="Last Name"
+                    placeholder={t("Last Name")}
                     type="text"
                     required
                     value={lastName}
@@ -583,7 +594,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Username"
+                  placeholder={t("Username")}
                   type="text"
                   required
                   value={userName}
@@ -608,15 +619,11 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                             component={"div"}
                             sx={styles?.loginExisting}
                           >
-                            This is the name used for other Flexlists users to
-                            find and identify you. If you are a Flexlists member
-                            already, this is the user name you used to login to
-                            the previous Flexlists version. You can also got to{" "}
+                            {t("Name Used For Other")}{" "}
                             <Link sx={styles?.link} href="login">
-                              Login page
+                              {t("Login Page")}
                             </Link>{" "}
-                            and login with your previous user name and password
-                            and we will migrate your previous works.
+                            {t("And Login With Previous")}
                           </Typography>
                           <InfoIcon />
                         </IconButton>
@@ -630,7 +637,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Email"
+                  placeholder={t("Email")}
                   type="email"
                   required
                   value={userEmail}
@@ -646,7 +653,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Password"
+                  placeholder={t("Password")}
                   required
                   value={password}
                   onChange={handleChangePassword}
@@ -703,11 +710,11 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                         color="primary"
                       />
                     }
-                    label="I have read and agree to the&nbsp;"
+                    label={t("I Have Read")}
                   />
 
                   <Link sx={styles?.link} href="#">
-                    Terms and conditions
+                    &nbsp;{t("Terms Conditions")}
                   </Link>
                 </FormGroup>
               </Grid>
@@ -721,7 +728,7 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
                   sx={styles?.button}
                   onClick={handleSubmit}
                 >
-                  Sign Up
+                  {t("Register Subject")}
                 </Button>
               </Grid>
               {/* <SocialLogin /> */}
@@ -730,9 +737,9 @@ const Register = ({ message, setMessage, styles }: RegisterProps) => {
               </Grid>
               <Grid item xs={12} columnSpacing={1} sx={styles?.signInWrapper}>
                 <Typography variant="body1">
-                  Already have an account?{" "}
+                  {t("Already Have")}{" "}
                   <Link href="/auth/login" variant="body1" sx={styles?.link}>
-                    Sign In
+                    {t("Login Subject")}
                   </Link>
                 </Typography>
               </Grid>
@@ -751,11 +758,15 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setMessage,
 };
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  var verifyToken = await validateToken(context)
+  const verifyToken = await validateToken(context);
+
   if(verifyToken){
-    return verifyToken
+    return verifyToken;
   }
-  return await getTranslations("register", context)
-}
+
+  return await getTranslations("register", context);
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)(Register);

@@ -36,28 +36,41 @@ import { connect } from "react-redux";
 import { SystemRole } from "src/enums/SystemRole";
 import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
-import { getTranslations } from "src/utils/i18n";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 import { setReturnUrl } from "src/redux/actions/adminAction";
 
 interface LoginProps {
   message: any;
-  setMessage: (message: any) => void;
   styles?: any;
-  returnUrl:any,
-  setReturnUrl:(returnUrl:any)=>void
+  returnUrl:any;
+  translations: TranslationText[];
+  setMessage: (message: any) => void;
+  setReturnUrl:(returnUrl:any)=>void;
 }
 
-const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProps) => {
+const Login = ({
+  message,
+  styles,
+  returnUrl,
+  translations,
+  setMessage,
+  setReturnUrl
+}: LoginProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const router = useRouter();
-  //const [error, setError] = useState<string>();
+
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
+
   //logout if user go to login page
   useEffect(() => {
     async function initialize() {
@@ -67,6 +80,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
       initialize();
     }
   }, [router.isReady]);
+
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -76,13 +90,15 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
     checkMessage();
   }, [message]);
 
-  function setError(message: string) {
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
+
   const handleClose = () => {
     setFlash(undefined);
     setMessage(null);
@@ -161,11 +177,13 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       handleSubmit();
     }
   };
+
   styles = {
     body: {
       background:
@@ -325,13 +343,10 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
         <Container maxWidth="xl" sx={styles?.container}>
           <Box sx={styles?.leftBox}>
             <Typography variant="h3">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              {t("Title")}
             </Typography>
             <Typography variant="body1">
-              If you need a lot of text you can add there and of course Lorem
-              ipsum dolor sit, amet consectetur adipisicing elit. Necessitatibus
-              quia error sunt aperiam voluptas illum aut, eum soluta, voluptate
-              sint delectus.
+              {t("Description")}
             </Typography>
 
             <Box
@@ -357,7 +372,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
                   </Link>
                 </Box>
                 <Typography variant="h3" textAlign="center" color={"#141E30"}>
-                  Sign in
+                  {t("Login Subject")}
                 </Typography>
               </Grid>
 
@@ -372,7 +387,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Email or Username"
+                  placeholder={t("Email Username")}
                   type="text"
                   required
                   value={userName}
@@ -384,7 +399,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
                 <TextField
                   sx={styles?.textField}
                   fullWidth
-                  placeholder="Password"
+                  placeholder={t("Password")}
                   required
                   value={password}
                   onChange={handleChangePassword}
@@ -412,7 +427,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
                 <FormGroup>
                   <FormControlLabel
                     control={<Checkbox defaultChecked sx={styles?.checkbox} />}
-                    label="Remember me"
+                    label={t("Remember Me")}
                   />
                 </FormGroup>
 
@@ -421,7 +436,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
                   variant="body1"
                   sx={styles?.forgotPassword}
                 >
-                  Forgot password?
+                  {t("Forgot Password")}
                 </Link>
               </Grid>
 
@@ -434,7 +449,7 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
                   sx={styles?.button}
                   onClick={handleSubmit}
                 >
-                  Sign in
+                  {t("Login Subject")}
                 </Button>
               </Grid>
 
@@ -446,9 +461,9 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
 
               <Grid item xs={12} columnSpacing={1} sx={styles?.signUpWrapper}>
                 <Typography variant="body1">
-                  Don&apos;t have an account?{" "}
+                  {t("Don't Have Account")}{" "}
                   <Link href="/auth/register" variant="body1" sx={styles?.link}>
-                    Sign Up
+                    {t("Register Subject")}
                   </Link>
                 </Typography>
               </Grid>
@@ -459,13 +474,17 @@ const Login = ({ message, setMessage, styles,returnUrl,setReturnUrl }: LoginProp
     </>
   );
 };
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // var verifyToken = await validateToken(context)
-  // if(verifyToken){
-  //   return verifyToken
-  // }
-  return await getTranslations("login", context)
-}
+  const verifyToken = await validateToken(context);
+
+  if(verifyToken){
+    return verifyToken;
+  }
+
+  return await getTranslations("register", context);
+};
+
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
   returnUrl:state.admin.returnUrl
