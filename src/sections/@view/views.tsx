@@ -8,7 +8,7 @@ import { FlexlistsError, FlexlistsSuccess, isErr, isSucc } from "src/models/ApiR
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import { getDefaultListViews, listViewService } from "src/services/listView.service";
-import { setMessage } from "src/redux/actions/viewActions";
+import { setCurrentView, setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 
 interface ViewsProps {
@@ -16,9 +16,10 @@ interface ViewsProps {
   isArchived: boolean;
   message: any;
   setMessage: (message: any) => void;
+  setCurrentView:(view:View|undefined)=>void;
 }
 
-function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) {
+function Views({ isArchived, message, setMessage, isDefaultViews,setCurrentView }: ViewsProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
@@ -37,6 +38,9 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
       }
     }
     checkMessage()
+    if(router.isReady){
+      setCurrentView(undefined);
+    }
   }, [message, router.isReady])
 
   const flashHandleClose = () => {
@@ -211,7 +215,8 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
+  setCurrentView
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Views);

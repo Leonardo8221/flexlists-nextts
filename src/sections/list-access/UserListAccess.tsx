@@ -17,18 +17,21 @@ import { View } from "src/models/SharedModels";
 import { Role } from "src/enums/SharedEnums";
 import { isSucc } from "src/models/ApiResponse";
 import { downloadFileUrl } from "src/utils/flexlistHelper";
+import { UserProfile } from "src/models/UserProfile";
 
 type UserListAccessProps = {
   currentView: View;
   users: any[];
   roles: { name: string; label: string }[];
   setViewUsers: (users: any[]) => void;
+  userProfile:UserProfile
 };
 function UserListAccess({
   currentView,
   users,
   roles,
   setViewUsers,
+  userProfile
 }: UserListAccessProps) {
   const [role, setRole] = useState("");
   const onRoleChange = async (userId: number, event: SelectChangeEvent) => {
@@ -67,7 +70,7 @@ function UserListAccess({
   return (
     <>
       {users &&
-        users.map((user) => {
+        users.filter((x)=>x.userId !== userProfile.id).map((user) => {
           return (
             <>
               <Box
@@ -187,6 +190,7 @@ function UserListAccess({
 }
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  userProfile: state.user.userProfile
 });
 
 const mapDispatchToProps = {
