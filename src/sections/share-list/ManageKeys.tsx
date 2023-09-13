@@ -11,8 +11,12 @@ import {
   SelectChangeEvent,
   Tooltip,
   Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditIcon from "@mui/icons-material/Edit";
 import { GetKeysForViewOutputDto } from "src/models/ApiOutputModels";
@@ -118,7 +122,7 @@ function ManageKeys({
               <Grid
                 container
                 spacing={1}
-                sx={{ alignItems: "flex-end" }}
+                sx={{ alignItems: "flex-end", display:{xs:"none", md:"flex"} }}
                 key={index}
               >
                 <Grid
@@ -240,7 +244,117 @@ function ManageKeys({
                   </Button>
                 </Grid>
               </Grid>
-              <Box></Box>
+              <Box sx={{mb:2, display:{xs:"block", md:"none"}}}>
+              <Typography variant="body2">{viewKey.role} - {viewKey.name}</Typography>
+              <Accordion >
+                
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  sx={{p:0,minHeight:40,"& .MuiAccordionSummary-content":{m: 0 ,minHeight:"unset"},"&.MuiAccordionSummary-root.Mui-expanded":{margin: "0 0" ,minHeight:"36px"}}}
+                >
+                  <TextField
+                    size="small"
+                    fullWidth
+                    value={getKeyLink(viewKey.key)}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {/* <Tooltip
+                      PopperProps={{
+                        disablePortal: true,
+                      }}
+                      onClose={handleTooltipClose}
+                      open={isTooltipOpen}
+                      disableFocusListener
+                      disableHoverListener
+                      disableTouchListener
+                      title="Copied"
+                    > */}
+                          <Tooltip title="Copy to clipboard">
+                            <ContentCopyIcon
+                              sx={{ cursor: "pointer" }}
+                              onClick={() => {
+                                handleCopyKeyLink(viewKey.key);
+                              }}
+                            />
+                          </Tooltip>
+
+                          {/* </Tooltip> */}
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  
+                </AccordionSummary>
+                <AccordionDetails sx={{px:0, gap:1, display:"flex", flexDirection:"column"}}>
+                  <Select
+                    size="small"
+                    fullWidth
+                    value={viewKey.role}
+                    onChange={(e) => handleSelectRoleChange(e, index)}
+                    disabled={!isKeyEditing(viewKey.keyId)}
+                  >
+                    {roles &&
+                      roles.map((role, index) => {
+                        return (
+                          <MenuItem key={index} value={role.name}>
+                            {role.label}
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    placeholder="Key name"
+                    value={viewKey.name}
+                    onChange={(e: any) => handleViewNameChange(e, index)}
+                    disabled={!isKeyEditing(viewKey.keyId)}
+                  />
+                  <Box sx={{display:"flex"}}>
+                  <Button
+                    fullWidth
+                    variant={isKeyEditing(viewKey.keyId) ? "text" : "contained"}
+                    sx={{
+                      color: theme.palette.palette_style.primary.main,
+                      display:isKeyEditing(viewKey.keyId) ? "block" : "none"
+                    }}
+                    onClick={() => onSubmit(viewKey.keyId)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    fullWidth
+                    variant={isKeyEditing(viewKey.keyId) ? "contained" : "text"}
+
+                    sx={{
+                      color: isKeyEditing(viewKey.keyId) ?theme.palette.palette_style.text.white : theme.palette.palette_style.primary.main  ,
+                      
+                    }}
+                    onClick={() => onSubmit(viewKey.keyId)}
+                  >
+                    {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
+                  </Button>
+                  <Button
+                    fullWidth
+                    variant="text"
+                    sx={{
+                      borderColor: "red",
+                      color: theme.palette.palette_style.error.dark,
+                    }}
+                    onClick={() => deleteKey(viewKey.keyId)}
+                  >
+                    Delete
+                  </Button>
+                  </Box>
+                </AccordionDetails>
+              </Accordion>
+                
+                </Box> 
+              
             </>
           );
         })}
