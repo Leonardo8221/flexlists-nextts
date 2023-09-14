@@ -22,13 +22,21 @@ import { useRouter } from "next/router";
 import { isSucc } from "src/models/ApiResponse";
 import { ThemeContext } from "@emotion/react";
 import { View } from "src/models/SharedModels";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 type ManageKeysProps = {
   viewKeys: GetKeysForViewOutputDto[];
   roles: { name: string; label: string }[];
   onUpdateViewKeys: (newViewKeys: GetKeysForViewOutputDto[]) => void;
-  currentView:View
+  currentView:View;
+  translations: TranslationText[];
 };
-function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKeysProps) {
+
+function ManageKeys({ viewKeys, roles, translations, onUpdateViewKeys,currentView }: ManageKeysProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const router = useRouter();
   const [viewKeyUpdateList, setViewKeyUpdateList] = useState<
@@ -120,7 +128,7 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
                 sx={{ display: "flex", flexDirection: "column" }}
               >
                 <FormLabel>
-                  <Typography variant="body2">Access / Role</Typography>
+                  <Typography variant="body2">{t("Access Role")}</Typography>
                 </FormLabel>
                 <Select
                   size="small"
@@ -148,7 +156,7 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
                 }}
               >
                 <FormLabel>
-                  <Typography variant="body2">Key Link</Typography>
+                  <Typography variant="body2">{t("Key Link")}</Typography>
                 </FormLabel>
 
                 <TextField
@@ -190,11 +198,11 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
                 }}
               >
                 <FormLabel>
-                  <Typography variant="body2">Info</Typography>
+                  <Typography variant="body2">{t("Info")}</Typography>
                 </FormLabel>
                 <TextField
                   size="small"
-                  placeholder="Key name"
+                  placeholder={t("Key Name")}
                   value={viewKey.name}
                   onChange={(e: any) => handleViewNameChange(e, index)}
                   disabled={!isKeyEditing(viewKey.keyId)}
@@ -217,7 +225,7 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
                   }}
                   onClick={() => onSubmit(viewKey.keyId)}
                 >
-                  {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
+                  {isKeyEditing(viewKey.keyId) ? t("Update") : t("Edit")}
                 </Button>
               </Grid>
               <Grid
@@ -238,7 +246,7 @@ function ManageKeys({ viewKeys, roles, onUpdateViewKeys,currentView }: ManageKey
                   }}
                   onClick={() => deleteKey(viewKey.keyId)}
                 >
-                  Delete
+                  {t("Delete")}
                 </Button>
               </Grid>
             </Grid>

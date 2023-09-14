@@ -25,14 +25,21 @@ import { getViewTemplates } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import ViewTemplateCard from "src/sections/@listView/ViewTemplateCard";
 import { PATH_MAIN } from "src/routes/paths";
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 interface ChooseTemplateProps {
   message: any;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
   setViewTemplate: (viewTemplate: any) => void;
 }
 
-function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateProps) {
+function ChooseTemplate({ message, translations, setMessage ,setViewTemplate}: ChooseTemplateProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   // error handling
   const router = useRouter();
   const [flash, setFlash] = useState<
@@ -47,8 +54,8 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
   {
     id:0,
     icon: "/assets/icons/tour/add-icon.svg",
-    name: "New List",
-    description: "Crreate from scratch"
+    name: t("New List"),
+    description: t("Crreate From Scratch")
   }
   const [currentCategory,setCurrentCategory] = useState<string>("all");
   const [searchTemplateText,setSearchTemplateText] = useState<string>("");
@@ -99,7 +106,7 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
     router.push({pathname:`${PATH_MAIN.newList}`})
   }
   return (
-    <MainLayout removeFooter={true}>
+    <MainLayout removeFooter={true} translations={translations}>
       <Container
         sx={{
           py: 3,
@@ -123,13 +130,10 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
         </Snackbar>
         <Box>
           <Typography variant="h6" gutterBottom>
-            Most popular templates
+            {t("Most Popular Templates")}
           </Typography>
           <Typography variant="body2">
-            Elevate your productivity and effortlessly streamline your tasks
-            with the user-friendly templates on FlexLists.com, allowing you to
-            choose pre-made templates or unleash your creativity to create
-            stunning views from scratch.
+            {t("Templates Description")}
           </Typography>
         </Box>
         <Divider light sx={{ my: 4 }}></Divider>
@@ -148,11 +152,11 @@ function ChooseTemplate({ message, setMessage ,setViewTemplate}: ChooseTemplateP
             }}
           >
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">All categories</InputLabel>
+              <InputLabel id="demo-simple-select-label">{t("All Categories")}</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                label="All categories"
+                label={t("All Categories")}
                 value={currentCategory}
                 onChange={handleCategoryChange}
               >
@@ -249,6 +253,10 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setMessage,
   setViewTemplate
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("lists views", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChooseTemplate);

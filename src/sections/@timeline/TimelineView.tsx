@@ -8,18 +8,21 @@ import ViewFooter from '../../components/view-footer/ViewFooter';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
 import { FlatWhere, View } from 'src/models/SharedModels';
 import { getDataColumnId } from 'src/utils/flexlistHelper';
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type Props = {
   columns: any;
   rows: any;
   open: boolean;
   currentView: View,
+  translations: TranslationText[];
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
 };
 
 const TimelineView = (props: Props) => {
-  const { columns, rows, open, currentView, fetchRows, setCurrentView } = props;
+  const { columns, rows, open, currentView, translations, fetchRows, setCurrentView } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -149,7 +152,7 @@ const TimelineView = (props: Props) => {
         {rows.length ? showRows() : <></>}
       </Box>
 
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
     </Box>
   );
 };

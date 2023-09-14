@@ -14,11 +14,15 @@ import {
 } from "src/models/ApiResponse";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { UserProfile } from "src/models/UserProfile";
-interface ChatFormProps {
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
+type ChatFormProps = {
   chatType: ChatType;
   id: number;
   currentView: View;
   userProfile: UserProfile;
+  translations: TranslationText[];
 }
 
 const ChatForm = ({
@@ -26,7 +30,11 @@ const ChatForm = ({
   userProfile,
   chatType,
   id,
+  translations
 }: ChatFormProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const theme = useTheme();
   const [messages, setMessages] = useState<ViewChat[]>([]);
@@ -35,6 +43,7 @@ const ChatForm = ({
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(25);
   const [hasMore, setHasMore] = useState<boolean>(true);
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -97,11 +106,13 @@ const ChatForm = ({
       })
     );
   };
+
   const handleKeyPress = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       await handleMessage();
     }
   };
+
   const getDifference = (time?: Date) => {
     const now = dayjs();
     const difference = now.diff(time, "second");
@@ -117,12 +128,15 @@ const ChatForm = ({
       ? `${hour} hour${hour > 1 ? "s" : ""} ago`
       : `${min} min${min > 1 ? "s" : ""} ago`;
   };
+
   const isOwner = (userId: number): boolean => {
     return userId === userProfile?.id;
   };
+
   const getTime = (date?: Date) => {
     return date != null ? new Date(date).getTime() : 0;
   };
+  
   return (
     <Box>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -140,7 +154,7 @@ const ChatForm = ({
             marginRight: { xs: 1.5, md: 4 },
           }}
         /> */}
-        <Typography variant="subtitle1">Comments</Typography>
+        <Typography variant="subtitle1">{t("Comments")}</Typography>
       </Box>
       <Box
         sx={{
@@ -170,7 +184,7 @@ const ChatForm = ({
           />
           <form onSubmit={(e) => e.preventDefault()} id="new_message_form">
             <TextField
-              label="Reply..."
+              label={t("Reply")}
               name="message"
               value={message}
               size="medium"
@@ -215,7 +229,7 @@ const ChatForm = ({
           dataLength={messages.length}
           next={fetchData}
           hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
+          loader={<h4>{t("Loading")}</h4>}
           height={"80vh"}
           endMessage={
             <p style={{ textAlign: "center" }}>

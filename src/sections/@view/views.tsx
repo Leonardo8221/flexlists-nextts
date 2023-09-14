@@ -10,15 +10,27 @@ import { PATH_MAIN } from "src/routes/paths";
 import { getDefaultListViews, listViewService } from "src/services/listView.service";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-interface ViewsProps {
+type ViewsProps = {
+  translations: TranslationText[];
   isDefaultViews: boolean;
   isArchived: boolean;
   message: any;
   setMessage: (message: any) => void;
 }
 
-function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) {
+const Views = ({
+  translations,
+  isArchived,
+  message,
+  setMessage,
+  isDefaultViews
+}: ViewsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
@@ -42,8 +54,9 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
   const flashHandleClose = () => {
     setFlash(undefined)
     setMessage(null)
-  }
-  function setFlashMessage(message: string, type: string = 'error') {
+  };
+
+  const setFlashMessage = (message: string, type: string = 'error') => {
     setFlash({ message: message, type: type })
     setMessage({ message: message, type: type })
   }
@@ -61,6 +74,7 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
 
     //  document.body.addEventListener('click', closePopup);
   }, [router.isReady]);
+
   useEffect(() => {
     async function fetchData() {
       let response: FlexlistsError | FlexlistsSuccess<View[]>
@@ -124,7 +138,6 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
 
   const [maskProperty, setMaskProperty] = useState(maskProperties[0]);
 
-
   const createNewView = async () => {
     await router.push(PATH_MAIN.chooseTemplate);
   };
@@ -168,7 +181,7 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
               variant="contained"
               onClick={() => createNewView()}
             >
-              Create new
+              {t("Create New")}
             </Button>
           }
 
@@ -215,5 +228,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Views);
-//export default Views
-

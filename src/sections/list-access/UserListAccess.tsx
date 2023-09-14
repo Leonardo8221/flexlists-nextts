@@ -16,15 +16,21 @@ import { listViewService } from "src/services/listView.service";
 import { View } from "src/models/SharedModels";
 import { Role } from "src/enums/SharedEnums";
 import { isSucc } from "src/models/ApiResponse";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type UserListAccessProps = 
 {
   currentView:View;
-  users:any[]
-  roles:{name:string,label:string}[],
-  setViewUsers:(users:any[]) => void
+  users:any[];
+  roles:{name:string,label:string}[];
+  translations: TranslationText[];
+  setViewUsers:(users:any[]) => void;
 }
-function UserListAccess({currentView,users,roles,setViewUsers}:UserListAccessProps) {
+function UserListAccess({currentView,users,roles, translations,setViewUsers}:UserListAccessProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [role, setRole] = useState("");
   const onRoleChange = async(userId:number,event: SelectChangeEvent) => {
      let response = await listViewService.updateUserRoleForView(currentView.id,userId,event.target.value as Role)
@@ -133,7 +139,7 @@ function UserListAccess({currentView,users,roles,setViewUsers}:UserListAccessPro
                         },
                       }}
                     >
-                      Delete
+                      {t("Delete")}
                     </Typography>
                   </Box>           
               </Box>

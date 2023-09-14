@@ -44,9 +44,12 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { View } from "src/models/SharedModels";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type ShareListProps = {
   open: boolean;
+  translations: TranslationText[];
   handleClose: () => void;
   users: any[];
   viewGroups: any[];
@@ -97,6 +100,7 @@ const scaleUp = {
 
 const ShareList = ({
   open,
+  translations,
   handleClose,
   users,
   viewGroups,
@@ -106,6 +110,9 @@ const ShareList = ({
   setFlashMessage,
   currentView
 }: ShareListProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
   RoleLabel.forEach((value, key) => {
@@ -119,7 +126,7 @@ const ShareList = ({
       value: "Users",
       icon: <PersonIcon />,
       component: (
-        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} setFlashMessage={setFlashMessage} currentView={currentView} />
+        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} setFlashMessage={setFlashMessage} currentView={currentView} translations={translations} />
       ),
     },
     {
@@ -132,13 +139,14 @@ const ShareList = ({
           setViewGroups={setViewGroups}
           setFlashMessage={setFlashMessage}
           currentView={currentView}
+          translations={translations}
         />
       ),
     },
     {
       value: "Keys",
       icon: <KeyIcon />,
-      component: <ShareKeys roles={roles} currentView={currentView} />,
+      component: <ShareKeys roles={roles} currentView={currentView} translations={translations} />,
     },
   ];
   const changeTab = (value: any) => {
@@ -183,7 +191,7 @@ const ShareList = ({
         exit="close"
       >
         <Typography gutterBottom variant="h5">
-          Share
+          {t("Share")}
         </Typography>
         <Box borderBottom={"solid 1px"} sx={{ mb: 1 }} borderColor={"divider"}>
           <Tabs
@@ -215,6 +223,7 @@ const ShareList = ({
   );
 };
 type ShareUsersProps = {
+  translations: TranslationText[];
   users: any[];
   roles: { name: string; label: string }[];
   setViewUsers: (newUsers: any[]) => void;
@@ -223,6 +232,7 @@ type ShareUsersProps = {
   currentView:View
 };
 const ShareUsers = ({
+  translations,
   users,
   roles,
   setViewUsers,
@@ -230,6 +240,9 @@ const ShareUsers = ({
   setFlashMessage,
   currentView
 }: ShareUsersProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
@@ -370,12 +383,13 @@ const ShareUsers = ({
           </Button>
         </Grid>
       </Grid>
-      <UserListAccess users={users} roles={roles} />
+      <UserListAccess users={users} roles={roles} translations={translations} />
     </>
   );
 };
 
 type ShareGroupsProps = {
+  translations: TranslationText[];
   viewGroups: GetViewGroupsOutputDto[];
   roles: { name: string; label: string }[];
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
@@ -384,6 +398,7 @@ type ShareGroupsProps = {
   currentView:View
 };
 const ShareGroups = ({
+  translations,
   viewGroups,
   roles,
   setViewGroups,
@@ -391,6 +406,9 @@ const ShareGroups = ({
   setFlashMessage,
   currentView
 }: ShareGroupsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const [submit, setSubmit] = useState<boolean>(false);
@@ -457,7 +475,7 @@ const ShareGroups = ({
   return (
     <>
       <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
-        Invite group
+        {t("Invite Group")}
       </Typography>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       {/* <Box>
@@ -466,7 +484,7 @@ const ShareGroups = ({
       <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
@@ -482,7 +500,7 @@ const ShareGroups = ({
         {groups && (
           <Grid item xs={7} sx={{ display: "flex", flexDirection: "column" }}>
             <FormLabel>
-              <Typography variant="body2">Groups</Typography>
+              <Typography variant="body2">{t("Groups")}</Typography>
             </FormLabel>
             <Autocomplete
               size="small"
@@ -498,7 +516,7 @@ const ShareGroups = ({
                 onGroupChange(newInputValue);
               }}
               renderInput={(params) => (
-                <TextField {...params} size="small" label="Search groups" />
+                <TextField {...params} size="small" label={t("Search Groups")} />
               )}
             />
           </Grid>
@@ -506,7 +524,7 @@ const ShareGroups = ({
 
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
           <Button variant="contained" fullWidth onClick={() => onsubmit()}>
-            Add Group
+            {t("Add Group")}
           </Button>
         </Grid>
       </Grid>
@@ -519,10 +537,14 @@ const ShareGroups = ({
   );
 };
 type ShareKeysProps = {
+  translations: TranslationText[];
   roles: { name: string; label: string }[];
   currentView:View
 };
-const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
+const ShareKeys = ({ roles, translations, currentView }: ShareKeysProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const [keyName, setKeyName] = useState<string>("");
@@ -575,12 +597,12 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
     <>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
-        Create keys
+        {t("Create Keys")}
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select value={role} size="small" onChange={handleSelectRoleChange}>
             {roles &&
@@ -595,30 +617,31 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
         </Grid>
         <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Info</Typography>
+            <Typography variant="body2">{t("Info")}</Typography>
           </FormLabel>
           <TextField
             size="small"
-            placeholder="Name of key..."
+            placeholder={t("Name Key")}
             value={keyName}
             onChange={onKeyNameChange}
           ></TextField>
         </Grid>
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
           <Button variant="contained" fullWidth onClick={() => onSubmit()}>
-            Create Key
+            {t("Create Key")}
           </Button>
         </Grid>
       </Grid>
       <Divider sx={{ my: 3, mb: 2 }}></Divider>
       <Typography gutterBottom variant="subtitle2">
-        All keys
+        {t("All Keys")}
       </Typography>
       <ManageKeys
         viewKeys={viewKeys}
         roles={roles}
         onUpdateViewKeys={(newViewKeys) => onUpdateViewKeys(newViewKeys)}
         currentView={currentView}
+        translations={translations}
       />
     </>
   );

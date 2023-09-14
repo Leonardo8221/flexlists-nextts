@@ -21,6 +21,8 @@ import {
 } from "src/utils/flexlistHelper";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 const exports_all = [
   {
@@ -139,6 +141,7 @@ const style = {
   border: "none",
 };
 type ExportProps = {
+  translations: TranslationText[];
   open: boolean;
   handleClose: () => void;
   currentView: View;
@@ -146,11 +149,15 @@ type ExportProps = {
 };
 
 const Export = ({
+  translations,
   open,
   handleClose,
   currentView,
   setFlashMessage,
 }: ExportProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
@@ -164,6 +171,7 @@ const Export = ({
   const [exportMode, setExportMode] = useState<"all" | "currentView">("all");
   const [delimiter, setDelimiter] = useState<string>(";");
   const csvDelimiters: string[] = [";", ","];
+  
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -285,7 +293,7 @@ const Export = ({
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="subtitle2">Export</Typography>
+          <Typography variant="subtitle2">{t("Export")}</Typography>
           <Box
             component="span"
             className="svg-color add_choice"
@@ -308,7 +316,7 @@ const Export = ({
                 borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
               }}
             >
-              <Box sx={{ paddingTop: 2 }}>All data to:</Box>
+              <Box sx={{ paddingTop: 2 }}>{t("All Data To")}:</Box>
               <Box
                 sx={{
                   py: 2,
@@ -365,7 +373,7 @@ const Export = ({
               </Box>
             </Box>
             <Box sx={{}}>
-              <Box sx={{ paddingTop: 2 }}>Current View:</Box>
+              <Box sx={{ paddingTop: 2 }}>{t("Current View")}:</Box>
               <Box
                 sx={{
                   py: 2,
@@ -417,8 +425,8 @@ const Export = ({
                 onClick={toggleExportCurrentViewShowMore}
               >
                 {isExportCurrentViewShowMore
-                  ? "View less options"
-                  : "View more options"}
+                  ? t("View Less Options")
+                  : t("View More Options")}
               </Box>
             </Box>
           </Box>
@@ -446,9 +454,9 @@ const Export = ({
                   exportContent(ExportType.CSV, exportMode == "all", delimiter)
                 }
               >
-                Download
+                {t("Download")}
               </Button>
-              <Button onClick={() => backMainScreen()}>Cancel</Button>
+              <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
             </Box>
           </Box>
         )}

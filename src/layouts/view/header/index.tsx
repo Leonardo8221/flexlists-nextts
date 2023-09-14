@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import AccountPopover from "src/layouts/AccountPopover";
 import LanguagePopover from "src/layouts/LanguagePopover";
 import MenuIcon from "@mui/icons-material/Menu";
+import { TranslationText } from "src/models/SharedModels";
 
 const HEADER_MOBILE = 48;
 const HEADER_DESKTOP = 48;
@@ -36,10 +37,14 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 type HeaderProps = {
+  translations: TranslationText[];
   onOpenNav: (value: any) => void;
 };
 
-export function Header({ onOpenNav }: HeaderProps) {
+export function Header({
+  translations,
+  onOpenNav
+}: HeaderProps) {
   const theme = useTheme();
   const isMobile = useResponsive("down", "sm");
 
@@ -106,7 +111,7 @@ export function Header({ onOpenNav }: HeaderProps) {
             }}
           >
             {/* <NotificationsPopover /> */}
-            <AccountPopover />
+            <AccountPopover translations={translations}/>
           </Stack>
         )}
       </StyledToolbar>

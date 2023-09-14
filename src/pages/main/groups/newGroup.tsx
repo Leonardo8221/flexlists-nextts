@@ -13,14 +13,23 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
 import { uploadFile } from "src/services/admin/contentManagement.service";
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
+
 type NewGroupProps = {
+  translations: TranslationText[];
   setFlashMessage: (message: FlashMessageModel) => void;
 };
+
 const AvatarImg = styled("img")(({ theme }) => ({
   width: "100%",
   height: "100%",
 }));
- function NewGroup({ setFlashMessage }: NewGroupProps) {
+function NewGroup({ translations, setFlashMessage }: NewGroupProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
   const [isSubmit,setIsSubmit] = useState<boolean>(false);
@@ -90,7 +99,7 @@ const AvatarImg = styled("img")(({ theme }) => ({
     setCurrentGroup(newGroup)
   };
   return (
-    <MainLayout removeFooter={true} disableOverflow={false}>
+    <MainLayout removeFooter={true} disableOverflow={false} translations={translations}>
       <Box
         sx={{
           display: "flex",
@@ -98,7 +107,7 @@ const AvatarImg = styled("img")(({ theme }) => ({
         }}
       >
         <Box sx={{ py: 4, mx: 2, flexGrow: 1 }}>
-          <Typography variant="h4">Create new group</Typography>
+          <Typography variant="h4">{t("Create New Group")}</Typography>
           <Divider sx={{ my: 2 }} light />
           <Box sx={{ display: "flex", alignItems: "center",mt:'15px',mb:'20px' }}>
             <Avatar
@@ -125,7 +134,7 @@ const AvatarImg = styled("img")(({ theme }) => ({
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
               <Button component="label" variant="contained">
-                Choose File
+                {t("Choose File")}
                 <input
                   type="file"
                   accept={`.jpg,.png,.jpeg`}
@@ -134,13 +143,13 @@ const AvatarImg = styled("img")(({ theme }) => ({
                 />
               </Button>
               <Button variant="outlined" sx={{ mt: 1 }} onClick={handleDeleteAvatar}>
-                Delete Icon
+                {t("Delete Icon")}
               </Button>
             </Box>
           </Box>
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
-              Name
+              {t("Name")}
               <Typography component={"span"} sx={{ color: "red" }}>
                 *
               </Typography>
@@ -156,7 +165,7 @@ const AvatarImg = styled("img")(({ theme }) => ({
           </Box>
           <Box sx={{mb:'25px'}}>
             <Typography variant="subtitle2" gutterBottom>
-              Description
+              {t("Description")}
             </Typography>
             <WysiwygEditor
               value={currentGroup.description}
@@ -176,7 +185,7 @@ const AvatarImg = styled("img")(({ theme }) => ({
             type="submit"
             onClick={() => handleSubmit()}
           >
-            Create Group
+            {t("Create Group")}
           </Button>
         </Box>
       </Box>
@@ -188,6 +197,10 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setFlashMessage
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("groups", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewGroup);

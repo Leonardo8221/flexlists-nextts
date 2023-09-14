@@ -8,6 +8,8 @@ import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import GoogleMapReact from 'google-map-react';
 import LocationPin from "./LocationPin";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_FLEXLIST_GOOGLE_MAPS_API_KEY;
 
@@ -19,13 +21,14 @@ const CENTER = {
 type Props = {
   columns: any;
   rows: any;
+  translations: TranslationText[];
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   open: boolean;
 };
 
 const MapView = (props: Props) => {
-  const { columns, rows, setRows, open } = props;
+  const { columns, rows, translations, setRows, open } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -61,7 +64,7 @@ const MapView = (props: Props) => {
         </GoogleMapReact>
       </Box>
 
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
     </Box>
   );
 };

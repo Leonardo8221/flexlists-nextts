@@ -8,15 +8,17 @@ import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import ChatForm from './ChatForm';
 import { ChatType } from 'src/enums/ChatType';
+import { TranslationText } from "src/models/SharedModels";
 
-interface ChatFormPanelProps {
+type ChatFormPanelProps = {
   chatType : ChatType;
   id:number;
   open: boolean;
+  translations: TranslationText[];
   onClose: () => void;
 }
 
-const ChatFormPanel = ({chatType,id, open, onClose } : ChatFormPanelProps) => {
+const ChatFormPanel = ({chatType,id, open, translations, onClose } : ChatFormPanelProps) => {
   const theme = useTheme();
   const [windowHeight, setWindowHeight] = useState(0);
 
@@ -56,7 +58,7 @@ const ChatFormPanel = ({chatType,id, open, onClose } : ChatFormPanelProps) => {
         />
       </Box>  */}
       <DialogContent>
-        <ChatForm chatType={chatType} id = {id} />
+        <ChatForm chatType={chatType} id = {id} translations={translations} />
       </DialogContent>
     </Drawer>
   );
