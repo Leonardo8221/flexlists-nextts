@@ -12,6 +12,7 @@ import AccountPopover from "src/layouts/AccountPopover";
 import LanguagePopover from "src/layouts/LanguagePopover";
 import MenuIcon from "@mui/icons-material/Menu";
 import { TranslationText } from "src/models/SharedModels";
+import { AuthValidate } from "src/models/AuthValidate";
 
 const HEADER_MOBILE = 48;
 const HEADER_DESKTOP = 48;
@@ -39,11 +40,13 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 type HeaderProps = {
   translations: TranslationText[];
   onOpenNav: (value: any) => void;
+  authValidate: AuthValidate
 };
 
 export function Header({
   translations,
-  onOpenNav
+  onOpenNav,
+  authValidate
 }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useResponsive("down", "sm");
@@ -97,7 +100,14 @@ export function Header({
             {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
-        {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
+        {
+          authValidate.isUserValidated && (
+            <>
+            {isMobile ? <SearchBarContainer /> : <SearchBarMin />}
+            </>
+          )
+        }
+        
 
         <Box sx={{ flexGrow: 1 }} />
         {/* <LanguagePopover /> */}
@@ -111,7 +121,12 @@ export function Header({
             }}
           >
             {/* <NotificationsPopover /> */}
-            <AccountPopover translations={translations}/>
+            {
+              authValidate.isUserValidated && (
+                <AccountPopover translations={translations} />
+              )
+            }
+           
           </Stack>
         )}
       </StyledToolbar>
@@ -119,6 +134,7 @@ export function Header({
   );
 }
 const mapStateToProps = (state: any) => ({
+  authValidate: state.admin.authValidate
 });
 const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

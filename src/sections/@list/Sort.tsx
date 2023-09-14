@@ -9,9 +9,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
 import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
-import { getColumn } from "src/utils/flexlistHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 
 type SortProps = {
   translations: TranslationText[];
@@ -59,9 +59,9 @@ const SortPage = ({
     );
     setCurrentView(newCurrentView);
   };
-  
+
   const getSorDirections = (sort: any): { key: string; value: string }[] => {
-    var column = getColumn(sort.fieldId,columns);
+    var column = getColumn(sort.fieldId, columns);
     var directions: { key: string; value: string }[] = [
       {
         key: "asc",
@@ -184,7 +184,10 @@ const SortPage = ({
                     sx={{ width: { md: "168px" }, textTransform: "capitalize" }}
                     className="sort_column"
                   >
-                    {columns.map((column: any) => (
+                    {columns.map((column: any) => {
+                      let coloumIcon =
+                      column.icon ?? getDefaultFieldIcon(column.uiField);
+                      return (
                       <MenuItem
                         key={column.id}
                         value={column.id}
@@ -198,14 +201,14 @@ const SortPage = ({
                             height: 14,
                             display: "inline-block",
                             bgcolor: theme.palette.palette_style.text.primary,
-                            mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                            WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                            mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                            WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
                             marginRight: 1,
                           }}
                         />
                         <Box>{column.name}</Box>
                       </MenuItem>
-                    ))}
+                    )})}
                   </Select>
                   <Select
                     value={sort.direction}

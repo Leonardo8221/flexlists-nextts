@@ -308,8 +308,8 @@ const ViewFields = ({
                       bgcolor: theme.palette.palette_style.text.primary,
                       //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
                       WebkitMask: `url(/assets/icons/toolbar/visible.svg) no-repeat center / contain`,
-                      // marginLeft: { xs: 0.2, md: 1 },
-                      marginTop: "15px",
+                      ml: 0.5,
+                      mt: 2,
                     }}
                   />
                 </Tooltip>
@@ -324,8 +324,8 @@ const ViewFields = ({
                       bgcolor: theme.palette.palette_style.text.primary,
                       //mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
                       WebkitMask: `url(/assets/icons/toolbar/detailsOnly.svg) no-repeat center / contain`,
-                      marginLeft: "20px",
-                      marginTop: "15px",
+                      ml: 2,
+                      mt: 2,
                     }}
                   />
                 </Tooltip>
@@ -364,7 +364,8 @@ const ViewFields = ({
                                   display: "flex",
                                   justifyContent: "space-between",
                                   cursor: "pointer",
-                                  p: 1,
+                                  py: 1,
+                                  pr: 1,
                                 }}
                               >
                                 <Box
@@ -407,8 +408,8 @@ const ViewFields = ({
                                       height: 18,
                                       bgcolor: "#666",
                                       display: "inline-block",
-                                      mask: `url(/assets/icons/table/column/${columnIcon}.svg) no-repeat center / contain`,
-                                      WebkitMask: `url(/assets/icons/table/column/${columnIcon}.svg) no-repeat center / contain`,
+                                      mask: `url(/assets/icons/table/${columnIcon}.svg) no-repeat center / contain`,
+                                      WebkitMask: `url(/assets/icons/table/${columnIcon}.svg) no-repeat center / contain`,
                                       marginRight: 1,
                                       // marginTop: 0.5,
                                     }}

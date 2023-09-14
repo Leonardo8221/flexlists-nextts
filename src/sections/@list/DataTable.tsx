@@ -24,7 +24,7 @@ import MenuItem from "@mui/material/MenuItem";
 import {
   fetchColumns,
   fetchRowsByPage,
-  setCurrentView
+  setCurrentView,
 } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
@@ -48,7 +48,7 @@ import {
   archiveBulkContents,
   cloneContent,
   deleteBulkContents,
-  unarchiveBulkContents
+  unarchiveBulkContents,
 } from "src/services/listContent.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
@@ -57,7 +57,11 @@ import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { useReactToPrint } from "react-to-print";
 import PrintDataTable from "./PrintDataTable";
 import sanitizeHtml from "sanitize-html";
-import { getLocalDateTimeFromString, getLocalTimeFromString, getLocalDateFromString } from "src/utils/convertUtils";
+import {
+  getLocalDateTimeFromString,
+  getLocalTimeFromString,
+  getLocalDateFromString,
+} from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
@@ -72,7 +76,8 @@ type DataTableProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
-  users: any[],
+  users: any[];
+  readContents: number[];
 };
 
 const DataTable = ({
@@ -85,7 +90,8 @@ const DataTable = ({
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
-  users
+  users,
+  readContents,
 }: DataTableProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -97,7 +103,8 @@ const DataTable = ({
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] = useState(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
+    useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [pagination, setPagination] = useState({
@@ -109,7 +116,9 @@ const DataTable = ({
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
+    "view"
+  );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
@@ -152,12 +161,11 @@ const DataTable = ({
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
-        setSelectedRowData(currentRow)
-        if(mode === "view")
-        {
+        setSelectedRowData(currentRow);
+        if (mode === "view") {
           setVisibleAddRowPanel(true);
         }
-        
+
         // setMode("view");
       }
     }
@@ -170,7 +178,7 @@ const DataTable = ({
       fetchContent();
       setIsLoadedCurrentContent(true);
     }
-      }, [router.isReady, router.query.contentId, rows]);
+  }, [router.isReady, router.query.contentId, rows]);
 
   useEffect(() => {
     //editRow(row) => from rows
@@ -208,13 +216,12 @@ const DataTable = ({
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
 
-  const getUserName = (userId: any) => {  
-    let user = users.find(x=>x.userId === userId)
-    if(user)
-    {
-      return user.name
+  const getUserName = (userId: any) => {
+    let user = users.find((x) => x.userId === userId);
+    if (user) {
+      return user.name;
     }
-    return ""
+    return "";
   };
 
   const getColumnKey = (column: any): string => {
@@ -228,11 +235,14 @@ const DataTable = ({
     }
     return column.id;
   };
-
+  const isReadContent = (contentId: number) => {
+    return readContents.includes(contentId);
+  };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
-      const fieldIcon = dataColumn.icon??getDefaultFieldIcon(dataColumn.uiField);
+      const fieldIcon =
+        dataColumn.icon ?? getDefaultFieldIcon(dataColumn.uiField);
 
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
@@ -248,8 +258,8 @@ const DataTable = ({
                   height: 16,
                   display: "inline-block",
                   bgcolor: theme.palette.palette_style.text.primary,
-                  mask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
-                  WebkitMask: `url(/assets/icons/table/column/${fieldIcon}.svg) no-repeat center / contain`,
+                  mask: `url(/assets/icons/table/${fieldIcon}.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/table/${fieldIcon}.svg) no-repeat center / contain`,
                   marginTop: 0.5,
                   marginRight: 1,
                 }}
@@ -269,10 +279,7 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
-          function renderFieldData(
-            dataColumn: ViewField,
-            cellValue: any
-          ) {
+          function renderFieldData(dataColumn: ViewField, cellValue: any) {
             switch (dataColumn.uiField) {
               case FieldUiTypeEnum.Integer:
               case FieldUiTypeEnum.Float:
@@ -410,7 +417,16 @@ const DataTable = ({
                     <FormGroup>
                       <FormControlLabel
                         disabled
-                        control={<Switch checked={cellValue} />}
+                        control={
+                          <Switch
+                            checked={cellValue}
+                            sx={{
+                              "& ::before": {
+                                display: "none",
+                              },
+                            }}
+                          />
+                        }
                         label={cellValue?.toString() === "true" ? "Yes" : "No"}
                       />
                     </FormGroup>
@@ -496,28 +512,45 @@ const DataTable = ({
                   </Box>
                 );
               case FieldUiTypeEnum.Lookup:
-                return (<Box>{row?.original ? row.original[`___extra_${dataColumn.id}`] : ''}</Box>);
+                return (
+                  <Box>
+                    {row?.original
+                      ? row.original[`___extra_${dataColumn.id}`]
+                      : ""}
+                  </Box>
+                );
               case FieldUiTypeEnum.User:
                 return (
-                  users.length>0 &&<Box
-                    key={row.id}
-                  >
-                   {getUserName(cellValue)}
-                  </Box>
+                  users.length > 0 && (
+                    <Box key={row.id}>{getUserName(cellValue)}</Box>
+                  )
                 );
               case FieldUiTypeEnum.Link:
                 return cellValue ? (
-                  <Link rel="noopener noreferrer" href={cellValue.linkValue} target="_blank">
-                      {cellValue.name?cellValue.name:cellValue.linkValue}
+                  <Link
+                    rel="noopener noreferrer"
+                    href={cellValue.linkValue}
+                    target="_blank"
+                  >
+                    {cellValue.name ? cellValue.name : cellValue.linkValue}
                   </Link>
-                  ) : (
+                ) : (
                   <></>
-                  )
+                );
               default:
                 return <></>;
             }
           }
-          return renderFieldData(dataColumn, renderedCellValue);
+          return (
+            <Box
+              sx={{
+                fontWeight: isReadContent(row.id) ? "normal" : "bold",
+                // background: isReadContent(row.id) ? "none" : "skyblue",
+              }}
+            >
+              {renderFieldData(dataColumn, renderedCellValue)}
+            </Box>
+          );
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,
@@ -539,9 +572,8 @@ const DataTable = ({
           column.viewFieldDetailsOnly === false)
       );
     };
-
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
-  }, [columns]);
+  }, [columns, readContents]);
 
   useEffect(() => {
     setUpdatingTable(false);
@@ -809,7 +841,23 @@ const DataTable = ({
               onClick: () => {
                 editRow(row);
               },
-              sx: { cursor: "pointer" },
+              sx: {
+                cursor: "pointer",
+                position: "relative",
+                "& :first-child::before": {
+                  content: "''",
+                  position: "absolute",
+                  width: "4px",
+                  height: "calc(100% - 1px)",
+                  transform: "translateX(-4px)",
+                  left: "0",
+                  top: "0",
+                  background: isReadContent(row.id)
+                    ? "none"
+                    : "rgb(84, 166, 251)",
+                  // ml: "64px",
+                },
+              },
             })}
             onPaginationChange={setPagination}
             state={{ pagination, rowSelection, showColumnFilters }}
@@ -839,15 +887,18 @@ const DataTable = ({
                 p: 0,
               }),
             }}
-            muiTableBodyCellProps={{
+            muiTableBodyCellProps={({ row }: any) => ({
               sx: (theme: any) => ({
                 color: theme.palette.palette_style.text.primary,
-                backgroundColor:
-                  theme.palette.palette_style.background.table_body,
+                // backgroundColor:
+                //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
+                background: isReadContent(row.id)
+                  ? "none"
+                  : "rgba(84, 166, 251, 0.05)",
               }),
-            }}
+            })}
             muiBottomToolbarProps={{
               sx: () => ({
                 height: "55px",
@@ -1106,12 +1157,13 @@ const mapStateToProps = (state: any) => ({
   rows: state.view.rows,
   currentView: state.view.currentView,
   count: state.view.count,
-  users : state.view.users
+  users: state.view.users,
+  readContents: state.view.readContents,
 });
 
 const mapDispatchToProps = {
   fetchRowsByPage,
   setCurrentView,
-  setFlashMessage
+  setFlashMessage,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DataTable);

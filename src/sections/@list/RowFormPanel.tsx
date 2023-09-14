@@ -11,20 +11,19 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "src/hooks/useResponsive";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { connect } from "react-redux";
 import {
   cloneContent,
   listContentService,
 } from "src/services/listContent.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
-import { filter, set } from "lodash";
+import { filter } from "lodash";
 import ChatForm from "./chat/ChatForm";
 import { ChatType } from "src/enums/ChatType";
 import { marked } from "marked";
 //import MarkdownEditor from "src/components/wysiwyg/markdownEditor";
 // -----ICONS------
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ArchiveIcon from "@mui/icons-material/Archive";
@@ -42,6 +41,7 @@ import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { removeReadContent, setReadContent } from "src/redux/actions/viewActions";
 
 interface RowFormProps {
   currentView: View;
@@ -53,6 +53,8 @@ interface RowFormProps {
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
+  setReadContent: (viewId: number,contentId:number) => void;
+  removeReadContent: (viewId: number,contentId:number) => void;
 }
 
 const RowFormPanel = ({
@@ -65,6 +67,8 @@ const RowFormPanel = ({
   onClose,
   onSubmit,
   setFlashMessage,
+  setReadContent,
+  removeReadContent
 }: RowFormProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -122,7 +126,6 @@ const RowFormPanel = ({
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
-
   useEffect(() => {
     setValues(rowData);
     setSubmit(false);
@@ -139,6 +142,7 @@ const RowFormPanel = ({
         pathname: router.pathname,
         query: { ...query, ["contentId"]: rowData.id },
       });
+      setReadContent(currentView.id,rowData.id)
     }
   }, [open, rowData, mode]);
 
@@ -198,6 +202,7 @@ const RowFormPanel = ({
           );
           if (isSucc(updateRowRespone)) {
             onSubmit(values, "update");
+            removeReadContent(currentView.id,rowData.id)
           } else {
             setFlashMessage({
               message: (updateRowRespone as FlexlistsError).message,
@@ -651,6 +656,8 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setFlashMessage,
+  setReadContent,
+  removeReadContent
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RowFormPanel);
