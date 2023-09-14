@@ -14,6 +14,7 @@ import {
 } from "src/models/ApiResponse";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { UserProfile } from "src/models/UserProfile";
+import { getAvatarUrl } from "src/utils/flexlistHelper";
 interface ChatFormProps {
   chatType: ChatType;
   id: number;
@@ -159,7 +160,7 @@ const ChatForm = ({
         >
           <Box
             component="img"
-            src="/assets/images/avatars/avatar_9.jpg"
+            src={getAvatarUrl(userProfile?.avatarUrl)}
             sx={{
               width: 40,
               height: 40,
@@ -245,7 +246,7 @@ const ChatForm = ({
                   <Box sx={{ display: "flex" }}>
                     <Box
                       component="img"
-                      src={"/assets/images/avatars/avatar_1.jpg"}
+                      src={getAvatarUrl(message.ownerInfo?.avatarUrl)}
                       sx={{
                         width: 24,
                         height: 24,

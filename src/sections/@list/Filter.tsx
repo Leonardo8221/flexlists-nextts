@@ -37,7 +37,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { isArray } from "lodash";
 import { getAmPm, getDateFormatString } from "src/utils/convertUtils";
-import { getColumn } from "src/utils/flexlistHelper";
+import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
 import { fieldColors } from "src/constants/fieldColors";
 
@@ -58,7 +58,7 @@ const Filter = ({
   fetchRows,
   setCurrentView,
   handleClose,
-  users
+  users,
 }: FilterProps) => {
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
@@ -119,7 +119,7 @@ const Filter = ({
   );
   const condtionOperators: string[] = ["And", "Or"];
   const booleanValues: string[] = ["true", "false"];
-  
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -155,7 +155,7 @@ const Filter = ({
               filter["cmp"] === FilterOperator.in ||
               filter["cmp"] === FilterOperator.nin
             ) {
-              let column = getColumn(filter.left,columns);
+              let column = getColumn(filter.left, columns);
               if (column?.uiField !== FieldUiTypeEnum.Choice) {
                 filter[key] = value;
               } else {
@@ -203,9 +203,9 @@ const Filter = ({
     );
     setCurrentView(newView);
   };
-  
+
   const getChoiceValues = (filter: any) => {
-    const column = getColumn(filter.left,columns);
+    const column = getColumn(filter.left, columns);
     let choices: any[] = [];
     if (
       filter.right &&
@@ -220,12 +220,12 @@ const Filter = ({
     }
     return choices;
   };
-  
+
   const getFilter = (
     filter: any,
     index?: number
   ): [string, { key: string; value: string }[], any, any] => {
-    const column = getColumn(filter.left,columns);
+    const column = getColumn(filter.left, columns);
     const columnUiType = column?.uiField;
     let defaultConditionOperator: string = FilterOperator.eq;
     let conditionOperators: { key: string; value: string }[] = [];
@@ -308,7 +308,7 @@ const Filter = ({
 
         render =
           filter.cmp !== FilterOperator.in &&
-            filter.cmp !== FilterOperator.nin ? (
+          filter.cmp !== FilterOperator.nin ? (
             <Select
               value={filter.right}
               onChange={(e) => {
@@ -373,37 +373,36 @@ const Filter = ({
         );
         break;
       case FieldUiTypeEnum.Color:
-          defaultConditionOperator = colorFilterOperators[0].key;
-          conditionOperators = colorFilterOperators;
-          defaultValue = fieldColors[0]
-          render =
-          (
-            <Select
-              value={filter.right}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              size="small"
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            >
-              {fieldColors.map((color: any) => (
-                <MenuItem key={color} value={color}>
-                  <Box
-                      sx={{
-                        color: color??"#000000",
-                        display: "flex",
-                        gap: 1,
-                        alignItems: "center",
-                      }}
-                    >
-                   <div
+        defaultConditionOperator = colorFilterOperators[0].key;
+        conditionOperators = colorFilterOperators;
+        defaultValue = fieldColors[0];
+        render = (
+          <Select
+            value={filter.right}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            size="small"
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          >
+            {fieldColors.map((color: any) => (
+              <MenuItem key={color} value={color}>
+                <Box
+                  sx={{
+                    color: color ?? "#000000",
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <div
                     style={{
                       width: "32px",
                       height: "32px",
-                      backgroundColor: color??"#000000",
+                      backgroundColor: color ?? "#000000",
                       borderRadius: "100px",
                     }}
                   ></div>
@@ -520,12 +519,15 @@ const Filter = ({
     borderRadius: "5px",
     border: "none",
   };
-  const filteredColumns = (columns:ViewField[]) => {
-     return columns.filter((column:ViewField) => {
-        return column.uiField !== FieldUiTypeEnum.Video && column.uiField !== FieldUiTypeEnum.Document && 
+  const filteredColumns = (columns: ViewField[]) => {
+    return columns.filter((column: ViewField) => {
+      return (
+        column.uiField !== FieldUiTypeEnum.Video &&
+        column.uiField !== FieldUiTypeEnum.Document &&
         column.uiField !== FieldUiTypeEnum.Image
-     })
-  }
+      );
+    });
+  };
   return (
     <Modal
       open={open}
@@ -551,8 +553,8 @@ const Filter = ({
               height: 18,
               display: "inline-block",
               bgcolor: theme.palette.palette_style.text.primary,
-              mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+              mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
               cursor: "pointer",
             }}
             onClick={handleClose}
@@ -588,11 +590,12 @@ const Filter = ({
                       {filteredColumns(columns).map((column: any) => {
                         var columnValue =
                           column.system &&
-                            (column.name === "createdAt" ||
-                              column.name === "updatedAt")
+                          (column.name === "createdAt" ||
+                            column.name === "updatedAt")
                             ? column.name
                             : column.id;
-
+                        let coloumIcon =
+                          column.icon ?? getDefaultFieldIcon(column.uiField);
                         return (
                           <MenuItem
                             key={`${column.id}`}
@@ -608,8 +611,8 @@ const Filter = ({
                                 display: "inline-block",
                                 bgcolor:
                                   theme.palette.palette_style.text.primary,
-                                mask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
-                                WebkitMask: `url(/assets/icons/table/${column.icon}.svg) no-repeat center / contain`,
+                                mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                                WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
                                 marginRight: { xs: 0.2, md: 1 },
                               }}
                             />
@@ -646,8 +649,8 @@ const Filter = ({
                         height: 18,
                         display: "inline-block",
                         bgcolor: theme.palette.palette_style.text.primary,
-                        mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-                        WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                        mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+                        WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
                         maskPosition: { xs: "right", md: "inherit" },
                         cursor: "pointer",
                         marginTop: 1.5,
@@ -781,7 +784,7 @@ const Filter = ({
           </Box>
         </Box> */}
       </Box>
-    </Modal >
+    </Modal>
   );
 };
 

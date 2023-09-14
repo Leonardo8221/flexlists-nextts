@@ -42,8 +42,14 @@ import { setViewGroups, setViewUsers } from "src/redux/actions/viewActions";
 import { groupService } from "src/services/group.service";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
-import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import {
+  FieldValidatorEnum,
+  ModelValidatorEnum,
+  frontendValidate,
+  isFrontendError,
+} from "src/utils/validatorHelper";
 import { View } from "src/models/SharedModels";
+import RightPanel from "src/components/right-panel/RightPanel";
 
 type ShareListProps = {
   open: boolean;
@@ -54,7 +60,8 @@ type ShareListProps = {
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
   styles?: any;
   setFlashMessage: (message: FlashMessageModel) => void;
-  currentView:View
+  currentView: View;
+  panelWidth?: string;
 };
 
 const style = {
@@ -104,7 +111,8 @@ const ShareList = ({
   setViewGroups,
   styles,
   setFlashMessage,
-  currentView
+  currentView,
+  panelWidth,
 }: ShareListProps) => {
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
@@ -119,7 +127,13 @@ const ShareList = ({
       value: "Users",
       icon: <PersonIcon />,
       component: (
-        <ShareUsers users={users} roles={roles} setViewUsers={setViewUsers} setFlashMessage={setFlashMessage} currentView={currentView} />
+        <ShareUsers
+          users={users}
+          roles={roles}
+          setViewUsers={setViewUsers}
+          setFlashMessage={setFlashMessage}
+          currentView={currentView}
+        />
       ),
     },
     {
@@ -168,19 +182,9 @@ const ShareList = ({
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={closeModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
+    <RightPanel open={open} handleClose={closeModal} panelWidth="700px">
       <Box
-        sx={styles?.modal}
-        component={motion.div}
-        variants={scaleUp}
-        initial="hidden"
-        animate="visible"
-        exit="close"
+        sx={{ mx: 2, my: 2, height: "calc(100vh - 100px)", overflowY: "auto" }}
       >
         <Typography gutterBottom variant="h5">
           Share
@@ -190,7 +194,7 @@ const ShareList = ({
             value={currentTab}
             scrollButtons="auto"
             variant="scrollable"
-            allowScrollButtonsMobile
+            // allowScrollButtonsMobile
             onChange={(e, value) => changeTab(value)}
           >
             {shareTabs.map((tab) => (
@@ -211,7 +215,23 @@ const ShareList = ({
           return isMatched && <Box key={tab.value}>{tab.component}</Box>;
         })}
       </Box>
-    </Modal>
+      <Box
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          right: 0,
+          p: 2,
+          background: "#fff",
+          width: { xs: "100%", lg: panelWidth ?? "700px" },
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button onClick={closeModal} variant="outlined">
+          Close
+        </Button>
+      </Box>
+    </RightPanel>
   );
 };
 type ShareUsersProps = {
@@ -220,7 +240,7 @@ type ShareUsersProps = {
   setViewUsers: (newUsers: any[]) => void;
   styles?: any;
   setFlashMessage: (message: FlashMessageModel) => void;
-  currentView:View
+  currentView: View;
 };
 const ShareUsers = ({
   users,
@@ -228,7 +248,7 @@ const ShareUsers = ({
   setViewUsers,
   styles,
   setFlashMessage,
-  currentView
+  currentView,
 }: ShareUsersProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
@@ -240,8 +260,8 @@ const ShareUsers = ({
   // const [submit, setSubmit] = useState<boolean>(false);
   const [isEmailValid, setEmailValid] = useState(false);
   const [emailDirty, setEmailDirty] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
-  const [isSubmit,setIsSubmit] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
   useEffect(() => {
     async function fetchData() {
@@ -254,25 +274,33 @@ const ShareUsers = ({
       fetchData();
     }
   }, [router.isReady]);
-  const setError = (message:string)=>{
-    setFlashMessage({message:message,type:'error'})
-  }
+  const setError = (message: string) => {
+    setFlashMessage({ message: message, type: "error" });
+  };
   const onSubmit = async () => {
     if (!currentView.id) {
       setFlashMessage({ message: "View id is not valid", type: "error" });
       return;
     }
-    setIsSubmit(true)
-    let _errors: { [key: string]: string|boolean } = {}
+    setIsSubmit(true);
+    let _errors: { [key: string]: string | boolean } = {};
 
-    const _setErrors = (e: { [key: string]: string|boolean }) => { 
-      _errors = e
-    } 
-    let newEmail = await frontendValidate(ModelValidatorEnum.GenericTypes,FieldValidatorEnum.email,invitedEmail,_errors,_setErrors,true)
-        if(isFrontendError(FieldValidatorEnum.email,_errors,setErrors,setError)) return
-    
+    const _setErrors = (e: { [key: string]: string | boolean }) => {
+      _errors = e;
+    };
+    let newEmail = await frontendValidate(
+      ModelValidatorEnum.GenericTypes,
+      FieldValidatorEnum.email,
+      invitedEmail,
+      _errors,
+      _setErrors,
+      true
+    );
+    if (isFrontendError(FieldValidatorEnum.email, _errors, setErrors, setError))
+      return;
+
     var existContact = contacts.find((x) => x.email === invitedEmail);
-    
+
     if (existContact) {
       let inviteToUserResponse = await listViewService.inviteUserToView(
         currentView.id,
@@ -280,9 +308,15 @@ const ShareUsers = ({
         role
       );
       if (isSucc(inviteToUserResponse)) {
-        setFlashMessage({ message: `Invite to ${invitedEmail} sent`, type: "success"});
+        setFlashMessage({
+          message: `Invite to ${invitedEmail} sent`,
+          type: "success",
+        });
       } else {
-        setFlashMessage({ message: (inviteToUserResponse as FlexlistsError).message, type: "error" });
+        setFlashMessage({
+          message: (inviteToUserResponse as FlexlistsError).message,
+          type: "error",
+        });
       }
     } else {
       let inviteToEmailResponse = await listViewService.inviteEmailToView(
@@ -291,25 +325,54 @@ const ShareUsers = ({
         role
       );
       if (isSucc(inviteToEmailResponse)) {
-        setFlashMessage({ message: `Invite to ${invitedEmail} sent`, type: "success"});
+        setFlashMessage({
+          message: `Invite to ${invitedEmail} sent`,
+          type: "success",
+        });
       } else {
-        setFlashMessage({ message: (inviteToEmailResponse as FlexlistsError).message, type: "error" });
+        setFlashMessage({
+          message: (inviteToEmailResponse as FlexlistsError).message,
+          type: "error",
+        });
       }
     }
   };
 
   styles = {
-    textField: {
-      height: "36px",
+    shareFormWrapper: {
+      display: "flex",
+      alignItems: { xs: "center", md: "flex-end" },
+      justifyContent: "space-evenly",
+      gap: 2,
+      flexDirection: { xs: "column", md: "row" },
+    },
+    accessRole: {
+      display: "flex",
+      flexDirection: "column",
+      flex: { xs: "unset", md: 1.05 },
+      width: { xs: "100%", md: "unset" },
+    },
+    usersGroupsKeys: {
+      display: "flex",
+      flexDirection: "column",
+      flex: { xs: "unset", md: 2 },
+      width: { xs: "100%", md: "unset" },
+    },
+    buttonWrapper: {
+      width: "100%",
+      flex: 1,
+    },
+    button: {
+      height: "40px",
     },
   };
   return (
     <>
-      <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" sx={{ py: 2 }}>
         Invite user
       </Typography>
 
-      <Grid container spacing={2}>
+      {/* <Grid container spacing={2}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
@@ -326,26 +389,33 @@ const ShareUsers = ({
           </Select>
         </Grid>
         <Grid item xs={7} sx={{ display: "flex", flexDirection: "column" }}>
-          {/* <FormLabel>
+          <FormLabel>
             <Typography variant="body2">Users</Typography>
-          </FormLabel> */}
+          </FormLabel>
           <Autocomplete
-            sx={{marginTop:'23px'}}
+            sx={{ marginTop: "23px" }}
             size="small"
             freeSolo
             id="free-solo-2-demo"
             disableClearable
-            onInputChange={async(event, newInputValue) => {
-              setIsSubmit(false)
+            onInputChange={async (event, newInputValue) => {
+              setIsSubmit(false);
               setInvitedEmail(newInputValue);
 
-              let _errors: { [key: string]: string|boolean } = {}
+              let _errors: { [key: string]: string | boolean } = {};
 
-              const _setErrors = (e: { [key: string]: string|boolean }) => { 
-                _errors = e
-              } 
-              await frontendValidate(ModelValidatorEnum.GenericTypes,FieldValidatorEnum.email,newInputValue,_errors,_setErrors,true)
-              setErrors(_errors)
+              const _setErrors = (e: { [key: string]: string | boolean }) => {
+                _errors = e;
+              };
+              await frontendValidate(
+                ModelValidatorEnum.GenericTypes,
+                FieldValidatorEnum.email,
+                newInputValue,
+                _errors,
+                _setErrors,
+                true
+              );
+              setErrors(_errors);
             }}
             options={contacts.map((option) => option.email)}
             renderInput={(params) => (
@@ -357,7 +427,10 @@ const ShareUsers = ({
                   type: "search",
                 }}
                 required
-                error={(emailDirty||isSubmit) && isFrontendError(FieldValidatorEnum.email,errors)}
+                error={
+                  (emailDirty || isSubmit) &&
+                  isFrontendError(FieldValidatorEnum.email, errors)
+                }
                 onBlur={() => setEmailDirty(true)}
                 sx={styles?.textField}
               />
@@ -369,7 +442,88 @@ const ShareUsers = ({
             Invite
           </Button>
         </Grid>
-      </Grid>
+      </Grid> */}
+      <Box sx={styles?.shareFormWrapper}>
+        <Box sx={styles?.accessRole}>
+          <FormLabel>
+            <Typography variant="body2">Access / Role</Typography>
+          </FormLabel>
+          <Select size="small" value={role} onChange={handleSelectRoleChange}>
+            {roles &&
+              roles.map((role, index) => {
+                return (
+                  <MenuItem key={index} value={role.name}>
+                    {role.label}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </Box>
+        <Box sx={styles?.usersGroupsKeys}>
+          <FormLabel>
+            <Typography variant="body2">Users</Typography>
+          </FormLabel>
+          <Autocomplete
+            // sx={{ marginTop: "23px" }}
+            size="small"
+            freeSolo
+            id="free-solo-2-demo"
+            disableClearable
+            onInputChange={async (event, newInputValue) => {
+              setIsSubmit(false);
+              setInvitedEmail(newInputValue);
+
+              let _errors: { [key: string]: string | boolean } = {};
+
+              const _setErrors = (e: { [key: string]: string | boolean }) => {
+                _errors = e;
+              };
+              await frontendValidate(
+                ModelValidatorEnum.GenericTypes,
+                FieldValidatorEnum.email,
+                newInputValue,
+                _errors,
+                _setErrors,
+                true
+              );
+              setErrors(_errors);
+            }}
+            options={contacts.map((option) => option.email)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Invite contacts or invite by email ..."
+                InputProps={{
+                  ...params.InputProps,
+                  type: "search",
+                }}
+                required
+                error={
+                  (emailDirty || isSubmit) &&
+                  isFrontendError(FieldValidatorEnum.email, errors)
+                }
+                onBlur={() => setEmailDirty(true)}
+                sx={styles?.textField}
+              />
+            )}
+          />
+        </Box>
+        <Box sx={styles?.buttonWrapper}>
+          <Button
+            sx={styles?.button}
+            variant="contained"
+            fullWidth
+            onClick={() => onSubmit()}
+          >
+            Invite
+          </Button>
+        </Box>
+      </Box>
+
+      <Divider sx={{ mt: 3, mb: 1 }}></Divider>
+      <Typography sx={{ pt: 1 }} variant="subtitle2">
+        All users
+      </Typography>
       <UserListAccess users={users} roles={roles} />
     </>
   );
@@ -381,7 +535,7 @@ type ShareGroupsProps = {
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
   styles?: any;
   setFlashMessage: (message: FlashMessageModel) => void;
-  currentView:View
+  currentView: View;
 };
 const ShareGroups = ({
   viewGroups,
@@ -389,7 +543,7 @@ const ShareGroups = ({
   setViewGroups,
   styles,
   setFlashMessage,
-  currentView
+  currentView,
 }: ShareGroupsProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
@@ -450,20 +604,43 @@ const ShareGroups = ({
     }
   };
   styles = {
-    textField: {
-      height: "36px",
+    shareFormWrapper: {
+      display: "flex",
+      alignItems: { xs: "center", md: "flex-end" },
+      justifyContent: "space-evenly",
+      gap: 2,
+      flexDirection: { xs: "column", md: "row" },
+    },
+    accessRole: {
+      display: "flex",
+      flexDirection: "column",
+      flex: { xs: "unset", md: 1.05 },
+      width: { xs: "100%", md: "unset" },
+    },
+    usersGroupsKeys: {
+      display: "flex",
+      flexDirection: "column",
+      flex: { xs: "unset", md: 2 },
+      width: { xs: "100%", md: "unset" },
+    },
+    buttonWrapper: {
+      width: "100%",
+      flex: 1,
+    },
+    button: {
+      height: "40px",
     },
   };
   return (
     <>
-      <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" sx={{ py: 2 }}>
         Invite group
       </Typography>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       {/* <Box>
           {submit && successMessage && <Alert severity="success">{successMessage}</Alert>}
         </Box> */}
-      <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
+      {/* <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
@@ -509,7 +686,60 @@ const ShareGroups = ({
             Add Group
           </Button>
         </Grid>
-      </Grid>
+      </Grid> */}
+      <Box sx={styles?.shareFormWrapper}>
+        <Box sx={styles?.accessRole}>
+          <FormLabel>
+            <Typography variant="body2">Access / Role</Typography>
+          </FormLabel>
+          <Select size="small" value={role} onChange={handleSelectRoleChange}>
+            {roles &&
+              roles.map((role, index) => {
+                return (
+                  <MenuItem key={index} value={role.name}>
+                    {role.label}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </Box>
+        <Box sx={styles?.usersGroupsKeys}>
+          <FormLabel>
+            <Typography variant="body2">Groups</Typography>
+          </FormLabel>
+          <Autocomplete
+            size="small"
+            id="combo-box-groups"
+            filterSelectedOptions={true}
+            options={groups.filter(
+              (x) => !viewGroups.find((g) => g.groupId === x.groupId)
+            )}
+            getOptionLabel={(option) => option.name}
+            fullWidth
+            value={currentGroup ?? null}
+            onChange={(event, newInputValue) => {
+              onGroupChange(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField {...params} size="small" label="Search groups" />
+            )}
+          />
+        </Box>
+        <Box sx={styles?.buttonWrapper}>
+          <Button
+            sx={styles?.button}
+            variant="contained"
+            fullWidth
+            onClick={() => onsubmit()}
+          >
+            Add Group
+          </Button>
+        </Box>
+      </Box>
+      <Divider sx={{ mt: 3, mb: 1 }}></Divider>
+      <Typography sx={{ pt: 1 }} variant="subtitle2">
+        All groups
+      </Typography>
       <GroupListAccess
         roles={roles}
         viewGroups={viewGroups}
@@ -520,9 +750,10 @@ const ShareGroups = ({
 };
 type ShareKeysProps = {
   roles: { name: string; label: string }[];
-  currentView:View
+  currentView: View;
+  styles?: any;
 };
-const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
+const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const [keyName, setKeyName] = useState<string>("");
@@ -531,9 +762,7 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
   const [submit, setSubmit] = useState<boolean>(false);
   useEffect(() => {
     async function fetchData() {
-      var response = await listViewService.getKeysForView(
-        currentView.id
-      );
+      var response = await listViewService.getKeysForView(currentView.id);
       if (isSucc(response) && response.data) {
         setViewKeys(response.data);
       }
@@ -571,14 +800,42 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
   const onUpdateViewKeys = (newViewKeys: GetKeysForViewOutputDto[]) => {
     setViewKeys(newViewKeys);
   };
+  styles = {
+    shareFormWrapper: {
+      display: "flex",
+      alignItems: { xs: "center", md: "flex-end" },
+      justifyContent: "space-evenly",
+      gap: 2,
+      flexDirection: { xs: "column", md: "row" },
+    },
+    accessRole: {
+      display: "flex",
+      flexDirection: "column",
+      flex: { xs: "unset", md: 1.05 },
+      width: { xs: "100%", md: "unset" },
+    },
+    usersGroupsKeys: {
+      display: "flex",
+      flexDirection: "column",
+      flex: { xs: "unset", md: 2 },
+      width: { xs: "100%", md: "unset" },
+    },
+    buttonWrapper: {
+      width: "100%",
+      flex: 1,
+    },
+    button: {
+      height: "40px",
+    },
+  };
   return (
     <>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-      <Typography variant="subtitle2" gutterBottom sx={{ mt: 1 }}>
+      <Typography variant="subtitle2" sx={{ py: 2 }}>
         Create keys
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+      {/* <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
+        <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Access / Role</Typography>
           </FormLabel>
@@ -593,7 +850,7 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
               })}
           </Select>
         </Grid>
-        <Grid item xs={5} sx={{ display: "flex", flexDirection: "column" }}>
+        <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
             <Typography variant="body2">Info</Typography>
           </FormLabel>
@@ -604,14 +861,62 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
             onChange={onKeyNameChange}
           ></TextField>
         </Grid>
-        <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
+        <Grid
+          item
+          xs={3}
+          sx={{
+            // display: "flex",
+            // alignItems: "flex-start",
+            background: "wheat",
+            height: "36px",
+          }}
+        >
           <Button variant="contained" fullWidth onClick={() => onSubmit()}>
             Create Key
           </Button>
         </Grid>
-      </Grid>
-      <Divider sx={{ my: 3, mb: 2 }}></Divider>
-      <Typography gutterBottom variant="subtitle2">
+      </Grid> */}
+      <Box sx={styles?.shareFormWrapper}>
+        <Box sx={styles?.accessRole}>
+          <FormLabel>
+            <Typography variant="body2">Access / Role</Typography>
+          </FormLabel>
+          <Select value={role} size="small" onChange={handleSelectRoleChange}>
+            {roles &&
+              roles.map((role, index) => {
+                return (
+                  <MenuItem key={index} value={role.name}>
+                    {role.label}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </Box>
+        <Box sx={styles?.usersGroupsKeys}>
+          <FormLabel>
+            <Typography variant="body2">Info</Typography>
+          </FormLabel>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Name of key..."
+            value={keyName}
+            onChange={onKeyNameChange}
+          />
+        </Box>
+        <Box sx={styles?.buttonWrapper}>
+          <Button
+            variant="contained"
+            sx={styles?.button}
+            fullWidth
+            onClick={() => onSubmit()}
+          >
+            Create Key
+          </Button>
+        </Box>
+      </Box>
+      <Divider sx={{ mt: 3, mb: 1 }}></Divider>
+      <Typography sx={{ pt: 1, pb: 1 }} variant="subtitle2">
         All keys
       </Typography>
       <ManageKeys
@@ -626,13 +931,13 @@ const ShareKeys = ({ roles,currentView }: ShareKeysProps) => {
 const mapStateToProps = (state: any) => ({
   users: state.view.users,
   viewGroups: state.view.viewGroups,
-  currentView: state.view.currentView
+  currentView: state.view.currentView,
 });
 
 const mapDispatchToProps = {
   setViewUsers,
   setViewGroups,
-  setFlashMessage
+  setFlashMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareList);
