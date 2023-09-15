@@ -416,12 +416,16 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
         />
       </>
       <>
+      {
+        openShare &&
         <ShareList
-          open={openShare}
-          handleClose={() => {
-            handleCloseShare();
-          }}
-        />
+        open={openShare}
+        handleClose={() => {
+          handleCloseShare();
+        }}
+      />
+      }
+       
       </>
       {currentView && (
         <>

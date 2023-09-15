@@ -18,32 +18,35 @@ import {
 import { useTheme } from "@mui/material/styles";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import EditIcon from "@mui/icons-material/Edit";
 import { GetKeysForViewOutputDto } from "src/models/ApiOutputModels";
 import { Role } from "src/enums/SharedEnums";
-import { listViewService } from "src/services/listView.service";
-import { convertToInteger } from "src/utils/convertUtils";
+import { listViewService, updateKeyForView } from "src/services/listView.service";
 import { useRouter } from "next/router";
-import { isSucc } from "src/models/ApiResponse";
-import { ThemeContext } from "@emotion/react";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { View } from "src/models/SharedModels";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { connect } from "react-redux";
 type ManageKeysProps = {
   viewKeys: GetKeysForViewOutputDto[];
   roles: { name: string; label: string }[];
   onUpdateViewKeys: (newViewKeys: GetKeysForViewOutputDto[]) => void;
   currentView: View;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 function ManageKeys({
   viewKeys,
   roles,
   onUpdateViewKeys,
   currentView,
+  setFlashMessage
 }: ManageKeysProps) {
   const theme = useTheme();
   const router = useRouter();
   const [viewKeyUpdateList, setViewKeyUpdateList] = useState<
     { keyId: number; isEditing: boolean }[]
   >([]);
+  const [previousEditViewKeys,setPreviousEditViewKeys] = useState<GetKeysForViewOutputDto[]>([]);
   const handleSelectRoleChange = async (
     event: SelectChangeEvent,
     index: number
@@ -108,11 +111,56 @@ function ManageKeys({
   const onSubmit = async (keyId: number) => {
     if (!isKeyEditing(keyId)) {
       updateViewKeyUpdateList(keyId, true);
-    } else {
-      console.log("aaaa");
-      updateViewKeyUpdateList(keyId, false);
+      let newViewKeys : GetKeysForViewOutputDto[] = Object.assign([],viewKeys);
+      let currentViewKey = newViewKeys.find((x) => x.keyId === keyId);
+      let previousEditViewKey = previousEditViewKeys.find((x) => x.keyId === keyId);
+      if(!previousEditViewKey)
+      {
+        previousEditViewKey = Object.assign({},currentViewKey);
+        setPreviousEditViewKeys([...previousEditViewKeys,previousEditViewKey]);
+      }
+    } 
+    else 
+    {
+      let currentKeyView = viewKeys.find((x) => x.keyId === keyId);
+      if (currentKeyView) 
+      {
+        let updateKeyView = await updateKeyForView(currentView.id,keyId,currentKeyView.role,currentKeyView.name);
+        if(isSucc(updateKeyView))
+        {
+          updateViewKeyUpdateList(keyId, false);
+          revertPreviousEditKey(keyId,false)
+        }
+        else
+        {
+          setFlashMessage({message:(updateKeyView as FlexlistsError).message, type:"error"})
+        }
+      }
     }
   };
+  const onEditCancel = (keyId: number) => {
+    revertPreviousEditKey(keyId)
+  }
+  const revertPreviousEditKey = (keyId: number,isCancel:boolean=true) => {
+    if(isCancel)
+    {
+      let previousEditViewKey = previousEditViewKeys.find((x) => x.keyId === keyId);
+      if(previousEditViewKey)
+      {
+        let newViewKeys : GetKeysForViewOutputDto[] = Object.assign([],viewKeys);
+        let currentViewKey = newViewKeys.find((x) => x.keyId === keyId);
+        if(currentViewKey)
+        {
+          currentViewKey.name = previousEditViewKey.name;
+          currentViewKey.role = previousEditViewKey.role;
+          onUpdateViewKeys(newViewKeys);
+        }
+      }
+    }
+    let newPreviousEditViewKeys = previousEditViewKeys.filter((x) => x.keyId !== keyId);
+    setPreviousEditViewKeys(newPreviousEditViewKeys);
+    updateViewKeyUpdateList(keyId, false);
+  }
   return (
     <>
       {viewKeys &&
@@ -224,6 +272,7 @@ function ManageKeys({
                   <Button
                     fullWidth
                     variant="text"
+                    disabled={index===0}
                     sx={{
                       color: theme.palette.palette_style.primary.main,
                     }}
@@ -233,10 +282,23 @@ function ManageKeys({
                   </Button>
                   <Button
                     fullWidth
+                    variant={isKeyEditing(viewKey.keyId) ? "text" : "contained"}
+                    sx={{
+                      color: theme.palette.palette_style.primary.main,
+                      display:isKeyEditing(viewKey.keyId) ? "block" : "none"
+                    }}
+                    onClick={() => onEditCancel(viewKey.keyId)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    fullWidth
                     variant="text"
+                    disabled={index===0}
                     sx={{
                       borderColor: "red",
                       color: theme.palette.palette_style.error.dark,
+                      display:!isKeyEditing(viewKey.keyId)? "block" : "none"
                     }}
                     onClick={() => deleteKey(viewKey.keyId)}
                   >
@@ -322,14 +384,14 @@ function ManageKeys({
                       color: theme.palette.palette_style.primary.main,
                       display:isKeyEditing(viewKey.keyId) ? "block" : "none"
                     }}
-                    onClick={() => onSubmit(viewKey.keyId)}
+                    onClick={() => onEditCancel(viewKey.keyId)}
                   >
                     Cancel
                   </Button>
                   <Button
                     fullWidth
                     variant={isKeyEditing(viewKey.keyId) ? "contained" : "text"}
-
+                    disabled={index===0}
                     sx={{
                       color: isKeyEditing(viewKey.keyId) ?theme.palette.palette_style.text.white : theme.palette.palette_style.primary.main  ,
                       
@@ -341,9 +403,11 @@ function ManageKeys({
                   <Button
                     fullWidth
                     variant="text"
+                    disabled={index===0}
                     sx={{
                       borderColor: "red",
                       color: theme.palette.palette_style.error.dark,
+                      display:!isKeyEditing(viewKey.keyId) ? "block" : "none"
                     }}
                     onClick={() => deleteKey(viewKey.keyId)}
                   >
@@ -361,5 +425,10 @@ function ManageKeys({
     </>
   );
 }
+const mapStateToProps = (state: any) => ({
+});
 
-export default ManageKeys;
+const mapDispatchToProps = {
+  setFlashMessage,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ManageKeys)
