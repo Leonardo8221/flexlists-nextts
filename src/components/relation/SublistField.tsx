@@ -81,9 +81,9 @@ const SublistField = ({
         disabled={currentMode === "view" || isPrint}
         label={column.name}
         id={`${column.id}`}
-        value={values[column.id] ? values[column.id].split(',').map((el: string) => parseInt(el)) : []}
+        value={values[column.id] || []}
         onChange={(e) =>
-          setValues({ ...values, [column.id]: typeof e.target.value === 'string' ? e.target.value : e.target.value.join(',') })
+          setValues({ ...values, [column.id]: e.target.value })
         }
         size="small"
         error={submit && column.required && !values[column.id]}
