@@ -9,9 +9,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
 import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 
 type SortProps = {
+  translations: TranslationText[];
   currentView: View;
   setCurrentView: (view: View) => void;
   columns: any;
@@ -21,6 +24,7 @@ type SortProps = {
 };
 
 const SortPage = ({
+  translations,
   columns,
   currentView,
   setCurrentView,
@@ -28,6 +32,9 @@ const SortPage = ({
   handleClose,
   fetchRows,
 }: SortProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
@@ -58,11 +65,11 @@ const SortPage = ({
     var directions: { key: string; value: string }[] = [
       {
         key: "asc",
-        value: "First-Last",
+        value: t("First-Last"),
       },
       {
         key: "desc",
-        value: "Last-First",
+        value: t("Last-First"),
       },
     ];
     switch (column?.uiField) {
@@ -137,7 +144,7 @@ const SortPage = ({
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="subtitle2">Sort by</Typography>
+          <Typography variant="subtitle2">{t("Sort By")}</Typography>
           <Box
             component="span"
             className="svg-color add_choice"
@@ -270,7 +277,7 @@ const SortPage = ({
               sx={{ color: theme.palette.palette_style.text.selected }}
               onClick={addSort}
             >
-              Add another sort
+              {t("Add Another Sort")}
             </Box>
           </Box>
           <Button
@@ -278,7 +285,7 @@ const SortPage = ({
             variant="contained"
             onClick={() => onsubmit()}
           >
-            Submit
+            {t("Submit")}
           </Button>
         </Box>
       </Box>

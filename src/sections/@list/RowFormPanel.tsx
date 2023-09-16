@@ -39,6 +39,8 @@ import RenderFields from "./RenderFields";
 import { useRouter } from "next/router";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 import { removeReadContent, setReadContent } from "src/redux/actions/viewActions";
 
 interface RowFormProps {
@@ -47,6 +49,7 @@ interface RowFormProps {
   columns: any[];
   open: boolean;
   mode: "view" | "create" | "update" | "comment";
+  translations: TranslationText[];
   onClose: () => void;
   onSubmit: (values: any, action: string) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
@@ -60,12 +63,16 @@ const RowFormPanel = ({
   open,
   columns,
   mode,
+  translations,
   onClose,
   onSubmit,
   setFlashMessage,
   setReadContent,
   removeReadContent
 }: RowFormProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -79,13 +86,13 @@ const RowFormPanel = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const actions = [
     {
-      title: "Resize",
+      title: t("Resize"),
       icon: <FullscreenIcon />,
       action: "resize",
       allowed: true,
     },
     {
-      title: "Clone",
+      title: t("Clone"),
       icon: <ContentCopyIcon />,
       action: "clone",
       allowed: hasPermission(currentView?.role, "Update"),
@@ -93,21 +100,21 @@ const RowFormPanel = ({
     {
       title: `${values &&
         values[columns.find((x) => x.system && x.name === "___archived").id]
-        ? "Unarchive"
-        : "Archive"
+        ? t("Unarchive")
+        : t("Archive")
         }`,
       icon: <ArchiveIcon />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: "Print",
+      title: t("Print"),
       icon: <PrintIcon />,
       action: "print",
       allowed: hasPermission(currentView?.role, "Read"),
     },
     {
-      title: "Delete",
+      title: t("Delete"),
       icon: <DeleteIcon />,
       action: "delete",
       // color: "#c92929",
@@ -446,7 +453,7 @@ const RowFormPanel = ({
             borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
           }}
         >
-          Create New Row
+          {t("Create New Row")}
         </DialogTitle>
       )}
       {(currentMode === "update" || currentMode === "view") && (
@@ -542,7 +549,7 @@ const RowFormPanel = ({
           </form>
         )}
         {currentMode == "comment" && (
-          <ChatForm chatType={ChatType.RowData} id={rowData.id} />
+          <ChatForm chatType={ChatType.RowData} id={rowData.id} translations={translations} />
         )}
       </DialogContent>
 
@@ -588,7 +595,7 @@ const RowFormPanel = ({
             bottom: 0,
           }}
         >
-          <Button onClick={handleCloseModal}>Cancel</Button>
+          <Button onClick={handleCloseModal}>{t("Cancel")}</Button>
           {(currentMode === "update" || currentMode === "create") && (
             <Button
               color="primary"
@@ -596,7 +603,7 @@ const RowFormPanel = ({
               variant="contained"
               type="submit"
             >
-              {rowData && rowData.id ? "Update Row" : "Create New Row"}
+              {rowData && rowData.id ? t("Update Row") : t("Create New Row")}
             </Button>
           )}
           {hasPermission(currentView?.role, "Update") &&
@@ -607,15 +614,16 @@ const RowFormPanel = ({
                 variant="contained"
                 type="submit"
               >
-                Edit
+                {t("Edit")}
               </Button>
             )}
         </Box>
         <YesNoDialog
-          title="Delete Selected Data"
-          submitText="Delete"
-          message="Are you sure you want to delete selected data?"
+          title={t("Delete Selected Data")}
+          submitText={t("Delete")}
+          message={t("Sure Delete Data")}
           open={openBulkDeleteDialog}
+          translations={translations}
           handleClose={() => setOpenBulkDeleteDialog(false)}
           onSubmit={() => {
             handleDelete();

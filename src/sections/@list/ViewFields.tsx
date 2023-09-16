@@ -20,8 +20,11 @@ import ListFields from "./ListFields";
 import { reorderViewFields } from "src/services/field.service";
 import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { getFieldIcons } from "src/utils/flexlistHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type ViewFieldsProps = {
+  translations: TranslationText[];
   currentView: View;
   setCurrentView: (view: View) => void;
   columns: ViewField[];
@@ -32,6 +35,7 @@ type ViewFieldsProps = {
 };
 
 const ViewFields = ({
+  translations,
   currentView,
   setCurrentView,
   columns,
@@ -40,6 +44,9 @@ const ViewFields = ({
   handleClose,
   fetchColumns,
 }: ViewFieldsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
 
@@ -248,7 +255,7 @@ const ViewFields = ({
 
           {fieldListMode ? (
             <>
-              <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
+              <AddColumnButton modalHandle={handleOpenFieldManagementPanel} translations={translations} />
               <Divider
                 light
                 sx={{
@@ -266,7 +273,7 @@ const ViewFields = ({
                 id="search_column_list"
               >
                 <TextField
-                  label="Search a field"
+                  label={t("Search A Field")}
                   size="small"
                   type="text"
                   onChange={handleSearchColumns}
@@ -290,7 +297,7 @@ const ViewFields = ({
                 />
               </Box>
               <Box>
-                <Tooltip title="Field is visible">
+                <Tooltip title={t("Field Is Visible")}>
                   <Box
                     component="span"
                     className="svg-color"
@@ -306,7 +313,7 @@ const ViewFields = ({
                     }}
                   />
                 </Tooltip>
-                <Tooltip title="Visible on main view, not details">
+                <Tooltip title={t("Visible On Main View")}>
                   <Box
                     component="span"
                     className="svg-color"
@@ -458,7 +465,7 @@ const ViewFields = ({
                     handleVisible(true);
                   }}
                 >
-                  Show all
+                  {t("Show All")}
                 </Box>
                 <Box
                   sx={{
@@ -471,7 +478,7 @@ const ViewFields = ({
                     handleVisible(false);
                   }}
                 >
-                  Hide all
+                  {t("Hide All")}
                 </Box>
               </Box>
             </>
@@ -490,6 +497,7 @@ const ViewFields = ({
         </Box>
       </Modal>
       <ListFields
+        translations={translations}
         open={visibleFieldManagementPanel}
         onClose={() => handleCloseFieldManagementPanel()}
       />

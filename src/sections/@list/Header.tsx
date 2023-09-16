@@ -32,15 +32,26 @@ import { PATH_MAIN } from "src/routes/paths";
 import EditViewConfigForm from "../@listView/EditViewConfigForm";
 import { ViewType } from "src/enums/SharedEnums";
 import { renderHTML } from "src/utils/convertUtils";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type HeaderProps = {
   currentView: View;
+  translations: TranslationText[];
   setFlashMessage: (message: FlashMessageModel) => void;
 };
 
-const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
+const Header = ({
+  currentView,
+  translations,
+  setFlashMessage,
+}: HeaderProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const theme = useTheme();
+
   const [isFavorite, setIsFavorite] = useState(true);
   const [open, setOpen] = useState(true);
   const [openPublish, setOpenPublish] = useState(false);
@@ -64,9 +75,11 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
   const handleBoxClick = () => {
     setShowIcons(!showIcons);
   };
+
   const handleOpenPublish = () => {
     setOpenPublish(true);
   };
+
   const handleClosePublish = () => {
     setOpenPublish(false);
   };
@@ -74,12 +87,15 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
   const handleOpenShare = () => {
     setOpenShare(true);
   };
+
   const handleCloseShare = () => {
     setOpenShare(false);
   };
+
   const handleOpenRenameModal = () => {
     setIsRenameOpenModal(true);
   };
+
   const handleOpenDuplicateModal = () => {
     setIsDuplicateOpenModal(true);
   };
@@ -90,9 +106,11 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
   const handleOpenArchiveModal = () => {
     setIsArchiveOpenModal(true);
   };
+
   const handleOpenEditViewConfigModal = () => {
     setIsEditViewConfigOpenModal(true);
   };
+
   const handleArchive = async () => {
     setIsArchiveOpenModal(false);
     let response = await archiveView(currentView?.id);
@@ -109,6 +127,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
       });
     }
   };
+
   const handleUnArchive = async () => {
     setIsArchiveOpenModal(false);
     let response = await unArchiveView(currentView?.id);
@@ -125,6 +144,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
       });
     }
   };
+
   return (
     <Box
       sx={{
@@ -203,7 +223,9 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                   key={"rename_list"}
                   onClick={() => handleOpenRenameModal()}
                 >
-                  {currentView?.isDefaultView ? "Rename List" : "Rename View"}
+                  {currentView?.isDefaultView
+                    ? t("Rename List")
+                    : t("Rename View")}
                 </CDropdownItem>
                 {!currentView?.isDefaultView && (
                   <>
@@ -212,14 +234,14 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                       key={"duplicate_list"}
                       onClick={() => handleOpenDuplicateModal()}
                     >
-                      Duplicate View
+                      {t("Duplicate View")}
                     </CDropdownItem>
                     <CDropdownItem
                       href="#"
                       key={"delete_list"}
                       onClick={() => handleOpenDeleteModal()}
                     >
-                      Delete View
+                      {t("Delete View")}
                     </CDropdownItem>
                     {currentView?.isArchived ? (
                       <CDropdownItem
@@ -227,7 +249,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                         key={"unarchive_list"}
                         onClick={() => handleUnArchive()}
                       >
-                        UnArchive View
+                        {t("UnArchive View")}
                       </CDropdownItem>
                     ) : (
                       <CDropdownItem
@@ -235,7 +257,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                         key={"archive_list"}
                         onClick={() => handleOpenArchiveModal()}
                       >
-                        Archive View
+                        {t("Archive View")}
                       </CDropdownItem>
                     )}
                   </>
@@ -246,7 +268,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                     key={"edit_config"}
                     onClick={() => handleOpenEditViewConfigModal()}
                   >
-                    Edit Config
+                    {t("Edit Config")}
                   </CDropdownItem>
                 )}
               </CDropdownMenu>
@@ -254,7 +276,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
           )}
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
-          {isDesktop && <ToolBar />}
+          {isDesktop && <ToolBar translations={translations} />}
         </Box>
         <Box
           sx={{
@@ -334,7 +356,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                 variant="contained"
                 startIcon={<Iconify icon={"eva:paper-plane-fill"} />}
               >
-                Publish
+                {t("Publish")}
               </Button>
               {hasPermission(currentView?.role, "All") && (
                 <Button
@@ -345,7 +367,7 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
                   variant="text"
                   startIcon={<Iconify icon={"eva:share-outline"} />}
                 >
-                  Share
+                  {t("Share")}
                 </Button>
               )}
             </Box>
@@ -397,12 +419,13 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
       </Box>
 
       <Box sx={{ display: { md: "none", width: "100%" } }}>
-        {!isDesktop && <ToolBar />}
+        {!isDesktop && <ToolBar translations={translations} />}
       </Box>
       <ChatFormPanel
         chatType={ChatType.View}
         id={currentView.id}
         open={visiblePanel}
+        translations={translations}
         onClose={() => setVisiblePanel(false)}
       />
       <>
@@ -410,47 +433,53 @@ const Header = ({ currentView, setFlashMessage }: HeaderProps) => {
           id={currentView.id}
           name={currentView.name}
           open={openPublish}
+          translations={translations}
           handleClose={() => {
             handleClosePublish();
           }}
         />
       </>
+
       <>
-      {
-        openShare &&
-        <ShareList
-        open={openShare}
-        handleClose={() => {
-          handleCloseShare();
-        }}
-      />
-      }
-       
+        {openShare && (
+          <ShareList
+            open={openShare}
+            translations={translations}
+            handleClose={() => {
+              handleCloseShare();
+            }}
+          />
+        )}
       </>
       {currentView && (
         <>
           <RenameView
             open={isRenameOpenModal}
+            translations={translations}
             handleClose={() => setIsRenameOpenModal(false)}
           />
           <DuplicateView
             open={isDuplicateOpenModal}
+            translations={translations}
             handleClose={() => setIsDuplicateOpenModal(false)}
           />
           <DeleteView
             viewId={currentView.id}
             open={isDeleteOpenModal}
+            translations={translations}
             handleClose={() => setIsDeleteOpenModal(false)}
           />
           <EditViewConfigForm
             open={isEditViewConfigOpenModal}
+            translations={translations}
             handleClose={() => setIsEditViewConfigOpenModal(false)}
           />
           <YesNoDialog
-            title="Archive View"
-            submitText="Archive"
-            message="Are you sure you want to archive selected view?"
+            title={t("Archive View")}
+            submitText={t("Archive")}
+            message={t("Sure Archive")}
             open={isArchiveOpenModal}
+            translations={translations}
             handleClose={() => setIsArchiveOpenModal(false)}
             onSubmit={() => {
               handleArchive();

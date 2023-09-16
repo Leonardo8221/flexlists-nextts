@@ -12,18 +12,20 @@ import { ViewField } from "src/models/ViewField";
 import { listContentService } from "src/services/listContent.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import { TranslationText } from "src/models/SharedModels";
 
 type KanbanViewProps = {
   columns: ViewField[];
   currentView:View;
   rows: any[];
   open: boolean;
+  translations: TranslationText[];
   setRows: (columns: any) => void;
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
 };
 
-const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCurrentView }: KanbanViewProps) => {
+const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fetchRows, setCurrentView }: KanbanViewProps) => {
   
   // const [testData, setTestData] = useState<any>();
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -158,14 +160,14 @@ const KanbanView = ({currentView,columns, rows, open, setRows, fetchRows, setCur
               // const column = testData.columns[columnId];
               const tasks = rows.filter((row: any) => row[kanbanConfig.boardColumnId] === boardColumn.id);
               
-              return <KanbanColumn key={boardColumn.id} kanbanConfig={kanbanConfig} column={boardColumn} tasks={tasks} index={index} openNewRowPanel={() => { setVisibleAddRowPanel(true); }} handleRowData={handleRowData} />;
+              return <KanbanColumn translations={translations} key={boardColumn.id} kanbanConfig={kanbanConfig} column={boardColumn} tasks={tasks} index={index} openNewRowPanel={() => { setVisibleAddRowPanel(true); }} handleRowData={handleRowData} />;
             })}
             {provided.placeholder}
           </Container>
         )}
       </Droppable>
       
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} translations={translations} />
     </DragDropContext>
   );
 };

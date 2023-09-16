@@ -11,8 +11,11 @@ import { fetchRows, setCurrentView } from "src/redux/actions/viewActions";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { deleteViewPreset } from "src/services/listView.service";
 import { FlexlistsError, isSucc } from "src/utils/responses";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type ViewPresetsProps = {
+  translations: TranslationText[];
   columns: any[];
   currentView: View;
   setCurrentView: (view: View) => void;
@@ -23,7 +26,9 @@ type ViewPresetsProps = {
   selectedPreset: any;
   setSelectedPreset: (preset: any) => void;
 };
+
 function ViewPresets({
+  translations,
   selectedPreset,
   setSelectedPreset,
   columns,
@@ -34,18 +39,21 @@ function ViewPresets({
   fetchRows,
   setFlashMessage,
 }: ViewPresetsProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const theme = useTheme();
   const [presets, setPresets] = useState<any[]>([]);
-
   const [deletePreset, setDeletePreset] = useState<any>();
   const [isDeletePresetDialogOpen, setOpenDeletePresetDialog] = useState(false);
+
   useEffect(() => {
     let newPresets: any[] = [
-      cloneDeep(defaultPreset),
-      { name: "Show All" },
-      { name: "Archived" },
-      { name: "Unarchived" },
+      t(cloneDeep(defaultPreset)),
+      { name: t("Show All") },
+      { name: t("Archived") },
+      { name: t("Unarchived") },
     ];
 
     if (currentView && currentView.presets && currentView.presets.length > 0) {
@@ -66,7 +74,7 @@ function ViewPresets({
 
     var newView: View = Object.assign({}, currentView);
     setSelectedPreset(preset);
-    if (preset.name === "Show All") {
+    if (preset.name === t("Show All")) {
       const archived = columns.find((x: any) => x.name === "___archived");
       newView.conditions = [
         {
@@ -90,7 +98,7 @@ function ViewPresets({
       handleClose();
       return;
     }
-    if (preset.name === "Archived") {
+    if (preset.name === t("Archived")) {
       const archived = columns.find((x: any) => x.name === "___archived");
       newView.conditions = [
         {
@@ -107,7 +115,7 @@ function ViewPresets({
       handleClose();
       return;
     }
-    if (preset.name === "Unarchived") {
+    if (preset.name === t("Unarchived")) {
       const archived = columns.find((x: any) => x.name === "___archived");
       newView.conditions = [
         {
@@ -135,10 +143,10 @@ function ViewPresets({
   };
   const handleDeletePreset = async (preset: any) => {
     if (
-      preset.name === "Default" ||
-      preset.name === "Show All" ||
-      preset.name === "Archived" ||
-      preset.name === "Unarchived"
+      preset.name === t("Default") ||
+      preset.name === t("Show All") ||
+      preset.name === t("Archived") ||
+      preset.name === t("Unarchived")
     ) {
       return;
     }
@@ -158,7 +166,7 @@ function ViewPresets({
     if (isSucc(deletePresetRespone)) {
       console.log(deletePreset.name);
       if (deletePreset.name === selectedPreset?.name) {
-        const defaultPreset = presets.find((x: any) => x.name === "Default");
+        const defaultPreset = presets.find((x: any) => x.name === t("Default"));
         const newView: View = Object.assign({}, currentView);
         newView.presets = newView.presets.filter(
           (x: any) => x.name?.toLowerCase() !== deletePreset.name?.toLowerCase()
@@ -182,7 +190,7 @@ function ViewPresets({
       }
 
       setFlashMessage({
-        message: "Preset deleted successfully",
+        message: t("Preset Deleted"),
         type: "success",
       });
     } else {
@@ -202,7 +210,7 @@ function ViewPresets({
           justifyContent: "space-between",
         }}
       >
-        <Typography variant="subtitle2">Presets:</Typography>
+        <Typography variant="subtitle2">{t("Presets")}:</Typography>
       </Box>
       <Box>
         {presets &&
@@ -225,10 +233,10 @@ function ViewPresets({
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>
-                    {preset.name !== "Default" &&
-                      preset.name !== "Show All" &&
-                      preset.name !== "Archived" &&
-                      preset.name !== "Unarchived" && (
+                    {preset.name !== t("Default") &&
+                      preset.name !== t("Show All") &&
+                      preset.name !== t("Archived") &&
+                      preset.name !== t("Unarchived") && (
                         <Box
                           sx={{
                             display: "flex",
@@ -263,10 +271,11 @@ function ViewPresets({
           })}
       </Box>
       <YesNoDialog
-        title="Delete Preset"
-        submitText="Delete"
-        message="Are you sure you want to delete the preset?"
+        title={t("Delete Preset")}
+        submitText={t("Delete")}
+        message={t("Sure Delete Preset")}
         open={isDeletePresetDialogOpen}
+        translations={translations}
         handleClose={() => setOpenDeletePresetDialog(false)}
         onSubmit={() => {
           deletePresets();

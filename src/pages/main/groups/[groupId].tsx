@@ -40,11 +40,15 @@ import WysiwygView from "src/components/wysiwyg/wysiwygView";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
 import { uploadFile } from "src/services/admin/contentManagement.service";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 const AvatarImg = styled("img")(({ theme }) => ({
   width: "100%",
   height: "100%",
 }));
+
 const activeButtonStyle: React.CSSProperties = {
   border: "1px solid #eee",
   background: "#eee",
@@ -109,10 +113,19 @@ const ListViewButton = ({
     </Box>
   );
 };
+
 type GroupDetailProps = {
+  translations: TranslationText[];
   setFlashMessage: (flashMessage: FlashMessageModel) => void;
 };
-function GroupDetail({ setFlashMessage }: GroupDetailProps) {
+
+const GroupDetail = ({
+  translations,
+  setFlashMessage
+}: GroupDetailProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [groupViews, setGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
   const [filterGroupViews, setFilterGroupViews] = useState<GetGroupViewsOutputDto[]>([]);
@@ -121,6 +134,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const [currentGroup, setCurrentGroup] = useState<GetUserGroupByIdOutputDto>();
   const [isRenameGroupOpenModal, setIsRenameGroupOpenModal] =
     useState<boolean>(false);
+
   useEffect(() => {
     async function fetchData() {
       if (router.query.groupId) {
@@ -153,19 +167,23 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
   const handleListView = () => {
     setIsGrid(false);
   };
+
   const onOpenRenameModal = () => {
     setIsRenameGroupOpenModal(true);
   };
+
   const handleUpdateGroup = (newGroup: GetUserGroupsOutputDto) => {
     setCurrentGroup(newGroup);
   };
+
   const handleSearchView = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchViewText(event.target.value);
     let filterViews = groupViews.filter((x) => !event.target.value || x.tableViewName.includes(event.target.value));
     setFilterGroupViews(filterViews);
   };
+
   return (
-    <MainLayout>
+    <MainLayout translations={translations}>
       <Grid container>
         <Grid item xs={10} sx={{ p: 2 }}>
           <Grid container>
@@ -209,7 +227,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
             </Grid>
             <Grid item xs={1}>
               <Button variant="contained" onClick={() => onOpenRenameModal()}>
-                Edit Group
+                {t("Edit Group")}
               </Button>
             </Grid>
           </Grid>
@@ -304,6 +322,7 @@ function GroupDetail({ setFlashMessage }: GroupDetailProps) {
           open={isRenameGroupOpenModal}
           onUpdate={(newGroup) => handleUpdateGroup(newGroup)}
           setFlashMessage={setFlashMessage}
+          translations={translations}
         />
       )}
     </MainLayout>
@@ -317,9 +336,14 @@ const mapDispatchToProps = {
   setFlashMessage
 };
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("groups", context);
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)(GroupDetail);
 
 type RenameGroupProps = {
+  translations: TranslationText[];
   open: boolean;
   handleClose: () => void;
   group: GetUserGroupsOutputDto;
@@ -328,12 +352,16 @@ type RenameGroupProps = {
 };
 
 const RenameGroup = ({
+  translations,
   open,
   handleClose,
   group,
   onUpdate,
   setFlashMessage
 }: RenameGroupProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [windowHeight, setWindowHeight] = useState(0);
   const [currentGroup, setCurrentGroup] =
     useState<GetUserGroupsOutputDto>(group);
@@ -410,7 +438,7 @@ const RenameGroup = ({
   };
   return (
     <CentralModal open={open} handleClose={handleClose}>
-      <Typography variant="h6">Rename Group</Typography>
+      <Typography variant="h6">{t("Rename Group")}</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box sx={{ display: "flex", alignItems: "center", mt: '15px', mb: '20px' }}>
         <Avatar
@@ -437,7 +465,7 @@ const RenameGroup = ({
         </Avatar>
         <Box sx={{ display: "flex", flexDirection: "column", ml: 2 }}>
           <Button component="label" variant="contained">
-            Choose File
+            {t("Choose File")}
             <input
               type="file"
               accept={`.jpg,.png,.jpeg`}
@@ -446,12 +474,12 @@ const RenameGroup = ({
             />
           </Button>
           <Button variant="outlined" sx={{ mt: 1 }} onClick={handleDeleteAvatar}>
-            Delete Icon
+            {t("Delete Icon")}
           </Button>
         </Box>
       </Box>
       <Box>
-        <Typography variant="subtitle2">Name</Typography>
+        <Typography variant="subtitle2">{t("Name")}</Typography>
         <TextField
           fullWidth
           onChange={handleGroupNameChange}
@@ -463,7 +491,7 @@ const RenameGroup = ({
       </Box>
       <Box>
         <Typography variant="subtitle2" sx={{ mt: 2 }}>
-          Description
+          {t("Description")}
         </Typography>
         <WysiwygEditor
           value={currentGroup.description}
@@ -484,14 +512,14 @@ const RenameGroup = ({
           variant="contained"
           onClick={() => onSubmit()}
         >
-          Update
+          {t("Update")}
         </Button>
         <Button
           onClick={handleClose}
           sx={{ mt: 2, ml: 2, color: "#666" }}
           variant="text"
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       </Box>
     </CentralModal>

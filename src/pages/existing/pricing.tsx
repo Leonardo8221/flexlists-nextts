@@ -77,7 +77,7 @@ const pricing = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  return await getTranslations("pricing", context);
+  return await getTranslations("existing pricing", context);
 };
 
 export default pricing;

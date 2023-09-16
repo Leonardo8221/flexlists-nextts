@@ -7,23 +7,30 @@ import ChatFormPanel from "src/sections/@list/chat/ChatFormPanel";
 import { setRows } from "src/redux/actions/viewActions";
 import { ChatType } from "src/enums/ChatType";
 import { View } from "src/models/SharedModels";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 type FooterProps = {
   columns: any;
   rows: any;
   currentView: View;
+  translations: TranslationText[];
   setRows: (columns: any) => void;
 };
 
-const toolbars = [
-  {
-    title: "Add comment",
-    icon: "footer/add_comment",
-  },
-];
-
-const Footer = ({ currentView, columns, rows, setRows }: FooterProps) => {
+const Footer = ({ currentView, columns, rows, translations, setRows }: FooterProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
+
+  const toolbars = [
+    {
+      title: t("Add Comment"),
+      icon: "footer/add_comment",
+    },
+  ];
 
   const [visiblePanel, setVisiblePanel] = useState(false);
 
@@ -96,6 +103,7 @@ const Footer = ({ currentView, columns, rows, setRows }: FooterProps) => {
         </Box>
       ))}
       <ChatFormPanel
+        translations={translations}
         chatType={ChatType.View}
         id={currentView.id}
         open={visiblePanel}

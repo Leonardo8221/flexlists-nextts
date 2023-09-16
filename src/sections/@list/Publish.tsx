@@ -17,15 +17,17 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import NewReleaseIcon from "@mui/icons-material/NewReleases";
-
 import { motion } from "framer-motion";
 import { getShareURL } from "src/services/listView.service";
 import { isErr } from "src/models/ApiResponse";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-type Props = {
+type PublishListProps = {
   id: number;
   name: string;
   open: boolean;
+  translations: TranslationText[];
   handleClose: () => void;
 };
 
@@ -67,8 +69,16 @@ const scaleUp = {
   },
 };
 
-const PublishList = (props: Props) => {
-  const { open, handleClose } = props;
+const PublishList = ({
+  id,
+  name,
+  open,
+  translations,
+  handleClose
+}: PublishListProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [code, setCode] = useState("");
   const [copyOpen, setCopyOpen] = useState(false);
   const [selected, setSelected] = useState("iframe");
@@ -79,16 +89,16 @@ const PublishList = (props: Props) => {
 
   useEffect(() => {
     async function setStart() {
-      if (!code && props.id) {
+      if (!code && id) {
         const url = await getShareURLAsync("html");
         setCode(`<iframe src="${url}" width="100%" height="100%"></iframe>`);
       }
     }
     setStart();
-  }, [code, props.id]);
+  }, [code, id]);
 
   async function getShareURLAsync(format: string) {
-    const url = await getShareURL(props.id, format);
+    const url = await getShareURL(id, format);
     if (isErr(url)) {
       return "";
     }
@@ -123,18 +133,16 @@ const PublishList = (props: Props) => {
           exit="close"
         >
           <Typography gutterBottom variant="h5" sx={{ my: 1 }}>
-            Publish
+            {t("Publish")}
           </Typography>
 
           <Typography gutterBottom variant="body2" sx={{ my: 1 }}>
-            With Web export you can add the list to your website by simply
-            adding a bit of javascript. Simply copy the code below into your
-            site.
+            {t("Publish Description")}
           </Typography>
           <Divider sx={{ my: 1 }}></Divider>
           <FormControl sx={{ my: 1 }}>
             <FormLabel id="demo-radio-buttons-group-label">
-              Publish as
+              {t("Publish As")}
             </FormLabel>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
@@ -193,12 +201,12 @@ const PublishList = (props: Props) => {
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flexlists.com, showing list ${props.name}</title>
+  <title>Flexlists.com, showing list ${name}</title>
   <script src="${domain}${widgetURI}"></script>
 </head>
 
 <body>
-  <h3>${props.name}</h3>
+  <h3>${name}</h3>
 
   <script>
     const host = '${domain}'
@@ -270,7 +278,7 @@ const PublishList = (props: Props) => {
             onClick={handleClose}
             sx={{ my: 2, width: "25%" }}
           >
-            Close
+            {t("Close")}
           </Button>
         </Box>
       </Modal>

@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import AccountPopover from "src/layouts/AccountPopover";
 import LanguagePopover from "src/layouts/LanguagePopover";
 import MenuIcon from "@mui/icons-material/Menu";
+import { TranslationText } from "src/models/SharedModels";
 import { AuthValidate } from "src/models/AuthValidate";
 
 const HEADER_MOBILE = 48;
@@ -37,11 +38,16 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 type HeaderProps = {
+  translations: TranslationText[];
   onOpenNav: (value: any) => void;
   authValidate: AuthValidate
 };
 
-export function Header({ onOpenNav,authValidate }: HeaderProps) {
+export function Header({
+  translations,
+  onOpenNav,
+  authValidate
+}: HeaderProps) {
   const theme = useTheme();
   const isMobile = useResponsive("down", "sm");
 
@@ -117,7 +123,7 @@ export function Header({ onOpenNav,authValidate }: HeaderProps) {
             {/* <NotificationsPopover /> */}
             {
               authValidate.isUserValidated && (
-                <AccountPopover />
+                <AccountPopover translations={translations} />
               )
             }
            

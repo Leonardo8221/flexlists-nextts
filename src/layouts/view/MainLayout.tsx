@@ -11,6 +11,7 @@ import { View } from "src/models/SharedModels";
 import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
 import Error from 'src/sections/Error'
 import { fetchUserContacts } from "src/redux/actions/userActions";
+import { TranslationText } from "src/models/SharedModels";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -54,6 +55,7 @@ const Content = styled("div")(
 );
 
 type MainLayoutProps = {
+  translations: TranslationText[];
   children: ReactNode;
   removeFooter?: boolean;
   disableOverflow?: boolean;
@@ -65,6 +67,7 @@ type MainLayoutProps = {
 };
 
 const MainLayout = ({
+  translations,
   children,
   removeFooter = false,
   disableOverflow = false,
@@ -93,15 +96,15 @@ const MainLayout = ({
 
   return apiResponseStatus === ApiResponseStatus.Success ?(
     <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} />
+      <Header onOpenNav={() => setOpen(true)} translations={translations} />
 
       <Main sx={{ height: `${windowHeight - 40}px` }}>
-        <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+      <Nav openNav={open} onCloseNav={() => setOpen(false)} translations={translations} />
         <Content theme={theme} disableOverflow={disableOverflow}>
           {children}
         </Content>
       </Main>
-      {removeFooter == true && currentView && <Footer />}
+      {removeFooter == true && currentView && <Footer translations={translations} />}
     </StyledRoot>
   ):
   (

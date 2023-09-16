@@ -7,43 +7,53 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
-interface ListPageProps {
+type ListPageProps = {
   message: any;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
-}
+};
+
 const styles = {
   tab: {
     minWidth: "fit-content",
     flex: 1,
   },
 };
-function ViewsPage({ message, setMessage }: ListPageProps) {
+
+const ViewsPage = ({
+  translations,
+  message,
+  setMessage
+}: ListPageProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   // error handling
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
-  const [currentTab, setCurrentTab] = useState("My Views");
+  const [currentTab, setCurrentTab] = useState(t("My Views"));
   const viewTabs: any[] = [
     {
-      value: "My Views",
+      value: t("My Views"),
       icon: <UnarchiveIcon />,
       component: (
-        <Views isArchived={false} isDefaultViews = {false}  />
+        <Views isArchived={false} isDefaultViews = {false} translations={translations} />
       ),
     },
     {
-      value: "Archive Views",
+      value: t("Archive Views"),
       icon: <ArchiveIcon />,
       component: (
-        <Views isArchived={true} isDefaultViews = {false}  />
+        <Views isArchived={true} isDefaultViews = {false} translations={translations} />
       ),
     },
   ];
-  const changeTab = (value: any) => {
-    setCurrentTab(value);
-  };
 
   useEffect(() => {
     function checkMessage() {
@@ -54,20 +64,26 @@ function ViewsPage({ message, setMessage }: ListPageProps) {
     checkMessage();
   }, [message]);
 
+  const changeTab = (value: any) => {
+    setCurrentTab(value);
+  };  
+
   const flashHandleClose = () => {
     setFlash(undefined);
     setMessage(null);
   };
-  function setError(message: string) {
+
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
 
   return (
-    <MainLayout>
+    <MainLayout translations={translations}>
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,
@@ -117,13 +133,18 @@ function ViewsPage({ message, setMessage }: ListPageProps) {
       </Box>
     </MainLayout>
   );
-}
+};
+
 const mapStateToProps = (state: any) => ({
   message: state.view.message,
 });
 
 const mapDispatchToProps = {
   setMessage,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("lists views", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewsPage);

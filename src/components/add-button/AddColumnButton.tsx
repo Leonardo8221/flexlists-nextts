@@ -2,12 +2,18 @@ import { useTheme } from "@mui/material/styles";
 import { Box, Button } from "@mui/material";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import AddIcon from "@mui/icons-material/Add";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-interface Props {
+type Props = {
+  translations: TranslationText[];
   modalHandle: (value: boolean) => void;
 }
 
-export default function AddColumnButton({ modalHandle }: Props) {
+export default function AddColumnButton({ translations, modalHandle }: Props) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
 
   return (
@@ -32,7 +38,7 @@ export default function AddColumnButton({ modalHandle }: Props) {
       variant="contained"
     >
       <AddIcon sx={{ mr: 1 }} />
-      Edit Fields
+      {t("Edit Fields")}
     </Button>
   );
 }

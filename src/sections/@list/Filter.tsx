@@ -40,8 +40,11 @@ import { getAmPm, getDateFormatString } from "src/utils/convertUtils";
 import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { ViewField } from "src/models/ViewField";
 import { fieldColors } from "src/constants/fieldColors";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type FilterProps = {
+  translations: TranslationText[];
   currentView: View;
   columns: ViewField[];
   open: boolean;
@@ -52,6 +55,7 @@ type FilterProps = {
 };
 
 const Filter = ({
+  translations,
   currentView,
   columns,
   open,
@@ -60,6 +64,9 @@ const Filter = ({
   handleClose,
   users,
 }: FilterProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
@@ -117,8 +124,9 @@ const Filter = ({
       return { key: item[0], value: item[1] };
     }
   );
-  const condtionOperators: string[] = ["And", "Or"];
-  const booleanValues: string[] = ["true", "false"];
+    
+  const condtionOperators: string[] = [t("And"), t("Or")];
+  const booleanValues: string[] = [t("True"), t("False")];
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -544,7 +552,7 @@ const Filter = ({
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="subtitle2">Show fields in list if:</Typography>
+          <Typography variant="subtitle2">{t("Show Fields")}</Typography>
           <Box
             component="span"
             className="svg-color add_choice"
@@ -717,7 +725,7 @@ const Filter = ({
               sx={{ color: theme.palette.palette_style.text.selected }}
               onClick={addFilter}
             >
-              Add condition
+              {t("Add Condition")}
             </Typography>
           </Box>
 
@@ -726,7 +734,7 @@ const Filter = ({
             variant="contained"
             onClick={() => onsubmit()}
           >
-            Submit
+            {t("Submit")}
           </Button>
         </Box>
         {/* <Box>

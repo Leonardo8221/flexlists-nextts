@@ -17,8 +17,10 @@ import CalendarFooter from './CalendarFooter';
 import { getDataColumnId, getRowContent } from 'src/utils/flexlistHelper';
 import { FlatWhere, View } from 'src/models/SharedModels';
 import { useRouter } from 'next/router';
+import { TranslationText } from "src/models/SharedModels";
 
 type CalendarViewProps = {
+  translations: TranslationText[];
   currentView:View,
   columns: any;
   rows: any;
@@ -28,7 +30,7 @@ type CalendarViewProps = {
   setCurrentView: (view: View) => void;
 };
 
-const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, setCurrentView }: CalendarViewProps) => {
+const CalendarView = ({ translations, currentView, columns, rows, open, setRows, fetchRows, setCurrentView }: CalendarViewProps) => {
   const theme = useTheme();
   const router = useRouter();
   const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
@@ -48,7 +50,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
-  }, []);
+  }, [translations]);
   
   useEffect(() => {
     async function fetchContent() {
@@ -69,6 +71,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       setIsLoadedCurrentContent(true)
     }
   }, [router.isReady, router.query.contentId,rows]);
+
   useEffect(() => {
     const displayDays = [];
     let newView: View = Object.assign({}, currentView);
@@ -303,7 +306,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
       >
         <Box sx={{ paddingLeft: mode === 'month' || mode === 'list' ? 'inherit' : isDesktop ? '64px' : '24px' }}>
           <CalendarTitle mode={mode} current={cycleStart} currentDate={currentDate} handleFirstPageer={handleFirstPageer} handleSecondPageer={handleSecondPageer} />
-          {mode !== 'day' && mode !== 'list' && <WeekBar mode={mode} />}
+          {mode !== 'day' && mode !== 'list' && <WeekBar mode={mode} translations={translations} />}
         </Box>
         {mode === 'month' ? 
           <MonthlyView days={days} currentDate={currentDate} cycleStart={cycleStart} getData={getData} handleData={handleData} getFieldData={getFieldData} getDataStatus={getDataStatus} /> :
@@ -317,7 +320,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
         }
       </Box>
 
-      <CalendarFooter mode={mode} handleNewRowPanel={(values)=>handleNewRowPanel(values)} handleMode={handleMode} />
+      <CalendarFooter mode={mode} handleNewRowPanel={(values)=>handleNewRowPanel(values)} handleMode={handleMode} translations={translations} />
 
       {detailMode && <RowFormPanel
         rowData={selectedRowData}
@@ -326,6 +329,7 @@ const CalendarView = ({currentView, columns, rows, open, setRows, fetchRows, set
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
         mode={detailMode}
+        translations={translations}
       />}
     </Box>
   );

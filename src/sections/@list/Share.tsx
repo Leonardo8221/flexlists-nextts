@@ -49,10 +49,13 @@ import {
   isFrontendError,
 } from "src/utils/validatorHelper";
 import { View } from "src/models/SharedModels";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 import RightPanel from "src/components/right-panel/RightPanel";
 
 type ShareListProps = {
   open: boolean;
+  translations: TranslationText[];
   handleClose: () => void;
   users: any[];
   viewGroups: any[];
@@ -104,6 +107,7 @@ const scaleUp = {
 
 const ShareList = ({
   open,
+  translations,
   handleClose,
   users,
   viewGroups,
@@ -114,6 +118,9 @@ const ShareList = ({
   currentView,
   panelWidth,
 }: ShareListProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [currentTab, setCurrentTab] = useState("Users");
   var roles: { name: string; label: string }[] = [];
   RoleLabel.forEach((value, key) => {
@@ -128,6 +135,7 @@ const ShareList = ({
       icon: <PersonIcon />,
       component: (
         <ShareUsers
+          translations={translations}
           users={users}
           roles={roles}
           setViewUsers={setViewUsers}
@@ -146,13 +154,14 @@ const ShareList = ({
           setViewGroups={setViewGroups}
           setFlashMessage={setFlashMessage}
           currentView={currentView}
+          translations={translations}
         />
       ),
     },
     {
       value: "Keys",
       icon: <KeyIcon />,
-      component: <ShareKeys roles={roles} currentView={currentView} />,
+      component: <ShareKeys roles={roles} currentView={currentView} translations={translations} />,
     },
   ];
   const changeTab = (value: any) => {
@@ -187,7 +196,7 @@ const ShareList = ({
         sx={{ mx: 2, my: 2, height: "calc(100vh - 100px)", overflowY: "auto" }}
       >
         <Typography gutterBottom variant="h5">
-          Share
+          {t("Share")}
         </Typography>
         <Box borderBottom={"solid 1px"} sx={{ mb: 1 }} borderColor={"divider"}>
           <Tabs
@@ -235,6 +244,7 @@ const ShareList = ({
   );
 };
 type ShareUsersProps = {
+  translations: TranslationText[];
   users: any[];
   roles: { name: string; label: string }[];
   setViewUsers: (newUsers: any[]) => void;
@@ -243,6 +253,7 @@ type ShareUsersProps = {
   currentView: View;
 };
 const ShareUsers = ({
+  translations,
   users,
   roles,
   setViewUsers,
@@ -250,6 +261,9 @@ const ShareUsers = ({
   setFlashMessage,
   currentView,
 }: ShareUsersProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const handleSelectRoleChange = (event: SelectChangeEvent) => {
@@ -369,13 +383,13 @@ const ShareUsers = ({
   return (
     <>
       <Typography variant="subtitle2" sx={{ py: 2 }}>
-        Invite user
+        {t("Invite User")}
       </Typography>
 
       {/* <Grid container spacing={2}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
@@ -446,7 +460,7 @@ const ShareUsers = ({
       <Box sx={styles?.shareFormWrapper}>
         <Box sx={styles?.accessRole}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
@@ -461,7 +475,7 @@ const ShareUsers = ({
         </Box>
         <Box sx={styles?.usersGroupsKeys}>
           <FormLabel>
-            <Typography variant="body2">Users</Typography>
+            <Typography variant="body2">{t("Users")}</Typography>
           </FormLabel>
           <Autocomplete
             // sx={{ marginTop: "23px" }}
@@ -492,7 +506,7 @@ const ShareUsers = ({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Invite contacts or invite by email ..."
+                label={t("Invite Contacts")}
                 InputProps={{
                   ...params.InputProps,
                   type: "search",
@@ -515,21 +529,22 @@ const ShareUsers = ({
             fullWidth
             onClick={() => onSubmit()}
           >
-            Invite
+            {t("Invite")}
           </Button>
         </Box>
       </Box>
 
       <Divider sx={{ mt: 3, mb: 1 }}></Divider>
       <Typography sx={{ pt: 1 }} variant="subtitle2">
-        All users
+        {t("All Users")}
       </Typography>
-      <UserListAccess users={users} roles={roles} />
+      <UserListAccess users={users} roles={roles} translations={translations} />
     </>
   );
 };
 
 type ShareGroupsProps = {
+  translations: TranslationText[];
   viewGroups: GetViewGroupsOutputDto[];
   roles: { name: string; label: string }[];
   setViewGroups: (newViewGroups: GetViewGroupsOutputDto[]) => void;
@@ -538,6 +553,7 @@ type ShareGroupsProps = {
   currentView: View;
 };
 const ShareGroups = ({
+  translations,
   viewGroups,
   roles,
   setViewGroups,
@@ -545,6 +561,9 @@ const ShareGroups = ({
   setFlashMessage,
   currentView,
 }: ShareGroupsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const [submit, setSubmit] = useState<boolean>(false);
@@ -586,7 +605,7 @@ const ShareGroups = ({
     );
     if (isSucc(response)) {
       setError("");
-      setSuccessMessage("Group added sucessfully");
+      setSuccessMessage(t("Group Added"));
       var newViewGroups: GetViewGroupsOutputDto[] = Object.assign(
         [],
         viewGroups
@@ -634,7 +653,7 @@ const ShareGroups = ({
   return (
     <>
       <Typography variant="subtitle2" sx={{ py: 2 }}>
-        Invite group
+        {t("Invite Group")}
       </Typography>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       {/* <Box>
@@ -643,7 +662,7 @@ const ShareGroups = ({
       {/* <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
@@ -659,7 +678,7 @@ const ShareGroups = ({
         {groups && (
           <Grid item xs={7} sx={{ display: "flex", flexDirection: "column" }}>
             <FormLabel>
-              <Typography variant="body2">Groups</Typography>
+              <Typography variant="body2">{t("Groups")}</Typography>
             </FormLabel>
             <Autocomplete
               size="small"
@@ -675,7 +694,7 @@ const ShareGroups = ({
                 onGroupChange(newInputValue);
               }}
               renderInput={(params) => (
-                <TextField {...params} size="small" label="Search groups" />
+                <TextField {...params} size="small" label={t("Search Groups")} />
               )}
             />
           </Grid>
@@ -683,14 +702,14 @@ const ShareGroups = ({
 
         <Grid item xs={2} sx={{ display: "flex", alignItems: "flex-end" }}>
           <Button variant="contained" fullWidth onClick={() => onsubmit()}>
-            Add Group
+            {t("Add Group")}
           </Button>
         </Grid>
       </Grid> */}
       <Box sx={styles?.shareFormWrapper}>
         <Box sx={styles?.accessRole}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select size="small" value={role} onChange={handleSelectRoleChange}>
             {roles &&
@@ -705,7 +724,7 @@ const ShareGroups = ({
         </Box>
         <Box sx={styles?.usersGroupsKeys}>
           <FormLabel>
-            <Typography variant="body2">Groups</Typography>
+            <Typography variant="body2">{t("Groups")}</Typography>
           </FormLabel>
           <Autocomplete
             size="small"
@@ -721,7 +740,7 @@ const ShareGroups = ({
               onGroupChange(newInputValue);
             }}
             renderInput={(params) => (
-              <TextField {...params} size="small" label="Search groups" />
+              <TextField {...params} size="small" label={t("Search Groups")} />
             )}
           />
         </Box>
@@ -732,13 +751,13 @@ const ShareGroups = ({
             fullWidth
             onClick={() => onsubmit()}
           >
-            Add Group
+            {t("Add Group")}
           </Button>
         </Box>
       </Box>
       <Divider sx={{ mt: 3, mb: 1 }}></Divider>
       <Typography sx={{ pt: 1 }} variant="subtitle2">
-        All groups
+        {t("All Groups")}
       </Typography>
       <GroupListAccess
         roles={roles}
@@ -749,11 +768,15 @@ const ShareGroups = ({
   );
 };
 type ShareKeysProps = {
+  translations: TranslationText[];
   roles: { name: string; label: string }[];
   currentView: View;
   styles?: any;
 };
-const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
+const ShareKeys = ({ roles, translations, currentView, styles }: ShareKeysProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [role, setRole] = useState<Role>(Role.ReadOnly);
   const [keyName, setKeyName] = useState<string>("");
@@ -834,12 +857,12 @@ const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
     <>
       <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
       <Typography variant="subtitle2" sx={{ py: 2 }}>
-        Create keys
+        {t("Create Keys")}
       </Typography>
       {/* <Grid container spacing={2} sx={{ alignItems: "flex-end" }}>
         <Grid item xs={3} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select value={role} size="small" onChange={handleSelectRoleChange}>
             {roles &&
@@ -854,11 +877,11 @@ const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
         </Grid>
         <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
           <FormLabel>
-            <Typography variant="body2">Info</Typography>
+            <Typography variant="body2">{t("Info")}</Typography>
           </FormLabel>
           <TextField
             size="small"
-            placeholder="Name of key..."
+            placeholder={t("Name Key")}
             value={keyName}
             onChange={onKeyNameChange}
           ></TextField>
@@ -874,14 +897,14 @@ const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
           }}
         >
           <Button variant="contained" fullWidth onClick={() => onSubmit()}>
-            Create Key
+            {t("Create Key")}
           </Button>
         </Grid>
       </Grid> */}
       <Box sx={styles?.shareFormWrapper}>
         <Box sx={styles?.accessRole}>
           <FormLabel>
-            <Typography variant="body2">Access / Role</Typography>
+            <Typography variant="body2">{t("Access Role")}</Typography>
           </FormLabel>
           <Select value={role} size="small" onChange={handleSelectRoleChange}>
             {roles &&
@@ -896,12 +919,12 @@ const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
         </Box>
         <Box sx={styles?.usersGroupsKeys}>
           <FormLabel>
-            <Typography variant="body2">Info</Typography>
+            <Typography variant="body2">{t("Info")}</Typography>
           </FormLabel>
           <TextField
             fullWidth
             size="small"
-            placeholder="Name of key..."
+            placeholder={t("Name Key")}
             value={keyName}
             onChange={onKeyNameChange}
           />
@@ -913,19 +936,20 @@ const ShareKeys = ({ roles, currentView, styles }: ShareKeysProps) => {
             fullWidth
             onClick={() => onSubmit()}
           >
-            Create Key
+            {t("Create Key")}
           </Button>
         </Box>
       </Box>
       <Divider sx={{ mt: 3, mb: 1 }}></Divider>
       <Typography sx={{ pt: 1, pb: 1 }} variant="subtitle2">
-        All keys
+        {t("All Keys")}
       </Typography>
       <ManageKeys
         viewKeys={viewKeys}
         roles={roles}
         onUpdateViewKeys={(newViewKeys) => onUpdateViewKeys(newViewKeys)}
         currentView={currentView}
+        translations={translations}
       />
     </>
   );

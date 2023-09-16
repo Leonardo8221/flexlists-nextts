@@ -35,25 +35,34 @@ import {
   setLegacyCredentials,
   setMessage,
 } from "src/redux/actions/authAction";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 interface MigrateListsProps {
   message: any;
   legacyCredentials: LegacyCredentials;
+  styles?: any;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
   setLegacyCredentials: (credentials: LegacyCredentials) => void;
-  styles?: any;
 }
 const MigrateLists = ({
   message,
   legacyCredentials,
-  setMessage,
-  setLegacyCredentials,
   styles,
+  translations,
+  setMessage,
+  setLegacyCredentials
 }: MigrateListsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
-  //const [error, setError] = useState<string>();
   const router = useRouter();
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
@@ -63,10 +72,10 @@ const MigrateLists = ({
   const [lastName, setLastName] = useState<string>("");
   const [termsAndConditions, setTermsAndConditions] = useState<boolean>(false);
   const [lists, setLists] = useState<any[]>([]);
-
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     function checkCreds() {
@@ -93,13 +102,15 @@ const MigrateLists = ({
     setFlash(undefined);
     setMessage(null);
   };
-  function setError(message: string) {
+
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
 
   const handlePhoneChange = (newPhoneNumber: string) => {
     setPhoneNumber(newPhoneNumber);
@@ -110,6 +121,7 @@ const MigrateLists = ({
   ) => {
     setFirstName(event.target.value);
   };
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserEmail(event.target.value);
   };
@@ -248,8 +260,6 @@ const MigrateLists = ({
       console.log(error);
     }
   };
-
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -474,13 +484,10 @@ const MigrateLists = ({
               </Link>
             </Box>
             <Typography variant="h4" textAlign="center" gutterBottom>
-              Sign Up - Existing User
+              {t("Title")}
             </Typography>
             <Typography variant="body1" textAlign="center">
-              While before you did not have an account, due to several changes,
-              we now require you to create an account. Please click here for
-              more information. Your data is safe and will be taken into the new
-              version.
+              {t("Description")}
             </Typography>
           </Grid>
 
@@ -490,7 +497,7 @@ const MigrateLists = ({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="Username"
+              placeholder={t("Username")}
               type="text"
               required
               value={userName}
@@ -523,10 +530,7 @@ const MigrateLists = ({
                           zIndex: 10,
                         }}
                       >
-                        This is the name used for other Flexlists users to find
-                        and identify you. If you are a Flexlists member already,
-                        this is the user name you used to login to the previous
-                        Flexlists version. You can also got to{" "}
+                        {t("Name Used For Other")}{" "}
                         <Link
                           sx={{
                             color: "#FFD32E",
@@ -535,10 +539,9 @@ const MigrateLists = ({
                           }}
                           href="login"
                         >
-                          Login page
+                          {t("Login Page")}
                         </Link>{" "}
-                        and login with your previous user name and password and
-                        we will migrate your previous works.
+                        {t("And Login With Previous")}
                       </Typography>
                       <InfoIcon />
                     </IconButton>
@@ -552,7 +555,7 @@ const MigrateLists = ({
             <Grid item xs={6} sx={{ paddingRight: 1 }}>
               <TextField
                 fullWidth
-                placeholder="First Name"
+                placeholder={t("First Name")}
                 type="text"
                 required
                 value={firstName}
@@ -564,7 +567,7 @@ const MigrateLists = ({
             <Grid item xs={6} sx={{ paddingLeft: 1 }}>
               <TextField
                 fullWidth
-                placeholder="Last Name"
+                placeholder={t("Last Name")}
                 type="text"
                 required
                 value={lastName}
@@ -577,7 +580,7 @@ const MigrateLists = ({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="Email"
+              placeholder={t("Email")}
               type="email"
               required
               value={userEmail}
@@ -589,7 +592,7 @@ const MigrateLists = ({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="Your current password"
+              placeholder={t("Password")}
               required
               value={password}
               onChange={handleChangePassword}
@@ -642,11 +645,11 @@ const MigrateLists = ({
                     sx={styles?.checkbox}
                   />
                 }
-                label="I have read and agree to the&nbsp;"
+                label={t("I Have Read")}
               />
 
               <Link href="#" sx={styles?.link}>
-                Terms and conditions
+                &nbsp;{t("Terms Conditions")}
               </Link>
             </FormGroup>
           </Grid>
@@ -660,7 +663,7 @@ const MigrateLists = ({
               sx={styles?.button}
               onClick={handleSubmit}
             >
-              Sign Up
+              {t("Register Subject")}
             </Button>
           </Grid>
           {/* <SocialLogin /> */}
@@ -680,13 +683,13 @@ const MigrateLists = ({
                 display: "inline",
               }}
             >
-              Already have an account?{" "}
+              {t("Already Have")}{" "}
               <Link
                 href="/auth/loginExisting"
                 variant="body1"
                 sx={styles?.link}
               >
-                Sign In
+                {t("Login Subject")}
               </Link>
             </Typography>
           </Grid>
@@ -704,6 +707,16 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   setMessage,
   setLegacyCredentials,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const verifyToken = await validateToken(context);
+
+  if(verifyToken){
+    return verifyToken;
+  }
+
+  return await getTranslations("migrate lists", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MigrateLists);

@@ -13,7 +13,6 @@ import {
   IconButton,
   Link,
 } from "@mui/material";
-
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { authService } from "src/services/auth.service";
 import { isSucc } from "src/models/ApiResponse";
@@ -23,6 +22,10 @@ import { setMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import Iconify from "../../components/iconify";
 import { useTheme } from "@mui/material";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 // const theme = createTheme({
 //   components: {
 //     MuiInputBase: {
@@ -44,22 +47,32 @@ import { useTheme } from "@mui/material";
 
 interface VerifyEmailProps {
   message: any;
-  setMessage: (message: any) => void;
   styles?: any;
+  translations: TranslationText[];
+  setMessage: (message: any) => void;
 }
 
-const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
+const VerifyEmail = ({
+  message,
+  styles,
+  translations,
+  setMessage
+}: VerifyEmailProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
+  const router = useRouter();
+  const theme = useTheme();
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [canSubmit, setCanSubmit] = React.useState(false);
   const [token, setToken] = React.useState<string>("      ");
-  const router = useRouter();
   const [flash, setFlash] = React.useState<
     { message: string; type: string } | undefined
   >(undefined);
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [showPassword, setShowPassword] = React.useState(false);
-  const theme = useTheme();
 
   useEffect(() => {
     function checkMessage() {
@@ -70,10 +83,10 @@ const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
     checkMessage();
   }, [message]);
 
-  function setFlashMessage(message: string, type: string = "error") {
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
 
   useEffect(() => {
     function routerCheck() {
@@ -311,17 +324,17 @@ const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
               </Link>
             </Box>
             <Typography variant="h4" gutterBottom>
-              Email with verification code sent.{" "}
+              {t("Title")}{" "}
             </Typography>
             <Typography variant="body1">
-              Please insert code from the email below to change your password.
+              {t("Description")}
             </Typography>
           </Grid>
 
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="Email"
+              placeholder={t("Email")}
               type="email"
               required
               value={email}
@@ -338,7 +351,7 @@ const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="New Password"
+              placeholder={t("New Password")}
               required
               value={password}
               sx={styles?.textField}
@@ -448,7 +461,7 @@ const VerifyEmail = ({ message, setMessage, styles }: VerifyEmailProps) => {
               sx={styles?.button}
               onClick={() => handleSubmit()}
             >
-              Submit
+              {t("Submit")}
             </Button>
             <Snackbar
               open={flash !== undefined}
@@ -476,6 +489,16 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setMessage,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const verifyToken = await validateToken(context);
+
+  if(verifyToken){
+    return verifyToken;
+  }
+
+  return await getTranslations("forgot password verification manual", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmail);

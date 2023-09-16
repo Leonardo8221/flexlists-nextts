@@ -15,8 +15,11 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
 import { GalleryConfig } from "src/models/ViewConfig";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type GalleryViewConfigProps = {
+  translations: TranslationText[];
   submit: boolean;
   updateConfig: (config: GalleryConfig) => void;
   columns: ViewField[];
@@ -24,11 +27,15 @@ type GalleryViewConfigProps = {
 };
 
 function GalleryViewConfig({
+  translations,
   submit,
   updateConfig,
   columns,
   availableFieldUiTypes,
 }: GalleryViewConfigProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [avatarFieldId, setAvatarFieldId] = useState<number>(0);
   const [nameFieldId, setNameFieldId] = useState<number>(0);
   const [importanceFieldId, setImportanceFieldId] = useState<number>(0);
@@ -249,10 +256,10 @@ function GalleryViewConfig({
           Avatar
         </Typography> */}
         <InputLabel required id="select-image-label">
-          Image
+          {t("Image")}
         </InputLabel>
         <Select
-          label="Image"
+          label={t("Image")}
           labelId="select-image-label"
           value={`${avatarFieldId}`}
           onChange={onAvatarFieldChange}
@@ -267,7 +274,7 @@ function GalleryViewConfig({
             </MenuItem>
           ))}
           <MenuItem key={"-1"} value={"-1"}>
-            create a new field
+            {t("Create New Field")}
           </MenuItem>
         </Select>
       </FormControl>

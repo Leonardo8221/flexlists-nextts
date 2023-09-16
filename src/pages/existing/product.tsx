@@ -1,20 +1,19 @@
 import { Box, Container, Typography, Grid, Button } from "@mui/material";
 import React from "react";
 import MainLayout from "src/layouts/main/MainLayout";
-import MainPricing from "src/components/pricing/MainPricing";
+import MainFeatures from "src/components/products/MainFeatures";
 import { LandingPricingPlans } from "src/components/landing";
 import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 
-type SolutionsProps = {
+type ProductProps = {
   translations: TranslationText[];
 };
 
-const pricing = ({
+const Product = ({
   translations
-}: SolutionsProps
-) => {
+}: ProductProps) => {
   const t = (key: string): string => {
     if (!translations) return key;
     return getTranslation(key, translations);
@@ -70,14 +69,14 @@ const pricing = ({
           </Grid>
         </Container>
       </Box>
-      <MainPricing translations={translations} />
+      <MainFeatures translations={translations} />
       <LandingPricingPlans translations={translations} />
     </MainLayout>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  return await getTranslations("pricing", context);
+  return await getTranslations("existing product", context);
 };
 
-export default pricing;
+export default Product;

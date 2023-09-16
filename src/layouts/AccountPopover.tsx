@@ -19,25 +19,37 @@ import { isSucc } from "src/models/ApiResponse";
 import { setUserProfile } from "src/redux/actions/userActions";
 import { UserProfile } from "src/models/UserProfile";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-const MENU_OPTIONS = [
-  // {
-  //   label: 'Profile',
-  //   icon: 'eva:person-fill',
-  // },
-  {
-    label: "Settings",
-    icon: "eva:settings-2-fill",
-    path: PATH_MAIN.settings
-  },
-];
 type AccountPopoverProps = {
   userProfile?:UserProfile;
+  translations: TranslationText[];
   setUserProfile: (userProfile: UserProfile|undefined) => void;
 }
-const AccountPopover = ({userProfile,setUserProfile} : AccountPopoverProps) => {
+const AccountPopover = ({
+  userProfile,
+  translations,
+  setUserProfile
+} : AccountPopoverProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [open, setOpen] = useState(null);
   const router = useRouter();
+
+  const MENU_OPTIONS = [
+    // {
+    //   label: 'Profile',
+    //   icon: 'eva:person-fill',
+    // },
+    {
+      label: t("Settings"),
+      icon: "eva:settings-2-fill",
+      path: PATH_MAIN.settings
+    },
+  ];
+
   useEffect(() => {
     async function getUserProfile() {
       const response = await getProfile();
@@ -136,7 +148,7 @@ const AccountPopover = ({userProfile,setUserProfile} : AccountPopoverProps) => {
         <Divider sx={{ borderStyle: "dashed" }} />
 
         <MenuItem onClick={logout} sx={{ m: 1 }}>
-          Logout
+          {t("Logout")}
         </MenuItem>
       </Popover>
     </>

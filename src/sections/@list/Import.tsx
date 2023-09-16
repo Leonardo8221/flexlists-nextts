@@ -28,6 +28,9 @@ import axios from "src/utils/axios";
 import { fetchColumns, fetchRowsByPage } from "src/redux/actions/viewActions";
 import { getImportFileExtension } from "src/utils/flexlistHelper";
 import path from "path";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 const imports = [
   {
     name: ImportType.CSV,
@@ -69,6 +72,7 @@ const style = {
   border: "none",
 };
 type ImportProps = {
+  translations: TranslationText[];
   open: boolean;
   handleClose: () => void;
   currentView: View;
@@ -79,6 +83,7 @@ type ImportProps = {
 };
 
 const ImportContent = ({
+  translations,
   open,
   handleClose,
   currentView,
@@ -87,6 +92,9 @@ const ImportContent = ({
   fetchColumns,
   styles,
 }: ImportProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
@@ -98,6 +106,7 @@ const ImportContent = ({
   const [truncate, setTruncate] = useState<boolean>(false);
   const [file, setFile] = useState<File>();
   const [error, setError] = useState<string>("");
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -216,7 +225,7 @@ const ImportContent = ({
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="subtitle2">Import</Typography>
+          <Typography variant="subtitle2">{t("Import")}</Typography>
           <Box
             component="span"
             className="svg-color add_choice"
@@ -285,7 +294,7 @@ const ImportContent = ({
             <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
             <Box sx={{ display: "flex", alignItems: "center", my: 2, gap: 1 }}>
               <Button component="label" variant="text">
-                Choose File
+                {t("Choose File")}
                 <input
                   type="file"
                   accept={`.${getImportFileExtension(importType)}`}
@@ -322,7 +331,7 @@ const ImportContent = ({
                     name="required"
                   />
                 }
-                label="Add Missing Fields"
+                label={t("Add Missing Fields")}
               />
             </Box>
             <Box>
@@ -335,7 +344,7 @@ const ImportContent = ({
                     name="required"
                   />
                 }
-                label="Truncate"
+                label={t("Truncate")}
               />
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
@@ -344,9 +353,9 @@ const ImportContent = ({
                 variant="contained"
                 onClick={() => importContent()}
               >
-                Import
+                {t("Import")}
               </Button>
-              <Button onClick={() => backMainScreen()}>Cancel</Button>
+              <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
             </Box>
           </Box>
         )}

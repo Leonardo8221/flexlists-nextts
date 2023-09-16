@@ -9,20 +9,28 @@ import { hasPermission } from 'src/utils/permissionHelper';
 import AddIcon from "@mui/icons-material/Add";
 import { ViewField } from 'src/models/ViewField';
 import { getDefaultValues } from 'src/utils/flexlistHelper';
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 interface Props {
   handleAddNewRow: (values:any) => void;
   currentView:View;
-  columns:ViewField[]
+  columns:ViewField[];
+  translations: TranslationText[];
 }
   
 function AddRowButton ({
   handleAddNewRow,
   currentView,
-  columns
+  columns,
+  translations
 }: Props) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'lg');
+
   return (
     <Box 
     sx={{  
@@ -51,7 +59,7 @@ function AddRowButton ({
                 }}
               >
                 <AddIcon sx={{ mr: 0.5 }} />
-                {isDesktop ? "add new row" : ""}
+                {isDesktop ? t("Add New Row") : ""}
               </Button>
             )}
     </Box>

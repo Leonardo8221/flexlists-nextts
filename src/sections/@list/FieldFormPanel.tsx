@@ -29,7 +29,11 @@ import {
 } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { getDefaultFieldIcon, getFieldIcons } from "src/utils/flexlistHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 interface FieldFormPanelProps {
+  translations: TranslationText[];
   viewId: number;
   field: Field;
   fieldUiTypes: FieldUIType[];
@@ -54,7 +58,9 @@ const GroupHeader = styled("div")(({ theme }) => ({
 const GroupItems = styled("ul")({
   padding: 0,
 });
-function FieldFormPanel({
+
+const FieldFormPanel = ({
+  translations,
   viewId,
   field,
   fieldUiTypes,
@@ -63,7 +69,10 @@ function FieldFormPanel({
   onDelete,
   onClose,
   setFlashMessage,
-}: FieldFormPanelProps) {
+}: FieldFormPanelProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isCreating: boolean = !field.id || field.id == 0;
   const [currentField, setCurrentField] = useState<Field>(field);
@@ -72,7 +81,6 @@ function FieldFormPanel({
   >(fieldUiTypes.find((x) => x.name === field.uiField));
   const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-
   const [visibleIconList, setVisibleIconList] = useState(false);
   const [windowHeight, setWindowHeight] = useState(0);
 
@@ -88,9 +96,11 @@ function FieldFormPanel({
       setCurrentFieldType(fieldUiTypes.find((x) => x.name === field.uiField));
     }
   }, [field]);
+
   const setError = (message: string) => {
     setFlashMessage({ message: message, type: "error" });
   };
+
   const handleSubmit = async () => {
     setIsSubmit(true);
 
@@ -181,11 +191,13 @@ function FieldFormPanel({
 
     onClose();
   };
+
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     var newField = Object.assign({}, currentField);
     newField.name = event.target.value;
     setCurrentField(newField);
   };
+
   const onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     var newField = Object.assign({}, currentField);
     newField.description = event.target.value;
@@ -207,6 +219,7 @@ function FieldFormPanel({
     setCurrentFieldType(newTypeInput);
     setCurrentField(newField);
   };
+
   const onIconChange = (newIcon: string) => {
     var newField = Object.assign({}, currentField);
     newField.icon = newIcon;
@@ -219,11 +232,13 @@ function FieldFormPanel({
     newField.required = event.target.checked;
     setCurrentField(newField);
   };
+
   const onDetailsOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     var newField = Object.assign({}, currentField);
     newField.detailsOnly = event.target.checked;
     setCurrentField(newField);
   };
+  
   const updateConfig = (newConfig: any) => {
     var newField = Object.assign({}, currentField);
     if (!newField.config) {
@@ -233,6 +248,7 @@ function FieldFormPanel({
     newField.config.values = newConfig;
     setCurrentField(newField);
   };
+
   const renderFieldConfigSwitch = (field: Field) => {
     var uiType = field.uiField;
     switch (uiType) {
@@ -296,7 +312,7 @@ function FieldFormPanel({
         }}
       >
         <TextField
-          label="Name"
+          label={t("Name")}
           name="name"
           size="small"
           value={currentField.name}
@@ -306,7 +322,7 @@ function FieldFormPanel({
           error={isSubmit && isFrontendError(FieldValidatorEnum.name, errors)}
         />
         <TextField
-          label="Description"
+          label={t("Description")}
           name="name"
           size="small"
           value={currentField.description}
@@ -331,7 +347,7 @@ function FieldFormPanel({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Field type"
+                label={t("Field Type")}
                 error={isSubmit && !currentField.uiField}
               />
             )}
@@ -353,7 +369,7 @@ function FieldFormPanel({
                 disabled={!isCreating && field.system}
               />
             }
-            label="Required"
+            label={t("Required")}
           />
           <FormControlLabel
             control={
@@ -363,14 +379,14 @@ function FieldFormPanel({
                 name="required"
               />
             }
-            label="DetailsOnly"
+            label={t("DetailsOnly")}
           />
         </FormGroup>
         <FormControl sx={{ marginTop: 2 }} required>
           <TextField
             type="text"
             className="add_icon"
-            label="Select icon"
+            label={t("Select Icon")}
             value={
               currentField.icon
                 ? currentField.icon
@@ -434,10 +450,10 @@ function FieldFormPanel({
         }}
       >
         <Button variant="outlined" onClick={onClose}>
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button variant="contained" onClick={handleSubmit}>
-          {isCreating ? "Create Field" : "Update Field"}
+          {isCreating ? t("Create Field") : t("Update Field")}
         </Button>
       </Box>
     </form>

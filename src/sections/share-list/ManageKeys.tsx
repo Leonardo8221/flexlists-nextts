@@ -13,40 +13,53 @@ import {
   Box,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { GetKeysForViewOutputDto } from "src/models/ApiOutputModels";
 import { Role } from "src/enums/SharedEnums";
-import { listViewService, updateKeyForView } from "src/services/listView.service";
+import {
+  listViewService,
+  updateKeyForView,
+} from "src/services/listView.service";
 import { useRouter } from "next/router";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
-import { View } from "src/models/SharedModels";
+import { View, TranslationText } from "src/models/SharedModels";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
+import { getTranslation } from "src/utils/i18n";
+
 type ManageKeysProps = {
   viewKeys: GetKeysForViewOutputDto[];
   roles: { name: string; label: string }[];
   onUpdateViewKeys: (newViewKeys: GetKeysForViewOutputDto[]) => void;
-  currentView: View;
   setFlashMessage: (message: FlashMessageModel) => void;
+  currentView: View;
+  translations: TranslationText[];
 };
+
 function ManageKeys({
   viewKeys,
   roles,
+  translations,
   onUpdateViewKeys,
   currentView,
-  setFlashMessage
+  setFlashMessage,
 }: ManageKeysProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const router = useRouter();
   const [viewKeyUpdateList, setViewKeyUpdateList] = useState<
     { keyId: number; isEditing: boolean }[]
   >([]);
-  const [previousEditViewKeys,setPreviousEditViewKeys] = useState<GetKeysForViewOutputDto[]>([]);
+  const [previousEditViewKeys, setPreviousEditViewKeys] = useState<
+    GetKeysForViewOutputDto[]
+  >([]);
   const handleSelectRoleChange = async (
     event: SelectChangeEvent,
     index: number
@@ -111,56 +124,63 @@ function ManageKeys({
   const onSubmit = async (keyId: number) => {
     if (!isKeyEditing(keyId)) {
       updateViewKeyUpdateList(keyId, true);
-      let newViewKeys : GetKeysForViewOutputDto[] = Object.assign([],viewKeys);
+      let newViewKeys: GetKeysForViewOutputDto[] = Object.assign([], viewKeys);
       let currentViewKey = newViewKeys.find((x) => x.keyId === keyId);
-      let previousEditViewKey = previousEditViewKeys.find((x) => x.keyId === keyId);
-      if(!previousEditViewKey)
-      {
-        previousEditViewKey = Object.assign({},currentViewKey);
-        setPreviousEditViewKeys([...previousEditViewKeys,previousEditViewKey]);
+      let previousEditViewKey = previousEditViewKeys.find(
+        (x) => x.keyId === keyId
+      );
+      if (!previousEditViewKey) {
+        previousEditViewKey = Object.assign({}, currentViewKey);
+        setPreviousEditViewKeys([...previousEditViewKeys, previousEditViewKey]);
       }
-    } 
-    else 
-    {
+    } else {
       let currentKeyView = viewKeys.find((x) => x.keyId === keyId);
-      if (currentKeyView) 
-      {
-        let updateKeyView = await updateKeyForView(currentView.id,keyId,currentKeyView.role,currentKeyView.name);
-        if(isSucc(updateKeyView))
-        {
+      if (currentKeyView) {
+        let updateKeyView = await updateKeyForView(
+          currentView.id,
+          keyId,
+          currentKeyView.role,
+          currentKeyView.name
+        );
+        if (isSucc(updateKeyView)) {
           updateViewKeyUpdateList(keyId, false);
-          revertPreviousEditKey(keyId,false)
-        }
-        else
-        {
-          setFlashMessage({message:(updateKeyView as FlexlistsError).message, type:"error"})
+          revertPreviousEditKey(keyId, false);
+        } else {
+          setFlashMessage({
+            message: (updateKeyView as FlexlistsError).message,
+            type: "error",
+          });
         }
       }
     }
   };
   const onEditCancel = (keyId: number) => {
-    revertPreviousEditKey(keyId)
-  }
-  const revertPreviousEditKey = (keyId: number,isCancel:boolean=true) => {
-    if(isCancel)
-    {
-      let previousEditViewKey = previousEditViewKeys.find((x) => x.keyId === keyId);
-      if(previousEditViewKey)
-      {
-        let newViewKeys : GetKeysForViewOutputDto[] = Object.assign([],viewKeys);
+    revertPreviousEditKey(keyId);
+  };
+  const revertPreviousEditKey = (keyId: number, isCancel: boolean = true) => {
+    if (isCancel) {
+      let previousEditViewKey = previousEditViewKeys.find(
+        (x) => x.keyId === keyId
+      );
+      if (previousEditViewKey) {
+        let newViewKeys: GetKeysForViewOutputDto[] = Object.assign(
+          [],
+          viewKeys
+        );
         let currentViewKey = newViewKeys.find((x) => x.keyId === keyId);
-        if(currentViewKey)
-        {
+        if (currentViewKey) {
           currentViewKey.name = previousEditViewKey.name;
           currentViewKey.role = previousEditViewKey.role;
           onUpdateViewKeys(newViewKeys);
         }
       }
     }
-    let newPreviousEditViewKeys = previousEditViewKeys.filter((x) => x.keyId !== keyId);
+    let newPreviousEditViewKeys = previousEditViewKeys.filter(
+      (x) => x.keyId !== keyId
+    );
     setPreviousEditViewKeys(newPreviousEditViewKeys);
     updateViewKeyUpdateList(keyId, false);
-  }
+  };
   return (
     <>
       {viewKeys &&
@@ -170,7 +190,10 @@ function ManageKeys({
               <Grid
                 container
                 spacing={1}
-                sx={{ alignItems: "flex-end", display:{xs:"none", md:"flex"} }}
+                sx={{
+                  alignItems: "flex-end",
+                  display: { xs: "none", md: "flex" },
+                }}
                 key={index}
               >
                 <Grid
@@ -179,7 +202,7 @@ function ManageKeys({
                   sx={{ display: "flex", flexDirection: "column" }}
                 >
                   <FormLabel>
-                    <Typography variant="body2">Access / Role</Typography>
+                    <Typography variant="body2">{t("Access Role")}</Typography>
                   </FormLabel>
                   <Select
                     size="small"
@@ -207,7 +230,7 @@ function ManageKeys({
                   }}
                 >
                   <FormLabel>
-                    <Typography variant="body2">Key Link</Typography>
+                    <Typography variant="body2">{t("Key Link")}</Typography>
                   </FormLabel>
 
                   <TextField
@@ -228,7 +251,7 @@ function ManageKeys({
                       disableTouchListener
                       title="Copied"
                     > */}
-                          <Tooltip title="Copy to clipboard">
+                          <Tooltip title={t("Copy To Clipboard")}>
                             <ContentCopyIcon
                               sx={{ cursor: "pointer" }}
                               onClick={() => {
@@ -252,11 +275,11 @@ function ManageKeys({
                   }}
                 >
                   <FormLabel>
-                    <Typography variant="body2">Info</Typography>
+                    <Typography variant="body2">{t("Info")}</Typography>
                   </FormLabel>
                   <TextField
                     size="small"
-                    placeholder="Key name"
+                    placeholder={t("Key Name")}
                     value={viewKey.name}
                     onChange={(e: any) => handleViewNameChange(e, index)}
                     disabled={!isKeyEditing(viewKey.keyId)}
@@ -272,20 +295,20 @@ function ManageKeys({
                   <Button
                     fullWidth
                     variant="text"
-                    disabled={index===0}
+                    disabled={index === 0}
                     sx={{
                       color: theme.palette.palette_style.primary.main,
                     }}
                     onClick={() => onSubmit(viewKey.keyId)}
                   >
-                    {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
+                    {isKeyEditing(viewKey.keyId) ? t("Update") : t("Edit")}
                   </Button>
                   <Button
                     fullWidth
                     variant={isKeyEditing(viewKey.keyId) ? "text" : "contained"}
                     sx={{
                       color: theme.palette.palette_style.primary.main,
-                      display:isKeyEditing(viewKey.keyId) ? "block" : "none"
+                      display: isKeyEditing(viewKey.keyId) ? "block" : "none",
                     }}
                     onClick={() => onEditCancel(viewKey.keyId)}
                   >
@@ -294,37 +317,49 @@ function ManageKeys({
                   <Button
                     fullWidth
                     variant="text"
-                    disabled={index===0}
+                    disabled={index === 0}
                     sx={{
                       borderColor: "red",
                       color: theme.palette.palette_style.error.dark,
-                      display:!isKeyEditing(viewKey.keyId)? "block" : "none"
+                      display: !isKeyEditing(viewKey.keyId) ? "block" : "none",
                     }}
                     onClick={() => deleteKey(viewKey.keyId)}
                   >
-                    Delete
+                    {t("Delete")}
                   </Button>
                 </Grid>
               </Grid>
-              <Box sx={{mb:2, display:{xs:"block", md:"none"}}}>
-              <Typography variant="body2">{viewKey.role} - {viewKey.name}</Typography>
-              <Accordion >
-                
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                  sx={{p:0,minHeight:40,"& .MuiAccordionSummary-content":{m: 0 ,minHeight:"unset"},"&.MuiAccordionSummary-root.Mui-expanded":{margin: "0 0" ,minHeight:"36px"}}}
-                >
-                  <TextField
-                    size="small"
-                    fullWidth
-                    value={getKeyLink(viewKey.key)}
-                    InputProps={{
-                      readOnly: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          {/* <Tooltip
+              <Box sx={{ mb: 2, display: { xs: "block", md: "none" } }}>
+                <Typography variant="body2">
+                  {viewKey.role} - {viewKey.name}
+                </Typography>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                    sx={{
+                      p: 0,
+                      minHeight: 40,
+                      "& .MuiAccordionSummary-content": {
+                        m: 0,
+                        minHeight: "unset",
+                      },
+                      "&.MuiAccordionSummary-root.Mui-expanded": {
+                        margin: "0 0",
+                        minHeight: "36px",
+                      },
+                    }}
+                  >
+                    <TextField
+                      size="small"
+                      fullWidth
+                      value={getKeyLink(viewKey.key)}
+                      InputProps={{
+                        readOnly: true,
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {/* <Tooltip
                       PopperProps={{
                         disablePortal: true,
                       }}
@@ -335,100 +370,112 @@ function ManageKeys({
                       disableTouchListener
                       title="Copied"
                     > */}
-                          <Tooltip title="Copy to clipboard">
-                            <ContentCopyIcon
-                              sx={{ cursor: "pointer" }}
-                              onClick={() => {
-                                handleCopyKeyLink(viewKey.key);
-                              }}
-                            />
-                          </Tooltip>
+                            <Tooltip title="Copy to clipboard">
+                              <ContentCopyIcon
+                                sx={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  handleCopyKeyLink(viewKey.key);
+                                }}
+                              />
+                            </Tooltip>
 
-                          {/* </Tooltip> */}
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  
-                </AccordionSummary>
-                <AccordionDetails sx={{px:0, gap:1, display:"flex", flexDirection:"column"}}>
-                  <Select
-                    size="small"
-                    fullWidth
-                    value={viewKey.role}
-                    onChange={(e) => handleSelectRoleChange(e, index)}
-                    disabled={!isKeyEditing(viewKey.keyId)}
-                  >
-                    {roles &&
-                      roles.map((role, index) => {
-                        return (
-                          <MenuItem key={index} value={role.name}>
-                            {role.label}
-                          </MenuItem>
-                        );
-                      })}
-                  </Select>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    placeholder="Key name"
-                    value={viewKey.name}
-                    onChange={(e: any) => handleViewNameChange(e, index)}
-                    disabled={!isKeyEditing(viewKey.keyId)}
-                  />
-                  <Box sx={{display:"flex"}}>
-                  <Button
-                    fullWidth
-                    variant={isKeyEditing(viewKey.keyId) ? "text" : "contained"}
+                            {/* </Tooltip> */}
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </AccordionSummary>
+                  <AccordionDetails
                     sx={{
-                      color: theme.palette.palette_style.primary.main,
-                      display:isKeyEditing(viewKey.keyId) ? "block" : "none"
+                      px: 0,
+                      gap: 1,
+                      display: "flex",
+                      flexDirection: "column",
                     }}
-                    onClick={() => onEditCancel(viewKey.keyId)}
                   >
-                    Cancel
-                  </Button>
-                  <Button
-                    fullWidth
-                    variant={isKeyEditing(viewKey.keyId) ? "contained" : "text"}
-                    disabled={index===0}
-                    sx={{
-                      color: isKeyEditing(viewKey.keyId) ?theme.palette.palette_style.text.white : theme.palette.palette_style.primary.main  ,
-                      
-                    }}
-                    onClick={() => onSubmit(viewKey.keyId)}
-                  >
-                    {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
-                  </Button>
-                  <Button
-                    fullWidth
-                    variant="text"
-                    disabled={index===0}
-                    sx={{
-                      borderColor: "red",
-                      color: theme.palette.palette_style.error.dark,
-                      display:!isKeyEditing(viewKey.keyId) ? "block" : "none"
-                    }}
-                    onClick={() => deleteKey(viewKey.keyId)}
-                  >
-                    Delete
-                  </Button>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-                
-                </Box> 
-              
+                    <Select
+                      size="small"
+                      fullWidth
+                      value={viewKey.role}
+                      onChange={(e) => handleSelectRoleChange(e, index)}
+                      disabled={!isKeyEditing(viewKey.keyId)}
+                    >
+                      {roles &&
+                        roles.map((role, index) => {
+                          return (
+                            <MenuItem key={index} value={role.name}>
+                              {role.label}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                    <TextField
+                      size="small"
+                      fullWidth
+                      placeholder="Key name"
+                      value={viewKey.name}
+                      onChange={(e: any) => handleViewNameChange(e, index)}
+                      disabled={!isKeyEditing(viewKey.keyId)}
+                    />
+                    <Box sx={{ display: "flex" }}>
+                      <Button
+                        fullWidth
+                        variant={
+                          isKeyEditing(viewKey.keyId) ? "text" : "contained"
+                        }
+                        sx={{
+                          color: theme.palette.palette_style.primary.main,
+                          display: isKeyEditing(viewKey.keyId)
+                            ? "block"
+                            : "none",
+                        }}
+                        onClick={() => onEditCancel(viewKey.keyId)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        fullWidth
+                        variant={
+                          isKeyEditing(viewKey.keyId) ? "contained" : "text"
+                        }
+                        disabled={index === 0}
+                        sx={{
+                          color: isKeyEditing(viewKey.keyId)
+                            ? theme.palette.palette_style.text.white
+                            : theme.palette.palette_style.primary.main,
+                        }}
+                        onClick={() => onSubmit(viewKey.keyId)}
+                      >
+                        {isKeyEditing(viewKey.keyId) ? "Update" : "Edit"}
+                      </Button>
+                      <Button
+                        fullWidth
+                        variant="text"
+                        disabled={index === 0}
+                        sx={{
+                          borderColor: "red",
+                          color: theme.palette.palette_style.error.dark,
+                          display: !isKeyEditing(viewKey.keyId)
+                            ? "block"
+                            : "none",
+                        }}
+                        onClick={() => deleteKey(viewKey.keyId)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </AccordionDetails>
+                </Accordion>
+              </Box>
             </>
           );
         })}
     </>
   );
 }
-const mapStateToProps = (state: any) => ({
-});
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
   setFlashMessage,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(ManageKeys)
+export default connect(mapStateToProps, mapDispatchToProps)(ManageKeys);

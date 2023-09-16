@@ -8,14 +8,27 @@ import { setMessage } from "src/redux/actions/authAction";
 import { PATH_AUTH } from "src/routes/paths";
 import { authService } from "src/services/auth.service";
 import Iconify from "../../../components/iconify";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 interface VerifyEmailTokenProps {
   message: any;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
 }
 
-const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
+const VerifyEmailToken = ({
+  message,
+  translations,
+  setMessage
+}: VerifyEmailTokenProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
+
   const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
   // const [email, setEmail] = useState<string>('');
   // const [verifyResult, setVerifyResult] = useState<string>('Verifying')
@@ -24,18 +37,25 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    function checkMessage() {
+    const checkMessage = () => {
       if (message?.message) {
         setFlash(message)
       }
+    };
+
+    checkMessage();
+  }, [message]);
+  
+  useEffect(() => {
+    if (router.query.token && router.isReady) {
+      //verifyEmail()
     }
-    checkMessage()
-  }, [message])
+  }, [router.query.token]);
 
   const handleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
 
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
@@ -66,13 +86,8 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
       //setVerifyResult("Verify fail")
     }
 
-  }
-  useEffect(() => {
+  };
 
-    if (router.query.token && router.isReady) {
-      //verifyEmail()
-    }
-  }, [router.query.token])
   return (
     <>
       <Box
@@ -118,16 +133,16 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
         >
           <Grid item xs={12}>
             <Typography variant="h4" gutterBottom>
-              Enter a new password for your account below.
+              {t("Title")}
             </Typography>
             <Typography variant="body1">
-              Please do not close this window.
+              {t("Description")}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
-              placeholder="New Password"
+              placeholder={t("Password")}
               required
               value={password}
               onChange={handleChangePassword}
@@ -165,7 +180,7 @@ const VerifyEmailToken = ({ message, setMessage }: VerifyEmailTokenProps) => {
               }}
               onClick={() => handleSubmit()}
             >
-              Submit
+              {t("Submit")}
             </Button>
           </Grid>
         </Grid>
@@ -180,6 +195,16 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setMessage
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const verifyToken = await validateToken(context);
+
+  if(verifyToken){
+    return verifyToken;
+  }
+
+  return await getTranslations("register", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyEmailToken);

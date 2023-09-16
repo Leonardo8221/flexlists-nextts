@@ -29,7 +29,11 @@ import { ErrorConsts } from "src/constants/errorConstants";
 import { filter } from "lodash";
 import { fetchColumns, fetchRows } from "src/redux/actions/viewActions";
 import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 interface ListFieldsProps {
+  translations: TranslationText[];
   currentView: View;
   fields: Field[];
   fetchColumns: (viewId: number) => void;
@@ -42,6 +46,7 @@ interface ListFieldsProps {
 }
 
 const ListFields = ({
+  translations,
   currentView,
   fields,
   setFields,
@@ -52,6 +57,9 @@ const ListFields = ({
   fetchRows,
   availableFieldUiTypes,
 }: ListFieldsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const [fieldManagementMode, setFieldManagementMode] = useState<boolean>(true);
   const [windowHeight, setWindowHeight] = useState(0);
@@ -76,6 +84,7 @@ const ListFields = ({
   };
   const [selectedField, setSelectedField] = useState<Field>(newField);
   const [error, setError] = useState<string>("");
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -93,6 +102,7 @@ const ListFields = ({
 
     return result;
   };
+
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
@@ -108,22 +118,27 @@ const ListFields = ({
     );
     fetchFields(currentView.id);
   };
+
   const reloadViewData = () => {
     fetchColumns(currentView.id);
     fetchRows();
   };
+
   const handleAddField = () => {
     setSelectedField({ ...newField, listId: currentView.listId });
     setFieldManagementMode(false);
   };
+
   const addField = (field: Field) => {
     setFields([...fields, field]);
     reloadViewData();
   };
+
   const handleUpdateField = (field: Field) => {
     setSelectedField(field);
     setFieldManagementMode(false);
   };
+
   const updateField = (field: Field) => {
     setFields(
       fields.map((x) => {
@@ -132,6 +147,7 @@ const ListFields = ({
     );
     reloadViewData();
   };
+
   const handleDeleteField = async (fieldId: number) => {
     var deleteFieldResponse = await fieldService.deleteField(
       currentView.id,
@@ -144,10 +160,12 @@ const ListFields = ({
     setFields(fields.filter((field: any) => field.id !== fieldId));
     reloadViewData();
   };
+
   const handleCloseModal = () => {
     setFieldManagementMode(true);
     onClose();
   };
+
   return (
     <Drawer
       anchor="right"
@@ -201,10 +219,10 @@ const ListFields = ({
           }}
         >
           <Typography variant="h6" component={"div"}>
-            Manage fields
+            {t("Manage Fields")}
           </Typography>
           <Button variant="contained" onClick={() => handleAddField()}>
-            New Field
+            {t("New Field")}
           </Button>
         </Box>
       )}
@@ -350,7 +368,7 @@ const ListFields = ({
                                           },
                                         }}
                                       >
-                                        Edit
+                                        {t("Edit")}
                                       </Typography>
                                     </Box>
                                   )}
@@ -382,7 +400,7 @@ const ListFields = ({
                                           },
                                         }}
                                       >
-                                        Delete
+                                        {t("Delete")}
                                       </Typography>
                                     </Box>
                                   ) : (
@@ -414,6 +432,7 @@ const ListFields = ({
           </>
         ) : (
           <FieldFormPanel
+            translations={translations}
             fieldUiTypes={availableFieldUiTypes}
             viewId={currentView.id}
             field={selectedField}
@@ -439,10 +458,10 @@ const ListFields = ({
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
             <Button variant="outlined" onClick={handleCloseModal}>
-              Close
+              {t("Close")}
             </Button>
             <Button variant="contained" onClick={() => handleAddField()}>
-              New Field
+              {t("New Field")}
             </Button>
           </Box>
         </>
