@@ -65,7 +65,8 @@ export enum FieldUiTypeEnum {
   Sublist = "Sublist",
   ManyToMany = "ManyToMany",
   User = "User",
-  Link = "Link"
+  Link = "Link",
+  Rating = "Rating"
 }
 export enum SearchType {
   List = "List",
