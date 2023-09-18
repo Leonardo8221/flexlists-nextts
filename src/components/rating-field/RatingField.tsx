@@ -1,5 +1,8 @@
 import React from 'react';
 import {Rating} from '@mui/material';
+interface RatingFieldProps {
+  onRatingChange: (newValue: number | null) => void;
+}
 
 interface RatingFieldProps {
   onRatingChange: (newValue: number | null) => void;

@@ -39,6 +39,8 @@ import LookupField from "src/components/relation/LookupField";
 import LinkFieldInput from "./fields/LinkFieldInput";
 import RatingField from "src/components/rating-field/RatingField";
 import DisplayRating from "src/components/rating-field/DisplayRating";
+import CheckboxRating from "src/components/rating-field/CheckboxRating";
+import NumericRating from "src/components/rating-field/NumericRating";
 
 type RenderFieldProps = {
   column: ViewField;
@@ -1100,6 +1102,8 @@ const RenderField = ({
                 </Typography>
                 <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
                   <RatingField onRatingChange={handleRatingChange} />
+                  <CheckboxRating/>
+                  <NumericRating/>
                 </Box>
               </Box>
             );
