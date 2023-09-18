@@ -351,7 +351,7 @@ export default function MenuMobile({
         ml: { xs: 0, lg: 6 },
         top: { xs: 64, md: 88 },
         left: { xs: 0, lg: 0 },
-        transform: !isMenuMobileOpen?"translateX(4000px)": "translateX(0px)",
+        transform: !isMenuMobileOpen ? "translateX(4000px)" : "translateX(0px)",
         transition: "transform ease .5s",
         position: "absolute",
         textTransform: "uppercase",

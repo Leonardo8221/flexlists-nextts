@@ -19,6 +19,7 @@ import { isSucc } from "src/models/ApiResponse";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { downloadFileUrl } from "src/utils/flexlistHelper";
+import { UserProfile } from "src/models/UserProfile";
 
 type UserListAccessProps = {
   currentView: View;
@@ -26,6 +27,7 @@ type UserListAccessProps = {
   roles: { name: string; label: string }[];
   translations: TranslationText[];
   setViewUsers: (users: any[]) => void;
+  userProfile:UserProfile
 };
 function UserListAccess({
   currentView,
@@ -33,6 +35,7 @@ function UserListAccess({
   roles,
   translations,
   setViewUsers,
+  userProfile
 }: UserListAccessProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -74,7 +77,7 @@ function UserListAccess({
   return (
     <>
       {users &&
-        users.map((user) => {
+        users.filter((x)=>x.userId !== userProfile.id).map((user) => {
           return (
             <>
               <Box
@@ -194,6 +197,7 @@ function UserListAccess({
 }
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
+  userProfile: state.user.userProfile
 });
 
 const mapDispatchToProps = {

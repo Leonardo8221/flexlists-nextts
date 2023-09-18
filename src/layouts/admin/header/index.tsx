@@ -75,11 +75,10 @@ export function Header({ onOpenNav }: HeaderProps) {
             {theme.palette.mode === "light" ? <Logo /> : <DarkLogo />}
           </Box>
         </Link>
-        
-        
+
         <Box sx={{ flexGrow: 1 }} />
         <LanguagePopover />
-        {(
+        {
           <Stack
             direction="row"
             alignItems="center"
@@ -91,12 +90,11 @@ export function Header({ onOpenNav }: HeaderProps) {
             
             <AccountPopover translations={[]} />
           </Stack>
-        )}
+        }
       </StyledToolbar>
     </StyledRoot>
   );
 }
-const mapStateToProps = (state: any) => ({
-});
+const mapStateToProps = (state: any) => ({});
 const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

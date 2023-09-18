@@ -44,7 +44,7 @@ type HeaderProps = {
 const Header = ({
   currentView,
   translations,
-  setFlashMessage
+  setFlashMessage,
 }: HeaderProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -223,7 +223,9 @@ const Header = ({
                   key={"rename_list"}
                   onClick={() => handleOpenRenameModal()}
                 >
-                  {currentView?.isDefaultView ? t("Rename List") : t("Rename View")}
+                  {currentView?.isDefaultView
+                    ? t("Rename List")
+                    : t("Rename View")}
                 </CDropdownItem>
                 {!currentView?.isDefaultView && (
                   <>
@@ -426,22 +428,29 @@ const Header = ({
         translations={translations}
         onClose={() => setVisiblePanel(false)}
       />
-      <PublishList
-        id={currentView.id}
-        name={currentView.name}
-        open={openPublish}
-        translations={translations}
-        handleClose={() => {
-          handleClosePublish();
-        }}
-      />
-      <ShareList
-        open={openShare}
-        translations={translations}
-        handleClose={() => {
-          handleCloseShare();
-        }}
-      />
+      <>
+        <PublishList
+          id={currentView.id}
+          name={currentView.name}
+          open={openPublish}
+          translations={translations}
+          handleClose={() => {
+            handleClosePublish();
+          }}
+        />
+      </>
+
+      <>
+        {openShare && (
+          <ShareList
+            open={openShare}
+            translations={translations}
+            handleClose={() => {
+              handleCloseShare();
+            }}
+          />
+        )}
+      </>
       {currentView && (
         <>
           <RenameView

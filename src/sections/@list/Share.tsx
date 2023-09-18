@@ -816,6 +816,8 @@ const ShareKeys = ({ roles, translations, currentView, styles }: ShareKeysProps)
         name: keyName,
       });
       setViewKeys(newViewKeys);
+      setKeyName("");
+      setRole(Role.ReadOnly);
     } else {
       setError((response as FlexlistsError).message);
     }

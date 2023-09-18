@@ -60,20 +60,18 @@ function ViewPresets({
       newPresets = newPresets.concat(cloneDeep(currentView.presets));
     }
     setPresets(newPresets);
-    console.log(newPresets);
   }, [currentView.presets, defaultPreset]);
 
   const onSubmit = async (preset: any) => {
-    const {query} = router;
-    if(query)
-    {
-      delete query['contentId'];
+    const { query } = router;
+    if (query) {
+      delete query["contentId"];
       router.replace({
         pathname: router.pathname,
-        query: { ...query}
+        query: { ...query },
       });
     }
-    
+
     var newView: View = Object.assign({}, currentView);
     setSelectedPreset(preset);
     if (preset.name === t("Show All")) {
