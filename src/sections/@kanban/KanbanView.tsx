@@ -13,6 +13,8 @@ import { listContentService } from "src/services/listContent.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type KanbanViewProps = {
   columns: ViewField[];
@@ -26,7 +28,9 @@ type KanbanViewProps = {
 };
 
 const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fetchRows, setCurrentView }: KanbanViewProps) => {
-  
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   // const [testData, setTestData] = useState<any>();
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [rowData, setRowData] = useState(null);
@@ -153,6 +157,11 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
+      <Head>
+        <title>{t("Kanban Page Title")}</title>
+        <meta name="description" content={t("Kanban Meta Description")} />
+        <meta name="keywords" content={t("Kanban Meta Keywords")} />
+      </Head>
       <Droppable droppableId="board" direction="horizontal" type="column">
         {(provided: any) => (
           provided.droppableProps && <Container ref={provided.innerRef} {...provided.droppableProps} className="board">

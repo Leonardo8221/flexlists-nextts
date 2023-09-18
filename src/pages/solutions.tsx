@@ -5,6 +5,7 @@ import MainSolutions from "src/components/solutions/MainSolutions";
 import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type SolutionsProps = {
   translations: TranslationText[];
@@ -20,6 +21,11 @@ const Solutions = ({
 
   return (
     <MainLayout translations={translations}>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
       <Box
         sx={{
           mt: { xs: "64px", md: "88px" },

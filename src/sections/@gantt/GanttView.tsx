@@ -10,6 +10,7 @@ import { FlatWhere, View } from 'src/models/SharedModels';
 import { getDataColumnId } from 'src/utils/flexlistHelper';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type Props = {
   columns: any;
@@ -22,6 +23,9 @@ type Props = {
 };
 
 const GanttView = (props: Props) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const { columns, rows, currentView, open, translations, fetchRows, setCurrentView } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
@@ -164,6 +168,11 @@ const GanttView = (props: Props) => {
 
   return (
     <Box sx={{ p: {xs: 0.5, md: 1}, overflow: 'auto' }}>
+      <Head>
+        <title>{t("Gantt Page Title")}</title>
+        <meta name="description" content={t("Gantt Meta Description")} />
+        <meta name="keywords" content={t("Gantt Meta Keywords")} />
+      </Head>
       <Box sx={{ textTransform: 'uppercase', backgroundColor: '#F6F8FA', px:2, py: 1.2, display: 'grid', gridTemplateColumns: `repeat(3, 1fr)`, minWidth: `${40 * ganttDays.length}px` }}>
         <Box sx={{ textAlign: 'center' }}>{format(firstRange[0], 'dd MMM')} - {format(firstRange[firstRange.length - 1], 'dd MMM')}</Box>
         <Box sx={{ textAlign: 'center' }}>{format(secondRange[0], 'dd MMM')} - {format(secondRange[secondRange.length - 1], 'dd MMM')}</Box>

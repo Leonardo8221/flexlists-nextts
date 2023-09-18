@@ -47,8 +47,9 @@ const Home = ({
   return (
     <MainLayout translations={translations}>
       <Head>
-        <title>Flexlists</title>
-        <meta name="description" content="Flexlists Home" />
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
       </Head>
       <LandingHero translations={translations} />
       <LandingWeHelpYou translations={translations} />

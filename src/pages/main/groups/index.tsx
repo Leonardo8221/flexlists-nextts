@@ -10,6 +10,7 @@ import { PATH_MAIN } from "src/routes/paths";
 import { GetServerSideProps } from "next";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import Head from 'next/head';
 
 type allGroupsProps = {
   translations: TranslationText[];
@@ -28,57 +29,60 @@ const AllGroups = ({ translations, groups, fetchGroups }: allGroupsProps) => {
     }
   }, [router.isReady]);
   return (
-    <>
-      <MainLayout removeFooter={true} translations={translations}>
-        <Container
+    <MainLayout removeFooter={true} translations={translations}>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
+      <Container
+        sx={{
+          py: 3,
+          maxWidth: "inherit !important",
+          overflow: "auto",
+        }}
+      >
+        <Box
           sx={{
-            py: 3,
-            maxWidth: "inherit !important",
-            overflow: "auto",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+          <Typography variant="h6">{t("All Groups")}</Typography>
+          <Button
+            size="medium"
+            variant="contained"
+            onClick={() => {
+              router.push(PATH_MAIN.newGroup);
             }}
           >
-            <Typography variant="h6">{t("All Groups")}</Typography>
-            <Button
-              size="medium"
-              variant="contained"
-              onClick={() => {
-                router.push(PATH_MAIN.newGroup);
-              }}
-            >
-              {t("Create New Group")}
-            </Button>
-          </Box>
-          <Grid
-            container
-            spacing={3}
-            sx={{
-              pt: 3,
-            }}
-          >
-            {groups &&
-              groups.map((group, index) => {
-                return (
-                  <Grid item xs={12} sm={6} md={2} key={index}>
-                    <GroupCard
-                      groupId={group.groupId}
-                      title={group.name}
-                      description={group.description}
-                      avatarUrl={group.avatarUrl}
-                    ></GroupCard>
-                  </Grid>
-                );
-              })}
-          </Grid>
-        </Container>
-      </MainLayout>
-    </>
+            {t("Create New Group")}
+          </Button>
+        </Box>
+        <Grid
+          container
+          spacing={3}
+          sx={{
+            pt: 3,
+          }}
+        >
+          {groups &&
+            groups.map((group, index) => {
+              return (
+                <Grid item xs={12} sm={6} md={2} key={index}>
+                  <GroupCard
+                    groupId={group.groupId}
+                    title={group.name}
+                    description={group.description}
+                    avatarUrl={group.avatarUrl}
+                  ></GroupCard>
+                </Grid>
+              );
+            })}
+        </Grid>
+      </Container>
+    </MainLayout>
   );
 };
 const mapStateToProps = (state: any) => ({

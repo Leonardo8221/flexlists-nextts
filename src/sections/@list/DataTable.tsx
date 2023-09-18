@@ -65,6 +65,7 @@ import {
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type DataTableProps = {
   translations: TranslationText[];
@@ -751,6 +752,11 @@ const DataTable = ({
 
   return (
     <>
+      <Head>
+        <title>{t("List Page Title")}</title>
+        <meta name="description" content={t("List Meta Description")} />
+        <meta name="keywords" content={t("List Meta Keywords")} />
+      </Head>
       <Box
         sx={{
           width: { xs: "100vw", lg: "100%" },
