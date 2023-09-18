@@ -86,9 +86,9 @@ const ViewsPage = ({
   return (
     <MainLayout translations={translations}>
       <Head>
-        <title>{t("Page Title")}</title>
-        <meta name="description" content={t("Meta Description")} />
-        <meta name="keywords" content={t("Meta Keywords")} />
+        <title>{t("Views Page Title")}</title>
+        <meta name="description" content={t("Views Meta Description")} />
+        <meta name="keywords" content={t("Views Meta Keywords")} />
       </Head>
       <Box
         sx={{

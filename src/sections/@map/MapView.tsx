@@ -10,6 +10,7 @@ import GoogleMapReact from 'google-map-react';
 import LocationPin from "./LocationPin";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_FLEXLIST_GOOGLE_MAPS_API_KEY;
 
@@ -28,6 +29,9 @@ type Props = {
 };
 
 const MapView = (props: Props) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const { columns, rows, translations, setRows, open } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
@@ -46,6 +50,11 @@ const MapView = (props: Props) => {
 
   return (
     <Box sx={{ p: {xs: 0.5, md: 1} }}>
+      <Head>
+        <title>{t("Map Page Title")}</title>
+        <meta name="description" content={t("Map Meta Description")} />
+        <meta name="keywords" content={t("Map Meta Keywords")} />
+      </Head>
       <Box sx={{ height: {xs: `${windowHeight - (open ? 310 : 264)}px`, md: `${windowHeight - 217}px`} }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY as string, libraries: 'places' }}

@@ -65,9 +65,9 @@ const ListsPage = ({
   return (
     <MainLayout translations={translations}>
       <Head>
-        <title>{t("Page Title")}</title>
-        <meta name="description" content={t("Meta Description")} />
-        <meta name="keywords" content={t("Meta Keywords")} />
+        <title>{t("Lists Page Title")}</title>
+        <meta name="description" content={t("Lists Meta Description")} />
+        <meta name="keywords" content={t("Lists Meta Keywords")} />
       </Head>
       <Box
         sx={{
