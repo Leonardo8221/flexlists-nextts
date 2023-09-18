@@ -106,20 +106,14 @@ function MenuDesktopItem({
   const handleClose = () => {
     setIsOpen(false);
   };
-  const handleOpen = async() => {
-    if(title === "Documentation")
-    {
+  const handleOpen = async () => {
+    if (title === "Documentation") {
       setIsOpen(true);
-    }
-    else
-    {
-      if(path)
-      {
-        await router.push({pathname: path})
+    } else {
+      if (path) {
+        await router.push({ pathname: path });
       }
-      
     }
-    
   };
   // if (children) {
   //   return (
@@ -282,7 +276,7 @@ function MenuDesktopItem({
             },
           }}
         >
-          <DocumentationMenu />
+          <DocumentationMenu translations={{} as any} />
         </Popover>
       )}
     </LinkStyle>

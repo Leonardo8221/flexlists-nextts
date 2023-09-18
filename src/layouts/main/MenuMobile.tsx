@@ -281,7 +281,7 @@ function MenuMobileItem({
             },
           }}
         >
-          <DocumentationMenu />
+          <DocumentationMenu translations={{} as any} />
         </Popover>
       )}
     </LinkStyle>
@@ -300,7 +300,7 @@ export default function MenuMobile({
   isHome,
   navConfig,
   translations,
-  isMenuMobileOpen
+  isMenuMobileOpen,
 }: MenuDesktopProps & { translations?: TranslationText[] }) {
   const router = useRouter();
   const pathname = router.pathname;
@@ -356,7 +356,7 @@ export default function MenuMobile({
         ml: { xs: 0, lg: 6 },
         top: { xs: 64, md: 88 },
         left: { xs: 0, lg: 0 },
-        transform: !isMenuMobileOpen?"translateX(4000px)": "translateX(0px)",
+        transform: !isMenuMobileOpen ? "translateX(4000px)" : "translateX(0px)",
         transition: "transform ease .5s",
         position: "absolute",
         textTransform: "uppercase",
