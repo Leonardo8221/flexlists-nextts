@@ -1,4 +1,3 @@
-// material
 import { styled } from "@mui/material/styles";
 import {
   Box,
@@ -9,17 +8,12 @@ import {
   Typography,
   Link,
 } from "@mui/material";
-// hooks
 import useOffSetTop from "src/hooks/useOffSetTop";
-// components
 import Logo from "src/components/logo";
 import { MHidden } from "src/components/@material-extend";
-//
 import MenuDesktop from "./MenuDesktop";
-// import MenuMobile from './MenuMobile';
-import navConfig from "./MenuConfig";
+// import navConfig from "./MenuConfig";
 import { useRouter } from "next/router";
-// import Link from "next/link";
 import LanguagePopover from "../LanguagePopover";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
@@ -27,8 +21,9 @@ import MenuMobile from "./MenuMobile";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
-
-// ----------------------------------------------------------------------
+import { Icon } from "@iconify/react";
+import homeFill from "@iconify/icons-eva/home-fill";
+import fileFill from "@iconify/icons-eva/file-fill";
 
 const APP_BAR_MOBILE = 64;
 const APP_BAR_DESKTOP = 88;
@@ -76,15 +71,17 @@ const LogoTitleStyle = styled("span")(({ theme }) => ({
   color: "#54A6FB",
 }));
 
-// ----------------------------------------------------------------------
-type ContentProps = {};
+type ContentProps = {
+  translations: TranslationText[];
+};
 
 export default function MainNavbar({
   translations,
-}: ContentProps & { translations?: TranslationText[] }) {
+}: ContentProps) {
   const t = (key: string): string => {
     if (!translations) {
       return key;
+
     }
     return getTranslation(key, translations);
   };
@@ -93,6 +90,41 @@ export default function MainNavbar({
   var pathname = router.pathname;
   const isHome = pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  const ICON_SIZE = {
+    width: 22,
+    height: 22,
+  };
+
+  const navConfig = [
+    {
+      title: t("Product"),
+      icon: <Icon icon={homeFill} {...ICON_SIZE} />,
+      path: "/product",
+    },
+    {
+      title: t("Solutions"),
+      icon: <Icon icon={fileFill} {...ICON_SIZE} />,
+      path: "/solutions",
+    },
+    {
+      title: t("Pricing"),
+      icon: <Icon icon={fileFill} {...ICON_SIZE} />,
+      path: "/pricing",
+    },
+    {
+      title: t("Marketplace"),
+      icon: <Icon icon={fileFill} {...ICON_SIZE} />,
+      path: "/marketplace",
+    },
+  
+    {
+      title: t("Documentation"),
+      icon: <Icon icon={fileFill} {...ICON_SIZE} />,
+      path: "/documentation",
+    },
+  ];
+
   const gotoSignin = async () => {
     await router.push({
       pathname: "/auth/login",
@@ -106,6 +138,7 @@ export default function MainNavbar({
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: "white" }}>
       <ToolbarStyle
@@ -136,6 +169,7 @@ export default function MainNavbar({
 
           <MHidden width="lgDown">
             <MenuDesktop
+              translations={translations}
               isOffset={isOffset}
               isHome={isHome}
               navConfig={navConfig.map((item) => ({
@@ -188,6 +222,7 @@ export default function MainNavbar({
                 
               </Button>
               <MenuMobile
+                translations={translations}
                 isMenuMobileOpen={isMobileMenuOpen}
                 isOffset={isOffset}
                 isHome={isHome}

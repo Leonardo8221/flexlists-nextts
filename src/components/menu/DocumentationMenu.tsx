@@ -50,25 +50,25 @@ const DocumentationMenu = ({
           </Typography>
         </Box>
         <Divider light sx={{ my: 2 }}></Divider>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/adding_new_list">
           {t("Adding New List")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/inviting_users">
           {t("Inviting Users")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/inviting_groups">
           {t("Inviting Groups")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/key_sharing">
           {t("Key Sharing")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/creating_new_view">
           {t("Creating New View")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/view_permissions">
           {t("View Permissions")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/docs/comments_section">
           {t("Comments Section")}
         </Link>
       </Box>
@@ -80,19 +80,19 @@ const DocumentationMenu = ({
           </Typography>
         </Box>
         <Divider light sx={{ my: 2 }}></Divider>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/tutorials/adding_new_list">
           {t("Adding New List")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/tutorials/inviting_users">
           {t("Inviting Users")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/tutorials/inviting_groups">
           {t("Inviting Groups")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/tutorials/key_sharing">
           {t("Key Sharing")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/tutorials/list_sharing">
           {t("List Sharing")}
         </Link>
       </Box>
@@ -104,19 +104,19 @@ const DocumentationMenu = ({
           </Typography>
         </Box>
         <Divider light sx={{ my: 2 }}></Divider>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/webinars/adding_new_list">
           {t("Adding New List")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/webinars/inviting_users">
           {t("Inviting Users")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/webinars/inviting_groups">
           {t("Inviting Groups")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/webinars/key_sharing">
           {t("Key Sharing")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/webinars/list_sharing">
           {t("List Sharing")}
         </Link>
       </Box>
@@ -128,19 +128,19 @@ const DocumentationMenu = ({
           </Typography>
         </Box>
         <Divider light sx={{ my: 2 }}></Divider>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/blogs/adding_new_list">
           {t("Adding New List")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/blogs/inviting_users">
           {t("Inviting Users")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/blogs/inviting_groups">
           {t("Inviting Groups")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/blogs/key_sharing">
           {t("Key Sharing")}
         </Link>
-        <Link sx={styles?.docsLink} href="/documentation">
+        <Link sx={styles?.docsLink} href="/documentation/blogs/list_sharing">
           {t("List Sharing")}
         </Link>
       </Box>

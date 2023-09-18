@@ -356,6 +356,7 @@ function TimelineViewConfig({ translations, submit, updateConfig, columns, avail
       {
         isOpenTitleFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open = {isOpenTitleFieldModal}
@@ -365,6 +366,7 @@ function TimelineViewConfig({ translations, submit, updateConfig, columns, avail
       {
         isOpenColorFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newColorField}
           fieldUiTypes={colorFieldUiTypes}
           open = {isOpenColorFieldModal}
@@ -374,6 +376,7 @@ function TimelineViewConfig({ translations, submit, updateConfig, columns, avail
       {
         isOpenLevelFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newLevelField}
           fieldUiTypes={levelFieldUiTypes}
           open = {isOpenLevelFieldModal}
@@ -383,6 +386,7 @@ function TimelineViewConfig({ translations, submit, updateConfig, columns, avail
       {
         isOpenFromFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newFromField}
           fieldUiTypes={dateFieldUiTypes}
           open = {isOpenFromFieldModal}
@@ -392,6 +396,7 @@ function TimelineViewConfig({ translations, submit, updateConfig, columns, avail
       {
         isOpenToFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newToField}
           fieldUiTypes={dateFieldUiTypes}
           open = {isOpenToFieldModal}

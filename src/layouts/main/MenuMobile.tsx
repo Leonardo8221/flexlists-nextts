@@ -1,12 +1,10 @@
 import PropTypes from "prop-types";
 import { Icon } from "@iconify/react";
-
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import * as React from "react";
 import arrowIosUpwardFill from "@iconify/icons-eva/arrow-ios-upward-fill";
 import arrowIosDownwardFill from "@iconify/icons-eva/arrow-ios-downward-fill";
-// material
 import { styled } from "@mui/material/styles";
 import {
   Box,
@@ -24,8 +22,6 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { light } from "@mui/material/styles/createPalette";
-// --------------------------------ICONS--------------------------------------
-
 import { OndemandVideo as TutorialsIcon } from "@mui/icons-material/";
 import { Topic as DocsIcon } from "@mui/icons-material/";
 import { CoPresent as WebinarsIcon } from "@mui/icons-material/";
@@ -36,8 +32,6 @@ import { ThemeContext } from "@emotion/react";
 import LanguagePopover from "../LanguagePopover";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
-
-// ----------------------------------------------------------------------
 
 const LinkStyle = styled(Link)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -52,8 +46,6 @@ const LinkStyle = styled(Link)(({ theme }) => ({
     textDecoration: "none",
   },
 }));
-
-// ----------------------------------------------------------------------
 
 IconBullet.propTypes = {
   type: PropTypes.oneOf(["subheader", "item"]),
@@ -83,6 +75,7 @@ function IconBullet({ type = "item" }) {
 }
 
 type MenuMobileItemProps = {
+  translations: TranslationText[];
   item: ItemProps;
   pathname: string;
   isHome: boolean;
@@ -98,6 +91,7 @@ type ItemProps = {
 };
 
 function MenuMobileItem({
+  translations,
   item,
   pathname,
   isHome,
@@ -281,7 +275,7 @@ function MenuMobileItem({
             },
           }}
         >
-          <DocumentationMenu />
+          <DocumentationMenu translations={translations} />
         </Popover>
       )}
     </LinkStyle>
@@ -289,6 +283,7 @@ function MenuMobileItem({
 }
 
 type MenuDesktopProps = {
+  translations: TranslationText[];
   isOffset: boolean;
   isHome: boolean;
   navConfig: any[];
@@ -301,7 +296,7 @@ export default function MenuMobile({
   navConfig,
   translations,
   isMenuMobileOpen
-}: MenuDesktopProps & { translations?: TranslationText[] }) {
+}: MenuDesktopProps) {
   const router = useRouter();
   const pathname = router.pathname;
   const [open, setOpen] = useState(false);
@@ -393,6 +388,7 @@ export default function MenuMobile({
       </Box>
       {navConfig.map((link: ItemProps) => (
         <MenuMobileItem
+          translations={translations}
           key={link.title}
           item={link}
           pathname={pathname}

@@ -71,7 +71,7 @@ export default function Header({ onOpenNav }:HeaderProps) {
         >
           <LanguagePopover />
           <NotificationsPopover />
-          <AccountPopover />
+          <AccountPopover translations={[]} />
         </Stack>
       </StyledToolbar>
     </StyledRoot>

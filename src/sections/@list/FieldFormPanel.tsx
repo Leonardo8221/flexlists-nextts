@@ -32,7 +32,7 @@ import { getDefaultFieldIcon, getFieldIcons } from "src/utils/flexlistHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 
-interface FieldFormPanelProps {
+type FieldFormPanelProps = {
   translations: TranslationText[];
   viewId: number;
   field: Field;

@@ -19,7 +19,7 @@ const Solutions = ({
   };
 
   return (
-    <MainLayout>
+    <MainLayout translations={translations}>
       <Box
         sx={{
           mt: { xs: "64px", md: "88px" },

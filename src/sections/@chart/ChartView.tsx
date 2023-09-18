@@ -151,7 +151,7 @@ const BlankPage = (props: Props) => {
         <Scatter options={options_scatter} data={data_scatter} />
       </Box> */}
 
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} translations={[]} />
     </Box>
   );
 };

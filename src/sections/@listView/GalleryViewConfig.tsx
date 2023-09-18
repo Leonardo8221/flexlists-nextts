@@ -352,6 +352,7 @@ function GalleryViewConfig({
       </Box> */}
       {isOpenAvatarFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newAvatarField}
           fieldUiTypes={avatarFieldUiTypes}
           open={isOpenAvatarFieldModal}
@@ -360,6 +361,7 @@ function GalleryViewConfig({
       )}
       {/* {isOpenNameFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newNameField}
           fieldUiTypes={nameFieldUiTypes}
           open={isOpenNameFieldModal}
@@ -368,6 +370,7 @@ function GalleryViewConfig({
       )}
       {isOpenImportanceFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newImportanceField}
           fieldUiTypes={importanceFieldUiTypes}
           open={isOpenImportanceFieldModal}
@@ -376,6 +379,7 @@ function GalleryViewConfig({
       )}
       {isOpenDescriptionFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newDescriptionField}
           fieldUiTypes={descriptionFieldUiTypes}
           open={isOpenDescriptionFieldModal}

@@ -89,7 +89,7 @@ export function Header({ onOpenNav }: HeaderProps) {
             }}
           >
             
-            <AccountPopover />
+            <AccountPopover translations={[]} />
           </Stack>
         )}
       </StyledToolbar>
