@@ -157,6 +157,11 @@ export async function addKeyToView(viewId: number, role: Role, name?: any): Prom
 
   return response.data;
 };
+export async function updateKeyForView(viewId: number,keyId:number, role: Role, name?: string): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listView/updateKeyForView`, { viewId,keyId, role, name })
+
+  return response.data;
+};
 export async function getKeysForView(viewId: number): Promise<FlexlistsError | FlexlistsSuccess<GetKeysForViewOutputDto[]>> {
   var response = await axios.get<FlexlistsError | FlexlistsSuccess<GetKeysForViewOutputDto[]>>('/api/listView/getKeysForView' + `?viewId=${viewId}`)
   return response.data;

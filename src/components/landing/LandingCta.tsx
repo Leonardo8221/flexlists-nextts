@@ -1,8 +1,20 @@
 import { Box, Container, Typography, Button } from "@mui/material";
 import { ArrowOutward as DiscoverMoreIcon } from "@mui/icons-material/";
 import React from "react";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-export default function LandingCTA() {
+type LandingCTAProps = {
+  translations: TranslationText[];
+};
+
+const LandingCTA = ({
+  translations
+}: LandingCTAProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
+
   return (
     <Box sx={{ m: 2 }}>
       <Container
@@ -22,9 +34,9 @@ export default function LandingCTA() {
             px: { xs: 4, md: 8 },
           }}
         >
-          Try the new Flexlists using your existing data in complete safety!
+          {t("Section6 Description1")}
           <br />
-          Import your data into the new version of Flexlists, and try it.
+          {t("Section6 Description2")}
         </Typography>
         <Button
           size="large"
@@ -42,7 +54,7 @@ export default function LandingCTA() {
             },
           }}
         >
-          Try now{" "}
+          {t("Try now")}{" "}
           <DiscoverMoreIcon
             sx={{
               ml: 1,
@@ -55,9 +67,11 @@ export default function LandingCTA() {
           />
         </Button>
         <Typography variant="body2" sx={{ mt: 4 }}>
-          Your original data remains untouched and you can always revert back.
+          {t("Section6 Footer")}
         </Typography>
       </Container>
     </Box>
   );
-}
+};
+
+export default LandingCTA;

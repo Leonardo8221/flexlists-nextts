@@ -14,8 +14,11 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
 import { CalendarConfig } from "src/models/ViewConfig";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type CalendarViewConfigProps = {
+  translations: TranslationText[];
   submit: boolean;
   updateConfig: (config: CalendarConfig) => void;
   columns: ViewField[];
@@ -24,12 +27,16 @@ type CalendarViewConfigProps = {
 };
 
 function CalendarViewConfig({
+  translations,
   submit,
   updateConfig,
   columns,
   availableFieldUiTypes,
   config,
 }: CalendarViewConfigProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId:0);
   const [beginDateTimeId, setBeginDateTimeId] = useState<number>(config && config.beginDateTimeId? config.beginDateTimeId:0);
   const [endDateTimeId, setEndDateTimeId] = useState<number>(config && config.endDateTimeId? config.endDateTimeId:0);
@@ -274,11 +281,11 @@ function CalendarViewConfig({
       <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <FormControl fullWidth>
           <InputLabel required id="calendar_title_label">
-            Title
+            {t("Title")}
           </InputLabel>
           <Select
             labelId="calendar_title_label"
-            label="Title"
+            label={t("Title")}
             value={`${titleFieldId}`}
             required
             error={submit && (!titleFieldId || titleFieldId === 0)}
@@ -291,17 +298,17 @@ function CalendarViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth>
           <InputLabel required id="calendar_begindatetime_label">
-            Begin Date
+            {t("Begin Date")}
           </InputLabel>
           <Select
             labelId="calendar_begindatetime_label"
-            label="Begin Date"
+            label={t("Begin Date")}
             value={`${beginDateTimeId}`}
             onChange={onBeginDateTimeChange}
             required
@@ -317,17 +324,17 @@ function CalendarViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth>
           <InputLabel required id="calendar_enddatetime_label">
-            End Date
+            {t("End Date")}
           </InputLabel>
           <Select
             labelId="calendar_enddatetime_label"
-            label="End Date"
+            label={t("End Date")}
             value={`${endDateTimeId}`}
             onChange={onEndDateTimeChange}
             error={submit && (!endDateTimeId || endDateTimeId === 0)}
@@ -342,17 +349,17 @@ function CalendarViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth>
           <InputLabel required id="calendar_color_label">
-            Color
+            {t("Color")}
           </InputLabel>
           <Select
             labelId="calendar_color_label"
-            label="Color"
+            label={t("Color")}
             value={`${colorId}`}
             onChange={onColorChange}
             error={submit && (!colorId || colorId === 0)}
@@ -364,13 +371,14 @@ function CalendarViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
       </Box>
       {isOpenTitleFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open={isOpenTitleFieldModal}
@@ -379,6 +387,7 @@ function CalendarViewConfig({
       )}
       {isOpenBeginDateTimeModal && (
         <CreateFieldModal
+          translations={translations}
           field={newBeginDateTimeField}
           fieldUiTypes={dateTimeUiTypes}
           open={isOpenBeginDateTimeModal}
@@ -387,6 +396,7 @@ function CalendarViewConfig({
       )}
       {isOpenEndDateTimeModal && (
         <CreateFieldModal
+          translations={translations}
           field={newEndDateTimeField}
           fieldUiTypes={dateTimeUiTypes}
           open={isOpenEndDateTimeModal}
@@ -395,6 +405,7 @@ function CalendarViewConfig({
       )}
       {isOpenColorModal && (
         <CreateFieldModal
+          translations={translations}
           field={newColorField}
           fieldUiTypes={colorUiTypes}
           open={isOpenColorModal}

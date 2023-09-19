@@ -8,7 +8,7 @@ export default function TourPage() {
   const theme = useTheme();
 
   return (
-    <MainLayout>
+    <MainLayout translations={[]}>
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,

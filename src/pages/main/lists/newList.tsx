@@ -25,14 +25,21 @@ import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 import { createCoreView } from "src/services/listView.service";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
-interface NewListProps {
+type NewListProps = {
   message: any;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
   viewTemplate:any
 }
 
-function NewList({ message, setMessage,viewTemplate }: NewListProps) {
+function NewList({ message, translations, setMessage, viewTemplate }: NewListProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
   const [isSubmit,setIsSubmit] = useState<boolean>(false);
@@ -123,7 +130,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
     }
   };
   return (
-    <MainLayout removeFooter={true}>
+    <MainLayout removeFooter={true} translations={translations}>
       <Box
         sx={{
           display: "flex",
@@ -143,11 +150,11 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
           </Alert>
         </Snackbar>
         <Box sx={{ py: 4, mx: 2, flexGrow: 1 }}>
-          <Typography variant="h4">Create list</Typography>
+          <Typography variant="h4">{t("Create List")}</Typography>
           <Divider sx={{ my: 2 }} light />
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" gutterBottom>
-              Name
+              {t("Name")}
             </Typography>
             <TextField
               required
@@ -160,7 +167,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
           </Box>
           <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Description
+              {t("Description")}
             </Typography>
             <WysiwygEditor
               value={currentList.description}
@@ -171,7 +178,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
             (!viewTemplate || !viewTemplate.id|| viewTemplate.id == 0) &&
             <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Category
+              {t("Category")}
             </Typography>
             <Select
               fullWidth
@@ -194,7 +201,7 @@ function NewList({ message, setMessage,viewTemplate }: NewListProps) {
             type="submit"
             onClick={() => handleSubmit()}
           >
-            Create list
+            {t("Create List")}
           </Button>
         </Box>
         {/* <Box sx={{ borderLeft: "solid 1px #ccc", p: 2 }}>
@@ -215,6 +222,10 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setMessage,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("lists views", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewList);

@@ -7,6 +7,8 @@ import { styled } from '@mui/material/styles';
 import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react';
 import { ChoiceModel } from 'src/models/ChoiceModel';
 import { KanbanConfig } from 'src/models/ViewConfig';
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type KanbanColumnProps = {
   index: number;
@@ -14,6 +16,7 @@ type KanbanColumnProps = {
   column: ChoiceModel;
   tasks: any;
   kanbanConfig: KanbanConfig;
+  translations: TranslationText[];
   openNewRowPanel: () => void;
   handleRowData: (row: any) => void;
 };
@@ -53,28 +56,31 @@ const TaskList = styled('div')(({ theme }) => ({
   }
 }));
 
-const lists = [
-  {
-    label: 'Rename list',
-    value: 'rename_list'
-  },
-  {
-    label: 'Delete list',
-    value: 'delete_list'
-  },
-  {
-    label: 'Duplicate',
-    value: 'duplicate'
-  },
-  {
-    label: 'Archive',
-    value: 'archive'
-  }
-];
-
-const KanbanColumn = ({ index, rows, column, tasks,kanbanConfig, openNewRowPanel, handleRowData }: KanbanColumnProps) => {
+const KanbanColumn = ({ index, rows, column, tasks,kanbanConfig, translations, openNewRowPanel, handleRowData }: KanbanColumnProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const newRow = { phase: column.label };
+
+  const lists = [
+    {
+      label: t("Rename List"),
+      value: 'rename_list'
+    },
+    {
+      label: t("Delete List"),
+      value: 'delete_list'
+    },
+    {
+      label: t("Duplicate"),
+      value: 'duplicate'
+    },
+    {
+      label: t("Archive"),
+      value: 'archive'
+    }
+  ];
 
   const addRow = () => {
     handleRowData(newRow);

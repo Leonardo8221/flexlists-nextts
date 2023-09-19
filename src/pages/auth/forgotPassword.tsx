@@ -20,25 +20,35 @@ import { forgotPassword } from "src/services/auth.service";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_AUTH } from "src/routes/paths";
+import { GetServerSideProps } from "next";
+import { validateToken } from "src/utils/tokenUtils";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 interface ForgotPasswordProps {
   message: any;
-  setMessage: (message: any) => void;
   styles?: any;
+  translations: TranslationText[];
+  setMessage: (message: any) => void;
 }
 
 const ForgotPassword = ({
   message,
-  setMessage,
+  translations,
   styles,
+  setMessage
 }: ForgotPasswordProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
+  const router = useRouter();
+
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
   const [email, setEmail] = useState<string>("");
-  const router = useRouter();
 
   useEffect(() => {
     function checkMessage() {
@@ -49,13 +59,15 @@ const ForgotPassword = ({
     checkMessage();
   }, [message]);
 
-  function setError(message: string) {
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
+
   const handleClose = () => {
     setFlash(undefined);
     setMessage(null);
@@ -191,7 +203,7 @@ const ForgotPassword = ({
               </Link>
             </Box>
             <Typography variant="h4" textAlign="center">
-              Password Reset
+              {t("Password Reset")}
             </Typography>
           </Grid>
 
@@ -200,7 +212,7 @@ const ForgotPassword = ({
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               fullWidth
-              placeholder="Email"
+              placeholder={t("Email")}
               type="email"
               sx={styles?.textField}
               required
@@ -215,7 +227,7 @@ const ForgotPassword = ({
               variant="contained"
               sx={styles?.button}
             >
-              Send recovery email
+              {t("Send Recovery Email")}
             </Button>
           </Grid>
         </Grid>
@@ -230,6 +242,16 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setMessage,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const verifyToken = await validateToken(context);
+
+  if(verifyToken){
+    return verifyToken;
+  }
+
+  return await getTranslations("register", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);

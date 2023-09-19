@@ -15,8 +15,11 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { Field, FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
 import { KanbanConfig } from "src/models/ViewConfig";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type KanbanViewConfigProps = {
+  translations: TranslationText[];
   submit: boolean;
   updateConfig: (config: KanbanConfig) => void;
   columns: ViewField[];
@@ -24,11 +27,15 @@ type KanbanViewConfigProps = {
 };
 
 function KanbanViewConfig({
+  translations,
   submit,
   updateConfig,
   columns,
   availableFieldUiTypes,
 }: KanbanViewConfigProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [boardColumnId, setBoardColumnId] = useState<number>(0);
   const [orderColumnId, setOrderColumnId] = useState<number>(0);
   const [titleFieldId, setTitleFieldId] = useState<number>(0);
@@ -193,10 +200,10 @@ function KanbanViewConfig({
       <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <FormControl fullWidth>
           <InputLabel required id="select-board-label">
-            Board
+            {t("Board")}
           </InputLabel>
           <Select
-            label="Board Field"
+            label={t("Board")}
             labelId="select-board-label"
             value={`${boardColumnId}`}
             onChange={onBoardFieldChange}
@@ -211,16 +218,16 @@ function KanbanViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth>
           <InputLabel required id="select-order-label">
-            Order
+            {t("Order")}
           </InputLabel>
           <Select
-            label="Order Field"
+            label={t("Order")}
             labelId="select-order-label"
             value={`${orderColumnId}`}
             onChange={onOrderFieldChange}
@@ -235,16 +242,16 @@ function KanbanViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth>
           <InputLabel required id="select-title-label">
-            Title
+            {t("Title")}
           </InputLabel>
           <Select
-            label="Title"
+            label={t("Title")}
             labelId="select-title-label"
             value={`${titleFieldId}`}
             required
@@ -259,7 +266,7 @@ function KanbanViewConfig({
               </MenuItem>
             ))}
             <MenuItem key={"-1"} value={"-1"}>
-              create a new field
+              {t("Create New Field")}
             </MenuItem>
           </Select>
         </FormControl>
@@ -267,6 +274,7 @@ function KanbanViewConfig({
 
       {isOpenBoardFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newBoardField}
           fieldUiTypes={boardFieldUiTypes}
           open={isOpenBoardFieldModal}
@@ -275,6 +283,7 @@ function KanbanViewConfig({
       )}
       {isOpenOrderFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newOrderField}
           fieldUiTypes={orderFieldUiTypes}
           open={isOpenOrderFieldModal}
@@ -283,6 +292,7 @@ function KanbanViewConfig({
       )}
       {isOpenTitleFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open={isOpenTitleFieldModal}

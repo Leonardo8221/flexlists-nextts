@@ -27,7 +27,7 @@ export const getTranslation = (key: string, transaltions: TranslationText[]) => 
         }
     }
 
-    if (translation.trim().length === 0) {
+    if (translation?.trim().length === 0) {
         return key
     }
 

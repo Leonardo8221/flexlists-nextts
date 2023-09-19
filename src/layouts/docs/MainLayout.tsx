@@ -1,10 +1,7 @@
 import { ReactNode, useState } from "react";
-// @mui
 import { styled } from "@mui/material/styles";
-//
 import MainNavbar from "./MainNavbar";
-
-// ----------------------------------------------------------------------
+import { TranslationText } from "src/models/SharedModels";
 
 const APP_BAR_MOBILE = 4;
 const APP_BAR_DESKTOP = 32;
@@ -17,30 +14,35 @@ const StyledRoot = styled("div")({
 
 const Main = styled("div")(({ theme }) => ({
   flexGrow: 1,
-  overflow: "auto",
+  overflow: "hidden",
   minHeight: "100%",
-  paddingTop: APP_BAR_MOBILE + 24,
-  paddingBottom: theme.spacing(10),
+  // paddingTop: APP_BAR_MOBILE + 24,
+  // paddingBottom: theme.spacing(10),
+  position: "relative",
   [theme.breakpoints.up("lg")]: {
-    paddingTop: APP_BAR_DESKTOP + 24,
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    // paddingTop: APP_BAR_DESKTOP + 24,
   },
 }));
 
-// ----------------------------------------------------------------------
 type MainLayoutProps = {
   children: ReactNode;
+  translations: TranslationText[];
 };
-export default function MainLayout({ children }: MainLayoutProps) {
+
+const MainLayout = ({
+  children,
+  translations
+}: MainLayoutProps) => {
   const [open, setOpen] = useState(false);
 
   return (
     <StyledRoot>
-      <MainNavbar />
+      <MainNavbar translations={translations} />
       <Main>
         <div>{children}</div>
       </Main>
     </StyledRoot>
   );
-}
+};
+
+export default MainLayout;

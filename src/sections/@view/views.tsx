@@ -1,24 +1,55 @@
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@mui/material/styles";
-import { Box, Grid, Container, Typography, Button, Snackbar, Alert, AlertColor } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Container,
+  Typography,
+  Button,
+  Snackbar,
+  Alert,
+  AlertColor,
+} from "@mui/material";
 import { useState, useEffect } from "react";
 import ViewCard from "./ViewCard";
 import { View } from "src/models/SharedModels";
-import { FlexlistsError, FlexlistsSuccess, isErr, isSucc } from "src/models/ApiResponse";
+import {
+  FlexlistsError,
+  FlexlistsSuccess,
+  isErr,
+  isSucc,
+} from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
-import { getDefaultListViews, listViewService } from "src/services/listView.service";
-import { setMessage } from "src/redux/actions/viewActions";
+import {
+  getDefaultListViews,
+  listViewService,
+} from "src/services/listView.service";
+import { setCurrentView, setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
-interface ViewsProps {
+type ViewsProps = {
+  translations: TranslationText[];
   isDefaultViews: boolean;
   isArchived: boolean;
   message: any;
   setMessage: (message: any) => void;
-}
+  setCurrentView: (view: View | undefined) => void;
+};
 
-function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) {
+const Views = ({
+  translations,
+  isArchived,
+  message,
+  setMessage,
+  isDefaultViews,
+  setCurrentView,
+}: ViewsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [steps, setSteps] = useState(0);
@@ -27,26 +58,32 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
   const [windowHeight, setWindowHeight] = useState(0);
   const [views, setViews] = useState<View[]>([]);
 
-  // error handling 
-  const [flash, setFlash] = useState<{ message: string, type: string } | undefined>(undefined);
+  // error handling
+  const [flash, setFlash] = useState<
+    { message: string; type: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
-        setFlash(message)
+        setFlash(message);
       }
     }
-    checkMessage()
-  }, [message, router.isReady])
+    checkMessage();
+    if (router.isReady) {
+      setCurrentView(undefined);
+    }
+  }, [message, router.isReady]);
 
   const flashHandleClose = () => {
-    setFlash(undefined)
-    setMessage(null)
-  }
-  function setFlashMessage(message: string, type: string = 'error') {
-    setFlash({ message: message, type: type })
-    setMessage({ message: message, type: type })
-  }
+    setFlash(undefined);
+    setMessage(null);
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
+  };
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -61,28 +98,36 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
 
     //  document.body.addEventListener('click', closePopup);
   }, [router.isReady]);
+
   useEffect(() => {
     async function fetchData() {
-      let response: FlexlistsError | FlexlistsSuccess<View[]>
+      let response: FlexlistsError | FlexlistsSuccess<View[]>;
       if (isDefaultViews) {
         response = await getDefaultListViews();
-      }
-      else {
-        response = await listViewService.getViews(undefined, undefined, undefined, undefined, isArchived);
+      } else {
+        response = await listViewService.getViews(
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          isArchived
+        );
       }
 
       if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
           setViews(response.data);
-        }
-        else {
+        } else {
           if (!isArchived) {
-            setMessage({ message: "No views yet, click a template to create your first one!", type: "success" })
+            setMessage({
+              message:
+                "No views yet, click a template to create your first one!",
+              type: "success",
+            });
             await router.push(PATH_MAIN.chooseTemplate);
           }
         }
-      }
-      else {
+      } else {
         setFlashMessage(response?.data?.message);
       }
     }
@@ -124,7 +169,6 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
 
   const [maskProperty, setMaskProperty] = useState(maskProperties[0]);
 
-
   const createNewView = async () => {
     await router.push(PATH_MAIN.chooseTemplate);
   };
@@ -162,28 +206,21 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
           }}
         >
           <Typography variant="h6"></Typography>
-          {
-            isDefaultViews && <Button
+          {isDefaultViews && (
+            <Button
               size="medium"
               variant="contained"
               onClick={() => createNewView()}
             >
-              Create new
+              {t("Create New")}
             </Button>
-          }
-
+          )}
         </Box>
         <Grid container spacing={3} sx={{ mb: 2, mt: 0 }}>
           {views.length > 0 &&
             views.map((view, index) => {
               return (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={2}
-                  key={index}
-                >
+                <Grid item xs={12} sm={6} md={2} key={index}>
                   <ViewCard
                     isViewDefault={view.isDefaultView}
                     id={view.id}
@@ -195,8 +232,16 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
               );
             })}
         </Grid>
-        <Snackbar open={flash !== undefined} autoHideDuration={6000} onClose={flashHandleClose}>
-          <Alert onClose={flashHandleClose} severity={flash?.type as AlertColor} sx={{ width: '100%' }}>
+        <Snackbar
+          open={flash !== undefined}
+          autoHideDuration={6000}
+          onClose={flashHandleClose}
+        >
+          <Alert
+            onClose={flashHandleClose}
+            severity={flash?.type as AlertColor}
+            sx={{ width: "100%" }}
+          >
             {flash?.message}
           </Alert>
         </Snackbar>
@@ -204,16 +249,15 @@ function Views({ isArchived, message, setMessage, isDefaultViews }: ViewsProps) 
       {visibleMask && <MaskedBackground />}
     </>
   );
-}
+};
 
 const mapStateToProps = (state: any) => ({
   message: state.view.message,
 });
 
 const mapDispatchToProps = {
-  setMessage
+  setMessage,
+  setCurrentView,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Views);
-//export default Views
-

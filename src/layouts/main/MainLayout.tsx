@@ -31,7 +31,7 @@ const Main = styled("div")(({ theme }) => ({
 // ----------------------------------------------------------------------
 type MainLayoutProps = {
   children: ReactNode;
-  translations?: TranslationText[];
+  translations: TranslationText[];
 };
 export default function MainLayout({
   children,

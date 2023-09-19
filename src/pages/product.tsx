@@ -7,14 +7,18 @@ import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 
-type ContentProps = {
-
+type ProductProps = {
+  translations: TranslationText[];
 };
-function product({ translations }: ContentProps & { translations?: TranslationText[] }) {
+
+const Product = ({
+  translations
+}: ProductProps) => {
   const t = (key: string): string => {
-    if (!translations) return key
-    return getTranslation(key, translations)
-  }
+    if (!translations) return key;
+    return getTranslation(key, translations);
+  };
+
   return (
     <MainLayout translations={translations}>
       <Box
@@ -43,14 +47,12 @@ function product({ translations }: ContentProps & { translations?: TranslationTe
               }}
             >
               <Typography variant="h3" gutterBottom>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto,
-                molestiae.
+                {t("Title")}
               </Typography>
               <Typography variant="body1" gutterBottom>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Aliquam, beatae ipsa ea vitae saepe ut?
+                {t("Description")}
               </Typography>
-              <Button variant="contained">Try Demo</Button>
+              <Button variant="contained">{t("Try Demo Button")}</Button>
             </Grid>
             <Grid item xs={12} md={8}>
               <Box
@@ -71,9 +73,10 @@ function product({ translations }: ContentProps & { translations?: TranslationTe
       <LandingPricingPlans translations={translations} />
     </MainLayout>
   );
-}
-export const getServerSideProps: GetServerSideProps = async (context) => {
+};
 
-  return await getTranslations("existing pricing page", context)
-}
-export default product;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("product", context);
+};
+
+export default Product;

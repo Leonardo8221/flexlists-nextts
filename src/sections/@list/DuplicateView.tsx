@@ -20,14 +20,21 @@ import { PATH_MAIN } from "src/routes/paths";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 type DuplicateViewProps = {
   open: boolean;
+  translations: TranslationText[];
   handleClose: () => void;
   currentView: View,
   setFlashMessage : (message:FlashMessageModel)=>void
 };
 
-const DuplicateView = ({ open, handleClose, currentView,setFlashMessage }: DuplicateViewProps) => {
+const DuplicateView = ({ open, translations, handleClose, currentView,setFlashMessage }: DuplicateViewProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter()
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
@@ -67,22 +74,22 @@ const DuplicateView = ({ open, handleClose, currentView,setFlashMessage }: Dupli
   }
   return (
     <CentralModal open={open} handleClose={handleClose}>
-      <Typography variant="h6">Duplicate View</Typography>
+      <Typography variant="h6">{t("Duplicate View")}</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
-        <Typography variant="subtitle2">Name</Typography>
+        <Typography variant="subtitle2">{t("Name")}</Typography>
         <TextField
           fullWidth
           onChange={handleViewNameChange}
           value={name}
-          placeholder="Name"
+          placeholder={t("Name")}
           required
           error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
         />
       </Box>
       <Box>
         <Typography variant="subtitle2" sx={{ mt: 2 }}>
-          Description
+          {t("Description")}
         </Typography>
         <TextField
           multiline
@@ -100,14 +107,14 @@ const DuplicateView = ({ open, handleClose, currentView,setFlashMessage }: Dupli
       </FormGroup> */}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button sx={{ mt: 2 }} variant="contained" onClick={() => onSubmit()}>
-          Duplicate
+          {t("Duplicate")}
         </Button>
         <Button
           onClick={handleClose}
           sx={{ mt: 2, ml: 2, color: "#666" }}
           variant="text"
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       </Box>
     </CentralModal>

@@ -7,24 +7,33 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
-interface ListPageProps {
+type ListPageProps = {
   message: any;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
-}
+};
+
 const styles = {
   tab: {
     minWidth: "fit-content",
     flex: 1,
   },
 };
-function ListsPage({ message, setMessage }: ListPageProps) {
+
+const ListsPage = ({
+  message,
+  translations,
+  setMessage
+}: ListPageProps) => {
   const theme = useTheme();
   // error handling
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
-  >(undefined);
- 
+  >(undefined); 
 
   useEffect(() => {
     function checkMessage() {
@@ -39,16 +48,18 @@ function ListsPage({ message, setMessage }: ListPageProps) {
     setFlash(undefined);
     setMessage(null);
   };
-  function setError(message: string) {
+
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
 
   return (
-    <MainLayout>
+    <MainLayout translations={translations}>
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,
@@ -71,18 +82,23 @@ function ListsPage({ message, setMessage }: ListPageProps) {
           </Alert>
         </Snackbar>
         <Box borderBottom={"solid 1px"} sx={{ mb: 1 }} borderColor={"divider"}>
-          <Views isArchived = {false} isDefaultViews={true} />
+          <Views isArchived = {false} isDefaultViews={true} translations={translations} />
         </Box>
       </Box>
     </MainLayout>
   );
-}
+};
+
 const mapStateToProps = (state: any) => ({
   message: state.view.message,
 });
 
 const mapDispatchToProps = {
   setMessage,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("lists views", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListsPage);

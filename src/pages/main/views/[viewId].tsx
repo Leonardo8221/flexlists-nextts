@@ -27,10 +27,11 @@ import TimelineView from "src/sections/@timeline/TimelineView";
 import GanttView from "src/sections/@gantt/GanttView";
 import MapView from "src/sections/@map/MapView";
 import { GetServerSideProps } from "next";
+import { getTranslations } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
-import { getTranslations, getTranslation } from "src/utils/i18n";
 
 type ListProps = {
+  translations: TranslationText[];
   currentView: View;
   getCurrentView: (viewId: number) => void;
   columns: ViewField[];
@@ -41,7 +42,7 @@ type ListProps = {
   setCurrentView: (view: View) => void;
 };
 
-export function ViewDetail({
+export const ViewDetail = ({
   currentView,
   getCurrentView,
   columns,
@@ -51,15 +52,10 @@ export function ViewDetail({
   users,
   getViewUsers,
   setCurrentView
-}: ListProps & { translations?: TranslationText[]/*, test?: string */ }) {
+}: ListProps) => {
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-
-  const t = (key: string): string => {
-    if (!translations) return key
-    return getTranslation(key, translations)
-  }
 
   useEffect(() => {
     if (
@@ -116,7 +112,7 @@ export function ViewDetail({
 
   // }, [router.query.viewId]);
   return (
-    <MainLayout>
+    <MainLayout translations={translations}>
       {
         currentView && columns && columns.length > 0 && users.length>0 ?
         (
@@ -129,17 +125,17 @@ export function ViewDetail({
           overflow: "hidden",
         }}
       >
-        <Header />
-        <MenuBar search="" />
+        <Header translations={translations} />
+        <MenuBar search="" translations={translations} />
 
         {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
-        {currentView.type === ViewType.List && <DataTable tab={open} />}
-        {currentView.type === ViewType.Calendar && <CalendarView open={open} />}
-        {currentView.type === ViewType.KanBan && <KanbanView open={open} />}
-        {currentView.type === ViewType.Gallery && <GalleryView open={open} />}
-        {currentView.type === ViewType.TimeLine && <TimelineView open={open} />}
-        {currentView.type === ViewType.Gantt && <GanttView open={open} />}
-        {currentView.type === ViewType.Map && <MapView open={open} />}
+        {currentView.type === ViewType.List && <DataTable tab={open} translations={translations} />}
+        {currentView.type === ViewType.Calendar && <CalendarView open={open} translations={translations} />}
+        {currentView.type === ViewType.KanBan && <KanbanView open={open} translations={translations} />}
+        {currentView.type === ViewType.Gallery && <GalleryView open={open} translations={translations} />}
+        {currentView.type === ViewType.TimeLine && <TimelineView open={open} translations={translations} />}
+        {currentView.type === ViewType.Gantt && <GanttView open={open} translations={translations} />}
+        {currentView.type === ViewType.Map && <MapView open={open} translations={translations} />}
       </Box>
         ):
         (<></>)
@@ -185,9 +181,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //   },
   // }
 
-  const translations = await getTranslations("existing landing page", context)
-
-
-  return { props: { translations: translations/*, test: 'abrikoos'*/ } }
+  return await getTranslations("lists views", context);
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ViewDetail);

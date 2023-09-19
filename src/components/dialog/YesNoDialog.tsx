@@ -6,7 +6,11 @@ import {
   Typography,
 } from "@mui/material";
 import CentralModal from "src/components/modal/CentralModal";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 type YesNoDialogProps = {
+  translations: TranslationText[];
   title:string;
   submitText:string;
   message: string;
@@ -15,7 +19,10 @@ type YesNoDialogProps = {
   handleClose: () => void;
 };
 
-const YesNoDialog = ({title,submitText, message, open, handleClose,onSubmit }: YesNoDialogProps) => {
+const YesNoDialog = ({title,submitText, message, open, translations, handleClose,onSubmit }: YesNoDialogProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const handleSubmit = async () => {
     onSubmit()
     handleClose()
@@ -38,7 +45,7 @@ const YesNoDialog = ({title,submitText, message, open, handleClose,onSubmit }: Y
           sx={{ mt: 2, ml: 2, color: "#666" }}
           variant="text"
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       </Box>
     </CentralModal>

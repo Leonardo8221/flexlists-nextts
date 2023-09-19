@@ -31,9 +31,10 @@ import TimelineViewConfig from "./TimelineViewConfig";
 import GanttViewConfig from "./GanttViewConfig";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
 import dynamic from "next/dynamic";
-
 import "react-quill/dist/quill.snow.css";
 import { validateViewConfig } from "src/utils/flexlistHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 const ReactQuill = dynamic(
   () => {
@@ -55,57 +56,13 @@ const style = {
   overflow: "scroll",
 };
 
-const AddViewCards = [
-  {
-    type: ViewType.List,
-    icon: "/assets/icons/tour/ic_tick.svg",
-    title: "List View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-  {
-    type: ViewType.Calendar,
-    icon: "/assets/icons/CalendarSVG.svg",
-    title: "Calendar View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-  {
-    type: ViewType.Gallery,
-    icon: "/assets/icons/GallerySVG.svg",
-    title: "Gallery View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-  {
-    type: ViewType.KanBan,
-    icon: "/assets/icons/KanbanSVG.svg",
-    title: "Kanban View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-  {
-    type: ViewType.TimeLine,
-    icon: "/assets/icons/TimelineSVG.svg",
-    title: "Timeline View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-  {
-    type: ViewType.Gantt,
-    icon: "/assets/icons/GanttSVG.svg",
-    title: "Gantt View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-  {
-    type: ViewType.Map,
-    icon: "/assets/icons/MapSVG.svg",
-    title: "Map View",
-    description: "Lorem ipsum dolor sit amet consectetur.",
-  },
-];
-
 type ListViewFormProps = {
   currentView: View;
   columns: ViewField[];
   open: boolean;
   handleClose: () => void;
   availableFieldUiTypes: FieldUIType[];
+  translations: TranslationText[];
 };
 
 const ListViewForm = ({
@@ -114,7 +71,11 @@ const ListViewForm = ({
   currentView,
   columns,
   availableFieldUiTypes,
+  translations
 }: ListViewFormProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const [steps, setSteps] = useState(0);
   const [viewType, setViewType] = useState<ViewType>(ViewType.List);
@@ -123,6 +84,51 @@ const ListViewForm = ({
   const [config, setConfig] = useState<any>({});
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState<string>("");
+
+  const AddViewCards = [
+    {
+      type: ViewType.List,
+      icon: "/assets/icons/tour/ic_tick.svg",
+      title: t("List View"),
+      description: t("List Description"),
+    },
+    {
+      type: ViewType.Calendar,
+      icon: "/assets/icons/CalendarSVG.svg",
+      title: t("Calendar View"),
+      description: t("Calendar Description"),
+    },
+    {
+      type: ViewType.Gallery,
+      icon: "/assets/icons/GallerySVG.svg",
+      title: t("Gallery View"),
+      description: t("Gallery Description"),
+    },
+    {
+      type: ViewType.KanBan,
+      icon: "/assets/icons/KanbanSVG.svg",
+      title: t("Kanban View"),
+      description: t("Kanban Description"),
+    },
+    {
+      type: ViewType.TimeLine,
+      icon: "/assets/icons/TimelineSVG.svg",
+      title: t("Timeline View"),
+      description: t("Timeline Description"),
+    },
+    {
+      type: ViewType.Gantt,
+      icon: "/assets/icons/GanttSVG.svg",
+      title: t("Gantt View"),
+      description: t("Gantt Description"),
+    },
+    {
+      type: ViewType.Map,
+      icon: "/assets/icons/MapSVG.svg",
+      title: t("Map View"),
+      description: t("Map Description"),
+    },
+  ];
 
   const goPrevious = () => {
     setSteps(steps - 1);
@@ -210,10 +216,10 @@ const ListViewForm = ({
           >
             <Typography variant="h5">
               {steps === 0
-                ? "Choose View"
+                ? t("Choose View")
                 : steps === 1
-                ? "View details"
-                : "View Created"}
+                ? t("View Details")
+                : t("View Created")}
             </Typography>
           </Box>
 
@@ -250,7 +256,7 @@ const ListViewForm = ({
                   View Name
                 </Typography> */}
                 <TextField
-                  label="View name"
+                  label={t("View Name")}
                   fullWidth
                   id="fullWidth"
                   value={viewName}
@@ -285,7 +291,7 @@ const ListViewForm = ({
                     color: "rgba(0, 0, 0, 0.6)",
                   }}
                 >
-                  View description
+                  {t("View Description")}
                 </Typography>
                 <WysiwygEditor
                   value={viewDescription}
@@ -295,6 +301,7 @@ const ListViewForm = ({
               <Box>
                 {currentView && viewType === ViewType.Calendar && (
                   <CalendarViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -302,6 +309,7 @@ const ListViewForm = ({
                 )}
                 {currentView && viewType === ViewType.Gallery && (
                   <GalleryViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -309,6 +317,7 @@ const ListViewForm = ({
                 )}
                 {currentView && viewType === ViewType.KanBan && (
                   <KanbanViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -316,6 +325,7 @@ const ListViewForm = ({
                 )}
                 {currentView && viewType === ViewType.TimeLine && (
                   <TimelineViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -323,6 +333,7 @@ const ListViewForm = ({
                 )}
                 {currentView && viewType === ViewType.Gantt && (
                   <GanttViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -352,22 +363,22 @@ const ListViewForm = ({
                   size="small"
                   sx={{ display: "none" }}
                 >
-                  Skip
+                  {t("Skip")}
                 </Button>
               ) : (
                 <Button variant="contained" size="small" onClick={goPrevious}>
-                  Previous
+                  {t("Previous")}
                 </Button>
               )}
             </Box>
             <Box>
               {steps === 1 ? (
                 <Button variant="outlined" size="small" onClick={handleSubmit}>
-                  Finish
+                  {t("Finish")}
                 </Button>
               ) : (
                 <Button variant="contained" size="small" onClick={goNext}>
-                  Next
+                  {t("Next")}
                 </Button>
               )}
             </Box>

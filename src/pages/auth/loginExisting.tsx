@@ -35,7 +35,8 @@ import { connect } from "react-redux";
 import { styled } from "@mui/material/styles";
 import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
-import { getTranslations } from "src/utils/i18n";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
@@ -60,6 +61,7 @@ interface LoginProps {
   message: any;
   styles?: any;
   legacyCredentials: LegacyCredentials;
+  translations: TranslationText[];
   setMessage: (message: any) => void;
   setLegacyCredentials: (credentials: LegacyCredentials) => void;
 }
@@ -68,19 +70,24 @@ const Login = ({
   styles,
   message,
   legacyCredentials,
+  translations,
   setMessage,
   setLegacyCredentials,
 }: LoginProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const router = useRouter();
-  //const [error, setError] = useState<string>();
+
   const [showPassword, setShowPassword] = useState(false);
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [flash, setFlash] = useState<
     { message: string; type: string } | undefined
   >(undefined);
+
   useEffect(() => {
     async function initialize() {
       await authService.logout();
@@ -89,6 +96,7 @@ const Login = ({
       initialize();
     }
   }, [router.isReady]);
+
   useEffect(() => {
     function checkMessage() {
       if (message?.message) {
@@ -98,13 +106,15 @@ const Login = ({
     checkMessage();
   }, [message]);
 
-  function setError(message: string) {
+  const setError = (message: string) => {
     setFlashMessage(message);
-  }
-  function setFlashMessage(message: string, type: string = "error") {
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
     setFlash({ message: message, type: type });
     setMessage({ message: message, type: type });
-  }
+  };
+
   const handleClose = () => {
     setFlash(undefined);
     setMessage(null);
@@ -163,11 +173,13 @@ const Login = ({
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       handleSubmit();
     }
   };
+
   styles = {
     body: {
       background:
@@ -341,33 +353,16 @@ const Login = ({
                 }}
               >
                 <Typography variant="body1" color={"white"}>
-                  This is the sign in for existing Flexlists users; after
-                  logging in, your lists will be migrated to the new system and
-                  you can continue working. <br />
-                  If you already logged in before in the new version, please
-                  Sign in{" "}
+                  {t("Title")}{" "}
                   <Link sx={styles?.link} href="/auth/login">
-                    here
+                    {t("Here")}
                   </Link>
                   .
                 </Typography>
                 <br />
                 <br />
                 <Typography variant="body1" color={"white"}>
-                  If you need a lot of text you can add there and of course
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Necessitatibus quia error sunt aperiam voluptas illum aut, eum
-                  soluta, voluptate sint delectus. Animi omnis, reiciendis
-                  dolores inventore sit deleniti aliquid! Adipisci earum quidem
-                  iure exercitationem debitis amet modi dignissimos, sit
-                  quibusdam similique, odio labore repellat, facilis nobis
-                  aliquam. Quia nisi distinctio optio inventore dolorum
-                  excepturi debitis, exercitationem commodi? Dignissimos quia
-                  sit atque, odio nobis distinctio magnam sequi omnis veniam
-                  numquam quo, excepturi est eos aspernatur magni autem
-                  similique itaque ut quas labore explicabo! Saepe facilis
-                  laborum eveniet voluptas repellendus culpa libero, nulla ipsam
-                  consequuntur mollitia soluta, beatae optio neque veniam iure?
+                  {t("Description")}
                 </Typography>
               </Box>
             </Grid>
@@ -388,11 +383,10 @@ const Login = ({
                   </Link>
                 </Box>
                 <Typography variant="h3" gutterBottom color={"#141E30"}>
-                  Sign in - Existing User
+                  {t("Existing Login Subject")}
                 </Typography>
                 <Typography variant="caption" color={"#666"}>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Delectus, iure.
+                  {t("Subject Description")}
                 </Typography>
               </Grid>
 
@@ -406,7 +400,7 @@ const Login = ({
               <Grid item xs={12}>
                 <CustomTextField
                   fullWidth
-                  placeholder="Current Flexlists Username"
+                  placeholder={t("UserName")}
                   type="text"
                   required
                   value={userName}
@@ -417,7 +411,7 @@ const Login = ({
               <Grid item xs={12}>
                 <CustomTextField
                   fullWidth
-                  placeholder="Current Flexlists Password"
+                  placeholder={t("Password")}
                   required
                   variant="outlined"
                   value={password}
@@ -449,7 +443,7 @@ const Login = ({
                 <FormGroup>
                   <FormControlLabel
                     control={<Checkbox defaultChecked sx={styles?.checkbox} />}
-                    label="Remember me"
+                    label={t("Remember Me")}
                   />
                 </FormGroup>
                 <Link
@@ -457,7 +451,7 @@ const Login = ({
                   variant="body1"
                   sx={styles?.forgotPassword}
                 >
-                  Forgot password?
+                  {t("Forgot Password")}
                 </Link>
               </Grid>
 
@@ -470,7 +464,7 @@ const Login = ({
                   sx={styles?.button}
                   onClick={handleSubmit}
                 >
-                  Sign in - Existing User
+                  {t("Existing Login Subject")}
                 </Button>
               </Grid>
 
@@ -482,13 +476,13 @@ const Login = ({
 
               <Grid item xs={12} columnSpacing={1} sx={styles?.signUpWrapper}>
                 <Typography variant="body1">
-                  Don&apos;t have an account?{" "}
+                  {t("Don't Have Account")}{" "}
                   <Link
                     href="/auth/registerExisting"
                     variant="body1"
                     sx={styles?.link}
                   >
-                    Sign Up
+                    {t("Register Subject")}
                   </Link>
                 </Typography>
               </Grid>
@@ -499,13 +493,17 @@ const Login = ({
     </>
   );
 };
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  var verifyToken = await validateToken(context)
+  const verifyToken = await validateToken(context);
+
   if(verifyToken){
     return verifyToken
   }
-  return await getTranslations("loginExisting", context)
-}
+
+  return await getTranslations("existing login", context);
+};
+
 const mapStateToProps = (state: any) => ({
   message: state.auth.message,
   legacyCredentials: state.auth.legacyCredentials,

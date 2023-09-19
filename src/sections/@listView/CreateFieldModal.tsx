@@ -7,9 +7,11 @@ import { Field, FieldUIType, View } from "src/models/SharedModels";
 import FieldFormPanel from "../@list/FieldFormPanel";
 import { fetchRows, setColumns } from "src/redux/actions/viewActions";
 import { ViewField } from "src/models/ViewField";
-
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type ViewFieldConfigProps = {
+  translations: TranslationText[];
   open: boolean;
   handleClose: () => void;
   field:Field;
@@ -21,6 +23,7 @@ type ViewFieldConfigProps = {
 };
 
 const ViewFieldsConfig = ({
+  translations,
   open,
   handleClose,
   field,
@@ -33,7 +36,6 @@ const ViewFieldsConfig = ({
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
-
   
   const addField = async(field : Field)=>{
     var viewField : ViewField = Object.assign(field);
@@ -48,14 +50,15 @@ const ViewFieldsConfig = ({
     <CentralModal open={open} handleClose={handleClose}>
       {
         <FieldFormPanel
-        fieldUiTypes={fieldUiTypes}
-        viewId={currentView.id}
-        field={field}
-        onAdd={(field) => addField(field)}
-        onUpdate={(field) => {}}
-        onDelete={(id) => {}}
-        onClose={() => handleClose()}
-      />
+          fieldUiTypes={fieldUiTypes}
+          viewId={currentView.id}
+          field={field}
+          onAdd={(field) => addField(field)}
+          onUpdate={(field) => {}}
+          onDelete={(id) => {}}
+          onClose={() => handleClose()}
+          translations={translations}
+        />
       }
       
     </CentralModal>
