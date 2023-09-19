@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Switch,
   Link,
+  Rating
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -65,6 +66,7 @@ import {
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import DisplayRating from "src/components/rating-field/DisplayRating";
 
 type DataTableProps = {
   translations: TranslationText[];
@@ -279,6 +281,7 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
+          const [rating, setRating] = useState<number | null>(null);
           function renderFieldData(dataColumn: ViewField, cellValue: any) {
             switch (dataColumn.uiField) {
               case FieldUiTypeEnum.Integer:
@@ -509,6 +512,11 @@ const DataTable = ({
                         // position: "relative",
                       }}
                     ></div>
+                  </Box>
+                );
+              case FieldUiTypeEnum.Rating:
+                return(
+                  <Box key={row.id} sx={{"& span::before": {display:"none"}}}><DisplayRating rating={rating} />
                   </Box>
                 );
               case FieldUiTypeEnum.Lookup:
