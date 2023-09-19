@@ -50,7 +50,7 @@ function ViewPresets({
 
   useEffect(() => {
     let newPresets: any[] = [
-      t(cloneDeep(defaultPreset)),
+      cloneDeep(defaultPreset),
       { name: t("Show All") },
       { name: t("Archived") },
       { name: t("Unarchived") },
