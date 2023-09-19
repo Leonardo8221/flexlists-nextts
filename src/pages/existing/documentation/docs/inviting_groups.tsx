@@ -63,7 +63,7 @@ const DocsInvitingGroups = ({
             <Grid item xs={12} md={8}>
               <Box
                 component={"img"}
-                src="/assets/home/heroimg.png"
+                src={t("Main Image")}
                 alt="placeholder"
                 sx={{
                   maxWidth: "100%",
