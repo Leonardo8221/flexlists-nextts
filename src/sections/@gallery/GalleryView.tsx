@@ -7,6 +7,8 @@ import Pagination from '@mui/material/Pagination';
 import { View } from "src/models/SharedModels";
 import { fetchRowsByPage, setCurrentView } from "src/redux/actions/viewActions";
 import { getDataColumnId, downloadFileUrl, getChoiceField } from 'src/utils/flexlistHelper';
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type Props = {
   rows: any;
@@ -14,12 +16,13 @@ type Props = {
   open: boolean;
   currentView: View;
   count: number;
+  translations: TranslationText[];
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
 };
 
 const GalleryView = (props: Props) => {
-  const { rows, columns, open, currentView, count, fetchRowsByPage, setCurrentView } = props;
+  const { rows, columns, open, currentView, count, translations, fetchRowsByPage, setCurrentView } = props;
   const isXL = useResponsive('up', 'xl');
   const isLG = useResponsive('up', 'lg');
   const isMD = useResponsive('up', 'md');
@@ -104,7 +107,7 @@ const GalleryView = (props: Props) => {
             ))}
         </Box>
         
-        <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={selectedRowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setSelectedRowData}>
+        <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={selectedRowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setSelectedRowData}>
           <Pagination count={Math.ceil(count / PAGE_SIZE)} page={currentPage} onChange={handlePage} />
         </ViewFooter>
     </Box>

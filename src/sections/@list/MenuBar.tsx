@@ -11,13 +11,19 @@ import { ViewType } from "src/enums/SharedEnums";
 import { PATH_MAIN } from "src/routes/paths";
 import { hasPermission } from "src/utils/permissionHelper";
 import { renderHTML } from "src/utils/convertUtils";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type MenuBarProps = {
   search?: string;
   currentView: View;
+  translations: TranslationText[];
 };
 
-export function MenuBar({ search, currentView }: MenuBarProps) {
+export function MenuBar({ search, currentView, translations }: MenuBarProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [selectedViewId, setSelectedViewId] = useState(0);
   const [viewsSearchBar, setViewsSearchBar] = useState(false);
   const [viewsSearch, setViewsSearch] = useState("");
@@ -108,7 +114,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
                 width: "max-content",
               }}
             >
-              Add View
+              {t("Add View")}
             </Typography>
           </Box>
         )}
@@ -187,6 +193,7 @@ export function MenuBar({ search, currentView }: MenuBarProps) {
       <>
         <ListViewForm
           open={open}
+          translations={translations}
           handleClose={() => {
             handleClose();
           }}

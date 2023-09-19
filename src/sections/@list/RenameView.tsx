@@ -11,9 +11,12 @@ import { isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type RenameViewProps = {
   open: boolean;
+  translations: TranslationText[];
   handleClose: () => void;
   currentView: View;
   setCurrentView: (newView: View) => void;
@@ -22,11 +25,15 @@ type RenameViewProps = {
 
 const RenameView = ({
   open,
+  translations,
   handleClose,
   currentView,
   setCurrentView,
   setFlashMessage
 }: RenameViewProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
@@ -72,22 +79,22 @@ const RenameView = ({
   };
   return (
     <CentralModal open={open} handleClose={handleClose}>
-      <Typography variant="h6">Rename View</Typography>
+      <Typography variant="h6">{t("Rename View")}</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
-        <Typography variant="subtitle2">Name</Typography>
+        <Typography variant="subtitle2">{t("Name")}</Typography>
         <TextField
           fullWidth
           onChange={handleViewNameChange}
           value={view?.name}
-          placeholder="Name"
+          placeholder={t("Name")}
           required
           error = {isSubmit && isFrontendError(FieldValidatorEnum.name,errors)}
         />
       </Box>
       <Box>
         <Typography variant="subtitle2" sx={{ mt: 2 }}>
-          Description
+          {t("Description")}
         </Typography>
         <TextField
           multiline
@@ -100,14 +107,14 @@ const RenameView = ({
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         {/* DISABLED BUTTON UNTIL CHANGE IS MADE */}
         <Button disabled={!isUpdate} sx={{ mt: 2 }} variant="contained" onClick={()=>onSubmit()}>
-          Update
+          {t("Update")}
         </Button>
         <Button
           onClick={handleClose}
           sx={{ mt: 2, ml: 2, color: "#666" }}
           variant="text"
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       </Box>
     </CentralModal>

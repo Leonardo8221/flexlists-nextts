@@ -14,13 +14,20 @@ import { useRouter } from "next/router";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+
 type DeleteViewProps = {
   viewId: number;
   open: boolean;
+  translations: TranslationText[];
   handleClose: () => void;
 };
 
-const DeleteView = ({ viewId, open, handleClose }: DeleteViewProps) => {
+const DeleteView = ({ viewId, open, translations, handleClose }: DeleteViewProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const onSubmit = async () => {
     let response = await listViewService.softDeleteView(viewId)
@@ -30,23 +37,23 @@ const DeleteView = ({ viewId, open, handleClose }: DeleteViewProps) => {
   }
   return (
     <CentralModal open={open} handleClose={handleClose}>
-      <Typography variant="h6">Delete View</Typography>
+      <Typography variant="h6">{t("Delete View")}</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>
         <Typography variant="body1">
-          Are you sure you want to delete this view?
+          {t("Sure Delete")}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button sx={{ mt: 2 }} variant="contained" onClick={() => onSubmit()}>
-          Delete
+          {t("Delete")}
         </Button>
         <Button
           onClick={handleClose}
           sx={{ mt: 2, ml: 2, color: "#666" }}
           variant="text"
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       </Box>
     </CentralModal>

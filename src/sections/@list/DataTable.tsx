@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Switch,
   Link,
+  Rating
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -63,8 +64,12 @@ import {
   getLocalDateFromString,
 } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+import DisplayRating from "src/components/rating-field/DisplayRating";
 
 type DataTableProps = {
+  translations: TranslationText[];
   tab: boolean;
   currentView: View;
   columns: ViewField[];
@@ -78,6 +83,7 @@ type DataTableProps = {
 };
 
 const DataTable = ({
+  translations,
   tab,
   currentView,
   columns,
@@ -89,6 +95,9 @@ const DataTable = ({
   users,
   readContents,
 }: DataTableProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const router = useRouter();
@@ -118,31 +127,31 @@ const DataTable = ({
 
   const bulkActions = [
     {
-      title: "Clone",
+      title: t("Clone"),
       icon: <ContentCopyIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "clone",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: "Archive",
+      title: t("Archive"),
       icon: <ArchiveIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "archive",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: "Unarchive",
+      title: t("Unarchive"),
       icon: <UnarchiveIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "unarchive",
       allowed: hasPermission(currentView?.role, "Update"),
     },
     {
-      title: "Print",
+      title: t("Print"),
       icon: <PrintIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "print",
       allowed: hasPermission(currentView?.role, "Read"),
     },
     {
-      title: "Delete",
+      title: t("Delete"),
       icon: <DeleteIcon sx={{ width: { xs: 16, lg: 20 } }} />,
       action: "delete",
       color: "#c92929",
@@ -272,6 +281,7 @@ const DataTable = ({
           </Box>
         ),
         Cell: ({ renderedCellValue, row }: any) => {
+          const [rating, setRating] = useState<number | null>(null);
           function renderFieldData(dataColumn: ViewField, cellValue: any) {
             switch (dataColumn.uiField) {
               case FieldUiTypeEnum.Integer:
@@ -502,6 +512,11 @@ const DataTable = ({
                         // position: "relative",
                       }}
                     ></div>
+                  </Box>
+                );
+              case FieldUiTypeEnum.Rating:
+                return(
+                  <Box key={row.id} sx={{"& span::before": {display:"none"}}}><DisplayRating rating={rating} />
                   </Box>
                 );
               case FieldUiTypeEnum.Lookup:
@@ -940,6 +955,7 @@ const DataTable = ({
           >
             <AddRowButton
               handleAddNewRow={(values) => handleNewRowPanel(values)}
+              translations={translations}
             />
             {rowSelection && Object.keys(rowSelection).length > 0 && (
               <Button
@@ -1062,8 +1078,7 @@ const DataTable = ({
               sx={{ display: { xs: "none", lg: "block" } }}
             >
               {pagination.pageIndex * pagination.pageSize + 1}-
-              {(pagination.pageIndex + 1) * pagination.pageSize} of {count}, per
-              page:
+              {(pagination.pageIndex + 1) * pagination.pageSize} of {count}, {t("Per Page")}:
             </Typography>
             <Select
               id="per_page"
@@ -1109,21 +1124,24 @@ const DataTable = ({
             open={visibleAddRowPanel}
             onClose={() => setVisibleAddRowPanel(false)}
             mode={mode}
+            translations={translations}
           />
         )}
 
         {currentView && (
           <ListFields
+            translations={translations}
             open={visibleFieldManagementPanel}
             onClose={() => handleCloseFieldManagementPanel()}
           />
         )}
       </Box>
       <YesNoDialog
-        title="Delete Row"
-        submitText="Delete"
-        message="Are you sure you want to delete selected rows?"
+        title={t("Delete Row")}
+        submitText={t("Delete")}
+        message={t("Sure Delete Rows")}
         open={openBulkDeleteDialog}
+        translations={translations}
         handleClose={() => setOpenBulkDeleteDialog(false)}
         onSubmit={() => {
           handleBulkDelete();

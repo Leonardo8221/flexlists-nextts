@@ -17,7 +17,6 @@ import CalendarViewConfig from "./CalendarViewConfig";
 import GalleryViewConfig from "./GalleryViewConfig";
 import TimelineViewConfig from "./TimelineViewConfig";
 import GanttViewConfig from "./GanttViewConfig";
-
 import { validateViewConfig } from "src/utils/flexlistHelper";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import RightPanel from "src/components/right-panel/RightPanel";
@@ -25,12 +24,13 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { updateViewConfig } from "src/services/listView.service";
 import { FlexlistsError, isSucc } from "src/utils/responses";
 import { fetchRows, setCurrentView } from "src/redux/actions/viewActions";
-
-
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type EditViewConfigFormProps = {
   currentView: View;
   setCurrentView: (newView: View) => void;
+  translations: TranslationText[];
   columns: ViewField[];
   open: boolean;
   handleClose: () => void;
@@ -41,6 +41,7 @@ type EditViewConfigFormProps = {
 
 const EditViewConfigForm = ({
   open,
+  translations,
   handleClose,
   currentView,
   columns,
@@ -49,11 +50,13 @@ const EditViewConfigForm = ({
   fetchRows,
   setCurrentView
 }: EditViewConfigFormProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   const theme = useTheme();
   const [config, setConfig] = useState<any>({});
-  const [submit, setSubmit] = useState(false);
-  
+  const [submit, setSubmit] = useState(false);  
   
   const setError = (message:string)=>{
     setFlashMessage({message:message, type:'error'})
@@ -92,12 +95,13 @@ const EditViewConfigForm = ({
             borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
           }}
         >
-          Edit view config
+          {t("Edit View Config")}
         </DialogTitle>
         <DialogContent>
             <Box sx={{mt:3}}>
                 {currentView && currentView.type === ViewType.Calendar && (
                   <CalendarViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -106,6 +110,7 @@ const EditViewConfigForm = ({
                 )}
                 {currentView && currentView.type === ViewType.Gallery && (
                   <GalleryViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -113,6 +118,7 @@ const EditViewConfigForm = ({
                 )}
                 {currentView && currentView.type === ViewType.KanBan && (
                   <KanbanViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -120,6 +126,7 @@ const EditViewConfigForm = ({
                 )}
                 {currentView && currentView.type === ViewType.TimeLine && (
                   <TimelineViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -127,6 +134,7 @@ const EditViewConfigForm = ({
                 )}
                 {currentView && currentView.type === ViewType.Gantt && (
                   <GanttViewConfig
+                    translations={translations}
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
@@ -149,14 +157,14 @@ const EditViewConfigForm = ({
             mr: 0
           }}
         >
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>{t("Cancel")}</Button>
           <Button
               color="primary"
               onClick={handleSubmit}
               variant="contained"
               type="submit"
             >
-              Update
+              {t("Update")}
             </Button>
         </Box>
         

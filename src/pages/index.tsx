@@ -1,6 +1,4 @@
-// material
 import { styled } from "@mui/material/styles";
-// components
 // import Page from '../../components/Page';
 import {
   LandingHero,
@@ -18,7 +16,7 @@ import { Errors, FlexlistsError, isSucc } from "src/utils/responses";
 import { authService } from "src/services/auth.service";
 import { parse, serialize } from "cookie";
 import { validateToken } from "src/utils/tokenUtils";
-// ----------------------------------------------------------------------
+import Head from 'next/head';
 
 // const RootStyle = styled(Page)({
 //   height: '100%'
@@ -28,38 +26,48 @@ declare module "@mui/material/styles/createPalette" {
   interface Palette {
     palette_style?: any;
   }
-}
+};
 
 const ContentStyle = styled("div")(({ theme }) => ({
   position: "relative",
   backgroundColor: theme.palette.background.default,
 }));
 
-type ContentProps = {
-
+type HomeProps = {
+  translations: TranslationText[];
 };
 
-function Home({ translations }: ContentProps & { translations: TranslationText[] }) {
+const Home = ({
+  translations
+}: HomeProps) => {
   const t = (key: string): string => {
-    return getTranslation(key, translations)
-  }
+    return getTranslation(key, translations);
+  };
 
   return (
     <MainLayout translations={translations}>
+      <Head>
+        <title>Flexlists</title>
+        <meta name="description" content="Flexlists Home" />
+      </Head>
       <LandingHero translations={translations} />
-      <LandingWeHelpYou />
-      <LandingTrustedBy />
-      <LandingQuickCreate />
+      <LandingWeHelpYou translations={translations} />
+      <LandingTrustedBy translations={translations} />
+      <LandingQuickCreate translations={translations} />
       {/* <LandingPricingPlans /> */}
-      <LandingCTA />
+      <LandingCTA translations={translations} />
     </MainLayout>
   );
-}
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  var verifyToken = await validateToken(context)
+  const verifyToken = await validateToken(context);
+
   if(verifyToken){
-    return verifyToken
+    return verifyToken;
   }
-  return await getTranslations("existing landing page", context)
+
+  return await getTranslations("landing page", context);
 }
+
 export default Home;

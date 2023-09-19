@@ -7,16 +7,22 @@ import { convertToInteger } from "src/utils/convertUtils";
 import { FieldUIType } from "src/models/SharedModels";
 import CreateFieldModal from "./CreateFieldModal";
 import { GanttConfig } from "src/models/ViewConfig";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type GanttViewConfigProps = {
+  translations: TranslationText[];
   submit : boolean,
   updateConfig :(config : GanttConfig) => void
   columns:ViewField[];
   availableFieldUiTypes: FieldUIType[]
 }
 
-function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes }: GanttViewConfigProps)
+function GanttViewConfig({ translations, submit, updateConfig, columns, availableFieldUiTypes }: GanttViewConfigProps)
 {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [titleFieldId, setTitleFieldId] = useState<number>(0);
   const [colorFieldId, setColorFieldId] = useState<number>(0);
   const [levelFieldId, setLevelFieldId] = useState<number>(0);
@@ -268,7 +274,7 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
   return (
     <Box sx={{ pt: 2 }}>
       <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>Title</Typography>
+        <Typography variant="subtitle2" gutterBottom>{t("Title")}</Typography>
         <Select
           value={`${titleFieldId}`}
           onChange={onTitleFieldChange}
@@ -280,11 +286,11 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
           {titleFields.map((titleColumn: ViewField) => (
             <MenuItem key={`${titleColumn.id}`} value={`${titleColumn.id}`} >{titleColumn.name}</MenuItem>
           ))}
-          <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
+          <MenuItem key={"-1"} value={"-1"} >{t("Create New Field")}</MenuItem>
         </Select>
       </Box>
       <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>Color</Typography>
+        <Typography variant="subtitle2" gutterBottom>{t("Color")}</Typography>
         <Select
           value={`${colorFieldId}`}
           required
@@ -296,11 +302,11 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
           {colorFields.map((colorColumn: ViewField) => (
             <MenuItem key={`${colorColumn.id}`} value={`${colorColumn.id}`} >{colorColumn.name}</MenuItem>
           ))}
-          <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
+          <MenuItem key={"-1"} value={"-1"} >{t("Create New Field")}</MenuItem>
         </Select>
       </Box>
       <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>Level</Typography>
+        <Typography variant="subtitle2" gutterBottom>{t("Level")}</Typography>
         <Select
           value={`${levelFieldId}`}
           required
@@ -312,11 +318,11 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
           {levelFields.map((levelColumn: ViewField) => (
             <MenuItem key={`${levelColumn.id}`} value={`${levelColumn.id}`} >{levelColumn.name}</MenuItem>
           ))}
-          <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
+          <MenuItem key={"-1"} value={"-1"} >{t("Create New Field")}</MenuItem>
         </Select>
       </Box>
       <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>From</Typography>
+        <Typography variant="subtitle2" gutterBottom>{t("From")}</Typography>
         <Select
           value={`${fromFieldId}`}
           required
@@ -328,11 +334,11 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
           {fromFields.map((fromColumn: ViewField) => (
             <MenuItem key={`${fromColumn.id}`} value={`${fromColumn.id}`} >{fromColumn.name}</MenuItem>
           ))}
-          <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
+          <MenuItem key={"-1"} value={"-1"} >{t("Create New Field")}</MenuItem>
         </Select>
       </Box>
       <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>To</Typography>
+        <Typography variant="subtitle2" gutterBottom>{t("To")}</Typography>
         <Select
           value={`${toFieldId}`}
           required
@@ -344,12 +350,13 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
           {toFields.map((toColumn: ViewField) => (
             <MenuItem key={`${toColumn.id}`} value={`${toColumn.id}`} >{toColumn.name}</MenuItem>
           ))}
-          <MenuItem key={"-1"} value={"-1"} >create a new field</MenuItem>
+          <MenuItem key={"-1"} value={"-1"} >{t("Create New Field")}</MenuItem>
         </Select>
       </Box>
       {
         isOpenTitleFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open = {isOpenTitleFieldModal}
@@ -359,6 +366,7 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
       {
         isOpenColorFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newColorField}
           fieldUiTypes={colorFieldUiTypes}
           open = {isOpenColorFieldModal}
@@ -368,6 +376,7 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
       {
         isOpenLevelFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newLevelField}
           fieldUiTypes={levelFieldUiTypes}
           open = {isOpenLevelFieldModal}
@@ -377,6 +386,7 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
       {
         isOpenFromFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newFromField}
           fieldUiTypes={dateFieldUiTypes}
           open = {isOpenFromFieldModal}
@@ -386,6 +396,7 @@ function GanttViewConfig({ submit, updateConfig, columns, availableFieldUiTypes 
       {
         isOpenToFieldModal && 
         <CreateFieldModal
+          translations={translations}
           field={newToField}
           fieldUiTypes={dateFieldUiTypes}
           open = {isOpenToFieldModal}

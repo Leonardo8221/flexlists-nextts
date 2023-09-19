@@ -7,13 +7,20 @@ import { useRouter } from "next/router";
 import { fetchGroups } from "src/redux/actions/groupAction";
 import { connect } from "react-redux";
 import { PATH_MAIN } from "src/routes/paths";
+import { GetServerSideProps } from "next";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 
 type allGroupsProps = {
+  translations: TranslationText[];
   groups: GetUserGroupsOutputDto[];
   fetchGroups: () => void;
 };
 
-const AllGroups = ({ groups, fetchGroups }: allGroupsProps) => {
+const AllGroups = ({ translations, groups, fetchGroups }: allGroupsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
   useEffect(() => {
     if (router.isReady) {
@@ -22,7 +29,7 @@ const AllGroups = ({ groups, fetchGroups }: allGroupsProps) => {
   }, [router.isReady]);
   return (
     <>
-      <MainLayout removeFooter={true}>
+      <MainLayout removeFooter={true} translations={translations}>
         <Container
           sx={{
             py: 3,
@@ -37,7 +44,7 @@ const AllGroups = ({ groups, fetchGroups }: allGroupsProps) => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6">All groups.</Typography>
+            <Typography variant="h6">{t("All Groups")}</Typography>
             <Button
               size="medium"
               variant="contained"
@@ -45,7 +52,7 @@ const AllGroups = ({ groups, fetchGroups }: allGroupsProps) => {
                 router.push(PATH_MAIN.newGroup);
               }}
             >
-              Create new group
+              {t("Create New Group")}
             </Button>
           </Box>
           <Grid
@@ -80,6 +87,10 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   fetchGroups,
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await getTranslations("groups", context);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllGroups);

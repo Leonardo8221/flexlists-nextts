@@ -8,18 +8,21 @@ import ViewFooter from '../../components/view-footer/ViewFooter';
 import { format, startOfMonth, endOfMonth, subDays, eachDayOfInterval, subMonths, addMonths } from 'date-fns';
 import { FlatWhere, View } from 'src/models/SharedModels';
 import { getDataColumnId } from 'src/utils/flexlistHelper';
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type Props = {
   columns: any;
   rows: any;
   open: boolean;
   currentView: View;
+  translations: TranslationText[];
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
 };
 
 const GanttView = (props: Props) => {
-  const { columns, rows, currentView, open, fetchRows, setCurrentView } = props;
+  const { columns, rows, currentView, open, translations, fetchRows, setCurrentView } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -173,7 +176,7 @@ const GanttView = (props: Props) => {
         {showRows()}
       </Box>
 
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
     </Box>
   );
 };

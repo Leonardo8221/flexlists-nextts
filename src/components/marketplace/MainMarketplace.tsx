@@ -20,8 +20,8 @@ import MuiAccordionSummary, {
 } from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-
-// ---------------------------------------------------------------------
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -60,7 +60,18 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   //   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
-export default function MainMarketplace() {
+type MainSolutionsProps = {
+  translations: TranslationText[];
+};
+
+const MainMarketplace = ({
+  translations
+}: MainSolutionsProps) => {
+  const t = (key: string): string => {
+    if (!translations) return key;
+    return getTranslation(key, translations);
+  };
+
   const theme = useTheme();
   const isLight = theme.palette.mode === "light";
   const [expanded, setExpanded] = React.useState<string | false>("panel1");
@@ -109,7 +120,7 @@ export default function MainMarketplace() {
             >
               <Box>
                 <Typography variant="h3" sx={{ mb: { xs: 1, md: 3 } }}>
-                  Mobile Version
+                  {t("Section1 Title")}
                 </Typography>
 
                 <Typography
@@ -118,9 +129,7 @@ export default function MainMarketplace() {
                     color: isLight ? "text.secondary" : "common.white",
                   }}
                 >
-                  Full use of Flexlists on mobile or on a tablet. You can do
-                  everything on the mobile that you can do on the desktop -
-                  view, search, create new tables etc
+                  {t("Section1 Description")}
                 </Typography>
               </Box>
             </Grid>
@@ -169,7 +178,7 @@ export default function MainMarketplace() {
           >
             <Box>
               <Typography variant="h3" sx={{ mb: { xs: 1, md: 3 } }}>
-                Notifications
+                {t("Section2 Title")}
               </Typography>
 
               <Typography
@@ -178,9 +187,7 @@ export default function MainMarketplace() {
                   color: isLight ? "text.secondary" : "common.white",
                 }}
               >
-                Fully configurable notifications based on parameters set by you.
-                You can be notified of any changes to data. You can be notified
-                if a field value exceeds parameters that you set.
+                {t("Section2 Description")}
               </Typography>
             </Box>
           </Grid>
@@ -223,7 +230,7 @@ export default function MainMarketplace() {
           >
             <Box>
               <Typography variant="h3" sx={{ mb: { xs: 1, md: 3 } }}>
-                All new field types
+                {t("Section3 Title")}
               </Typography>
 
               <Typography
@@ -232,9 +239,7 @@ export default function MainMarketplace() {
                   color: isLight ? "text.secondary" : "common.white",
                 }}
               >
-                Including: Currencies/ Financials/ Full address fields
-                including: Cities/ Countries/ Phone numbers. All with content
-                validation.
+                {t("Section3 Description")}
               </Typography>
             </Box>
           </Grid>
@@ -279,12 +284,10 @@ export default function MainMarketplace() {
           >
             <Box>
               <Typography variant="h3" gutterBottom>
-                Hello people
+                {t("Section4 Title")}
               </Typography>
               <Typography variant="body1" gutterBottom>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Cupiditate optio obcaecati vero voluptas dolore harum maiores
-                vel facere ipsam. Harum!
+                {t("Section4 Description")}
               </Typography>
               <Box
                 sx={{
@@ -303,15 +306,11 @@ export default function MainMarketplace() {
                     aria-controls="panel1d-content"
                     id="panel1d-header"
                   >
-                    <Typography>Item #1</Typography>
+                    <Typography>{t("Section4 Item1 Title")}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Suspendisse malesuada lacus ex, sit amet blandit leo
-                      lobortis eget. Lorem ipsum dolor sit amet, consectetur
-                      adipiscing elit. Suspendisse malesuada lacus ex, sit amet
-                      blandit leo lobortis eget.
+                      {t("Section4 Item1 Description")}
                     </Typography>
                   </AccordionDetails>
                 </Accordion>
@@ -323,15 +322,11 @@ export default function MainMarketplace() {
                     aria-controls="panel2d-content"
                     id="panel2d-header"
                   >
-                    <Typography>Item #2</Typography>
+                    <Typography>{t("Section4 Item2 Title")}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Suspendisse malesuada lacus ex, sit amet blandit leo
-                      lobortis eget. Lorem ipsum dolor sit amet, consectetur
-                      adipiscing elit. Suspendisse malesuada lacus ex, sit amet
-                      blandit leo lobortis eget.
+                      {t("Section4 Item2 Description")}
                     </Typography>
                   </AccordionDetails>
                 </Accordion>
@@ -343,15 +338,11 @@ export default function MainMarketplace() {
                     aria-controls="panel3d-content"
                     id="panel3d-header"
                   >
-                    <Typography>Item #3</Typography>
+                    <Typography>{t("Section4 Item3 Title")}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Suspendisse malesuada lacus ex, sit amet blandit leo
-                      lobortis eget. Lorem ipsum dolor sit amet, consectetur
-                      adipiscing elit. Suspendisse malesuada lacus ex, sit amet
-                      blandit leo lobortis eget.
+                      {t("Section4 Item3 Description")}
                     </Typography>
                   </AccordionDetails>
                 </Accordion>
@@ -385,7 +376,7 @@ export default function MainMarketplace() {
             gutterBottom
             sx={{ pt: 6, pb: 2, textAlign: "center" }}
           >
-            Cards
+            {t("Section5 Title")}
           </Typography>
 
           <Grid container spacing={3} sx={{ alignItems: "center" }}>
@@ -400,12 +391,10 @@ export default function MainMarketplace() {
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                      Lizard
+                      {t("Section5 Item1 Title")}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Lizards are a widespread group of squamate reptiles, with
-                      over 6,000 species, ranging across all continents except
-                      Antarctica
+                      {t("Section5 Item1 Description")}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -423,12 +412,10 @@ export default function MainMarketplace() {
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                      Lizard
+                      {t("Section5 Item2 Title")}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Lizards are a widespread group of squamate reptiles, with
-                      over 6,000 species, ranging across all continents except
-                      Antarctica
+                      {t("Section5 Item2 Description")}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -445,12 +432,10 @@ export default function MainMarketplace() {
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                      Lizard
+                      {t("Section5 Item3 Title")}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Lizards are a widespread group of squamate reptiles, with
-                      over 6,000 species, ranging across all continents except
-                      Antarctica
+                      {t("Section5 Item3 Description")}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -467,12 +452,10 @@ export default function MainMarketplace() {
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                      Lizard
+                      {t("Section5 Item4 Title")}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Lizards are a widespread group of squamate reptiles, with
-                      over 6,000 species, ranging across all continents except
-                      Antarctica
+                      {t("Section5 Item4 Description")}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -483,4 +466,6 @@ export default function MainMarketplace() {
       </Container>
     </Box>
   );
-}
+};
+
+export default MainMarketplace;

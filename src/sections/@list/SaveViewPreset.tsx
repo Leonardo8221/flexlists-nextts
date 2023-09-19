@@ -28,8 +28,11 @@ import {
   frontendValidate,
   isFrontendError,
 } from "src/utils/validatorHelper";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type SaveViewPresetProps = {
+  translations: TranslationText[];
   currentView: View;
   setCurrentView: (view: View) => void;
   handleClose: () => void;
@@ -38,6 +41,7 @@ type SaveViewPresetProps = {
   getCurrentView: (viewId: number) => void;
 };
 function SaveViewPreset({
+  translations,
   currentView,
   getCurrentView,
   setCurrentView,
@@ -45,6 +49,9 @@ function SaveViewPreset({
   handleClose,
   setFlashMessage,
 }: SaveViewPresetProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [type, setType] = useState<PresetType>(PresetType.View);
   const [name, setName] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string | boolean }>({});
@@ -88,7 +95,7 @@ function SaveViewPreset({
         newName?.trim().toLowerCase() === "unarchived"
       ) {
         setIsNameValid(false);
-        setFlashMessage({ message: "Name already exist", type: "error" });
+        setFlashMessage({ message: t("Name Already Exist"), type: "error" });
         return;
       }
       if (
@@ -100,7 +107,7 @@ function SaveViewPreset({
           (p) => p.name.toLowerCase() === newName?.toLowerCase()
         );
         if (isExist) {
-          setFlashMessage({ message: "Name already exist", type: "error" });
+          setFlashMessage({ message: t("Name Already Exist"), type: "error" });
           return;
         }
       }
@@ -120,7 +127,7 @@ function SaveViewPreset({
       let newView = cloneDeep(currentView);
       if (type === PresetType.View) {
         setDefaultPreset({
-          name: "Default",
+          name: t("Default"),
           type: type,
           page: newView.page,
           limit: newView.limit,
@@ -181,7 +188,7 @@ function SaveViewPreset({
       // }
 
       setFlashMessage({
-        message: "Save view preset successfully",
+        message: t("Save View Preset"),
         type: "success",
       });
       handleClose();
@@ -193,7 +200,7 @@ function SaveViewPreset({
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <FormControl sx={{ gap: 1 }}>
         <FormLabel id="demo-row-radio-buttons-group-label">
-          Preset Types
+          {t("Preset Types")}
         </FormLabel>
         <RadioGroup
           row
@@ -203,17 +210,17 @@ function SaveViewPreset({
           onChange={handleTypeChange}
         >
           <FormControlLabel
-            value="View"
+            value={t("View")}
             control={<Radio />}
             label={PresetType.View}
           />
           <FormControlLabel
-            value="Yourself"
+            value={t("Yourself")}
             control={<Radio />}
             label={PresetType.Yourself}
           />
           <FormControlLabel
-            value="Everyone"
+            value={t("Everyone")}
             control={<Radio />}
             label={PresetType.Everyone}
           />
@@ -224,7 +231,7 @@ function SaveViewPreset({
           fullWidth
           onChange={handleViewNameChange}
           value={name}
-          label="Preset name"
+          label={t("Preset Name")}
           InputLabelProps={{
             shrink: true,
           }}
@@ -238,14 +245,14 @@ function SaveViewPreset({
       )}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button sx={{ mt: 2 }} variant="contained" onClick={() => onSubmit()}>
-          Save
+          {t("Save")}
         </Button>
         <Button
           onClick={handleClose}
           sx={{ mt: 2, ml: 2, color: "#666" }}
           variant="text"
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       </Box>
     </Box>

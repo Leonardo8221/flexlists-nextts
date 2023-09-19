@@ -6,12 +6,14 @@ import { setColumns } from '../../redux/actions/viewActions';
 import {  setRows } from '../../redux/actions/viewActions';
 import AddRowButton from "../../components/add-button/AddRowButton";
 import RowFormPanel from "src/sections/@list/RowFormPanel";
+import { TranslationText } from "src/models/SharedModels";
 
 type Props = {
   columns: any;
   rows: any;
   rowData: any;
   visibleAddRowPanel: boolean;
+  translations: TranslationText[];
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   setVisibleAddRowPanel: (visibleAddRowPanel: boolean) => void;
@@ -20,7 +22,7 @@ type Props = {
 };
 
 const ViewFooter = (props: Props) => {
-  const { columns, rows, visibleAddRowPanel, rowData, setRows, setVisibleAddRowPanel, setRowData, children } = props;
+  const { columns, rows, visibleAddRowPanel, rowData, translations, setRows, setVisibleAddRowPanel, setRowData, children } = props;
   const theme = useTheme();
 
   const handleNewRowPanel = (values:any) => {
@@ -55,7 +57,7 @@ const ViewFooter = (props: Props) => {
           flexDirection: 'inherit'
         }}
       >
-        <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} />
+        <AddRowButton handleAddNewRow={(values)=>handleNewRowPanel(values)} translations={translations} />
         {children}
       </Stack>
 
@@ -66,6 +68,7 @@ const ViewFooter = (props: Props) => {
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
         mode={'create'}
+        translations={translations}
       />
     </Box>
   );

@@ -22,78 +22,25 @@ import ViewPresets from "./ViewPresets";
 import TuneIcon from "@mui/icons-material/Tune";
 import { ViewField } from "src/models/ViewField";
 import { useRouter } from "next/router";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type ToolbBarProps = {
   columns: ViewField[]
   currentView: View;
+  translations: TranslationText[];
   setFlashMessage: (message: FlashMessageModel) => void;
 };
-
-const dos = [
-  {
-    title: "Undo",
-    icon: "toolbar/undo",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Redo",
-    icon: "toolbar/redo",
-    active: false,
-    leftIcon: false,
-  },
-];
-
-const actions = [
-  {
-    // title: "Presets",
-    icon: "toolbar/presetTest",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Filter",
-    icon: "toolbar/filter",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Sort",
-    icon: "toolbar/sort",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Fields",
-    icon: "toolbar/fields",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Import",
-    icon: "toolbar/import",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Export",
-    icon: "toolbar/export",
-    active: true,
-    leftIcon: true,
-  },
-  {
-    title: "Save",
-    icon: "toolbar/save",
-    active: true,
-    leftIcon: true,
-  },
-];
 
 const ToolbBar = ({
   columns,
   currentView,
+  translations,
   setFlashMessage,
 }: ToolbBarProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const router = useRouter();
   const [visibleFilter, setVisibleFilter] = useState(false);
@@ -104,7 +51,68 @@ const ToolbBar = ({
   const [visibleListFields, setVisibleListFields] = useState(false);
   const [saveViewPopoverOpen, setSaveViewPopoverOpen] = useState(null);
   const [viewPresetsPopoverOpen, setViewPresetsPopoverOpen] = useState(null);
-  const [selectedPreset, setSelectedPreset] = useState<any>();
+  const [selectedPreset, setSelectedPreset] = useState<any>();  
+
+  const dos = [
+    {
+      title: t("Undo"),
+      icon: "toolbar/undo",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Redo"),
+      icon: "toolbar/redo",
+      active: false,
+      leftIcon: false,
+    },
+  ];
+
+  const actions = [
+    {
+      // title: t("Presets"),
+      icon: "toolbar/presetTest",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Filter"),
+      icon: "toolbar/filter",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Sort"),
+      icon: "toolbar/sort",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Fields"),
+      icon: "toolbar/fields",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Import"),
+      icon: "toolbar/import",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Export"),
+      icon: "toolbar/export",
+      active: true,
+      leftIcon: true,
+    },
+    {
+      title: t("Save"),
+      icon: "toolbar/save",
+      active: true,
+      leftIcon: true,
+    },
+  ];
+
   useEffect(() => {
     if(router.isReady)
     {
@@ -117,19 +125,24 @@ const ToolbBar = ({
         }
       }
     }
-  },[router.isReady])
+  },[router.isReady]);
+
   const handleSaveViewPopoverClose = () => {
     setSaveViewPopoverOpen(null);
   };
+
   const handleSaveViewPopoverOpen = (event: any) => {
     setSaveViewPopoverOpen(event.currentTarget);
   };
+
   const handleViewPresetsPopoverClose = () => {
     setViewPresetsPopoverOpen(null);
   };
+
   const handleViewPresetsPopoverOpen = (event: any) => {
     setViewPresetsPopoverOpen(event.currentTarget);
   };
+
   return (
     <Box
       sx={{
@@ -211,7 +224,7 @@ const ToolbBar = ({
                 cursor: "pointer",
               }}
             >
-              {selectedPreset ? selectedPreset.name : "Default"}
+              {selectedPreset ? selectedPreset.name : t("Default")}
             </Box>
             {
               viewPresetsPopoverOpen !==null && (
@@ -237,6 +250,7 @@ const ToolbBar = ({
                   >
                     <Stack spacing={1}>
                       <ViewPresets
+                        translations={translations}
                         selectedPreset={selectedPreset}
                         setSelectedPreset={(newPreset) => {
                           setSelectedPreset(newPreset);
@@ -266,6 +280,7 @@ const ToolbBar = ({
               }}
             />
             <Filter
+              translations={translations}
               open={visibleFilter}
               handleClose={() => {
                 setVisibleFilter(false);
@@ -284,6 +299,7 @@ const ToolbBar = ({
               }}
             />
             <Sort
+              translations={translations}
               open={visibleSort}
               handleClose={() => {
                 setVisibleSort(false);
@@ -306,6 +322,7 @@ const ToolbBar = ({
               }}
             />
             <ViewFields
+              translations={translations}
               open={visibleFields}
               handleClose={() => {
                 setVisibleFields(false);
@@ -313,6 +330,7 @@ const ToolbBar = ({
             />
             <ListFields
               open={visibleListFields}
+              translations={translations}
               onClose={() => {
                 setVisibleListFields(false);
               }}
@@ -330,6 +348,7 @@ const ToolbBar = ({
               }}
             />
             <Import
+              translations={translations}
               open={visibleImport}
               handleClose={() => {
                 setVisibleImport(false);
@@ -348,6 +367,7 @@ const ToolbBar = ({
               }}
             />
             <Export
+              translations={translations}
               open={visibleExport}
               handleClose={() => {
                 setVisibleExport(false);
@@ -384,7 +404,7 @@ const ToolbBar = ({
               }}
             >
               <Stack spacing={0.75}>
-                <SaveViewPreset handleClose={handleSaveViewPopoverClose} />
+                <SaveViewPreset translations={translations} handleClose={handleSaveViewPopoverClose} />
               </Stack>
             </Popover>
           </Box>

@@ -6,7 +6,9 @@ import {
   Link,
   Switch,
   FormGroup,
+  Rating
 } from "@mui/material";
+import {useState} from "react";
 import { connect } from "react-redux";
 import { fetchRows, setCurrentView } from "../../redux/actions/viewActions";
 import useResponsive from "../../hooks/useResponsive";
@@ -35,6 +37,10 @@ import ReactPlayer from "react-player";
 import ColorPicker from "src/components/color-picker/ColorPicker";
 import LookupField from "src/components/relation/LookupField";
 import LinkFieldInput from "./fields/LinkFieldInput";
+import RatingField from "src/components/rating-field/RatingField";
+import DisplayRating from "src/components/rating-field/DisplayRating";
+import CheckboxRating from "src/components/rating-field/CheckboxRating";
+import NumericRating from "src/components/rating-field/NumericRating";
 
 type RenderFieldProps = {
   column: ViewField;
@@ -60,6 +66,12 @@ const RenderField = ({
   setTimeValue
 }: RenderFieldProps) => {
   const isDesktop = useResponsive("up", "md");
+  
+  const [rating, setRating] = useState<number | null>(null);
+
+  const handleRatingChange = (newValue: number | null) => {
+    setRating(newValue);
+  };
 
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -995,12 +1007,6 @@ const RenderField = ({
                 p: 2,
                 position: "relative",
                 borderRadius: "6px",
-                ".focusedNeed:focus &": {
-                  // border: "2px solid #1976d2",
-                },
-                "&:hover": {
-                  // border: "1px solid rgba(0, 0, 0, 0.87)",
-                },
               }}
             >
               <Typography
@@ -1054,8 +1060,242 @@ const RenderField = ({
               </Box>
             </Box>
           </div>
+          
+
         );
       }
+    case FieldUiTypeEnum.Rating:
+      if (currentMode !== "view" && !isPrint) {
+            return (
+              <Box
+                key={column.id}
+                sx={{
+                  border: "1px solid rgba(158, 158, 158, 0.32)",
+                  px: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  position: "relative",
+                  borderRadius: "6px",
+                  "&:hover": {
+                    border: "1px solid rgba(0, 0, 0, 0.87)",
+                  },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  component={"label"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: 12,
+                    position: "absolute",
+                    top: "-10px",
+                    left: "10px",
+                    background: "#fff",
+                    zIndex: 2,
+                    px: 0.5,
+                    color: "rgba(0, 0, 0, 0.6)",
+                    ".focusedNeed:focus &": {},
+                  }}
+                >
+                  {column.name}
+                </Typography>
+                <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
+                  <RatingField onRatingChange={handleRatingChange} />
+                  <CheckboxRating/>
+                  <NumericRating/>
+                </Box>
+              </Box>
+            );
+          } else {
+            return (
+              <>
+              <div className="focusedNeed" tabIndex={8}>
+                <Box
+                  key={column.id}
+                  className="markdownBox"
+                  sx={{
+                    border: "1px solid rgba(158, 158, 158, 0.32)",
+                    p: 2,
+                    position: "relative",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    component={"label"}
+                    sx={{
+                      textTransform: "capitalize",
+                      fontSize: 12,
+                      position: "absolute",
+                      top: "-10px",
+                      left: "10px",
+                      background: "#fff",
+                      zIndex: 2,
+                      px: 0.5,
+                      color: "rgba(0, 0, 0, 0.6)",
+                      ".focusedNeed:focus &": {},
+                    }}
+                  >
+                    {column.name}
+                  </Typography>
+                </Box>
+              </div>
+    
+              <div className="focusedNeed" tabIndex={8}>
+              <Box
+                key={column.id}
+                className="markdownBox"
+                sx={{
+                  border: "1px solid rgba(158, 158, 158, 0.32)",
+                  p: 2,
+                  position: "relative",
+                  borderRadius: "6px",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  component={"label"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: 12,
+                    position: "absolute",
+                    top: "-10px",
+                    left: "10px",
+                    background: "#fff",
+                    zIndex: 2,
+                    px: 0.5,
+                    color: "rgba(0, 0, 0, 0.6)",
+                  }}
+                >
+                  {column.name}
+                </Typography>
+                <Box>
+                  <DisplayRating rating={rating} />
+                </Box>
+              </Box>
+            </div>
+            </>
+            );}
+
+      // const [rating, setRating] = React.useState<number | null>(null);
+
+      // const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
+      //   setRating(newValue)};
+      //   if (currentMode !== "view" && !isPrint) {
+      //     return (
+      //       <Box
+      //         key={column.id}
+      //         sx={{
+      //           border: "1px solid rgba(158, 158, 158, 0.32)",
+      //           px: 2,
+      //           display: "flex",
+      //           alignItems: "center",
+      //           justifyContent: "space-between",
+      //           position: "relative",
+      //           borderRadius: "6px",
+      //           "&:hover": {
+      //             border: "1px solid rgba(0, 0, 0, 0.87)",
+      //           },
+      //         }}
+      //       >
+      //         <Typography
+      //           variant="body2"
+      //           component={"label"}
+      //           sx={{
+      //             textTransform: "capitalize",
+      //             fontSize: 12,
+      //             position: "absolute",
+      //             top: "-10px",
+      //             left: "10px",
+      //             background: "#fff",
+      //             zIndex: 2,
+      //             px: 0.5,
+      //             color: "rgba(0, 0, 0, 0.6)",
+      //             ".focusedNeed:focus &": {},
+      //           }}
+      //         >
+      //           {column.name}
+      //         </Typography>
+      //         <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
+      //           <Rating
+      //           name="rating-stars"
+      //           value={rating}
+      //           onChange={handleRatingChange}
+      //           />
+      //         </Box>
+      //       </Box>
+      //     );
+      //   } else {
+      //     return (
+      //       <>
+      //       <div className="focusedNeed" tabIndex={8}>
+      //         <Box
+      //           key={column.id}
+      //           className="markdownBox"
+      //           sx={{
+      //             border: "1px solid rgba(158, 158, 158, 0.32)",
+      //             p: 2,
+      //             position: "relative",
+      //             borderRadius: "6px",
+      //           }}
+      //         >
+      //           <Typography
+      //             variant="body2"
+      //             component={"label"}
+      //             sx={{
+      //               textTransform: "capitalize",
+      //               fontSize: 12,
+      //               position: "absolute",
+      //               top: "-10px",
+      //               left: "10px",
+      //               background: "#fff",
+      //               zIndex: 2,
+      //               px: 0.5,
+      //               color: "rgba(0, 0, 0, 0.6)",
+      //               ".focusedNeed:focus &": {},
+      //             }}
+      //           >
+      //             {column.name}
+      //           </Typography>
+      //         </Box>
+      //       </div>
+  
+      //       <div className="focusedNeed" tabIndex={8}>
+      //       <Box
+      //         key={column.id}
+      //         className="markdownBox"
+      //         sx={{
+      //           border: "1px solid rgba(158, 158, 158, 0.32)",
+      //           p: 2,
+      //           position: "relative",
+      //           borderRadius: "6px",
+      //         }}
+      //       >
+      //         <Typography
+      //           variant="body2"
+      //           component={"label"}
+      //           sx={{
+      //             textTransform: "capitalize",
+      //             fontSize: 12,
+      //             position: "absolute",
+      //             top: "-10px",
+      //             left: "10px",
+      //             background: "#fff",
+      //             zIndex: 2,
+      //             px: 0.5,
+      //             color: "rgba(0, 0, 0, 0.6)",
+      //           }}
+      //         >
+      //           {column.name}
+      //         </Typography>
+      //         <Box>
+      //           <Rating name="rating-stars" value={rating} readOnly />
+      //         </Box>
+      //       </Box>
+      //     </div>
+      //     </>
+      //     );}
     case FieldUiTypeEnum.Lookup:
       return (
         <LookupField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
