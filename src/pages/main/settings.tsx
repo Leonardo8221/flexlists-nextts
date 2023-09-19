@@ -5,7 +5,7 @@ import MainLayout from "src/layouts/view/MainLayout";
 
 function Settings() {
   return (
-    <MainLayout disableOverflow={true}>
+    <MainLayout disableOverflow={true} translations={[]}>
       <Container
         sx={{
           boxShadow: "0 0 24px 0 rgba(0,0,0,0.05)",

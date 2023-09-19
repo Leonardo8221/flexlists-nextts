@@ -1,12 +1,10 @@
 import PropTypes from "prop-types";
 import { Icon } from "@iconify/react";
-
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import * as React from "react";
 import arrowIosUpwardFill from "@iconify/icons-eva/arrow-ios-upward-fill";
 import arrowIosDownwardFill from "@iconify/icons-eva/arrow-ios-downward-fill";
-// material
 import { styled } from "@mui/material/styles";
 import {
   Box,
@@ -24,16 +22,14 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { light } from "@mui/material/styles/createPalette";
-// --------------------------------ICONS--------------------------------------
-
 import { OndemandVideo as TutorialsIcon } from "@mui/icons-material/";
 import { Topic as DocsIcon } from "@mui/icons-material/";
 import { CoPresent as WebinarsIcon } from "@mui/icons-material/";
 import { Newspaper as BlogIcon } from "@mui/icons-material/";
 import DocumentationMenu from "src/components/menu/DocumentationMenu";
 import { set } from "lodash";
-
-// ----------------------------------------------------------------------
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 const LinkStyle = styled(Link)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -47,8 +43,6 @@ const LinkStyle = styled(Link)(({ theme }) => ({
     textDecoration: "none",
   },
 }));
-
-// ----------------------------------------------------------------------
 
 IconBullet.propTypes = {
   type: PropTypes.oneOf(["subheader", "item"]),
@@ -78,6 +72,7 @@ function IconBullet({ type = "item" }) {
 }
 
 type MenuDesktopItemProps = {
+  translations: TranslationText[];
   item: ItemProps;
   pathname: string;
   isHome: boolean;
@@ -93,6 +88,7 @@ type ItemProps = {
 };
 
 function MenuDesktopItem({
+  translations,
   item,
   pathname,
   isHome,
@@ -106,20 +102,14 @@ function MenuDesktopItem({
   const handleClose = () => {
     setIsOpen(false);
   };
-  const handleOpen = async() => {
-    if(title === "Documentation")
-    {
+  const handleOpen = async () => {
+    if (title === "Documentation") {
       setIsOpen(true);
-    }
-    else
-    {
-      if(path)
-      {
-        await router.push({pathname: path})
+    } else {
+      if (path) {
+        await router.push({ pathname: path });
       }
-      
     }
-    
   };
   // if (children) {
   //   return (
@@ -282,7 +272,7 @@ function MenuDesktopItem({
             },
           }}
         >
-          <DocumentationMenu />
+          <DocumentationMenu translations={translations} />
         </Popover>
       )}
     </LinkStyle>
@@ -290,12 +280,14 @@ function MenuDesktopItem({
 }
 
 type MenuDesktopProps = {
+  translations: TranslationText[];
   isOffset: boolean;
   isHome: boolean;
   navConfig: any[];
 };
 
 export default function MenuDesktop({
+  translations,
   isOffset,
   isHome,
   navConfig,
@@ -323,6 +315,7 @@ export default function MenuDesktop({
     <Stack direction="row" sx={{ ml: 6 }}>
       {navConfig.map((link: ItemProps) => (
         <MenuDesktopItem
+          translations={translations}
           key={link.title}
           item={link}
           pathname={pathname}

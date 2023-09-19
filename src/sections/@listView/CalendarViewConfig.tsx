@@ -378,6 +378,7 @@ function CalendarViewConfig({
       </Box>
       {isOpenTitleFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open={isOpenTitleFieldModal}
@@ -386,6 +387,7 @@ function CalendarViewConfig({
       )}
       {isOpenBeginDateTimeModal && (
         <CreateFieldModal
+          translations={translations}
           field={newBeginDateTimeField}
           fieldUiTypes={dateTimeUiTypes}
           open={isOpenBeginDateTimeModal}
@@ -394,6 +396,7 @@ function CalendarViewConfig({
       )}
       {isOpenEndDateTimeModal && (
         <CreateFieldModal
+          translations={translations}
           field={newEndDateTimeField}
           fieldUiTypes={dateTimeUiTypes}
           open={isOpenEndDateTimeModal}
@@ -402,6 +405,7 @@ function CalendarViewConfig({
       )}
       {isOpenColorModal && (
         <CreateFieldModal
+          translations={translations}
           field={newColorField}
           fieldUiTypes={colorUiTypes}
           open={isOpenColorModal}

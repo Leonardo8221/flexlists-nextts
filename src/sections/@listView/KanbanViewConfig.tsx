@@ -274,6 +274,7 @@ function KanbanViewConfig({
 
       {isOpenBoardFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newBoardField}
           fieldUiTypes={boardFieldUiTypes}
           open={isOpenBoardFieldModal}
@@ -282,6 +283,7 @@ function KanbanViewConfig({
       )}
       {isOpenOrderFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newOrderField}
           fieldUiTypes={orderFieldUiTypes}
           open={isOpenOrderFieldModal}
@@ -290,6 +292,7 @@ function KanbanViewConfig({
       )}
       {isOpenTitleFieldModal && (
         <CreateFieldModal
+          translations={translations}
           field={newTitleField}
           fieldUiTypes={titleFieldUiTypes}
           open={isOpenTitleFieldModal}
