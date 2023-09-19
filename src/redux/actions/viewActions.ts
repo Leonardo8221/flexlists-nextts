@@ -114,7 +114,10 @@ export const fetchRows = (): ThunkAction<
         state.view.currentView.order,
         undefined,
         state.view.currentView.conditions,
-        true);
+        true,
+        state.view.currentView.parentViewId,
+        state.view.currentView.parentFieldId,
+        state.view.currentView.parentContentId);
       if (isSucc(response) && response.data && response.data.content) {
         var contents: any[] = []
         for (const row of response.data.content) {
@@ -150,7 +153,10 @@ export const fetchRowsByPage = (page?: number, limit?: number, query?: string): 
         state.view.currentView.order,
         state.view.currentView.query,
         state.view.currentView.conditions,
-        true);
+        true,
+        state.view.currentView.parentViewId,
+        state.view.currentView.parentFieldId,
+        state.view.currentView.parentContentId);
       if (isSucc(response) && response.data && response.data.content) {
         var contents: any[] = []
         for (const row of response.data.content) {
