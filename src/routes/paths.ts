@@ -26,6 +26,8 @@ export const PATH_MAIN = {
   chooseTemplate: path(ROOTS_MAIN, "/lists/chooseTemplate"),
   newList: path(ROOTS_MAIN, "/lists/newList"),
   groups: path(ROOTS_MAIN, "/groups"),
+  integrations: path(ROOTS_MAIN, "/integrations"),
+  newIntegration: path(ROOTS_MAIN, "/integrations/newIntegration"),
   newGroup: path(ROOTS_MAIN, "/groups/newGroup"),
   migratedLists: path(ROOTS_MAIN, "/migrate"),
   settings: path(ROOTS_MAIN, "/settings"),
