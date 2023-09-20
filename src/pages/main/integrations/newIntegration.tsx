@@ -15,8 +15,21 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { validateToken } from "src/utils/tokenUtils";
 
-export default function newIntegration() {
+type NewIntegrationProps = {
+  translations: TranslationText[];
+}
+
+const NewIntegration = ({
+  translations
+}: NewIntegrationProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [type, setType] = React.useState("");
   const handleChange = (e: any) => {
     setType(e.target.value);
@@ -24,7 +37,7 @@ export default function newIntegration() {
 
   return (
     <>
-      <MainLayout removeFooter>
+      <MainLayout removeFooter translations={translations}>
         <Box
           sx={{
             display: "flex",
@@ -99,4 +112,16 @@ export default function newIntegration() {
       </MainLayout>
     </>
   );
-}
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const verifyToken = await validateToken(context);
+
+  if(verifyToken){
+    return verifyToken;
+  }
+
+  return await getTranslations("integrations", context);
+};
+
+export default NewIntegration;

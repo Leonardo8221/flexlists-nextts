@@ -134,3 +134,11 @@ export type TranslationText = {
     translation: string
     ownerId: number
 }
+export type Integration = {
+    id: number,
+    name: string,
+    description: string,
+    type: string,
+    trigger: string,
+    email: string
+}

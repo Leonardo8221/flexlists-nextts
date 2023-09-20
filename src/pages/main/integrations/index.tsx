@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import {
   Box,
@@ -12,26 +12,48 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Snackbar,
+  Alert,
+  AlertColor
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
+import { GetServerSideProps } from "next";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslations, getTranslation } from "src/utils/i18n";
+import { validateToken } from "src/utils/tokenUtils";
+import Head from 'next/head';
+import { View, Integration } from "src/models/SharedModels";
+import {
+  FlexlistsError,
+  FlexlistsSuccess,
+  isErr,
+  isSucc,
+} from "src/models/ApiResponse";
+import {
+  getDefaultListViews,
+  listViewService,
+} from "src/services/listView.service";
+import { setCurrentView, setMessage } from "src/redux/actions/viewActions";
 
-interface IntegrationsProps {
-  styles?: any;
+type IntegrationsProps = {
+  translations: TranslationText[];
+  message: any;
+  setMessage: (message: any) => void;
 }
 
-function createData(
+const createData = (
   name: any,
   description: any,
   type: any,
   trigger: any,
   email: any,
   manage: any
-) {
+) => {
   return { name, description, type, trigger, email, manage };
 }
 
-function manageRow() {
+const manageRow = () => {
   return (
     <>
       <Button variant="text">Edit</Button>
@@ -55,9 +77,16 @@ const rows = [
   createData("-", "-", "-", "-", "-", "-"),
   createData("-", "-", "-", "-", "-", "-"),
 ];
-export default function Integrations({ styles }: IntegrationsProps) {
+
+const Integrations = ({ translations, message, setMessage }: IntegrationsProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter();
-  styles = {
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [flash, setFlash] = useState<{ message: string; type: string } | undefined>(undefined);
+
+  const styles = {
     tableCell: {
       whiteSpace: { xs: "nowrap", md: "wrap" },
       overflow: "hidden",
@@ -68,9 +97,53 @@ export default function Integrations({ styles }: IntegrationsProps) {
       color: "#333",
     },
   };
+
+  useEffect(() => {
+    function checkMessage() {
+      if (message?.message) {
+        setFlash(message);
+      }
+    }
+    checkMessage();
+  }, [message]);
+
+  useEffect(() => {
+    async function fetchIntegrations() {
+      let response: FlexlistsError | FlexlistsSuccess<View[]>;
+      response = await getDefaultListViews();
+
+      if (isSucc(response) && response.data) {
+        if (response.data.length > 0) {
+          setIntegrations(response.data);
+        } else {
+          setMessage({
+            message:
+              "No integrations yet, click Add Integration to create your first one!",
+            type: "success",
+          });
+          await router.push(PATH_MAIN.newIntegration);
+        }
+      } else {
+        setFlashMessage(response?.data?.message);
+      }
+    }
+
+    fetchIntegrations();
+  }, [router.isReady]);
+
+  const flashHandleClose = () => {
+    setFlash(undefined);
+    setMessage(null);
+  };
+
+  const setFlashMessage = (message: string, type: string = "error") => {
+    setFlash({ message: message, type: type });
+    setMessage({ message: message, type: type });
+  };
+
   return (
     <>
-      <MainLayout removeFooter={true}>
+      <MainLayout removeFooter={true} translations={translations}>
         <Box sx={{ p: { xs: 2, md: 4 } }}>
           <Typography variant="h4" gutterBottom>
             Integrations
@@ -138,7 +211,32 @@ export default function Integrations({ styles }: IntegrationsProps) {
             + Add integration
           </Button>
         </Box>
+        <Snackbar
+          open={flash !== undefined}
+          autoHideDuration={6000}
+          onClose={flashHandleClose}
+        >
+          <Alert
+            onClose={flashHandleClose}
+            severity={flash?.type as AlertColor}
+            sx={{ width: "100%" }}
+          >
+            {flash?.message}
+          </Alert>
+        </Snackbar>
       </MainLayout>
     </>
   );
-}
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // const verifyToken = await validateToken(context);
+
+  // if(verifyToken){
+  //   return verifyToken;
+  // }
+
+  return await getTranslations("integrations", context);
+};
+
+export default Integrations;
