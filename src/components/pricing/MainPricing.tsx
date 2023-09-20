@@ -144,7 +144,7 @@ const MainPricing = ({
                 <Box
                   component={"img"}
                   alt="We help you simplify your workflow."
-                  src={`/assets/images/products/mobile.png`}
+                  src={t("Section1 Image")}
                   sx={{
                     boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
                     maxHeight: "50%",
@@ -202,7 +202,7 @@ const MainPricing = ({
               <Box
                 component={"img"}
                 alt="We help you simplify your workflow."
-                src={`/assets/home/heroimg.png`}
+                src={t("Section2 Image")}
                 sx={{
                   boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
                 }}
@@ -254,7 +254,7 @@ const MainPricing = ({
               <Box
                 component={"img"}
                 alt="We help you simplify your workflow."
-                src={`/assets/home/heroimg.png`}
+                src={t("Section3 Image")}
                 sx={{
                   boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
                 }}
@@ -360,7 +360,7 @@ const MainPricing = ({
               <Box
                 component={"img"}
                 alt="We help you simplify your workflow."
-                src={`/assets/home/heroimg.png`}
+                src={t("Section4 Image")}
                 sx={{
                   boxShadow: "0 4px 24px 0 rgba(0,0,0,0.1)",
                 }}
@@ -384,7 +384,7 @@ const MainPricing = ({
                   <CardMedia
                     component="img"
                     height="140"
-                    image="/assets/home/heroimg.png"
+                    image={t("Section5 Item1 Image")}
                     alt="card img"
                   />
                   <CardContent>
@@ -405,7 +405,7 @@ const MainPricing = ({
                   <CardMedia
                     component="img"
                     height="140"
-                    image="/assets/home/heroimg.png"
+                    image={t("Section5 Item2 Image")}
                     alt="card img"
                   />
                   <CardContent>
@@ -425,7 +425,7 @@ const MainPricing = ({
                   <CardMedia
                     component="img"
                     height="140"
-                    image="/assets/home/heroimg.png"
+                    image={t("Section5 Item3 Image")}
                     alt="card img"
                   />
                   <CardContent>
@@ -445,7 +445,7 @@ const MainPricing = ({
                   <CardMedia
                     component="img"
                     height="140"
-                    image="/assets/home/heroimg.png"
+                    image={t("Section5 Item4 Image")}
                     alt="card img"
                   />
                   <CardContent>

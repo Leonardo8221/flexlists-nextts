@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Box, Typography, Tabs, Tab, Grid } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -8,7 +10,7 @@ interface TabPanelProps {
   value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
+const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
 
   return (
@@ -28,60 +30,70 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const details = [
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "list-view",
-    description: "List View Description goes here lorem ipsum",
-  },
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "calendar-view",
-    description: "Calendar View Description goes here lorem ipsum",
-  },
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "gallery-view",
-    description: "Gallery View Description goes here lorem ipsum",
-  },
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "kanban-view",
-    description: "Kanban View Description goes here lorem ipsum",
-  },
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "chart-view",
-    description: "Chart View Description goes here lorem ipsum",
-  },
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "gantt-view",
-    description: "Gantt View Description goes here lorem ipsum",
-  },
-  {
-    image: "/assets/home/heroimg.png",
-    alt: "timeline-view",
-    description: "Timeline View Description goes here lorem ipsum",
-  },
-];
+type TabViewProps = {
+  translations: TranslationText[];
+};
 
-const items = [
-  { title: "List View" },
-  { title: "Calendar View" },
-  { title: "Gallery View" },
-  { title: "Kanban View" },
-  { title: "Chart View" },
-  { title: "Gantt View" },
-  { title: "Timeline View" },
-];
-
-function TabView() {
+const TabView = ({
+  translations
+}: TabViewProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const [value, setValue] = useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   const theme = useTheme();
+
+  const details = [
+    {
+      image: t("Section5 Item1 Image"),
+      alt: t("Section5 Item1 Title"),
+      description: t("Section5 Item1 Description"),
+    },
+    {
+      image: t("Section5 Item2 Image"),
+      alt: t("Section5 Item2 Title"),
+      description: t("Section5 Item2 Description"),
+    },
+    {
+      image: t("Section5 Item3 Image"),
+      alt: t("Section5 Item3 Title"),
+      description: t("Section5 Item3 Description"),
+    },
+    {
+      image: t("Section5 Item4 Image"),
+      alt: t("Section5 Item4 Title"),
+      description: t("Section5 Item4 Description"),
+    },
+    {
+      image: t("Section5 Item5 Image"),
+      alt: t("Section5 Item5 Title"),
+      description: t("Section5 Item5 Description"),
+    },
+    {
+      image: t("Section5 Item6 Image"),
+      alt: t("Section5 Item6 Title"),
+      description: t("Section5 Item6 Description"),
+    },
+    {
+      image: t("Section5 Item7 Image"),
+      alt: t("Section5 Item7 Title"),
+      description: t("Section5 Item7 Description"),
+    }
+  ];
+  
+  const items = [
+    { title: t("Section5 Item1 Title") },
+    { title: t("Section5 Item2 Title") },
+    { title: t("Section5 Item3 Title") },
+    { title: t("Section5 Item4 Title") },
+    { title: t("Section5 Item5 Title") },
+    { title: t("Section5 Item6 Title") },
+    { title: t("Section5 Item7 Title") }
+  ];
+
   return (
     <Box sx={{ my: { xs: 2, md: 4 } }}>
       <Box sx={{ width: "100%" }}>

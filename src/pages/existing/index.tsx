@@ -16,6 +16,7 @@ import { Errors, FlexlistsError, isSucc } from "src/utils/responses";
 import { authService } from "src/services/auth.service";
 import { parse, serialize } from "cookie";
 import { validateToken } from "src/utils/tokenUtils";
+import Head from 'next/head';
 
 // const RootStyle = styled(Page)({
 //   height: '100%'
@@ -45,6 +46,11 @@ const Home = ({
 
   return (
     <MainLayout translations={translations}>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
       <LandingHero translations={translations} />
       <LandingWeHelpYou translations={translations} />
       <LandingTrustedBy translations={translations} />

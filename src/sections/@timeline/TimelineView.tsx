@@ -10,6 +10,7 @@ import { FlatWhere, View } from 'src/models/SharedModels';
 import { getDataColumnId } from 'src/utils/flexlistHelper';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type Props = {
   columns: any;
@@ -22,6 +23,9 @@ type Props = {
 };
 
 const TimelineView = (props: Props) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const { columns, rows, open, currentView, translations, fetchRows, setCurrentView } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
@@ -144,6 +148,11 @@ const TimelineView = (props: Props) => {
 
   return (
     <Box sx={{ p: {xs: 0.5, md: 1} }}>
+      <Head>
+        <title>{t("Timeline Page Title")}</title>
+        <meta name="description" content={t("Timeline Meta Description")} />
+        <meta name="keywords" content={t("Timeline Meta Keywords")} />
+      </Head>
       <Box sx={{ textTransform: 'uppercase', backgroundColor: '#F6F8FA', px:2, py: 1.2 }}>{format(currentMonth, 'MMMM yyyy')}</Box>
       <Box sx={{ display: 'grid', gridTemplateRows: `repeat(${ROWS}, 1fr)`, border: `1px solid ${theme.palette.palette_style.border.default}`, height: `${windowHeight - (open ? 356 : 236)}px`, overflow: 'auto' }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(${daysInMonth}, 1fr)`, height: '60px' }}>
