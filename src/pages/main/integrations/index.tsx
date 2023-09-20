@@ -23,18 +23,11 @@ import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { validateToken } from "src/utils/tokenUtils";
 import Head from 'next/head';
-import { View, Integration } from "src/models/SharedModels";
-import {
-  FlexlistsError,
-  FlexlistsSuccess,
-  isErr,
-  isSucc,
-} from "src/models/ApiResponse";
-import {
-  getDefaultListViews,
-  listViewService,
-} from "src/services/listView.service";
-import { setCurrentView, setMessage } from "src/redux/actions/viewActions";
+import { Integration } from "src/models/SharedModels";
+import { isSucc } from "src/models/ApiResponse";
+import { getDefaultListViews } from "src/services/listView.service";
+import { setMessage } from "src/redux/actions/viewActions";
+import { connect } from "react-redux";
 
 type IntegrationsProps = {
   translations: TranslationText[];
@@ -42,40 +35,15 @@ type IntegrationsProps = {
   setMessage: (message: any) => void;
 }
 
-const createData = (
-  name: any,
-  description: any,
-  type: any,
-  trigger: any,
-  email: any,
-  manage: any
-) => {
-  return { name, description, type, trigger, email, manage };
-}
-
-const manageRow = () => {
-  return (
-    <>
-      <Button variant="text">Edit</Button>
-      <Button sx={{ color: "#eb2027" }} variant="text">
-        Delete
-      </Button>
-    </>
-  );
-}
-
-const rows = [
-  createData(
-    "Email on change",
-    "When a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyone",
-    "Email",
-    "create, update, read, delete",
-    "email@example.com",
-    manageRow()
-  ),
-  createData("-", "-", "-", "-", "-", "-"),
-  createData("-", "-", "-", "-", "-", "-"),
-  createData("-", "-", "-", "-", "-", "-"),
+const dummyIntegrations = [
+  {
+    id: 1,
+    name: "Email on change",
+    description: "When a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyone",
+    type: "Email",
+    trigger: "create,update,read,delete",
+    email: "email@example.com"
+  }
 ];
 
 const Integrations = ({ translations, message, setMessage }: IntegrationsProps) => {
@@ -99,22 +67,22 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
   };
 
   useEffect(() => {
-    function checkMessage() {
+    const checkMessage = () => {
       if (message?.message) {
         setFlash(message);
       }
-    }
+    };
+
     checkMessage();
   }, [message]);
 
   useEffect(() => {
     async function fetchIntegrations() {
-      let response: FlexlistsError | FlexlistsSuccess<View[]>;
-      response = await getDefaultListViews();
+      const response = await getDefaultListViews();
 
       if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
-          setIntegrations(response.data);
+          setIntegrations(dummyIntegrations);
         } else {
           setMessage({
             message:
@@ -141,91 +109,100 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
     setMessage({ message: message, type: type });
   };
 
-  return (
-    <>
-      <MainLayout removeFooter={true} translations={translations}>
-        <Box sx={{ p: { xs: 2, md: 4 } }}>
-          <Typography variant="h4" gutterBottom>
-            Integrations
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Welcome to FlexLists integrations!
-          </Typography>
+  const editIntegration = (id: number) => {
 
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 320 }} aria-label="simple table">
-              <TableHead sx={{ background: "#fafafa" }}>
-                <TableRow>
-                  <TableCell sx={styles?.tableHeadCell}>Name</TableCell>
-                  <TableCell sx={styles?.tableHeadCell} align="left">
-                    Descripiton
+  };
+
+  const deleteIntegration = (id: number) => {
+    
+  };
+
+  return (
+    <MainLayout removeFooter={true} translations={translations}>
+      <Box sx={{ p: { xs: 2, md: 4 } }}>
+        <Typography variant="h4" gutterBottom>
+          Integrations
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Welcome to FlexLists integrations!
+        </Typography>
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 320 }} aria-label="simple table">
+            <TableHead sx={{ background: "#fafafa" }}>
+              <TableRow>
+                <TableCell sx={styles?.tableHeadCell}>Name</TableCell>
+                <TableCell sx={styles?.tableHeadCell} align="left">
+                  Descripiton
+                </TableCell>
+                <TableCell sx={styles?.tableHeadCell} align="left">
+                  Type
+                </TableCell>
+                <TableCell sx={styles?.tableHeadCell} align="left">
+                  Trigger
+                </TableCell>
+                <TableCell sx={styles?.tableHeadCell} align="left">
+                  Emails
+                </TableCell>
+                <TableCell sx={styles?.tableHeadCell} align="right">
+                  Manage
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {integrations.map((integration: Integration) => (
+                <TableRow
+                  key={integration.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell sx={styles?.tableCell}>{integration.name}</TableCell>
+                  <TableCell sx={styles?.tableCell} align="left">
+                    {integration.description}
                   </TableCell>
-                  <TableCell sx={styles?.tableHeadCell} align="left">
-                    Type
+                  <TableCell sx={styles?.tableCell} align="left">
+                    {integration.type}
                   </TableCell>
-                  <TableCell sx={styles?.tableHeadCell} align="left">
-                    Trigger
+                  <TableCell sx={styles?.tableCell} align="left">
+                    {integration.trigger}
                   </TableCell>
-                  <TableCell sx={styles?.tableHeadCell} align="left">
-                    Emails
+                  <TableCell sx={styles?.tableCell} align="left">
+                    {integration.email}
                   </TableCell>
-                  <TableCell sx={styles?.tableHeadCell} align="right">
-                    Manage
+                  <TableCell sx={styles?.tableCell} align="right">
+                    <Button variant="text" onClick={() => { editIntegration(integration.id) }}>Edit</Button>
+                    <Button sx={{ color: "#eb2027" }} variant="text" onClick={() => { deleteIntegration(integration.id) }}>
+                      Delete
+                    </Button>
                   </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell sx={styles?.tableCell}>{row.name}</TableCell>
-                    <TableCell sx={styles?.tableCell} align="left">
-                      {row.description}
-                    </TableCell>
-                    <TableCell sx={styles?.tableCell} align="left">
-                      {row.type}
-                    </TableCell>
-                    <TableCell sx={styles?.tableCell} align="left">
-                      {row.trigger}
-                    </TableCell>
-                    <TableCell sx={styles?.tableCell} align="left">
-                      {row.email}
-                    </TableCell>
-                    <TableCell sx={styles?.tableCell} align="right">
-                      {row.manage}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Divider sx={{ mb: 2 }} />
-          <Button
-            onClick={() => {
-              router.push(PATH_MAIN.newIntegration);
-            }}
-            variant="contained"
-          >
-            + Add integration
-          </Button>
-        </Box>
-        <Snackbar
-          open={flash !== undefined}
-          autoHideDuration={6000}
-          onClose={flashHandleClose}
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Divider sx={{ mb: 2 }} />
+        <Button
+          onClick={() => {
+            router.push(PATH_MAIN.newIntegration);
+          }}
+          variant="contained"
         >
-          <Alert
-            onClose={flashHandleClose}
-            severity={flash?.type as AlertColor}
-            sx={{ width: "100%" }}
-          >
-            {flash?.message}
-          </Alert>
-        </Snackbar>
-      </MainLayout>
-    </>
+          + Add integration
+        </Button>
+      </Box>
+      <Snackbar
+        open={flash !== undefined}
+        autoHideDuration={6000}
+        onClose={flashHandleClose}
+      >
+        <Alert
+          onClose={flashHandleClose}
+          severity={flash?.type as AlertColor}
+          sx={{ width: "100%" }}
+        >
+          {flash?.message}
+        </Alert>
+      </Snackbar>
+    </MainLayout>
   );
 };
 
@@ -239,4 +216,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return await getTranslations("integrations", context);
 };
 
-export default Integrations;
+const mapStateToProps = (state: any) => ({
+  message: state.view.message,
+});
+
+const mapDispatchToProps = {
+  setMessage
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Integrations);
