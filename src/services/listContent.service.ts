@@ -70,8 +70,8 @@ export async function getContent(viewId:number,contentId:number): Promise<Flexli
   var response = await axios.get<FlexlistsError|FlexlistsSuccess>('/api/listContent/getContent'+`?viewId=${viewId}&contentId=${contentId}`)
   return response.data;
 };
-export async function searchContents(viewId: number, page?: number, limit?: number, order?: Sort[], query?: any, conditions?: any, includeCount?: boolean): Promise<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>> {
-  var response = await axios.post<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, { viewId, page, limit, order, query, conditions, includeCount })
+export async function searchContents(viewId: number, page?: number, limit?: number, order?: Sort[], query?: any, conditions?: any, includeCount?: boolean, parentViewId?: number, parentFieldId?: number, parentContentId?: number): Promise<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess<SearchContentsOutputDto>>(`/api/listContent/searchContents`, { viewId, page, limit, order, query, conditions, includeCount, parentViewId, parentFieldId, parentContentId })
 
   return response.data;
 };
