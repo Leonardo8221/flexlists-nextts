@@ -82,7 +82,10 @@ export type View = {
     description?: string,
     role: Role,
     isArchived: boolean,
-    isDefaultView:boolean
+    isDefaultView:boolean,
+    parentViewId?: number,
+    parentFieldId?: number,
+    parentContentId?: number
 }
 export type FieldUIType = {
     name: string;

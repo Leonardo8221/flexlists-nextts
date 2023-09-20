@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import {useState} from "react";
 import { connect } from "react-redux";
-import { fetchRows, setCurrentView } from "../../redux/actions/viewActions";
 import useResponsive from "../../hooks/useResponsive";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -36,6 +35,7 @@ import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import ColorPicker from "src/components/color-picker/ColorPicker";
 import LookupField from "src/components/relation/LookupField";
+import SublistField from "src/components/relation/SublistField";
 import LinkFieldInput from "./fields/LinkFieldInput";
 import RatingField from "src/components/rating-field/RatingField";
 import DisplayRating from "src/components/rating-field/DisplayRating";
@@ -1300,6 +1300,10 @@ const RenderField = ({
       return (
         <LookupField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
       );
+    case FieldUiTypeEnum.Sublist:
+      return (
+        <SublistField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
+      );
     case FieldUiTypeEnum.Link:
       return <LinkFieldInput 
               isSubmit={submit} 
@@ -1316,13 +1320,7 @@ const RenderField = ({
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.view.columns,
-  currentView: state.view.currentView
+  columns: state.view.columns
 });
 
-const mapDispatchToProps = {
-  setCurrentView,
-  fetchRows,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(RenderField);
+export default connect(mapStateToProps)(RenderField);

@@ -102,9 +102,9 @@ const RelationConfig = ({
         setField(allFields[0].id);
 
         if (values) {
-          const oldField = allFields.filter((field: ViewField) => field.id === values.rightFieldId);
+          const oldField = allFields.find((field: ViewField) => field.id === values.rightFieldId);
           
-          setField(oldField[0].id);
+          if (oldField) setField(oldField.id);
         }
       }
     }

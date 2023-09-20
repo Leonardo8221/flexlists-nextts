@@ -527,6 +527,14 @@ const DataTable = ({
                       : ""}
                   </Box>
                 );
+              case FieldUiTypeEnum.Sublist:
+                return (
+                  <Box>
+                    {row?.original
+                      ? row.original[`___extra_${dataColumn.id}`]
+                      : ""}
+                  </Box>
+                );
               case FieldUiTypeEnum.User:
                 return (
                   users.length > 0 && (

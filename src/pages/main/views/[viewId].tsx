@@ -14,6 +14,7 @@ import {
   fetchRowsByPage,
   getCurrentView,
   getViewUsers,
+  setCurrentView
 } from "src/redux/actions/viewActions";
 import { isInteger } from "src/utils/validateUtils";
 import { convertToNumber } from "src/utils/convertUtils";
@@ -38,6 +39,7 @@ type ListProps = {
   fetchRowsByPage: (page?: number, limit?: number) => void;
   users:any[],
   getViewUsers: (viewId: number) => void;
+  setCurrentView: (view: View) => void;
 };
 
 export const ViewDetail = ({
@@ -48,7 +50,8 @@ export const ViewDetail = ({
   fetchRowsByPage,
   translations,
   users,
-  getViewUsers
+  getViewUsers,
+  setCurrentView
 }: ListProps) => {
   const router = useRouter();
   const theme = useTheme();
@@ -78,6 +81,18 @@ export const ViewDetail = ({
       isInteger(router.query.viewId)
     ) {
       fetchColumns(convertToNumber(router.query.viewId));
+
+      if (router.query.cpid) {
+        const cpids = typeof router.query.cpid === 'string' ? router.query.cpid.split('-') : router.query.cpid;
+        let newView: View = Object.assign({}, currentView);
+
+        newView.parentViewId = parseInt(cpids[0]);
+        newView.parentFieldId = parseInt(cpids[1]);
+        newView.parentContentId = parseInt(cpids[2]);
+
+        setCurrentView(newView);
+      }
+      
       fetchRowsByPage(0, currentView.limit ?? 25);
     }
   }, [router.isReady, currentView?.id]);
@@ -139,7 +154,8 @@ const mapDispatchToProps = {
   getCurrentView,
   fetchColumns,
   fetchRowsByPage,
-  getViewUsers
+  getViewUsers,
+  setCurrentView
 };
 
 // TODO: make this work, there is an access issue, so probably it's not passing the JWT token to the request 

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Box, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Button, Box, Typography, Link } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Iconify from "../../components/iconify";
 import ToolBar from "./ToolBar";
@@ -31,7 +31,8 @@ import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import EditViewConfigForm from "../@listView/EditViewConfigForm";
 import { ViewType } from "src/enums/SharedEnums";
-import { renderHTML } from "src/utils/convertUtils";
+import { renderHTML, convertToInteger } from "src/utils/convertUtils";
+import { listViewService } from 'src/services/listView.service';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 
@@ -65,12 +66,49 @@ const Header = ({
   const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
   const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] =
     useState<boolean>(false);
+  const [parentViews, setParentViews] = useState<any[]>([]);
   // const handleNewRow = (values: any, action: string) => {
   //   rows.push(values);
   //   setRows([...rows]);
   // };
 
   const [showIcons, setShowIcons] = useState(false);
+
+  useEffect(() => {
+    const getParentViews = async (ppids: string[], cpids: string[]) => {
+      const response = await listViewService.getViews();
+
+      if (isSucc(response)) {
+        const allParents = [];
+
+        ppids.map((ppid: string, index: number) => {
+          const ppidArray = ppid.split('-');
+          
+          allParents.push({ parentView: response.data.find((view: View) => view.id === convertToInteger(ppidArray[0])), contentId: ppidArray[2], param: getSubParams(ppids, index) });
+        });
+
+        allParents.push({ parentView: response.data.find((view: View) => view.id === convertToInteger(cpids[0])), contentId: cpids[2], param: getSubParams(ppids, ppids.length) });
+        setParentViews(allParents);
+      }
+    };
+
+    if (router.query.cpid) {
+      const cpids = typeof router.query.cpid === 'string' ? router.query.cpid.split('-') : router.query.cpid;
+
+      getParentViews(router.query.ppid && typeof router.query.ppid === 'string' ? router.query.ppid.split(';') : [], cpids);
+    }
+  }, [router.isReady]);
+
+  const getSubParams = (ppids: string[], index: number) => {
+    if (index === 0) return '';
+    else if (index === 1) return `cpid=${ppids[0]}&`;
+    else {
+      const cpid = ppids[index - 1];
+      const ppid = ppids.slice(0, -1).join(';');
+
+      return `ppid=${ppid}&cpid=${cpid}&`;
+    }
+  };
 
   const handleBoxClick = () => {
     setShowIcons(!showIcons);
@@ -186,13 +224,22 @@ const Header = ({
           <Typography
             variant="body1"
             sx={{
-              marginLeft: { xs: 0.3, md: 1 },
+              marginLeft: { xs: 0.3, md: 0.5 },
+              marginTop: '3px',
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
-              maxWidth: { xs: 160, lg: 88, xl: 256 },
+              maxWidth: { xs: 160, lg: 250, xl: 256 },
             }}
           >
+            {
+              parentViews.map((parentView: any) => (
+                <>
+                  <Link href={`/main/views/${parentView.parentView.id}?${parentView.param}contentId=${parentView.contentId}`} underline="none">{parentView.parentView.name}</Link>
+                  &#10230;
+                </>
+              ))
+            }
             {renderHTML(currentView?.name)}
           </Typography>
           {hasPermission(currentView?.role, "All") && (
