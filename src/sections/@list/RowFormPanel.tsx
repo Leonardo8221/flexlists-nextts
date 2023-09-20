@@ -42,6 +42,7 @@ import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendErr
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { removeReadContent, setReadContent } from "src/redux/actions/viewActions";
+import Tooltip from '@mui/material/Tooltip';
 
 interface RowFormProps {
   currentView: View;
@@ -84,6 +85,7 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(t("Copy to Clipboard"));
   const actions = [
     {
       title: t("Resize"),
@@ -126,6 +128,7 @@ const RowFormPanel = ({
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
+
   useEffect(() => {
     setValues(rowData);
     setSubmit(false);
@@ -402,6 +405,11 @@ const RowFormPanel = ({
 
   const isDesktop = useResponsive("up", "lg");
 
+  const copyUrlToClipboard = async () => {
+    await navigator.clipboard.writeText(location.href);
+    setCopySuccess(t("Copied to Clipboard"));
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -561,23 +569,42 @@ const RowFormPanel = ({
         }}
       >
         {(currentMode === "update" || currentMode === "view") && (
-          <Box
-            component="span"
-            className="svg-color"
-            sx={{
-              width: 16,
-              height: 16,
-              display: "inline-block",
-              bgcolor: theme.palette.palette_style.text.primary,
-              mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
-              cursor: "pointer",
-              marginRight: { xs: 1.5, md: 4 },
-            }}
-            onClick={() => {
-              setCurrentMode("comment");
-            }}
-          />
+          <Box>
+            <Box
+              component="span"
+              className="svg-color"
+              sx={{
+                width: 16,
+                height: 16,
+                display: "inline-block",
+                bgcolor: theme.palette.palette_style.text.primary,
+                mask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
+                WebkitMask: `url(/assets/icons/header/chat.svg) no-repeat center / contain`,
+                cursor: "pointer",
+                marginRight: { xs: 0.5, md: 1.5 },
+              }}
+              onClick={() => {
+                setCurrentMode("comment");
+              }}
+            />
+            <Tooltip title={copySuccess}>
+              <Box
+                component="span"
+                className="svg-color"
+                sx={{
+                  width: 20,
+                  height: 20,
+                  display: "inline-block",
+                  bgcolor: theme.palette.palette_style.text.primary,
+                  mask: `url(/assets/icons/copy_to_clipboard.svg) no-repeat center / contain`,
+                  WebkitMask: `url(/assets/icons/copy_to_clipboard.svg) no-repeat center / contain`,
+                  cursor: "pointer",
+                  marginRight: { xs: 1.5, md: 4 },
+                }}
+                onClick={copyUrlToClipboard}
+              />
+            </Tooltip>
+          </Box>
         )}
         {currentMode === "create" && (
           <Box
