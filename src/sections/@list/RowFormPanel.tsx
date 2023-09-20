@@ -85,7 +85,7 @@ const RowFormPanel = ({
   const [windowHeight, setWindowHeight] = useState(0);
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(t("Copy To Clipboard"));
+  const [copySuccess, setCopySuccess] = useState(t("Copy to Clipboard"));
   const actions = [
     {
       title: t("Resize"),
@@ -407,7 +407,7 @@ const RowFormPanel = ({
 
   const copyUrlToClipboard = async () => {
     await navigator.clipboard.writeText(location.href);
-    setCopySuccess(t("Copied To Clipboard"));
+    setCopySuccess(t("Copied to Clipboard"));
   };
 
   return (
