@@ -25,7 +25,7 @@ import { validateToken } from "src/utils/tokenUtils";
 import Head from 'next/head';
 import { Integration } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
-import { getDefaultListViews } from "src/services/listView.service";
+import { integrationService } from "src/services/integration.service";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 
@@ -77,27 +77,28 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
   }, [message]);
 
   useEffect(() => {
-    async function fetchIntegrations() {
-      const response = await getDefaultListViews();
-
-      if (isSucc(response) && response.data) {
-        if (response.data.length > 0) {
-          setIntegrations(dummyIntegrations);
-        } else {
-          setMessage({
-            message:
-              "No integrations yet, click Add Integration to create your first one!",
-            type: "success",
-          });
-          await router.push(PATH_MAIN.newIntegration);
-        }
-      } else {
-        setFlashMessage(response?.data?.message);
-      }
-    }
-
-    fetchIntegrations();
+    // fetchIntegrations();
+    setIntegrations(dummyIntegrations);
   }, [router.isReady]);
+
+  const fetchIntegrations = async () => {
+    const response = await integrationService.getIntegrations();
+
+    if (isSucc(response) && response.data) {
+      if (response.data.length > 0) {
+        setIntegrations(response.data);
+      } else {
+        setMessage({
+          message:
+          t("No Integrations"),
+          type: "success",
+        });
+        await router.push(PATH_MAIN.newIntegration);
+      }
+    } else {
+      setFlashMessage(response?.data?.message);
+    }
+  };
 
   const flashHandleClose = () => {
     setFlash(undefined);
@@ -110,42 +111,54 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
   };
 
   const editIntegration = (id: number) => {
-
+    router.push(`/main/integrations/${id}`);
   };
 
-  const deleteIntegration = (id: number) => {
-    
+  const deleteIntegration = async (id: number) => {
+    const response = await integrationService.deleteIntegration(id);
+
+    if (isSucc(response) && response.data) {
+      console.log(response.data, 'deleteIntegration')
+      await fetchIntegrations();
+    } else {
+      setFlashMessage(response?.data?.message);
+    }
   };
 
   return (
     <MainLayout removeFooter={true} translations={translations}>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
       <Box sx={{ p: { xs: 2, md: 4 } }}>
         <Typography variant="h4" gutterBottom>
-          Integrations
+          {t("Integrations")}
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Welcome to FlexLists integrations!
+          {t("Welcome")}
         </Typography>
 
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 320 }} aria-label="simple table">
             <TableHead sx={{ background: "#fafafa" }}>
               <TableRow>
-                <TableCell sx={styles?.tableHeadCell}>Name</TableCell>
+                <TableCell sx={styles?.tableHeadCell}>{t("Name")}</TableCell>
                 <TableCell sx={styles?.tableHeadCell} align="left">
-                  Descripiton
+                  {t("Descripiton")}
                 </TableCell>
                 <TableCell sx={styles?.tableHeadCell} align="left">
-                  Type
+                  {t("Type")}
                 </TableCell>
                 <TableCell sx={styles?.tableHeadCell} align="left">
-                  Trigger
+                  {t("Trigger")}
                 </TableCell>
                 <TableCell sx={styles?.tableHeadCell} align="left">
-                  Emails
+                  {t("Emails")}
                 </TableCell>
                 <TableCell sx={styles?.tableHeadCell} align="right">
-                  Manage
+                  {t("Manage")}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -169,9 +182,9 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
                     {integration.email}
                   </TableCell>
                   <TableCell sx={styles?.tableCell} align="right">
-                    <Button variant="text" onClick={() => { editIntegration(integration.id) }}>Edit</Button>
+                    <Button variant="text" onClick={() => { editIntegration(integration.id) }}>{t("Edit")}</Button>
                     <Button sx={{ color: "#eb2027" }} variant="text" onClick={() => { deleteIntegration(integration.id) }}>
-                      Delete
+                      {t("Delete")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -186,7 +199,7 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
           }}
           variant="contained"
         >
-          + Add integration
+          + {t("Add Integration")}
         </Button>
       </Box>
       <Snackbar

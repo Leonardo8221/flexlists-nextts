@@ -138,3 +138,7 @@ export type GetUserGroupByIdOutputDto = {
     description?:any
     avatarUrl?:any
 }
+export type CreateIntegrationOutputDto = {
+    viewId:number
+    fieldId:number
+}
