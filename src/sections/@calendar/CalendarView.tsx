@@ -18,6 +18,8 @@ import { getDataColumnId, getRowContent } from 'src/utils/flexlistHelper';
 import { FlatWhere, View } from 'src/models/SharedModels';
 import { useRouter } from 'next/router';
 import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type CalendarViewProps = {
   translations: TranslationText[];
@@ -31,6 +33,9 @@ type CalendarViewProps = {
 };
 
 const CalendarView = ({ translations, currentView, columns, rows, open, setRows, fetchRows, setCurrentView }: CalendarViewProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   const router = useRouter();
   const [isLoadedCurrentContent,setIsLoadedCurrentContent] = useState(false);
@@ -295,6 +300,11 @@ const CalendarView = ({ translations, currentView, columns, rows, open, setRows,
 
   return (
     <Box sx={{ display: {md: 'flex'}, paddingRight: {md: 1}, height: {xs: `${windowHeight - (open ? 312 : 268)}px`, md: 'calc(100% - 160px)', lg: 'calc(100% - 104px)'}, overflow: {xs: 'auto', md: 'inherit'} }}>
+      <Head>
+        <title>{t("Calendar Page Title")}</title>
+        <meta name="description" content={t("Calendar Meta Description")} />
+        <meta name="keywords" content={t("Calendar Meta Keywords")} />
+      </Head>
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,

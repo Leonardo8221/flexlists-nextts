@@ -10,6 +10,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import { GetServerSideProps } from "next";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import Head from 'next/head';
 
 type ListPageProps = {
   message: any;
@@ -29,6 +30,9 @@ const ListsPage = ({
   translations,
   setMessage
 }: ListPageProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const theme = useTheme();
   // error handling
   const [flash, setFlash] = useState<
@@ -60,6 +64,11 @@ const ListsPage = ({
 
   return (
     <MainLayout translations={translations}>
+      <Head>
+        <title>{t("Lists Page Title")}</title>
+        <meta name="description" content={t("Lists Meta Description")} />
+        <meta name="keywords" content={t("Lists Meta Keywords")} />
+      </Head>
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,

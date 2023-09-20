@@ -28,7 +28,7 @@ const ViewsPresentation = ({
         >
           {t("Section5 Description")}
         </Typography>
-        <TabView />
+        <TabView translations={translations} />
       </Container>
     </Box>
   );

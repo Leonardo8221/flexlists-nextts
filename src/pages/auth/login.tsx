@@ -39,6 +39,7 @@ import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
 import { setReturnUrl } from "src/redux/actions/adminAction";
+import Head from 'next/head';
 
 interface LoginProps {
   message: any;
@@ -326,6 +327,11 @@ const Login = ({
 
   return (
     <>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
       <Snackbar
         open={flash !== undefined}
         autoHideDuration={6000}

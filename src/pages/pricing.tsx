@@ -6,6 +6,7 @@ import { LandingPricingPlans } from "src/components/landing";
 import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type SolutionsProps = {
   translations: TranslationText[];
@@ -22,6 +23,11 @@ const pricing = ({
 
   return (
     <MainLayout translations={translations}>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
       <Box
         sx={{
           mt: { xs: "64px", md: "88px" },
@@ -58,7 +64,7 @@ const pricing = ({
             <Grid item xs={12} md={8}>
               <Box
                 component={"img"}
-                src="/assets/home/heroimg.png"
+                src={t("Main Image")}
                 alt="placeholder"
                 sx={{
                   maxWidth: "100%",

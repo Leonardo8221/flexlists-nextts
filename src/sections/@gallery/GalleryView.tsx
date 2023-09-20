@@ -9,6 +9,7 @@ import { fetchRowsByPage, setCurrentView } from "src/redux/actions/viewActions";
 import { getDataColumnId, downloadFileUrl, getChoiceField } from 'src/utils/flexlistHelper';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import Head from 'next/head';
 
 type Props = {
   rows: any;
@@ -22,6 +23,9 @@ type Props = {
 };
 
 const GalleryView = (props: Props) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const { rows, columns, open, currentView, count, translations, fetchRowsByPage, setCurrentView } = props;
   const isXL = useResponsive('up', 'xl');
   const isLG = useResponsive('up', 'lg');
@@ -76,6 +80,11 @@ const GalleryView = (props: Props) => {
 
   return (
     <Box sx={{ p: 1, overflowY: 'auto', height: `${windowHeight - (isLG ? 205 : isMD ? 260 : (open ? 306 : 262))}px` }}>
+        <Head>
+          <title>{t("Gallery Page Title")}</title>
+          <meta name="description" content={t("Gallery Meta Description")} />
+          <meta name="keywords" content={t("Gallery Meta Keywords")} />
+        </Head>
         <Box sx={{ display: 'grid', gridTemplateColumns: {sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(5, 1fr)', xl:'repeat(6, 1fr)'}, gap: '24px' }}>
             {rows.map((row: any) => (
                 <Box key={row.id} sx={{ boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.1)', borderRadius: '16px', overflow: 'hidden', maxHeight: {sm: '408px'}, cursor: 'pointer' }} onClick={() => { handleData(row) }}>

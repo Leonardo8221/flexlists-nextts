@@ -104,7 +104,7 @@ function MigrateModal({ message, setMessage }: MigrateModelProps) {
         setProgress(100);
         clearInterval(timer);
         setMessage({ message: 'Migration finished successful!', type: 'success' })
-        await router.push({ pathname: PATH_MAIN.views });
+        await router.push({ pathname: PATH_MAIN.lists });
         return
       }
     }, 2000);

@@ -10,6 +10,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import { GetServerSideProps } from "next";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import Head from 'next/head';
 
 type ListPageProps = {
   message: any;
@@ -84,6 +85,11 @@ const ViewsPage = ({
 
   return (
     <MainLayout translations={translations}>
+      <Head>
+        <title>{t("Views Page Title")}</title>
+        <meta name="description" content={t("Views Meta Description")} />
+        <meta name="keywords" content={t("Views Meta Keywords")} />
+      </Head>
       <Box
         sx={{
           backgroundColor: theme.palette.palette_style.background.default,

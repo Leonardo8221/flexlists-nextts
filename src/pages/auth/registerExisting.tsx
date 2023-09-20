@@ -46,6 +46,7 @@ import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import Head from 'next/head';
 
 interface RegisterProps {
   message: any;
@@ -502,6 +503,11 @@ const Register = ({
 
   return (
     <>
+      <Head>
+        <title>{t("Page Title")}</title>
+        <meta name="description" content={t("Meta Description")} />
+        <meta name="keywords" content={t("Meta Keywords")} />
+      </Head>
       <Snackbar
         open={flash !== undefined}
         autoHideDuration={10000}

@@ -52,10 +52,10 @@ export async function validateAccessKey(key: string): Promise<FlexlistsError | F
 };
 
 export enum LegacyMigrationQueueStatusEnum {
-    Pending,
-    Running,
-    Success,
-    Error,
+    Pending='Pending',
+    Running='Running',
+    Success='Success',
+    Error='Error'
 }
 
 export async function getMigrationProgress(): Promise<FlexlistsError | FlexlistsSuccess<{ totalLists: number, migratedLists: number, currentLists: number[], currentRowCount: number, totalRowCount: number, status: LegacyMigrationQueueStatusEnum }>> {
