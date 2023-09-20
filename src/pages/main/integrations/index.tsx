@@ -70,7 +70,7 @@ export default function Integrations({ styles }: IntegrationsProps) {
   };
   return (
     <>
-      <MainLayout removeFooter={true}>
+      <MainLayout removeFooter={true} translations={[]}>
         <Box sx={{ p: { xs: 2, md: 4 } }}>
           <Typography variant="h4" gutterBottom>
             Integrations
