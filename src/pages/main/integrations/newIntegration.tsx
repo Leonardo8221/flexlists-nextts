@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import {
   Box,
@@ -16,15 +16,15 @@ import {
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 
-export default function newIntegration() {
-  const [type, setType] = React.useState("");
+export default function NewIntegration() {
+  const [type, setType] = useState("");
   const handleChange = (e: any) => {
     setType(e.target.value);
   };
 
   return (
     <>
-      <MainLayout removeFooter>
+      <MainLayout removeFooter translations={[]}>
         <Box
           sx={{
             display: "flex",
