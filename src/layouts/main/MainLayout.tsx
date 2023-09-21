@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 //
 import MainNavbar from "./MainNavbar";
 import { TranslationText } from "src/models/SharedModels";
+import LoadingPage from "src/pages/LoadingPage";
 
 // ----------------------------------------------------------------------
 
@@ -40,11 +41,11 @@ export default function MainLayout({
   const [open, setOpen] = useState(false);
 
   return (
-    <StyledRoot>
-      <MainNavbar translations={translations} />
-      <Main>
-        <div>{children}</div>
-      </Main>
-    </StyledRoot>
+      <StyledRoot>
+        <MainNavbar translations={translations} />
+        <Main>
+          <div>{children}</div>
+        </Main>
+      </StyledRoot>
   );
 }
