@@ -415,6 +415,9 @@ const DataTable = ({
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis",
+                      height:"32px",
+                      display:"flex",
+                      alignItems:"center"
                     }}
                   >
                     {/* {cellValue?.toString() === "true" ? "yes" : "no"} */}
