@@ -459,7 +459,7 @@ const DataTable = ({
                   <Box
                     component="video"
                     sx={{
-                      // height: 100,
+                      height: 24,
                       width: 100,
                       // maxHeight: { xs: 233, md: 167 },
                       // maxWidth: { xs: 350, md: 250 },
@@ -866,18 +866,19 @@ const DataTable = ({
               sx: {
                 cursor: "pointer",
                 position: "relative",
+                overflowY:"hidden",
                 "& :first-child::before": {
                   content: "''",
                   position: "absolute",
                   width: "4px",
-                  height: "calc(100% - 1px)",
-                  transform: "translateX(-4px)",
+                  // height: "calc(100% - 1px)",
+                  height:"32px",
+                  transform: "translate(-4px,-50%)",
                   left: "0",
-                  top: "0",
+                  top: "50%",
                   background: isReadContent(row.id)
                     ? "none"
                     : "rgb(84, 166, 251)",
-                  // ml: "64px",
                 },
               },
             })}
