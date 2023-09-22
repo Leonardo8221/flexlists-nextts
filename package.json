@@ -6,6 +6,7 @@
     "dev": "next dev -p 3002",
     "local": "env-cmd -f local.env yarn dev",
     "build": "npx ts-node setSentry.ts; next build",
+    "buildwinblows": "next build",
     "start": "next start",
     "lint": "next lint"
   },
