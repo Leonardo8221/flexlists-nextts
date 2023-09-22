@@ -12,6 +12,7 @@ import { ApiResponseStatus } from "src/enums/ApiResponseStatus";
 import Error from 'src/sections/Error'
 import { fetchUserContacts } from "src/redux/actions/userActions";
 import { TranslationText } from "src/models/SharedModels";
+import LoadingPage from "src/pages/LoadingPage";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -95,17 +96,20 @@ const MainLayout = ({
   }, [router.isReady]);
 
   return apiResponseStatus === ApiResponseStatus.Success ?(
-    <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} translations={translations} />
+    <LoadingPage>
+      <StyledRoot>
+        <Header onOpenNav={() => setOpen(true)} translations={translations} />
 
-      <Main sx={{ height: `${windowHeight - 40}px` }}>
-      <Nav openNav={open} onCloseNav={() => setOpen(false)} translations={translations} />
-        <Content theme={theme} disableOverflow={disableOverflow}>
-          {children}
-        </Content>
-      </Main>
-      {removeFooter == true && currentView && <Footer translations={translations} />}
-    </StyledRoot>
+        <Main sx={{ height: `${windowHeight - 40}px` }}>
+        <Nav openNav={open} onCloseNav={() => setOpen(false)} translations={translations} />
+          <Content theme={theme} disableOverflow={disableOverflow}>
+            {children}
+          </Content>
+        </Main>
+        {removeFooter == true && currentView && <Footer translations={translations} />}
+      </StyledRoot>
+    </LoadingPage>
+    
   ):
   (
     <>

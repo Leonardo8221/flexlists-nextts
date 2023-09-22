@@ -18,10 +18,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <StyledChart />
         <Provider store={store}>
           <AuthGuard>
-            <LoadingPage>
+            {/* <LoadingPage> */}
               <FlashMessage />
               <Component {...pageProps} />
-            </LoadingPage>
+            {/* </LoadingPage> */}
           </AuthGuard>
         </Provider>
       </LanguagesProvider>
