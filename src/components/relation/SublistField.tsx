@@ -65,14 +65,14 @@ const SublistField = ({
   const getStyles = (name: string, theme: Theme) => {
     return {
       fontWeight:
-      !values[column.id] || values[column.id].indexOf(name) === -1
+      !values || !values[column.id] || values[column.id].indexOf(name) === -1
           ? theme.typography.fontWeightRegular
           : theme.typography.fontWeightMedium,
     };
   };
 
   return (
-    <FormControl key={column.id} required={column.required}>
+    <FormControl key={column.id} required={column.required} sx={{ width: '100%' }}>
       <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
         {column.name}
       </InputLabel>
@@ -81,12 +81,12 @@ const SublistField = ({
         disabled={currentMode === "view" || isPrint}
         label={column.name}
         id={`${column.id}`}
-        value={values[column.id] || []}
+        value={values && values[column.id] ? values[column.id] : []}
         onChange={(e) =>
           setValues({ ...values, [column.id]: e.target.value })
         }
         size="small"
-        error={submit && column.required && !values[column.id]}
+        error={submit && column.required && !values && !values[column.id]}
         multiple
       >
         {column?.config?.values &&
@@ -100,7 +100,7 @@ const SublistField = ({
             </MenuItem>
           ))}
       </Select>
-      {values[column.id] && (currentMode === "view" || isPrint) && <Link sx={{ marginTop: 1, textAlign: 'right' }} href={`/main/views/${column.config.values.viewId}?${ppid ? 'ppid=' + ppid + '&' : ''}cpid=${currentView.id}-${column.id}-${values.id}`}>Subview</Link>}
+      {values && values[column.id] && (currentMode === "view" || isPrint) && <Link sx={{ marginTop: 1, textAlign: 'right' }} href={`/main/views/${column.config.values.viewId}?${ppid ? 'ppid=' + ppid + '&' : ''}cpid=${currentView.id}-${column.id}-${values.id}`}>Subview</Link>}
     </FormControl>
   );
 };

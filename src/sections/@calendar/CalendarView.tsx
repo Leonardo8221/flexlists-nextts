@@ -177,7 +177,7 @@ const CalendarView = ({ translations, currentView, columns, rows, open, setRows,
     newView.conditions.push("And");
     newView.conditions.push(filter2);
 
-    if (endDateColumn) {
+    if (endDateColumn && endDateColumn != '0') {
       newView.conditions.push("Or");
       newView.conditions.push(filter3);
       newView.conditions.push("And");
@@ -333,7 +333,7 @@ const CalendarView = ({ translations, currentView, columns, rows, open, setRows,
       <CalendarFooter mode={mode} handleNewRowPanel={(values)=>handleNewRowPanel(values)} handleMode={handleMode} translations={translations} />
 
       {detailMode && <RowFormPanel
-        rowData={selectedRowData}
+        rowData={[selectedRowData]}
         columns={columns}
         onSubmit={handleNewRow}
         open={visibleAddRowPanel}

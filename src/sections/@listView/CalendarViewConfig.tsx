@@ -39,8 +39,8 @@ function CalendarViewConfig({
   };
   const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId:0);
   const [beginDateTimeId, setBeginDateTimeId] = useState<number>(config && config.beginDateTimeId? config.beginDateTimeId:0);
-  const [endDateTimeId, setEndDateTimeId] = useState<number>(config && config.endDateTimeId? config.endDateTimeId:0);
-  const [colorId, setColorId] = useState<number>(config && config.colorId? config.colorId:0);
+  const [endDateTimeId, setEndDateTimeId] = useState<number>(config && config.endDateTimeId? config.endDateTimeId: -2);
+  const [colorId, setColorId] = useState<number>(config && config.colorId? config.colorId: -2);
 
   const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] =
     useState<boolean>(false);
@@ -139,14 +139,10 @@ function CalendarViewConfig({
     const defaultEndDateTimeId =
       endDateTimeId && !isOpenEndDateTimeModal
         ? endDateTimeId
-        : newDateTimeFields.length > 1
-        ? newDateTimeFields.filter((dateTimeField) => dateTimeField.id !== defaultBeginDateTimeId)[0].id
         : 0;
     const defaultColorId =
       colorId && !isOpenColorModal
         ? colorId
-        : newColorFields.length > 0
-        ? newColorFields[0].id
         : 0;
     if (newTitleFields.length > 0) {
       setTitleFieldId(defaultTitleId);
@@ -237,6 +233,7 @@ function CalendarViewConfig({
     }
 
     setEndDateTimeId(convertToInteger(value));
+
     updateCalendarConfig(
       titleFieldId,
       beginDateTimeId,
@@ -254,6 +251,7 @@ function CalendarViewConfig({
     }
 
     setColorId(convertToInteger(value));
+    
     updateCalendarConfig(
       titleFieldId,
       beginDateTimeId,
@@ -271,8 +269,8 @@ function CalendarViewConfig({
     updateConfig({
       titleId: newTitleId,
       beginDateTimeId: newBeginDateTimeId,
-      endDateTimeId: newEndDateTimeId,
-      colorId: newColorId,
+      endDateTimeId: newEndDateTimeId === -2 ? 0 : newEndDateTimeId,
+      colorId: newColorId === -2 ? 0 : newColorId,
     });
   };
 
@@ -329,7 +327,7 @@ function CalendarViewConfig({
           </Select>
         </FormControl>
         <FormControl fullWidth>
-          <InputLabel required id="calendar_enddatetime_label">
+          <InputLabel id="calendar_enddatetime_label">
             {t("End Date")}
           </InputLabel>
           <Select
@@ -337,9 +335,11 @@ function CalendarViewConfig({
             label={t("End Date")}
             value={`${endDateTimeId}`}
             onChange={onEndDateTimeChange}
-            error={submit && (!endDateTimeId || endDateTimeId === 0)}
             fullWidth
           >
+            <MenuItem key={"-2"} value={"-2"}>
+              {t("Leave Empty")}
+            </MenuItem>
             {endDateTimeFields.map((dateTimeField: ViewField) => (
               <MenuItem
                 key={`${dateTimeField.id}`}
@@ -354,7 +354,7 @@ function CalendarViewConfig({
           </Select>
         </FormControl>
         <FormControl fullWidth>
-          <InputLabel required id="calendar_color_label">
+          <InputLabel id="calendar_color_label">
             {t("Color")}
           </InputLabel>
           <Select
@@ -362,9 +362,11 @@ function CalendarViewConfig({
             label={t("Color")}
             value={`${colorId}`}
             onChange={onColorChange}
-            error={submit && (!colorId || colorId === 0)}
             fullWidth
           >
+            <MenuItem key={"-2"} value={"-2"}>
+              {t("Leave Empty")}
+            </MenuItem>
             {colorFields.map((colorField: ViewField) => (
               <MenuItem key={`${colorField.id}`} value={`${colorField.id}`}>
                 {colorField.name}

@@ -10,7 +10,7 @@ import { isSucc } from "src/models/ApiResponse";
 import { ViewType } from "src/enums/SharedEnums";
 import { PATH_MAIN } from "src/routes/paths";
 import { hasPermission } from "src/utils/permissionHelper";
-import { renderHTML } from "src/utils/convertUtils";
+import { renderHTML, convertToNumber } from "src/utils/convertUtils";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 
@@ -34,11 +34,12 @@ export function MenuBar({ search, currentView, translations }: MenuBarProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // setSelectedViewId(router.pathname.split("/")[1]);
-  }, [router.pathname]);
+    if (router.query.viewId) setSelectedViewId(convertToNumber(router.query.viewId));
+    if (router.query.defaultListViewId) setSelectedViewId(convertToNumber(router.query.defaultListViewId));
+  }, [router.isReady]);
 
   const handleMenu = async (view: View) => {
-    // setSelectedViewId(value);
+    setSelectedViewId(view.id);
     if (view.isDefaultView) {
       await router.push(`${PATH_MAIN.lists}/${view.id}`);
     } else {
