@@ -39,6 +39,8 @@ const VerifyKey = () => {
   }, [router.query.key]);
   return (
     <>
+    {
+      verifyResult === "Verifying" &&
       <Box sx={{ display: "grid", placeContent: "center", minHeight: "100vh" }}>
         <Typography
           component={motion.div}
@@ -49,6 +51,20 @@ const VerifyKey = () => {
           {verifyResult}
         </Typography>
       </Box>
+    }
+    {
+      verifyResult !== "Verifying" &&
+      <Box sx={{ display: "grid", placeContent: "center", minHeight: "100vh" }}>
+        <Typography
+          component={motion.div}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 1 }}
+          variant="h3"
+        >
+          {verifyResult}
+        </Typography>
+      </Box>
+    } 
     </>
   );
 };
