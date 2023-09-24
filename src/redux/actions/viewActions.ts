@@ -310,3 +310,7 @@ export const setReadContents = (readContents: number[]) => ({
   type: 'SET_READ_CONTENTS',
   payload: readContents
 });
+export const setCurrentListViews = (views: any[]) => ({
+  type: 'SET_CURRENT_LIST_VIEWS',
+  payload: views
+});

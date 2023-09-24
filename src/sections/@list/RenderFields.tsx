@@ -26,7 +26,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { FormControl } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString, getDateFormatString } from "src/utils/convertUtils";
+import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString, getDateFormatString, getDifferneceWithCurrent } from "src/utils/convertUtils";
 import { DatePicker, renderTimeViewClock } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
@@ -248,7 +248,7 @@ const RenderField = ({
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
+                ? `${getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])} (${getDifferneceWithCurrent(values[getDataColumnId(column.id, columns)])})`
                 : ""
             }
             sx={{
@@ -295,7 +295,7 @@ const RenderField = ({
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
+                ? `${getLocalDateFromString(values[getDataColumnId(column.id, columns)])} (${getDifferneceWithCurrent(values[getDataColumnId(column.id, columns)])})`
                 : ""
             }
             sx={{

@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { PATH_AUTH } from "src/routes/paths";
 import { setMessage } from "src/redux/actions/authAction";
+import LockIcon from '@mui/icons-material/Lock';
 
 interface UnauthorizedProps {
   setReturnUrl: (returnUrl: any) => void;
@@ -100,39 +101,46 @@ function Unauthorized({ setReturnUrl, setMessage }: UnauthorizedProps) {
         sx={{
           display: "flex",
           alignItems: "center",
-          minHeight: "calc(50vh - 96px)",
+          // minHeight: "calc(50vh - 96px)",
+          minHeight:"calc(100vh - 96px)"
         }}
       >
         <Grid container>
           <Grid
             item
             xs={12}
-            md={6}
+            // md={6}
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
+              alignItems:"center",
               gap: { xs: 1, md: 3 },
             }}
           >
-            <Box
+            <Box sx={{border:"1px solid #54a6fb", borderRadius:500}}>
+              <LockIcon sx={{fontSize: 96, color: theme.palette.palette_style.text.selected, m: 4}}/>
+           </Box>
+            <Typography
+            variant="h1"
               sx={{
-                fontSize: { xs: 64, md: 96 },
+                // fontSize: { xs: 64, md: 96 },
                 fontWeight: 700,
-                color: theme.palette.palette_style.text.selected,
+                textAlign:"center"
+                // color: theme.palette.palette_style.text.selected,
               }}
             >
               Access denied
-            </Box>
-            <Typography variant="body1" gutterBottom>
-              You currently do not have access to this page
+            </Typography>
+            <Typography variant="body1" gutterBottom textAlign={"center"}>
+              You currently do not have permission to access to list. <br /> Contact an administrator of the list to get permissions or try to log in.
             </Typography>
             {/* <Typography variant="body1" gutterBottom>
               Don&apos;t worry, we&apos;ve sent out a search party to bring it back. In
               the meantime, why not enjoy a cup of virtual coffee and try
               exploring our other pages? Happy hunting!
             </Typography> */}
-            <Box>
+            <Box sx={{ display:"flex", gap: 2, alignItems:"center"}}>
               {/* <TextField
                 fullWidth
                 sx={styles?.textField}
@@ -145,10 +153,16 @@ function Unauthorized({ setReturnUrl, setMessage }: UnauthorizedProps) {
                   ),
                 }}
               /> */}
-              <Button onClick={onSubmit} variant="text">
-                Click here to login
+              <Button onClick={onSubmit} size="large" variant="contained">
+                Login
+              </Button>
+              <Button onClick={onSubmit} size="large" variant="outlined">
+                Register
               </Button>
             </Box>
+            <Button onClick={onSubmit} size="large" variant="text">
+                Back to homepage
+            </Button>
             {/* <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 6 }}>
               <Box
                 sx={{
@@ -178,14 +192,14 @@ function Unauthorized({ setReturnUrl, setMessage }: UnauthorizedProps) {
               </Link>
             </Box> */}
           </Grid>
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <Box
               sx={styles?.image}
               component="img"
               alt="Logo"
               src="/assets/illustrations/coffee.png"
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Box>
