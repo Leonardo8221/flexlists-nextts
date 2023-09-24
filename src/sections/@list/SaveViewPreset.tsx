@@ -209,11 +209,15 @@ function SaveViewPreset({
           value={type}
           onChange={handleTypeChange}
         >
-          <FormControlLabel
+          {
+            !currentView?.isDefaultView &&
+            <FormControlLabel
             value={t("View")}
             control={<Radio />}
             label={PresetType.View}
           />
+          }
+          
           <FormControlLabel
             value={t("Yourself")}
             control={<Radio />}
