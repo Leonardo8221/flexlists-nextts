@@ -179,7 +179,7 @@ const RenderField = ({
           onChange={(e) =>
             setValues({ ...values, [column.id]: e.target.value })
           }
-          value={values[column.id]}
+          value={values ? values[column.id] : ""}
           rows={4}
           required={column.required}
           error={submit && column.required && !values[column.id]}
@@ -213,8 +213,9 @@ const RenderField = ({
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DateTimePicker
+            sx={{ width: '100%' }}
             value={
-              values[column.id] && values[column.id] != null
+              values && values[column.id] && values[column.id] != null
                 ? dayjs(values[column.id])
                 : null
             }
@@ -269,7 +270,8 @@ const RenderField = ({
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DatePicker
-            value={dayjs(values[column.id])}
+            sx={{ width: '100%' }}
+            value={values ? dayjs(values[column.id]) : null}
             label={column.name}
             onChange={(x) => {
               setDateValue(column.id, x);
@@ -315,8 +317,9 @@ const RenderField = ({
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <TimePicker
+            sx={{ width: '100%' }}
             value={
-              values[column.id]
+              values && values[column.id]
                 ? dayjs(getDateFromTimeString(values[column.id]))
                 : null
             }
@@ -387,10 +390,11 @@ const RenderField = ({
               {column.name}
             </InputLabel>
             <Select
+              sx={{ width: '100%' }}
               key={column.id}
               label={column.name}
               id={`${column.id}`}
-              value={values[column.id]}
+              value={values ? values[column.id] : null}
               onChange={(e) =>
                 setValues({ ...values, [column.id]: e.target.value })
               }
@@ -497,7 +501,7 @@ const RenderField = ({
                 key={column.id}
                 control={
                   <Switch
-                    checked={values[column.id]}
+                    checked={values ? values[column.id] : false}
                     onChange={(e) =>
                       setValues({ ...values, [column.id]: e.target.checked })
                     }
@@ -572,7 +576,7 @@ const RenderField = ({
           key={column.id}
           id={column.id}
           name={column.name}
-          value={values[column.id]}
+          value={values ? values[column.id] : null}
           handleChange={(newValue: string) => {
             setValues({ ...values, [column.id]: newValue });
           }}
@@ -585,7 +589,7 @@ const RenderField = ({
           id={column.id}
           key={column.id}
           name={column.name}
-          value={values[column.id]}
+          value={values ? values[column.id] : null}
           handleChange={(newValue: string) => {
             setValues({ ...values, [column.id]: newValue });
           }}
@@ -630,14 +634,14 @@ const RenderField = ({
             }}
             alt=""
             src={
-              values[column.id] && values[column.id].fileId
+              values && values[column.id] && values[column.id].fileId
                 ? downloadFileUrl(values[column.id].fileId)
                 : ""
             }
           />
           <UploadButton
             fileAcceptTypes={["png", "jpg", "jpeg", "gif"]}
-            file={values[column.id]}
+            file={values ? values[column.id] : null}
             onUpload={(file) => {
               setValues({ ...values, [column.id]: file });
             }}
@@ -744,14 +748,14 @@ const RenderField = ({
               "mkv",
               "webm",
             ]}
-            file={values[column.id]}
+            file={values ? values[column.id] : null}
             onUpload={(file) => {
               setValues({ ...values, [column.id]: file });
             }}
           />
           <ReactPlayer
             url={
-              values[column.id] && values[column.id].fileId
+              values && values[column.id] && values[column.id].fileId
                 ? downloadFileUrl(values[column.id].fileId)
                 : ""
             }
@@ -855,7 +859,7 @@ const RenderField = ({
           </Typography>
           <UploadButton
             fileAcceptTypes={["*/*"]}
-            file={values[column.id]}
+            file={values ? values[column.id] : null}
             onUpload={(file) => {
               setValues({ ...values, [column.id]: file });
             }}
@@ -926,6 +930,7 @@ const RenderField = ({
           <Box
             key={column.id}
             sx={{
+              width: '100%',
               border: "1px solid rgba(158, 158, 158, 0.32)",
               px: 2,
               display: "flex",
@@ -957,7 +962,7 @@ const RenderField = ({
               {column.name}
             </Typography>
             <ColorPicker
-              selectedColor={values[column.id]??"#000000"}
+              selectedColor={values && values[column.id] ? values[column.id] : "#000000"}
               onColorChange={(color) => {
                 setValues({ ...values, [column.id]: color });
               }}
@@ -974,7 +979,7 @@ const RenderField = ({
                 style={{
                   width: "32px",
                   height: "32px",
-                  backgroundColor: values[column.id]??"#000000",
+                  backgroundColor: values && values[column.id] ? values[column.id] : "#000000",
                   display: "grid",
                   placeContent: "center",
                   borderRadius: "100px",
@@ -984,14 +989,14 @@ const RenderField = ({
               ></div>
               <span
                 style={{
-                  color: values[column.id],
+                  color: values && values[column.id] ? values[column.id] : "#000000",
                   backgroundColor: "#fff",
                   borderRadius: "8px",
                   paddingInline: 8,
                   fontSize: 14,
                 }}
               >
-                {values[column.id]}
+                {values && values[column.id] ? values[column.id] : "#000000"}
               </span>
             </Box>
           </Box>
@@ -1066,236 +1071,118 @@ const RenderField = ({
       }
     case FieldUiTypeEnum.Rating:
       if (currentMode !== "view" && !isPrint) {
-            return (
-              <Box
-                key={column.id}
+        return (
+          <Box
+            key={column.id}
+            sx={{
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              px: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              position: "relative",
+              borderRadius: "6px",
+              "&:hover": {
+                border: "1px solid rgba(0, 0, 0, 0.87)",
+              },
+            }}
+          >
+            <Typography
+              variant="body2"
+              component={"label"}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: 12,
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
+                ".focusedNeed:focus &": {},
+              }}
+            >
+              {column.name}
+            </Typography>
+            <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
+              <RatingField onRatingChange={handleRatingChange} />
+              <CheckboxRating/>
+              <NumericRating/>
+            </Box>
+          </Box>
+        );
+      } else {
+        return (
+          <>
+          <div className="focusedNeed" tabIndex={8}>
+            <Box
+              key={column.id}
+              className="markdownBox"
+              sx={{
+                border: "1px solid rgba(158, 158, 158, 0.32)",
+                p: 2,
+                position: "relative",
+                borderRadius: "6px",
+              }}
+            >
+              <Typography
+                variant="body2"
+                component={"label"}
                 sx={{
-                  border: "1px solid rgba(158, 158, 158, 0.32)",
-                  px: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  position: "relative",
-                  borderRadius: "6px",
-                  "&:hover": {
-                    border: "1px solid rgba(0, 0, 0, 0.87)",
-                  },
+                  textTransform: "capitalize",
+                  fontSize: 12,
+                  position: "absolute",
+                  top: "-10px",
+                  left: "10px",
+                  background: "#fff",
+                  zIndex: 2,
+                  px: 0.5,
+                  color: "rgba(0, 0, 0, 0.6)",
+                  ".focusedNeed:focus &": {},
                 }}
               >
-                <Typography
-                  variant="body2"
-                  component={"label"}
-                  sx={{
-                    textTransform: "capitalize",
-                    fontSize: 12,
-                    position: "absolute",
-                    top: "-10px",
-                    left: "10px",
-                    background: "#fff",
-                    zIndex: 2,
-                    px: 0.5,
-                    color: "rgba(0, 0, 0, 0.6)",
-                    ".focusedNeed:focus &": {},
-                  }}
-                >
-                  {column.name}
-                </Typography>
-                <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
-                  <RatingField onRatingChange={handleRatingChange} />
-                  <CheckboxRating/>
-                  <NumericRating/>
-                </Box>
-              </Box>
-            );
-          } else {
-            return (
-              <>
-              <div className="focusedNeed" tabIndex={8}>
-                <Box
-                  key={column.id}
-                  className="markdownBox"
-                  sx={{
-                    border: "1px solid rgba(158, 158, 158, 0.32)",
-                    p: 2,
-                    position: "relative",
-                    borderRadius: "6px",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    component={"label"}
-                    sx={{
-                      textTransform: "capitalize",
-                      fontSize: 12,
-                      position: "absolute",
-                      top: "-10px",
-                      left: "10px",
-                      background: "#fff",
-                      zIndex: 2,
-                      px: 0.5,
-                      color: "rgba(0, 0, 0, 0.6)",
-                      ".focusedNeed:focus &": {},
-                    }}
-                  >
-                    {column.name}
-                  </Typography>
-                </Box>
-              </div>
-    
-              <div className="focusedNeed" tabIndex={8}>
-              <Box
-                key={column.id}
-                className="markdownBox"
-                sx={{
-                  border: "1px solid rgba(158, 158, 158, 0.32)",
-                  p: 2,
-                  position: "relative",
-                  borderRadius: "6px",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  component={"label"}
-                  sx={{
-                    textTransform: "capitalize",
-                    fontSize: 12,
-                    position: "absolute",
-                    top: "-10px",
-                    left: "10px",
-                    background: "#fff",
-                    zIndex: 2,
-                    px: 0.5,
-                    color: "rgba(0, 0, 0, 0.6)",
-                  }}
-                >
-                  {column.name}
-                </Typography>
-                <Box>
-                  <DisplayRating rating={rating} />
-                </Box>
-              </Box>
-            </div>
-            </>
-            );}
+                {column.name}
+              </Typography>
+            </Box>
+          </div>
 
-      // const [rating, setRating] = React.useState<number | null>(null);
-
-      // const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
-      //   setRating(newValue)};
-      //   if (currentMode !== "view" && !isPrint) {
-      //     return (
-      //       <Box
-      //         key={column.id}
-      //         sx={{
-      //           border: "1px solid rgba(158, 158, 158, 0.32)",
-      //           px: 2,
-      //           display: "flex",
-      //           alignItems: "center",
-      //           justifyContent: "space-between",
-      //           position: "relative",
-      //           borderRadius: "6px",
-      //           "&:hover": {
-      //             border: "1px solid rgba(0, 0, 0, 0.87)",
-      //           },
-      //         }}
-      //       >
-      //         <Typography
-      //           variant="body2"
-      //           component={"label"}
-      //           sx={{
-      //             textTransform: "capitalize",
-      //             fontSize: 12,
-      //             position: "absolute",
-      //             top: "-10px",
-      //             left: "10px",
-      //             background: "#fff",
-      //             zIndex: 2,
-      //             px: 0.5,
-      //             color: "rgba(0, 0, 0, 0.6)",
-      //             ".focusedNeed:focus &": {},
-      //           }}
-      //         >
-      //           {column.name}
-      //         </Typography>
-      //         <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
-      //           <Rating
-      //           name="rating-stars"
-      //           value={rating}
-      //           onChange={handleRatingChange}
-      //           />
-      //         </Box>
-      //       </Box>
-      //     );
-      //   } else {
-      //     return (
-      //       <>
-      //       <div className="focusedNeed" tabIndex={8}>
-      //         <Box
-      //           key={column.id}
-      //           className="markdownBox"
-      //           sx={{
-      //             border: "1px solid rgba(158, 158, 158, 0.32)",
-      //             p: 2,
-      //             position: "relative",
-      //             borderRadius: "6px",
-      //           }}
-      //         >
-      //           <Typography
-      //             variant="body2"
-      //             component={"label"}
-      //             sx={{
-      //               textTransform: "capitalize",
-      //               fontSize: 12,
-      //               position: "absolute",
-      //               top: "-10px",
-      //               left: "10px",
-      //               background: "#fff",
-      //               zIndex: 2,
-      //               px: 0.5,
-      //               color: "rgba(0, 0, 0, 0.6)",
-      //               ".focusedNeed:focus &": {},
-      //             }}
-      //           >
-      //             {column.name}
-      //           </Typography>
-      //         </Box>
-      //       </div>
-  
-      //       <div className="focusedNeed" tabIndex={8}>
-      //       <Box
-      //         key={column.id}
-      //         className="markdownBox"
-      //         sx={{
-      //           border: "1px solid rgba(158, 158, 158, 0.32)",
-      //           p: 2,
-      //           position: "relative",
-      //           borderRadius: "6px",
-      //         }}
-      //       >
-      //         <Typography
-      //           variant="body2"
-      //           component={"label"}
-      //           sx={{
-      //             textTransform: "capitalize",
-      //             fontSize: 12,
-      //             position: "absolute",
-      //             top: "-10px",
-      //             left: "10px",
-      //             background: "#fff",
-      //             zIndex: 2,
-      //             px: 0.5,
-      //             color: "rgba(0, 0, 0, 0.6)",
-      //           }}
-      //         >
-      //           {column.name}
-      //         </Typography>
-      //         <Box>
-      //           <Rating name="rating-stars" value={rating} readOnly />
-      //         </Box>
-      //       </Box>
-      //     </div>
-      //     </>
-      //     );}
+          <div className="focusedNeed" tabIndex={8}>
+          <Box
+            key={column.id}
+            className="markdownBox"
+            sx={{
+              border: "1px solid rgba(158, 158, 158, 0.32)",
+              p: 2,
+              position: "relative",
+              borderRadius: "6px",
+            }}
+          >
+            <Typography
+              variant="body2"
+              component={"label"}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: 12,
+                position: "absolute",
+                top: "-10px",
+                left: "10px",
+                background: "#fff",
+                zIndex: 2,
+                px: 0.5,
+                color: "rgba(0, 0, 0, 0.6)",
+              }}
+            >
+              {column.name}
+            </Typography>
+            <Box>
+              <DisplayRating rating={rating} />
+            </Box>
+          </Box>
+        </div>
+        </>
+        );
+      }
     case FieldUiTypeEnum.Lookup:
       return (
         <LookupField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
@@ -1309,7 +1196,7 @@ const RenderField = ({
               isSubmit={submit} 
               mode={(currentMode==='view'|| isPrint)?'view':currentMode} 
               column={column}
-              selectedLink={values[column.id]??{linkValue:'',name:''}}
+              selectedLink={values && values[column.id] ? values[column.id] : {linkValue:'',name:''}}
               onLinkChange={(value: any) => {
                 setValues({ ...values, [column.id]: value });
               }}

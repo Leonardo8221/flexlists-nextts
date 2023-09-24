@@ -62,7 +62,8 @@ import {
   getLocalDateTimeFromString,
   getLocalTimeFromString,
   getLocalDateFromString,
-  getDifferneceWithCurrent
+  getDifferneceWithCurrent,
+  convertToInteger
 } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
@@ -110,7 +111,7 @@ const DataTable = ({
   const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
     useState(false);
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedRowData, setSelectedRowData] = useState(null);
+  const [selectedRowData, setSelectedRowData] = useState<any[]>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: currentView.limit ?? 25,
@@ -128,6 +129,12 @@ const DataTable = ({
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
 
   const bulkActions = [
+    {
+      title: t("Edit"),
+      icon: <EditIcon sx={{ width: { xs: 16, lg: 20 } }} />,
+      action: "edit",
+      allowed: hasPermission(currentView?.role, "Update"),
+    },
     {
       title: t("Clone"),
       icon: <ContentCopyIcon sx={{ width: { xs: 16, lg: 20 } }} />,
@@ -165,7 +172,7 @@ const DataTable = ({
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
-        setSelectedRowData(currentRow);
+        setSelectedRowData([currentRow]);
         if (mode === "view") {
           setVisibleAddRowPanel(true);
         }
@@ -197,6 +204,7 @@ const DataTable = ({
     }
 
     setToggleBulkAction(false);
+    setRowSelection({});
   }, [rows, router.query]);
 
   useEffect(() => {
@@ -642,13 +650,13 @@ const DataTable = ({
   const handleNewRowPanel = (values: any) => {
     setMode("create");
     setVisibleAddRowPanel(true);
-    setSelectedRowData(values);
+    setSelectedRowData([values]);
     setRowSelection({});
   };
 
   const editRow = (row: any) => {
     setMode("view");
-    setSelectedRowData(rows[row.index]);
+    setSelectedRowData([rows[row.index]]);
     setVisibleAddRowPanel(true);
   };
   const handleOpenFieldManagementPanel = () => {
@@ -662,6 +670,13 @@ const DataTable = ({
 
   const handleBulkAction = async (action: string) => {
     switch (action) {
+      case "edit":
+        const selectedRows = rows.filter((row: any) => Object.keys(rowSelection).map((key: any) => parseInt(key)).includes(row.id));
+
+        setMode("update");
+        setSelectedRowData(selectedRows);
+        setVisibleAddRowPanel(true);
+        return;
       case "clone":
         let cloneResponse = await cloneContent(
           currentView.id,
@@ -880,9 +895,12 @@ const DataTable = ({
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
-                  background: isReadContent(row.id)
-                    ? "none"
-                    : "rgb(84, 166, 251)",
+                  background: !isReadContent(row.id)
+                    ? "rgb(84, 166, 251, 0.5)" :
+                    router.query.contentId && convertToInteger(router.query.contentId) === row.id
+                    ? "rgb(84, 166, 251)"
+                    : "none",
+                  // ml: "64px",
                 },
               },
             })}
@@ -921,9 +939,11 @@ const DataTable = ({
                 //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
-                background: isReadContent(row.id)
-                  ? "none"
-                  : "rgba(84, 166, 251, 0.05)",
+                background: !isReadContent(row.id)
+                  ? "rgba(84, 166, 251, 0.05)" :
+                  router.query.contentId && convertToInteger(router.query.contentId) === row.id
+                  ? "rgba(84, 166, 251, 0.2)"
+                  : "none",
               }),
             })}
             muiBottomToolbarProps={{
