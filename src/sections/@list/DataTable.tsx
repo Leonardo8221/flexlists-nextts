@@ -62,6 +62,7 @@ import {
   getLocalDateTimeFromString,
   getLocalTimeFromString,
   getLocalDateFromString,
+  getDifferneceWithCurrent
 } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
@@ -316,7 +317,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocalDateTimeFromString(cellValue)
+                      ? `${getLocalDateTimeFromString(cellValue)} (${getDifferneceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -332,7 +333,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocalDateFromString(cellValue)
+                      ? `${getLocalDateFromString(cellValue)} (${getDifferneceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
