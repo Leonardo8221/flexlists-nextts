@@ -18,7 +18,8 @@ const initialState = {
   message: {},
   viewTemplate:{},
   defaultPreset:{},
-  readContents:[]
+  readContents:[],
+  currentListViews:[]
 };
 const viewReducer = (state = initialState, action: any) => {
   switch (action.type) {
@@ -53,6 +54,8 @@ const viewReducer = (state = initialState, action: any) => {
       return { ...state, defaultPreset: action.payload }
     case 'SET_READ_CONTENTS':
       return { ...state, readContents: action.payload }
+    case 'SET_CURRENT_LIST_VIEWS':
+      return { ...state, currentListViews: action.payload }
     default:
       return state;
   }

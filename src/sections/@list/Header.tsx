@@ -35,6 +35,7 @@ import { renderHTML, convertToInteger } from "src/utils/convertUtils";
 import { listViewService } from 'src/services/listView.service';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { listService } from "src/services/list.service";
 
 type HeaderProps = {
   currentView: View;
@@ -64,6 +65,7 @@ const Header = ({
     useState<boolean>(false);
   const [isDeleteOpenModal, setIsDeleteOpenModal] = useState<boolean>(false);
   const [isArchiveOpenModal, setIsArchiveOpenModal] = useState<boolean>(false);
+  const [isDeleteListOpenModal, setIsDeleteListOpenModal] = useState<boolean>(false);
   const [isEditViewConfigOpenModal, setIsEditViewConfigOpenModal] =
     useState<boolean>(false);
   const [parentViews, setParentViews] = useState<any[]>([]);
@@ -182,7 +184,25 @@ const Header = ({
       });
     }
   };
-
+  const handleDeleteList = async () => {
+    setIsDeleteListOpenModal(true);
+  }
+  const deleteList = async () => {
+    setIsDeleteListOpenModal(false);
+    let response = await listService.softDeleteList(currentView?.listId);
+    if (isSucc(response)) {
+      setFlashMessage({
+        message: "List deleted successfully",
+        type: "success",
+      });
+      await router.push({ pathname: PATH_MAIN.lists });
+    } else {
+      setFlashMessage({
+        message: (response as FlexlistsError).message,
+        type: "error",
+      });
+    }
+  };
   return (
     <Box
       sx={{
@@ -274,6 +294,16 @@ const Header = ({
                     ? t("Rename List")
                     : t("Rename View")}
                 </CDropdownItem>
+                {
+                  currentView?.isDefaultView &&
+                  <CDropdownItem
+                  href="#"
+                  key={"delete_list"}
+                  onClick={() => handleDeleteList()}
+                >
+                  {t("Delete List")}
+                </CDropdownItem>
+                }
                 {!currentView?.isDefaultView && (
                   <>
                     <CDropdownItem
@@ -521,7 +551,8 @@ const Header = ({
             translations={translations}
             handleClose={() => setIsEditViewConfigOpenModal(false)}
           />
-          <YesNoDialog
+          {
+            isArchiveOpenModal && <YesNoDialog
             title={t("Archive View")}
             submitText={t("Archive")}
             message={t("Sure Archive")}
@@ -532,6 +563,21 @@ const Header = ({
               handleArchive();
             }}
           />
+          }
+          {
+            isDeleteListOpenModal && <YesNoDialog
+            title={t("Delete List")}
+            submitText={t("Delete")}
+            message={t("Sure Delete List")}
+            open={isDeleteListOpenModal}
+            translations={translations}
+            handleClose={() => setIsDeleteListOpenModal(false)}
+            onSubmit={() => {
+              deleteList();
+            }}
+          />
+          }
+          
         </>
       )}
     </Box>
