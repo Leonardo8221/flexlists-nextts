@@ -116,7 +116,12 @@ const Views = ({
 
       if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
-          setViews(response.data);
+          if (isDefaultViews) {
+            setViews(response.data);
+          } else
+          {
+            setViews(response.data.filter((view:View) => !view.isDefaultView));
+          }
         } else {
           if (!isArchived) {
             setMessage({

@@ -18,7 +18,7 @@ export const listService = {
   //publishList,
   shareList,
   undoList,
-  truncateList,
+  softDeleteList,
   getLists,
   getList,
   copyList,
@@ -62,8 +62,8 @@ async function undoList(): Promise<FlexlistsError | FlexlistsSuccess> {
   var response = await axios.get<FlexlistsError | FlexlistsSuccess>('/api/list/undoList')
   return response.data;
 };
-async function truncateList(id: number): Promise<FlexlistsError | FlexlistsSuccess> {
-  var response = await axios.delete<FlexlistsError | FlexlistsSuccess>(`/api/list/truncateList` + `?id=${id}`);
+export async function softDeleteList(id: number): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.delete<FlexlistsError | FlexlistsSuccess>(`/api/list/softDeleteList` + `?id=${id}`);
 
   return response.data;
 };
