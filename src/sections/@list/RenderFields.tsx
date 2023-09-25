@@ -182,7 +182,7 @@ const RenderField = ({
           value={values ? values[column.id] : ""}
           rows={4}
           required={column.required}
-          error={submit && column.required && !values[column.id]}
+          error={submit && column.required && (values[column.id]==null || values[column.id]==undefined) }
         />
       ) : (
         <div key={column.id}>
