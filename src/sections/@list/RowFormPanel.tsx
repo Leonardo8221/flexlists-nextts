@@ -53,7 +53,7 @@ interface RowFormProps {
   mode: "view" | "create" | "update" | "comment";
   translations: TranslationText[];
   onClose: () => void;
-  onSubmit: (values: any, action: string) => void;
+  onSubmit: (values: any, action: string, id?: number) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
   setReadContent: (viewId: number,contentId:number) => void;
   removeReadContent: (viewId: number,contentId:number) => void;
@@ -143,11 +143,7 @@ const RowFormPanel = ({
       rowData[0].id &&
       rowData[0].id > 0
     ) {
-      const { query } = router;
-      router.replace({
-        pathname: router.pathname,
-        query: { ...query, ["contentId"]: rowData[0].id },
-      });
+      window.history.pushState( {} , '', '?contentId=' + rowData[0].id );
       setReadContent(currentView.id,rowData[0].id);
     }
 
@@ -292,7 +288,7 @@ const RowFormPanel = ({
               pathname: router.pathname,
               query: { ...query, ["contentId"]: values.id },
             });
-            onSubmit(values, "create");
+            onSubmit(values, "create", values.id);
           } else {
             setFlashMessage({
               message: (createRowResponse as FlexlistsError).message,
