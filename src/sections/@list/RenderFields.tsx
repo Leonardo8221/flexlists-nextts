@@ -182,7 +182,7 @@ const RenderField = ({
           value={values ? values[column.id] : ""}
           rows={4}
           required={column.required}
-          error={submit && column.required && !values[column.id]}
+          error={submit && column.required && (values[column.id]==null || values[column.id]==undefined) }
         />
       ) : (
         <div key={column.id}>
@@ -271,7 +271,11 @@ const RenderField = ({
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DatePicker
             sx={{ width: '100%' }}
-            value={values ? dayjs(values[column.id]) : null}
+            value={
+              values && values[column.id] && values[column.id] != null
+                ? dayjs(values[column.id])
+                : null
+            }
             label={column.name}
             onChange={(x) => {
               setDateValue(column.id, x);
