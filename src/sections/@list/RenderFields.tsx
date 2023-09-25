@@ -271,7 +271,11 @@ const RenderField = ({
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DatePicker
             sx={{ width: '100%' }}
-            value={values ? dayjs(values[column.id]) : null}
+            value={
+              values && values[column.id] && values[column.id] != null
+                ? dayjs(values[column.id])
+                : null
+            }
             label={column.name}
             onChange={(x) => {
               setDateValue(column.id, x);

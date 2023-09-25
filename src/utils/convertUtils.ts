@@ -142,8 +142,7 @@ export function getLocalDateTimeFromString(dateTime: string): string {
 }
 
 export function getDifferneceWithCurrent(dateTime: string): string {
-  const diff = (new Date()).getTime() - (new Date(dateTime)).getTime();
-  const sign = diff > 0 ? 'ago' : 'later';
+  const diff = Math.abs((new Date()).getTime() - (new Date(dateTime)).getTime());
   let seconds = Math.floor(Math.abs(diff) / 1000);
   let minutes = Math.floor(seconds / 60);
   let hours = Math.floor(minutes / 60);
@@ -153,13 +152,19 @@ export function getDifferneceWithCurrent(dateTime: string): string {
   minutes = minutes - (days * 24 * 60) - (hours * 60);
   seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60);
 
-  if (days > 365) return `2 years ${sign}`;
-  else if (days > 30) return `5 months ${sign}`;
-  else if (days > 7) return `3 weeks ${sign}`;
-  else if (days > 0) return `4 days ${sign}`;
-  else if (hours > 0) return `20 hours ${sign}`;
-  else if (minutes > 0) return `30 minutes ${sign}`;
-  else return `30 seconds ${sign}`;
+  if ((new Date()).getTime() - (new Date(dateTime)).getTime() > 0) {
+    if (days > 365) return `2 years ago`;
+    else if (days > 30) return `5 months ago`;
+    else if (days > 7) return `3 weeks ago`;
+    else if (days > 0) return `4 days ago`;
+    else if (hours > 0) return `20 hours ago`;
+    else if (minutes > 0) return `30 minutes ago`;
+    else return `30 seconds ago`;
+  } else {
+    const str = `${days > 365 ? days % 365 + ' year' + (days % 365 > 1 ? 's' : '') + '-' : ''}${days > 30 ? days % 30 + ' month' + (days % 30 > 1 ? 's' : '') + '-' : ''}${days > 0 ? days + ' day' + (days > 1 ? 's' : '') + '-' : ''}${hours > 0 ? hours + ' hour' + (hours > 1 ? 's' : '') + '-' : ''}${minutes > 0 ? minutes + ' minute' + (minutes > 1 ? 's' : '') + '-' : ''}${seconds > 0 ? seconds + ' seconds' : ''}`;
+
+    return `in ${str.split('-')[0]}`;
+  }
 }
 
 export function getDateFormatString(locale = 'en-US') {
