@@ -212,8 +212,8 @@ export default function ChoiceConfig ({
                     height: 18,
                     display: 'inline-block',
                     bgcolor: theme.palette.palette_style.text.primary,
-                    mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-                    WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+                    mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+                    WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
                     cursor: 'pointer',
                     marginTop: 1.2
                   }}

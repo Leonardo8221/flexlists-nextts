@@ -44,6 +44,7 @@ import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { removeReadContent, setReadContent } from "src/redux/actions/viewActions";
 import Tooltip from '@mui/material/Tooltip';
+import { isValidFieldValue } from "src/utils/flexlistHelper";
 
 interface RowFormProps {
   currentView: View;
@@ -182,12 +183,14 @@ const RowFormPanel = ({
     if (values) {
       for (const column of columns) {
         if (
-          !column.system &&
-          column.required &&
-          (!values[column.id] || values[column.id] === null)
+          !column.system
         ) {
-          validator = false;
-          requiredErrorFields.push(column.name);
+          let isValid = await isValidFieldValue(column.uiField,values[column.id],column.required);
+          if(!isValid)
+          {
+            validator = false;
+            requiredErrorFields.push(column.name);
+          }
         }
         if(column.uiField === FieldUiTypeEnum.Link)
         {
@@ -206,14 +209,14 @@ const RowFormPanel = ({
               otherErrorFields.push(`${column.name} is invalid link`);
             }
           }
-          else
-          {
-            if(column.required)
-            {
-              validator = false;
-              requiredErrorFields.push(column.name);
-            }
-          }
+          // else
+          // {
+          //   if(column.required)
+          //   {
+          //     validator = false;
+          //     requiredErrorFields.push(column.name);
+          //   }
+          // }
         }
       }
      
