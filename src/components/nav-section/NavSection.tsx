@@ -82,12 +82,12 @@ function NavItem({ item, open, pathname }: NavItemProps) {
               // backgroundRepeat: "no-repeat",
               borderRadius: "8px",
               backgroundColor:
-                pathname === path
+                pathname === path || pathname.indexOf(path) > -1
                   ? theme.palette.palette_style.primary.main
                   : theme.palette.palette_style.primary.lighter,
               "& .MuiSvgIcon-root": {
                 color:
-                  pathname === path
+                  pathname === path || pathname.indexOf(path) > -1
                     ? theme.palette.palette_style.text.white
                     : theme.palette.palette_style.primary.main,
               },
