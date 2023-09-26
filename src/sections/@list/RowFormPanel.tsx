@@ -145,11 +145,7 @@ const RowFormPanel = ({
       rowData[0].id &&
       rowData[0].id > 0
     ) {
-      const { query } = router;
-      router.replace({
-        pathname: router.pathname,
-        query: { ...query, ["contentId"]: rowData[0].id },
-      });
+      window.history.pushState( {} , '', '?contentId=' + rowData[0].id );
       setReadContent(currentView.id,rowData[0].id);
     }
 

@@ -169,6 +169,10 @@ const DataTable = ({
   ];
 
   useEffect(() => {
+    fetchRowsByPage(0, currentView.limit ?? 25);
+  }, []);
+
+  useEffect(() => {
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
