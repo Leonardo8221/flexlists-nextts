@@ -258,7 +258,7 @@ const DataTable = ({
 
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
-        header: dataColumn.viewFieldName,
+        header: dataColumn.system ? t(dataColumn.viewFieldName) : dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
             {fieldIcon && (
