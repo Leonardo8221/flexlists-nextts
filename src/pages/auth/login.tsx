@@ -40,6 +40,7 @@ import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
 import { setReturnUrl } from "src/redux/actions/adminAction";
 import Head from 'next/head';
+import LoadingPage from "../LoadingPage";
 
 interface LoginProps {
   message: any;
@@ -326,7 +327,7 @@ const Login = ({
   };
 
   return (
-    <>
+    <LoadingPage>
       <Head>
         <title>{t("Page Title")}</title>
         <meta name="description" content={t("Meta Description")} />
@@ -477,7 +478,7 @@ const Login = ({
           </Box>
         </Container>
       </Box>
-    </>
+    </LoadingPage>
   );
 };
 

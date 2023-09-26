@@ -23,6 +23,7 @@ import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import LoadingPage from "../LoadingPage";
 
 const theme = createTheme({
   components: {
@@ -282,7 +283,8 @@ const VerifyEmail = ({
   };
 
   return (
-    <Box sx={styles?.body}>
+    <LoadingPage>
+      <Box sx={styles?.body}>
       <Container
         maxWidth="sm"
         sx={{
@@ -451,6 +453,8 @@ const VerifyEmail = ({
         </Grid>
       </Container>
     </Box>
+    </LoadingPage>
+    
   );
 };
 
