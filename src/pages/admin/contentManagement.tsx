@@ -77,6 +77,7 @@ const ContentManagement = ({ setFlashMessage }: ContentMangementProps) => {
           message: "Importing Content Management Successfully",
           type: "success",
         });
+        router.reload();
       } else {
         setFlashMessage({
           message: (response as FlexlistsError).message,
