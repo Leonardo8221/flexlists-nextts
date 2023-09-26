@@ -334,7 +334,7 @@ const ListFields = ({
                                       whiteSpace: "nowrap",
                                     }}
                                   >
-                                    {field.name}
+                                    {field.system ? t(field.name) : field.name}
                                   </Box>
                                 </Box>
                                 <Box

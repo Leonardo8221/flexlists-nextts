@@ -624,7 +624,7 @@ const Filter = ({
                                 marginRight: { xs: 0.2, md: 1 },
                               }}
                             />
-                            <Box>{column.name}</Box>
+                            <Box>{column.system ? t(column.name) : column.name}</Box>
                           </MenuItem>
                         );
                       })}
