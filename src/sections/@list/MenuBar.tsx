@@ -10,17 +10,19 @@ import { isSucc } from "src/models/ApiResponse";
 import { ViewType } from "src/enums/SharedEnums";
 import { PATH_MAIN } from "src/routes/paths";
 import { hasPermission } from "src/utils/permissionHelper";
-import { renderHTML } from "src/utils/convertUtils";
+import { renderHTML, convertToNumber } from "src/utils/convertUtils";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { setCurrentListViews } from "src/redux/actions/viewActions";
 
 type MenuBarProps = {
   search?: string;
   currentView: View;
   translations: TranslationText[];
+  setCurrentListViews: (views: View[]) => void;
 };
 
-export function MenuBar({ search, currentView, translations }: MenuBarProps) {
+function MenuBar({ search, currentView, translations,setCurrentListViews }: MenuBarProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
@@ -34,11 +36,12 @@ export function MenuBar({ search, currentView, translations }: MenuBarProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // setSelectedViewId(router.pathname.split("/")[1]);
-  }, [router.pathname]);
+    if (router.query.viewId) setSelectedViewId(convertToNumber(router.query.viewId));
+    if (router.query.defaultListViewId) setSelectedViewId(convertToNumber(router.query.defaultListViewId));
+  }, [router.isReady]);
 
   const handleMenu = async (view: View) => {
-    // setSelectedViewId(value);
+    setSelectedViewId(view.id);
     if (view.isDefaultView) {
       await router.push(`${PATH_MAIN.lists}/${view.id}`);
     } else {
@@ -51,6 +54,7 @@ export function MenuBar({ search, currentView, translations }: MenuBarProps) {
       var response = await listViewService.getViews(currentView.id);
       if (isSucc(response) && response.data && response.data.length > 0) {
         setViews(response.data);
+        setCurrentListViews(response.data)
         setFilerViews(response.data);
       }
     }
@@ -206,7 +210,9 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setCurrentListViews
+};
 export default connect(mapStateToProps, mapDispatchToProps)(MenuBar);
 type MenuItemProps = {
   menu: View;

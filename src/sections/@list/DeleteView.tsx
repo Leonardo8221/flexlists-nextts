@@ -14,17 +14,20 @@ import { useRouter } from "next/router";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
-import { TranslationText } from "src/models/SharedModels";
+import { TranslationText, View } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { connect } from "react-redux";
+import { setCurrentListViews } from "src/redux/actions/viewActions";
 
 type DeleteViewProps = {
   viewId: number;
   open: boolean;
   translations: TranslationText[];
   handleClose: () => void;
+  currentListViews:View[];
 };
 
-const DeleteView = ({ viewId, open, translations, handleClose }: DeleteViewProps) => {
+const DeleteView = ({ viewId, open, translations, handleClose ,currentListViews}: DeleteViewProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
@@ -32,7 +35,16 @@ const DeleteView = ({ viewId, open, translations, handleClose }: DeleteViewProps
   const onSubmit = async () => {
     let response = await listViewService.softDeleteView(viewId)
     if (isSucc(response)) {
-      await router.push(PATH_MAIN.views)
+      let defaultView = currentListViews.find(x=>x.isDefaultView);
+      if(defaultView)
+      {
+        await router.push(`${PATH_MAIN.lists}/${defaultView.id}`)
+      }
+      else
+      {
+        await router.push(PATH_MAIN.views)
+      }
+      
     }
   }
   return (
@@ -59,4 +71,11 @@ const DeleteView = ({ viewId, open, translations, handleClose }: DeleteViewProps
     </CentralModal>
   );
 };
-export default DeleteView;
+const mapStateToProps = (state: any) => ({
+  currentListViews: state.view.currentListViews,
+});
+
+const mapDispatchToProps = {
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeleteView);

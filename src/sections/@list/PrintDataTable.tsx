@@ -199,7 +199,7 @@ interface PrintDataTableProps {
           {rows.map((row, index) => (
             <TableRow key={index}>
               {columns.map((column) => (
-                <TableCell key={column.id}>{renderFieldData(row,column,row[getDataColumnId(column.id,columns)])}</TableCell>
+                row && <TableCell key={column.id}>{renderFieldData(row,column,row[getDataColumnId(column.id,columns)])}</TableCell>
               ))}
             </TableRow>
           ))}

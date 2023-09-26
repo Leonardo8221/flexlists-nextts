@@ -62,7 +62,7 @@ const ViewFooter = (props: Props) => {
       </Stack>
 
       <RowFormPanel
-        rowData={rowData}
+        rowData={[rowData]}
         columns={columns}
         onSubmit={handleNewRow}
         open={visibleAddRowPanel}

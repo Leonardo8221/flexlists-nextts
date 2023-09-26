@@ -8,6 +8,7 @@ import {
   Drawer,
   Box,
   Typography,
+  Checkbox
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "src/hooks/useResponsive";
@@ -43,16 +44,17 @@ import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { removeReadContent, setReadContent } from "src/redux/actions/viewActions";
 import Tooltip from '@mui/material/Tooltip';
+import { isValidFieldValue } from "src/utils/flexlistHelper";
 
 interface RowFormProps {
   currentView: View;
-  rowData: any;
+  rowData: any[];
   columns: any[];
   open: boolean;
   mode: "view" | "create" | "update" | "comment";
   translations: TranslationText[];
   onClose: () => void;
-  onSubmit: (values: any, action: string) => void;
+  onSubmit: (values: any, action: string, id?: number) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
   setReadContent: (viewId: number,contentId:number) => void;
   removeReadContent: (viewId: number,contentId:number) => void;
@@ -77,7 +79,7 @@ const RowFormPanel = ({
   const router = useRouter();
   const componentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
-  const [values, setValues] = useState(rowData);
+  const [values, setValues] = useState(rowData[0]);
   const [submit, setSubmit] = useState(false);
   const [currentMode, setCurrentMode] = useState<
     "view" | "create" | "update" | "comment"
@@ -86,6 +88,8 @@ const RowFormPanel = ({
   const [panelWidth, setPanelWidth] = useState("500px");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [copySuccess, setCopySuccess] = useState(t("Copy to Clipboard"));
+  const [checkedFields, setCheckedFields] = useState<any[]>([]);
+
   const actions = [
     {
       title: t("Resize"),
@@ -130,22 +134,27 @@ const RowFormPanel = ({
   }, []);
 
   useEffect(() => {
-    setValues(rowData);
+    setValues(rowData.length > 1 ? null : rowData[0]);
     setSubmit(false);
     setCurrentMode(mode);
     if (
       router.isReady &&
       mode === "view" &&
-      rowData &&
-      rowData.id &&
-      rowData.id > 0
+      rowData.length &&
+      rowData[0].id &&
+      rowData[0].id > 0
     ) {
-      const { query } = router;
-      router.replace({
-        pathname: router.pathname,
-        query: { ...query, ["contentId"]: rowData.id },
+      window.history.pushState( {} , '', '?contentId=' + rowData[0].id );
+      setReadContent(currentView.id,rowData[0].id);
+    }
+
+    if (rowData.length > 1) {
+      const fieldCheckStatus: any[] = [];
+      columns.map((column: any) => {
+        fieldCheckStatus.push({ id: column.id, checked: false });
       });
-      setReadContent(currentView.id,rowData.id)
+
+      setCheckedFields(fieldCheckStatus);
     }
   }, [open, rowData, mode]);
 
@@ -153,6 +162,19 @@ const RowFormPanel = ({
     setSubmit(true);
     if (!values) {
       setFlashMessage({ message: "No values", type: "error" });
+      return;
+    } else {
+      if (rowData.length > 1) {
+        if (!checkedFields.find((checkedField: any) => checkedField.checked)) {
+          setFlashMessage({ message: "No selected fields", type: "error" });
+          return;
+        } else {
+          if (checkedFields.filter((checkedField: any) => checkedField.checked).find((checkedField: any) => !values[checkedField.id])) {
+            setFlashMessage({ message: "Empty value for selected field", type: "error" });
+            return;
+          }
+        }
+      }
     }
 
     let validator = true;
@@ -161,12 +183,14 @@ const RowFormPanel = ({
     if (values) {
       for (const column of columns) {
         if (
-          !column.system &&
-          column.required &&
-          (!values[column.id] || values[column.id] === null)
+          !column.system
         ) {
-          validator = false;
-          requiredErrorFields.push(column.name);
+          let isValid = await isValidFieldValue(column.uiField,values[column.id],column.required);
+          if(!isValid)
+          {
+            validator = false;
+            requiredErrorFields.push(column.name);
+          }
         }
         if(column.uiField === FieldUiTypeEnum.Link)
         {
@@ -185,33 +209,62 @@ const RowFormPanel = ({
               otherErrorFields.push(`${column.name} is invalid link`);
             }
           }
-          else
-          {
-            if(column.required)
-            {
-              validator = false;
-              requiredErrorFields.push(column.name);
-            }
-          }
+          // else
+          // {
+          //   if(column.required)
+          //   {
+          //     validator = false;
+          //     requiredErrorFields.push(column.name);
+          //   }
+          // }
         }
       }
      
       if (validator) {
         //update row data
-        if (rowData && rowData.id) {
-          var updateRowRespone = await listContentService.updateContent(
-            currentView.id,
-            values
-          );
-          if (isSucc(updateRowRespone)) {
-            onSubmit(values, "update");
-            removeReadContent(currentView.id,rowData.id)
-          } else {
-            setFlashMessage({
-              message: (updateRowRespone as FlexlistsError).message,
-              type: "error",
+        if (rowData.length && rowData[0].id) {
+          if (rowData.length > 1) {
+            const updatedContents = rowData.map((row: any) => {
+              const newRow = row;
+
+              for (const key in values) {
+                newRow[key] = values[key];
+              }
+
+              return newRow;
             });
-            return;
+
+            const updateRowRespone = await listContentService.updateContents(
+              currentView.id,
+              updatedContents
+            );
+            if (isSucc(updateRowRespone)) {
+              onSubmit(updatedContents, "update");
+              rowData.map((row: any) => {
+                removeReadContent(currentView.id, row.id)
+              });
+            } else {
+              setFlashMessage({
+                message: (updateRowRespone as FlexlistsError).message,
+                type: "error",
+              });
+              return;
+            }
+          } else {
+            const updateRowRespone = await listContentService.updateContent(
+              currentView.id,
+              values
+            );
+            if (isSucc(updateRowRespone)) {
+              onSubmit(values, "update");
+              removeReadContent(currentView.id, rowData[0].id)
+            } else {
+              setFlashMessage({
+                message: (updateRowRespone as FlexlistsError).message,
+                type: "error",
+              });
+              return;
+            }
           }
         } else {
           var createRowResponse = await listContentService.createContent(
@@ -238,7 +291,7 @@ const RowFormPanel = ({
               pathname: router.pathname,
               query: { ...query, ["contentId"]: values.id },
             });
-            onSubmit(values, "create");
+            onSubmit(values, "create", values.id);
           } else {
             setFlashMessage({
               message: (createRowResponse as FlexlistsError).message,
@@ -284,39 +337,62 @@ const RowFormPanel = ({
       }
       return;
     } else if (action === "clone") {
-      delete newValues.id;
-      var archiveField = columns.find(
-        (x) => x.system && x.name === "___archived"
+      let cloneResponse = await cloneContent(
+        currentView.id,
+        rowData.map((row: any) => {
+          if (row) {
+            delete row.id;
+            var archiveField = columns.find(
+              (x) => x.system && x.name === "___archived"
+            );
+            if (archiveField) {
+              row[archiveField.name] = row[archiveField.id];
+              delete row[archiveField.id];
+            }
+            return row;
+          }
+        })
       );
-      if (archiveField) {
-        newValues[archiveField.name] = newValues[archiveField.id];
-      }
-      var createRowResponse = await cloneContent(currentView.id, newValues);
       if (
-        isSucc(createRowResponse) &&
-        createRowResponse.data &&
-        createRowResponse.data.content &&
-        createRowResponse.data.content.length > 0
+        isSucc(cloneResponse) &&
+        cloneResponse.data &&
+        cloneResponse.data.content &&
+        cloneResponse.data.content.length > 0
       ) {
-        newValues.id = createRowResponse.data.content[0].id;
+        newValues.id = cloneResponse.data.content[0].id;
       } else {
         setFlashMessage({
           type: "error",
-          message: (createRowResponse as FlexlistsError).message,
+          message: (cloneResponse as FlexlistsError).message,
         });
         return;
       }
     } else if (action === "archive") {
-      var archiveField = columns.find(
+      let updateRowRespone: any;
+      const archiveField = columns.find(
         (x) => x.system && x.name === "___archived"
       );
-      if (archiveField) {
-        newValues[archiveField.id] = !values[archiveField.id];
+
+      if (rowData.length > 1) {
+        if (archiveField) {
+          newValues = rowData.map((row: any) => (
+            {...row, [archiveField.id]: !row[archiveField.id]}
+          ));
+        }
+        updateRowRespone = await listContentService.updateContents(
+          currentView.id,
+          newValues
+        );
+      } else {
+        if (archiveField) {
+          newValues[archiveField.id] = !values[archiveField.id];
+        }
+        updateRowRespone = await listContentService.updateContent(
+          currentView.id,
+          newValues
+        );
       }
-      var updateRowRespone = await listContentService.updateContent(
-        currentView.id,
-        newValues
-      );
+      
       if (isSucc(updateRowRespone)) {
         setFlashMessage({
           message: "Row archived successfully",
@@ -341,10 +417,20 @@ const RowFormPanel = ({
   };
 
   const handleDelete = async () => {
-    var deleteContentResponse = await listContentService.deleteContent(
-      currentView.id,
-      values.id
-    );
+    let deleteContentResponse: any;
+
+    if (rowData.length > 1) {
+      deleteContentResponse = await listContentService.deleteBulkContents(
+        currentView.id,
+        rowData.map((row: any) => row.id)
+      );
+    } else {
+      deleteContentResponse = await listContentService.deleteContent(
+        currentView.id,
+        values.id
+      );
+    }
+    
     if (isErr(deleteContentResponse)) {
       setFlashMessage({
         message: (deleteContentResponse as FlexlistsError).message,
@@ -408,6 +494,17 @@ const RowFormPanel = ({
   const copyUrlToClipboard = async () => {
     await navigator.clipboard.writeText(location.href);
     setCopySuccess(t("Copied to Clipboard"));
+  };
+
+  const handleCheckedFields = (e: any, column: any) => {
+    const newCheckedFields = checkedFields.map((checkedField) => {
+      if (checkedField.id === column.id) {
+        return {...checkedField, checked: e.target.checked};
+      }
+      return checkedField;
+    });
+
+    setCheckedFields(newCheckedFields);
   };
 
   return (
@@ -546,18 +643,26 @@ const RowFormPanel = ({
               }}
             >
               {currentMode !== "view" &&
-                values &&
                 filter(columns, (x) => !x.system).map((column: any) =>
-                  <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />
+                  <Box
+                    key={column.id}
+                    sx={{ display: 'flex', width: '100%' }}
+                  >
+                    {checkedFields.length > 1 && <Checkbox
+                      checked={checkedFields.find((field: any) => field.id === column.id).checked}
+                      onChange={(e) => { handleCheckedFields(e, column); }}
+                    />}
+                    <RenderFields column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} translations={translations} />
+                  </Box>
                 )}
               {currentMode === "view" &&
                 values &&
-                columns.map((column: any) => <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
+                columns.map((column: any) => <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} translations={translations} />)}
             </Stack>
           </form>
         )}
         {currentMode == "comment" && (
-          <ChatForm chatType={ChatType.RowData} id={rowData.id} translations={translations} />
+          <ChatForm chatType={ChatType.RowData} id={rowData[0].id} translations={translations} />
         )}
       </DialogContent>
 
@@ -630,7 +735,7 @@ const RowFormPanel = ({
               variant="contained"
               type="submit"
             >
-              {rowData && rowData.id ? t("Update Row") : t("Create New Row")}
+              {rowData.length && rowData[0].id ? t("Update Row") : t("Create New Row")}
             </Button>
           )}
           {hasPermission(currentView?.role, "Update") &&
@@ -667,8 +772,8 @@ const RowFormPanel = ({
                 paddingTop: 2,
               }}
             >
-              {values &&
-                columns.map((column: any) => <RenderFields key={column.id} column={column} isPrint={true} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
+              {
+                columns.map((column: any) => <RenderFields key={column.id} column={column} isPrint={true} currentMode={currentMode} values={rowData[0]} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} translations={translations} />)}
             </Stack>
           </div>
         </div>

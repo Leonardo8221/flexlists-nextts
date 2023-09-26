@@ -124,23 +124,31 @@ const FieldFormPanel = ({
         currentField.uiField as FieldUiTypeEnum
       );
     }
-    if (isCreating) {
-      if (
-        currentField.name &&
-        (currentField.name.toLowerCase() === "id" ||
-          currentField.name.toLowerCase() === "createdat" ||
-          currentField.name.toLowerCase() === "updatedat" ||
-          currentField.name.toLowerCase() === "___archived")
-      ) {
-        setError(`Field name cannot be ${currentField.name}`);
+    if (
+      currentField.name && !currentField.system &&
+      (currentField.name.toLowerCase() === "id" ||
+        currentField.name.toLowerCase() === "createdat" ||
+        currentField.name.toLowerCase() === "updatedat" ||
+        currentField.name.toLowerCase() === "___archived")
+    ) {
+      setError(`Field name cannot be ${currentField.name}`);
+      return;
+    }
+    if (currentField.uiField == FieldUiTypeEnum.Lookup || currentField.uiField == FieldUiTypeEnum.Sublist) {
+      if (!currentField.config.values) {
+        setError(`Empty field config`);
         return;
       }
-      if (currentField.uiField == FieldUiTypeEnum.Lookup || currentField.uiField == FieldUiTypeEnum.Sublist) {
-        if (!currentField.config.values) {
-          setError(`Empty field config`);
-          return;
-        }
+    }
+    if (currentField.uiField == FieldUiTypeEnum.Choice) {
+      if (!currentField.config||!currentField.config.values||currentField.config.values.length==0) {
+        setError(`Empty choice field config`);
+        return;
       }
+    }
+    if (isCreating) {
+      
+      
       var createFieldResponse = await fieldService.createUIField(
         viewId,
         currentField.name,
@@ -248,7 +256,6 @@ const FieldFormPanel = ({
     newField.config.values = newConfig;
     setCurrentField(newField);
   };
-
   const renderFieldConfigSwitch = (field: Field) => {
     var uiType = field.uiField;
     switch (uiType) {

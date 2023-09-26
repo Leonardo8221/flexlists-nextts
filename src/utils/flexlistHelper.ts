@@ -11,6 +11,7 @@ import { convertToInteger } from "./convertUtils";
 import { filter } from "lodash";
 import { getContent } from "src/services/listContent.service";
 import { isSucc } from "./responses";
+import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "./validatorHelper";
 
 export const getDefaultValues = (columns: ViewField[]): any => {
   var defautValues: any = {};
@@ -24,7 +25,7 @@ export const getDefaultValues = (columns: ViewField[]): any => {
         //   defaultValue = new Date().toISOString();
           break;
         case FieldUiTypeEnum.Choice:
-          defaultValue = column.config?.values[0]?.label;
+          defaultValue = column.config?.values?column.config?.values[0]?.label:'';
           break;
         case FieldUiTypeEnum.Boolean:
           defaultValue = false;
@@ -37,6 +38,36 @@ export const getDefaultValues = (columns: ViewField[]): any => {
       defautValues[column.id] = defaultValue;
     }
     return defautValues;
+}
+export const isValidFieldValue = async(fieldType: FieldUiTypeEnum,value:any,required:boolean): Promise<boolean> => {
+  let isValid :boolean = true;
+  let _errors: { [key: string]: string|boolean } = {}
+  let _setErrors = (e: { [key: string]: string|boolean }) => { 
+    _errors = e
+  } 
+  switch (fieldType) {
+    case FieldUiTypeEnum.Integer:
+      await frontendValidate(ModelValidatorEnum.GenericTypes,FieldValidatorEnum.integer,value,_errors,_setErrors,required)
+      if(isFrontendError(FieldValidatorEnum.integer,_errors)) 
+      {
+        isValid = false;
+      }
+      break;
+    case FieldUiTypeEnum.Boolean:
+      isValid = !required|| (required && value !== null && value !== undefined);
+      break;
+    case FieldUiTypeEnum.Decimal:
+    case FieldUiTypeEnum.Float:
+    case FieldUiTypeEnum.Double:
+    case FieldUiTypeEnum.Money:
+    case FieldUiTypeEnum.Percentage:
+      isValid = !required|| (required && value !== null && value !== undefined);
+      break;
+    default:
+      isValid = !required|| (required && value && value !== null && value !== undefined);
+      break;
+  }
+  return isValid;
 }
 export const getDataColumnId = (fieldId: number, columns: ViewField[]): string => {
     var field = columns.find((x) => x.id === fieldId);

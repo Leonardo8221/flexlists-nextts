@@ -12,6 +12,7 @@ export const listContentService = {
   createContent,
   cloneContent,
   updateContent,
+  updateContents,
   deleteBulkContents,
   deleteContent,
   archiveBulkContents,
@@ -33,6 +34,11 @@ export async function cloneContent(viewId: number, content: any): Promise<Flexli
 };
 export async function updateContent(viewId: number, content: any): Promise<FlexlistsError | FlexlistsSuccess> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/updateContent`, { viewId, content })
+
+  return response.data;
+};
+export async function updateContents(viewId: number, contents: any[], parentViewId?: number, parentFieldId?: number, parentContentId?: number): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/updateContents`, { viewId, contents, parentViewId, parentFieldId, parentContentId })
 
   return response.data;
 };

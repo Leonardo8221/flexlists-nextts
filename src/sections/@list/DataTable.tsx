@@ -62,6 +62,8 @@ import {
   getLocalDateTimeFromString,
   getLocalTimeFromString,
   getLocalDateFromString,
+  getDifferneceWithCurrent,
+  convertToInteger
 } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
@@ -109,7 +111,7 @@ const DataTable = ({
   const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
     useState(false);
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedRowData, setSelectedRowData] = useState(null);
+  const [selectedRowData, setSelectedRowData] = useState<any[]>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: currentView.limit ?? 25,
@@ -125,8 +127,15 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
+  const [selectedContentId, setSelectedContentId] = useState<number>();
 
   const bulkActions = [
+    {
+      title: t("Edit"),
+      icon: <EditIcon sx={{ width: { xs: 16, lg: 20 } }} />,
+      action: "edit",
+      allowed: hasPermission(currentView?.role, "Update"),
+    },
     {
       title: t("Clone"),
       icon: <ContentCopyIcon sx={{ width: { xs: 16, lg: 20 } }} />,
@@ -164,7 +173,7 @@ const DataTable = ({
     async function fetchContent() {
       let currentRow = await getRowContent(currentView.id, router, rows);
       if (currentRow) {
-        setSelectedRowData(currentRow);
+        setSelectedRowData([currentRow]);
         if (mode === "view") {
           setVisibleAddRowPanel(true);
         }
@@ -180,6 +189,7 @@ const DataTable = ({
     ) {
       fetchContent();
       setIsLoadedCurrentContent(true);
+      setSelectedContentId(convertToInteger(router.query.contentId));
     }
   }, [router.isReady, router.query.contentId, rows]);
 
@@ -196,6 +206,7 @@ const DataTable = ({
     }
 
     setToggleBulkAction(false);
+    setRowSelection({});
   }, [rows, router.query]);
 
   useEffect(() => {
@@ -249,7 +260,7 @@ const DataTable = ({
 
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
-        header: dataColumn.viewFieldName,
+        header: dataColumn.system ? t(dataColumn.viewFieldName) : dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
             {fieldIcon && (
@@ -316,7 +327,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocalDateTimeFromString(cellValue)
+                      ? `${getLocalDateTimeFromString(cellValue)} (${getDifferneceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -332,7 +343,7 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? getLocalDateFromString(cellValue)
+                      ? `${getLocalDateFromString(cellValue)} (${getDifferneceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -415,6 +426,9 @@ const DataTable = ({
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis",
+                      height:"32px",
+                      display:"flex",
+                      alignItems:"center"
                     }}
                   >
                     {/* {cellValue?.toString() === "true" ? "yes" : "no"} */}
@@ -596,20 +610,10 @@ const DataTable = ({
     setUpdatingTable(false);
   }, [columnsTable]);
 
-  const handleRowAction = (values: any, action: string) => {
+  const handleRowAction = (values: any, action: string, id?: number) => {
     fetchColumns(currentView.id);
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
-    return;
-    // if (action === "create" || action === "clone") {
-    //   var newRows = Object.assign([], rows);
-    //   newRows.push(values);
-    //   setRows(newRows);
-    // } else if (action === "update") {
-    //   setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
-    // } else if (action === "delete") {
-    //   setRows(rows.filter((row: any) => row.id !== values.id));
-    // } else {
-    // }
+    if (id) setSelectedContentId(id);
   };
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -638,14 +642,15 @@ const DataTable = ({
   const handleNewRowPanel = (values: any) => {
     setMode("create");
     setVisibleAddRowPanel(true);
-    setSelectedRowData(values);
+    setSelectedRowData([values]);
     setRowSelection({});
   };
 
   const editRow = (row: any) => {
     setMode("view");
-    setSelectedRowData(rows[row.index]);
+    setSelectedRowData([rows[row.index]]);
     setVisibleAddRowPanel(true);
+    setSelectedContentId(rows[row.index].id);
   };
   const handleOpenFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(true);
@@ -658,6 +663,13 @@ const DataTable = ({
 
   const handleBulkAction = async (action: string) => {
     switch (action) {
+      case "edit":
+        const selectedRows = rows.filter((row: any) => Object.keys(rowSelection).map((key: any) => parseInt(key)).includes(row.id));
+
+        setMode("update");
+        setSelectedRowData(selectedRows);
+        setVisibleAddRowPanel(true);
+        return;
       case "clone":
         let cloneResponse = await cloneContent(
           currentView.id,
@@ -876,9 +888,12 @@ const DataTable = ({
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
-                  background: isReadContent(row.id)
-                    ? "none"
-                    : "rgb(84, 166, 251)",
+                  background: selectedContentId === row.id
+                    ? "rgb(84, 166, 251)" :
+                    !isReadContent(row.id)
+                    ? "rgb(84, 166, 251, 0.5)"
+                    : "none",
+                  // ml: "64px",
                 },
               },
             })}
@@ -917,9 +932,11 @@ const DataTable = ({
                 //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
-                background: isReadContent(row.id)
-                  ? "none"
-                  : "rgba(84, 166, 251, 0.05)",
+                background: selectedContentId === row.id
+                  ? "rgba(84, 166, 251, 0.2)" :
+                  !isReadContent(row.id)
+                  ? "rgba(84, 166, 251, 0.05)"
+                  : "none",
               }),
             })}
             muiBottomToolbarProps={{
