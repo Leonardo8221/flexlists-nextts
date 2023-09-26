@@ -7,6 +7,7 @@ import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import Head from 'next/head';
+import PricingTable from "src/components/pricing/PricingTable";
 
 type SolutionsProps = {
   translations: TranslationText[];
@@ -36,6 +37,9 @@ const pricing = ({
         }}
       >
         <Container maxWidth="xl">
+          <Box sx={{py:4}}>
+          <PricingTable/>
+          </Box>
           <Grid
             container
             columnSpacing={8}
