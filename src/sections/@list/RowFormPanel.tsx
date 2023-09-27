@@ -54,7 +54,7 @@ interface RowFormProps {
   mode: "view" | "create" | "update" | "comment";
   translations: TranslationText[];
   onClose: () => void;
-  onSubmit: (values: any, action: string) => void;
+  onSubmit: (values: any, action: string, id?: number) => void;
   setFlashMessage: (message: FlashMessageModel | undefined) => void;
   setReadContent: (viewId: number,contentId:number) => void;
   removeReadContent: (viewId: number,contentId:number) => void;
@@ -292,7 +292,7 @@ const RowFormPanel = ({
               pathname: router.pathname,
               query: { ...query, ["contentId"]: values.id },
             });
-            onSubmit(values, "create");
+            onSubmit(values, "create", values.id);
           } else {
             setFlashMessage({
               message: (createRowResponse as FlexlistsError).message,
@@ -653,12 +653,12 @@ const RowFormPanel = ({
                       checked={checkedFields.find((field: any) => field.id === column.id).checked}
                       onChange={(e) => { handleCheckedFields(e, column); }}
                     />}
-                    <RenderFields column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />
+                    <RenderFields column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} translations={translations} />
                   </Box>
                 )}
               {currentMode === "view" &&
                 values &&
-                columns.map((column: any) => <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
+                columns.map((column: any) => <RenderFields key={column.id} column={column} currentMode={currentMode} values={values} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} translations={translations} />)}
             </Stack>
           </form>
         )}
@@ -774,7 +774,7 @@ const RowFormPanel = ({
               }}
             >
               {
-                columns.map((column: any) => <RenderFields key={column.id} column={column} isPrint={true} currentMode={currentMode} values={rowData[0]} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} />)}
+                columns.map((column: any) => <RenderFields key={column.id} column={column} isPrint={true} currentMode={currentMode} values={rowData[0]} submit={submit} setValues={setValues} setDateValue={setDateValue} setTimeValue={setTimeValue} translations={translations} />)}
             </Stack>
           </div>
         </div>

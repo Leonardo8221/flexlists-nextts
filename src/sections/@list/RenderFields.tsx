@@ -41,6 +41,8 @@ import RatingField from "src/components/rating-field/RatingField";
 import DisplayRating from "src/components/rating-field/DisplayRating";
 import CheckboxRating from "src/components/rating-field/CheckboxRating";
 import NumericRating from "src/components/rating-field/NumericRating";
+import { TranslationText } from "src/models/SharedModels";
+import { getTranslation } from "src/utils/i18n";
 
 type RenderFieldProps = {
   column: ViewField;
@@ -49,6 +51,7 @@ type RenderFieldProps = {
   values: any;
   submit: boolean;
   columns: any[];
+  translations: TranslationText[];
   setValues: (values: any[]) => void;
   setDateValue: (value: any, x: any) => void;
   setTimeValue: (value: any, x: any) => void;
@@ -61,10 +64,14 @@ const RenderField = ({
   values,
   submit,
   columns,
+  translations,
   setValues,
   setDateValue,
   setTimeValue
 }: RenderFieldProps) => {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const isDesktop = useResponsive("up", "md");
   
   const [rating, setRating] = useState<number | null>(null);
@@ -192,7 +199,7 @@ const RenderField = ({
               readOnly: true,
             }}
             InputLabelProps={{ shrink: true }}
-            label={column.name}
+            label={column.system ? t(column.name) : column.name}
             value={values ? values[getDataColumnId(column.id, columns)] : ""}
             sx={{
               "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -245,7 +252,7 @@ const RenderField = ({
               readOnly: true,
             }}
             InputLabelProps={{ shrink: true }}
-            label={column.name}
+            label={column.system ? t(column.name) : column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
                 ? `${getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])} (${getDifferneceWithCurrent(values[getDataColumnId(column.id, columns)])})`
@@ -549,7 +556,7 @@ const RenderField = ({
                 color: "rgba(0, 0, 0, 0.6)"
               }}
             >
-              {column.name}
+              {column.system ? t(column.name) : column.name}
             </Typography>
             <Box
               className="booleanWrapper"

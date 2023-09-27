@@ -420,7 +420,7 @@ const ViewFields = ({
                                     flexGrow={2}
                                     onClick={() => handleSelectField(column)}
                                   >
-                                    {column.viewFieldName}
+                                    {column.system ? t(column.viewFieldName) : column.viewFieldName}
                                   </Box>
                                 </Box>
                                 <Box

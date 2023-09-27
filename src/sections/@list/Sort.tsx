@@ -206,7 +206,7 @@ const SortPage = ({
                             marginRight: 1,
                           }}
                         />
-                        <Box>{column.name}</Box>
+                        <Box>{column.system ? t(column.name) : column.name}</Box>
                       </MenuItem>
                     )})}
                   </Select>

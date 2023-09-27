@@ -127,6 +127,7 @@ const DataTable = ({
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
+  const [selectedContentId, setSelectedContentId] = useState<number>();
 
   const bulkActions = [
     {
@@ -192,6 +193,7 @@ const DataTable = ({
     ) {
       fetchContent();
       setIsLoadedCurrentContent(true);
+      setSelectedContentId(convertToInteger(router.query.contentId));
     }
   }, [router.isReady, router.query.contentId, rows]);
 
@@ -262,7 +264,7 @@ const DataTable = ({
 
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
-        header: dataColumn.viewFieldName,
+        header: dataColumn.system ? t(dataColumn.viewFieldName) : dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
             {fieldIcon && (
@@ -612,20 +614,10 @@ const DataTable = ({
     setUpdatingTable(false);
   }, [columnsTable]);
 
-  const handleRowAction = (values: any, action: string) => {
+  const handleRowAction = (values: any, action: string, id?: number) => {
     fetchColumns(currentView.id);
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
-    return;
-    // if (action === "create" || action === "clone") {
-    //   var newRows = Object.assign([], rows);
-    //   newRows.push(values);
-    //   setRows(newRows);
-    // } else if (action === "update") {
-    //   setRows(rows.map((row: any) => (row.id === values.id ? values : row)));
-    // } else if (action === "delete") {
-    //   setRows(rows.filter((row: any) => row.id !== values.id));
-    // } else {
-    // }
+    if (id) setSelectedContentId(id);
   };
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -662,6 +654,7 @@ const DataTable = ({
     setMode("view");
     setSelectedRowData([rows[row.index]]);
     setVisibleAddRowPanel(true);
+    setSelectedContentId(rows[row.index].id);
   };
   const handleOpenFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(true);
@@ -899,10 +892,10 @@ const DataTable = ({
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
-                  background: !isReadContent(row.id)
-                    ? "rgb(84, 166, 251, 0.5)" :
-                    router.query.contentId && convertToInteger(router.query.contentId) === row.id
-                    ? "rgb(84, 166, 251)"
+                  background: selectedContentId === row.id
+                    ? "rgb(84, 166, 251)" :
+                    !isReadContent(row.id)
+                    ? "rgb(84, 166, 251, 0.5)"
                     : "none",
                   // ml: "64px",
                 },
@@ -943,10 +936,10 @@ const DataTable = ({
                 //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
-                background: !isReadContent(row.id)
-                  ? "rgba(84, 166, 251, 0.05)" :
-                  router.query.contentId && convertToInteger(router.query.contentId) === row.id
-                  ? "rgba(84, 166, 251, 0.2)"
+                background: selectedContentId === row.id
+                  ? "rgba(84, 166, 251, 0.2)" :
+                  !isReadContent(row.id)
+                  ? "rgba(84, 166, 251, 0.05)"
                   : "none",
               }),
             })}
