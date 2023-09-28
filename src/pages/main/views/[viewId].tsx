@@ -92,8 +92,6 @@ export const ViewDetail = ({
 
         setCurrentView(newView);
       }
-      
-      fetchRowsByPage(0, currentView.limit ?? 25);
     }
   }, [router.isReady, currentView?.id]);
   // useEffect(() => {

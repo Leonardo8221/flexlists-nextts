@@ -9,6 +9,7 @@ import { SearchType } from 'src/enums/SharedEnums'
 import { Query } from 'src/models/SharedModels'
 
 export const listContentService = {
+  reordercontents,
   createContent,
   cloneContent,
   updateContent,
@@ -22,6 +23,11 @@ export const listContentService = {
   search,
 };
 
+export async function reordercontents(viewId: number, sourceContentId: number, targetContentId: number): Promise<FlexlistsError | FlexlistsSuccess> {
+  var response = await axios.post<FlexlistsError | FlexlistsSuccess>(`/api/listContent/reorderContents`, { viewId, sourceContentId, targetContentId })
+
+  return response.data;
+};
 export async function createContent(viewId: number, content: any): Promise<FlexlistsError | FlexlistsSuccess<CreateContentOutputDto>> {
   var response = await axios.post<FlexlistsError | FlexlistsSuccess<CreateContentOutputDto>>(`/api/listContent/createContent`, { viewId, content })
 

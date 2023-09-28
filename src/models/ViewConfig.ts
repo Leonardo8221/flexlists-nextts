@@ -11,7 +11,6 @@ export type CalendarConfig = {
 
 export type KanbanConfig = {
     boardColumnId: number
-    orderColumnId: number
     titleId: number
 }
 

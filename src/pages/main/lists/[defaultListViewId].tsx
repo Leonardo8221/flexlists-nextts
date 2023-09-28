@@ -78,7 +78,6 @@ export const DefaultListViewDetail = ({
       isInteger(router.query.defaultListViewId)
     ) {
       fetchColumns(convertToNumber(router.query.defaultListViewId));
-      fetchRowsByPage(0, currentView.limit ?? 25);
     }
   }, [router.isReady, currentView?.id]);
 

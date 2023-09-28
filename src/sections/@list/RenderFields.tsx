@@ -397,7 +397,7 @@ const RenderField = ({
     case FieldUiTypeEnum.Choice:
       if (currentMode !== "view" && !isPrint) {
         return (
-          <FormControl sx={{width:"100%"}} key={column.id} required={column.required}>
+          <FormControl key={column.id} required={column.required} sx={{ width: '100%' }}>
             <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
               {column.name}
             </InputLabel>

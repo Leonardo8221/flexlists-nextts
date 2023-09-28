@@ -52,7 +52,6 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
 
     let newView: View = Object.assign({}, currentView);
     newView.conditions = [];
-    newView.order = [];
 
     for(let i = 0; i < boardColumns.length; i++) {
       const filter: FlatWhere = {
@@ -66,11 +65,6 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
       newView.conditions.push(filter);
       if (i < boardColumns.length -1) newView.conditions.push("Or");
     }
-
-    newView.order.push({
-      fieldId: currentView.config?.orderColumnId,
-      direction: "asc"
-    });
     
     setCurrentView(newView);
     fetchRows();
@@ -85,72 +79,41 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
     ) {
       return;
     }
+
+    const destColumn = boardColumns.find((x) => x.id.toString() === destination.droppableId);
+    const destTasks = rows.filter((row: any) => row[kanbanConfig.boardColumnId] === destColumn?.id);
+
     if (source.droppableId !== destination.droppableId) {
-       reorderRowMap(draggableId,source,destination)
+      // update content with destination board
+    }
+
+    reorderContents(parseInt(draggableId), destTasks[destination.index].id);
+  };
+
+  const reorderContents = async (sourceContentId: number, targetContentId: number) => {
+    const reorderContentResponse = await listContentService.reordercontents(
+      currentView.id,
+      sourceContentId,
+      targetContentId
+    );
+    
+    if (isSucc(reorderContentResponse)) {
+      setFlashMessage({
+        message: "Reordered successfully",
+        type: "success",
+      });
+
+      return;
     } else {
-      if (source.droppableId === "board") {
-        const [changed] = boardColumns.splice(source.index, 1);
-        boardColumns.splice(destination.index, 0, changed);
-      } else {
-        reorderRowMap(draggableId,source,destination)
-      }
+      setFlashMessage({
+        type: "error",
+        message: (reorderContentResponse as FlexlistsError).message,
+      });
+
+      return;
     }
   };
-  const reorderRowMap = async (draggableId:string,source:any,destination:any)=>{
-     const destColumn = boardColumns.find((x)=>x.id.toString() === destination.droppableId);
-     const destTasks = rows.filter((row: any) => row[kanbanConfig.boardColumnId] === destColumn?.id);
-     let destinationIndex = ((source.droppableId === destination.droppableId && destination.index>source.index)? destination.index+1:destination.index);
-     let sourceIndex = 0;
-     let destIndex = 0;
-     let newRows : any[] = rows.map((row: any, index: number) => {
-      //update the column id of the dragged row
-      if ((source.droppableId !== destination.droppableId)&& (row.id.toString() === draggableId)){
-        row[currentView.config?.boardColumnId] = destColumn?.id;
-      } 
-    
-      if (row.id === (destinationIndex<destTasks.length ?destTasks[destinationIndex]?.id:destTasks[destinationIndex-1]?.id))
-      {
-        //get the index of the row before which the dragged row needs to be inserted
-        destIndex = (destinationIndex<destTasks.length? index:index+1);
-      }
-      //get the index of the dragged row
-      if (row.id.toString() === draggableId)
-      {
-        sourceIndex = index;
-      } 
 
-      return row;
-    })
-      //if source is before destination, then we need to decrement the destination index by 1
-      if(sourceIndex<destIndex)
-      {
-        destIndex = destIndex-1;
-      }
-      const [changed] = newRows.splice(sourceIndex, 1);
-      newRows.splice(destIndex, 0, changed);
-
-      newRows[destIndex][currentView.config?.orderColumnId] = destTasks[destinationIndex - 1] ? destTasks[destinationIndex - 1][currentView.config?.orderColumnId] + 1 : destTasks[destinationIndex][currentView.config?.orderColumnId] - 1;
-
-      const updateRowRespone = await listContentService.updateContent(
-        currentView.id,
-        newRows[destIndex]
-      );
-      if (isSucc(updateRowRespone)) {
-        setFlashMessage({
-          message: "Row updated successfully",
-          type: "success",
-        });
-        
-        setRows(newRows);
-        return;
-      } else {
-        setFlashMessage({
-          type: "error",
-          message: (updateRowRespone as FlexlistsError).message,
-        });
-        return;
-      }
-  }
   const handleRowData = (row: any) => {
     setRowData(row);
   };

@@ -140,6 +140,7 @@ const RowFormPanel = ({
     if (
       router.isReady &&
       mode === "view" &&
+      open &&
       rowData.length &&
       rowData[0].id &&
       rowData[0].id > 0
@@ -735,7 +736,7 @@ const RowFormPanel = ({
               variant="contained"
               type="submit"
             >
-              {rowData.length && rowData[0].id ? t("Update Row") : t("Create New Row")}
+              {open && rowData.length && rowData[0].id ? t("Update Row") : t("Create New Row")}
             </Button>
           )}
           {hasPermission(currentView?.role, "Update") &&
