@@ -22,6 +22,7 @@ import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import LoadingPage from "../LoadingPage";
 
 interface VerifyEmailProps {
   message: any;
@@ -157,7 +158,8 @@ const VerifyEmail = ({
   };
 
   return (
-    <Box sx={styles?.body}>
+    <LoadingPage>
+      <Box sx={styles?.body}>
       <Snackbar
         open={flash !== undefined}
         autoHideDuration={6000}
@@ -240,6 +242,8 @@ const VerifyEmail = ({
         </Grid>
       </Container>
     </Box>
+    </LoadingPage>
+    
   );
 };
 

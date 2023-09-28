@@ -47,6 +47,7 @@ import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
 import Head from 'next/head';
+import LoadingPage from "../LoadingPage";
 
 interface RegisterProps {
   message: any;
@@ -502,7 +503,7 @@ const Register = ({
   };
 
   return (
-    <>
+    <LoadingPage>
       <Head>
         <title>{t("Page Title")}</title>
         <meta name="description" content={t("Meta Description")} />
@@ -737,7 +738,7 @@ const Register = ({
           </Box>
         </Container>
       </Box>
-    </>
+    </LoadingPage>
   );
 };
 

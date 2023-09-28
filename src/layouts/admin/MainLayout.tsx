@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { useRouter } from "next/router";
 import { getSearchTypes } from "src/redux/actions/adminAction";
 import { View } from "src/models/SharedModels";
+import LoadingPage from "src/pages/LoadingPage";
 
 const APP_BAR_MOBILE = 48;
 const APP_BAR_DESKTOP = 48;
@@ -69,16 +70,18 @@ const MainLayout = ({
     }
   }, [router.isReady]);
   return (
-    <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} />
-
-      <Main>
-        <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-        <Content theme={theme} disableOverflow={disableOverflow}>
-          {children}
-        </Content>
-      </Main>
-    </StyledRoot>
+    <LoadingPage>
+      <StyledRoot>
+        <Header onOpenNav={() => setOpen(true)} />
+        <Main>
+          <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+          <Content theme={theme} disableOverflow={disableOverflow}>
+            {children}
+          </Content>
+        </Main>
+      </StyledRoot>
+    </LoadingPage>
+    
   );
 };
 const mapStateToProps = (state: any) => ({});

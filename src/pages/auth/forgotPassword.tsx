@@ -24,6 +24,7 @@ import { GetServerSideProps } from "next";
 import { validateToken } from "src/utils/tokenUtils";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import LoadingPage from "../LoadingPage";
 
 interface ForgotPasswordProps {
   message: any;
@@ -157,7 +158,8 @@ const ForgotPassword = ({
   };
 
   return (
-    <Box sx={styles?.body}>
+    <LoadingPage>
+      <Box sx={styles?.body}>
       <Container maxWidth="sm" sx={styles?.container}>
         <Snackbar
           open={flash !== undefined}
@@ -233,6 +235,8 @@ const ForgotPassword = ({
         </Grid>
       </Container>
     </Box>
+    </LoadingPage>
+    
   );
 };
 
