@@ -125,7 +125,7 @@ function MenuBar({ search, currentView, translations,setCurrentListViews }: Menu
         <Box
           sx={{
             display: "flex",
-            marginLeft: { xs: 1, lg: 3 },
+            // marginLeft: { xs: 1, lg: 3 },
             borderLeft: `1px solid ${theme.palette.palette_style.border.default}`,
             paddingLeft: 1,
             width: { xs: "calc(100vw - 120px)", lg: "calc(100vw - 280px)" },
