@@ -141,6 +141,7 @@ const RenderField = ({
           multiline={true}
           required={column.required}
           error={submit && column.required && !values[column.id]}
+          fullWidth
         />
       ) : (
         <div key={column.id}>
@@ -396,12 +397,12 @@ const RenderField = ({
     case FieldUiTypeEnum.Choice:
       if (currentMode !== "view" && !isPrint) {
         return (
-          <FormControl key={column.id} required={column.required}>
+          <FormControl sx={{width:"100%"}} key={column.id} required={column.required}>
             <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
               {column.name}
             </InputLabel>
             <Select
-              sx={{ width: '100%' }}
+              // sx={{ width: '100%' }}
               key={column.id}
               label={column.name}
               id={`${column.id}`}
@@ -411,6 +412,7 @@ const RenderField = ({
               }
               size="small"
               error={submit && column.required && !values[column.id]}
+              fullWidth
             >
               {column?.config?.values &&
                 column.config.values.map((choice: any) => (
@@ -610,6 +612,7 @@ const RenderField = ({
     case FieldUiTypeEnum.Image:
       return currentMode !== "view" && !isPrint ? (
         <Box
+          className="focusedNeed"
           key={column.id}
           sx={{
             border: "1px solid rgba(158, 158, 158, 0.32)",
@@ -721,6 +724,7 @@ const RenderField = ({
     case FieldUiTypeEnum.Video:
       return currentMode !== "view" && !isPrint ? (
         <Box
+          className="focusedNeed"
           key={column.id}
           sx={{
             border: "1px solid rgba(158, 158, 158, 0.32)",
@@ -840,6 +844,7 @@ const RenderField = ({
     case FieldUiTypeEnum.Document:
       return currentMode !== "view" && !isPrint ? (
         <Box
+          className="focusedNeed"
           key={column.id}
           sx={{
             border: "1px solid rgba(158, 158, 158, 0.32)",
