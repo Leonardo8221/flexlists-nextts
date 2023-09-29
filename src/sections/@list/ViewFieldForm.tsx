@@ -26,13 +26,15 @@ interface ViewFieldFormProps {
   onUpdate: (field: ViewField) => void;
   onClose: () => void;
   setFlashMessage: (message: FlashMessageModel) => void;
+  columns: ViewField[]
 }
  function ViewFieldForm({
   currentView,
   field,
   onUpdate,
   onClose,
-  setFlashMessage
+  setFlashMessage,
+  columns
 }: ViewFieldFormProps) {
   const theme = useTheme();
   const [errors, setErrors] = useState<{ [key: string]: string|boolean }>({});
@@ -56,6 +58,11 @@ interface ViewFieldFormProps {
   }
   const handleSubmit = async () => {
     setSubmit(true);
+    if(!currentField.viewFieldName)
+    {
+      setError('Name is required')
+      return
+    }
     let _errors: { [key: string]: string|boolean } = {}
 
     const _setErrors = (e: { [key: string]: string|boolean }) => { 
@@ -63,6 +70,13 @@ interface ViewFieldFormProps {
     } 
     let newGroupName = await frontendValidate(ModelValidatorEnum.FieldDefinition,FieldValidatorEnum.name,currentField.viewFieldName,_errors,_setErrors,true)
         if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
+    
+    let existingViewFieldName = columns.find((x)=>x.viewFieldName?.trim().toLowerCase() == currentField.viewFieldName?.trim().toLowerCase() && x.id != currentField.id)
+    if(existingViewFieldName)
+    {
+      setError('Name already exists')
+      return
+    }
     var existingField = currentView.fields?.find((x)=>x.id == currentField.id)
     if(existingField)
     {
@@ -170,6 +184,7 @@ interface ViewFieldFormProps {
   );
 }
 const mapStateToProps = (state: any) => ({
+  columns: state.view.columns
 });
 
 const mapDispatchToProps = {
