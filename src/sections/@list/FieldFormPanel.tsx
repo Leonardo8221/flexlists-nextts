@@ -42,6 +42,7 @@ type FieldFormPanelProps = {
   onDelete: (id: number) => void;
   onClose: () => void;
   setFlashMessage: (message: FlashMessageModel) => void;
+  fields: Field[];
 }
 
 const GroupHeader = styled("div")(({ theme }) => ({
@@ -69,6 +70,7 @@ const FieldFormPanel = ({
   onDelete,
   onClose,
   setFlashMessage,
+  fields
 }: FieldFormPanelProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -148,7 +150,12 @@ const FieldFormPanel = ({
     }
     if (isCreating) {
       
-      
+      let existingField = fields.find(x=>x.name.trim().toLowerCase() == currentField.name.trim().toLowerCase());
+      if(existingField)
+      {
+        setError(`Field name ${currentField.name} already exists`);
+        return;
+      }
       var createFieldResponse = await fieldService.createUIField(
         viewId,
         currentField.name,
@@ -173,6 +180,12 @@ const FieldFormPanel = ({
         return;
       }
     } else {
+      let existingField = fields.find(x=>x.name.trim().toLowerCase() == currentField.name.trim().toLowerCase() && x.id != currentField.id);
+      if(existingField)
+      {
+        setError(`Field name ${currentField.name} already exists`);
+        return;
+      }
       var updateFieldResponse = await fieldService.updateUiField(
         viewId,
         field.id,
@@ -481,7 +494,9 @@ const FieldFormPanel = ({
 
 // };
 
-const mapStateToProps = (state: any) => ({});
+const mapStateToProps = (state: any) => ({
+  fields: state.list.fields
+});
 
 const mapDispatchToProps = {
   setFlashMessage,
