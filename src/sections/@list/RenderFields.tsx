@@ -658,18 +658,20 @@ const RenderField = ({
           >
             {column.name}
           </Typography>
-          <Box
-            component="img"
-            sx={{
-              mb: 2,
-            }}
-            alt=""
-            src={
-              values && values[column.id] && values[column.id].fileId
-                ? downloadFileUrl(values[column.id].fileId)
-                : ""
-            }
-          />
+          <a href={downloadFileUrl(values[column.id].fileId)} target="_blank">
+            <Box
+              component="img"
+              sx={{
+                mb: 2,
+              }}
+              alt=""
+              src={
+                values && values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
+            />
+          </a>
           <UploadButton
             fileAcceptTypes={["png", "jpg", "jpeg", "gif"]}
             file={values ? values[column.id] : null}

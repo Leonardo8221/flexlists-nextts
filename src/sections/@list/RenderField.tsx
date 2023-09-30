@@ -27,7 +27,13 @@ import UploadButton from "src/components/upload/UploadButton";
 import ReactPlayer from "react-player";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
 import HTMLEditor from "src/components/rowedit/HTMLEditor";
-import { getAmPm, getLocalDateTimeFromString, getLocalDateFromString, getDateFromTimeString, getDateFormatString } from "src/utils/convertUtils";
+import {
+  getAmPm,
+  getLocalDateTimeFromString,
+  getLocalDateFromString,
+  getDateFromTimeString,
+  getDateFormatString,
+} from "src/utils/convertUtils";
 
 const setDateValue = (
   columnId: number,
@@ -68,7 +74,7 @@ export const renderField = (
   setValues: (values: any) => void,
   submit: boolean,
   columns: any[],
-  isPrint: boolean = false,
+  isPrint: boolean = false
 ) => {
   switch (column.uiField) {
     case FieldUiTypeEnum.Text:
@@ -232,7 +238,9 @@ export const renderField = (
               submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
             ampm={getAmPm()}
-            format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+            format={`${getDateFormatString(window.navigator.language)} ${
+              getAmPm() ? "hh" : "HH"
+            }:mm:ss${getAmPm() ? " a" : ""}`}
           />
         </LocalizationProvider>
       ) : (
@@ -245,7 +253,9 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])
+                ? getLocalDateTimeFromString(
+                    values[getDataColumnId(column.id, columns)]
+                  )
                 : ""
             }
           />
@@ -276,7 +286,9 @@ export const renderField = (
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? getLocalDateFromString(values[getDataColumnId(column.id, columns)])
+                ? getLocalDateFromString(
+                    values[getDataColumnId(column.id, columns)]
+                  )
                 : ""
             }
           />
@@ -576,22 +588,25 @@ export const renderField = (
           >
             {column.name}
           </Typography>
-          <Box
-            component="img"
-            sx={{
-              mb: 2,
-              // height: 100,
-              // width: 350,
-              // maxHeight: { xs: 233, md: 167 },
-              // maxWidth: { xs: 350, md: 250 },
-            }}
-            alt=""
-            src={
-              values[column.id] && values[column.id].fileId
-                ? downloadFileUrl(values[column.id].fileId)
-                : ""
-            }
-          />
+          <a href={downloadFileUrl(values[column.id].fileId)} target="_blank">
+            <Box
+              component="img"
+              sx={{
+                mb: 2,
+                // height: 100,
+                // width: 350,
+                // maxHeight: { xs: 233, md: 167 },
+                // maxWidth: { xs: 350, md: 250 },
+              }}
+              alt=""
+              src={
+                values[column.id] && values[column.id].fileId
+                  ? downloadFileUrl(values[column.id].fileId)
+                  : ""
+              }
+            />
+          </a>
+          <div>{downloadFileUrl(values[column.id].fileId)}</div>
           <UploadButton
             fileAcceptTypes={["png", "jpg", "jpeg", "gif"]}
             file={values[column.id]}
