@@ -83,7 +83,6 @@
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "file-saver": "^2.0.5",
-    "formidable": "^3.5.1",
     "framer-motion": "^10.12.16",
     "google-map-react": "^2.2.0",
     "graphql-fields": "^2.0.3",
