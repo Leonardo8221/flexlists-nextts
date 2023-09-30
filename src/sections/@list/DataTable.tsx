@@ -8,7 +8,7 @@ import {
   FormControlLabel,
   Switch,
   Link,
-  Rating
+  Rating,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -62,13 +62,13 @@ import {
   getLocalDateTimeFromString,
   getLocalTimeFromString,
   getLocalDateFromString,
-  getDifferneceWithCurrent,
-  convertToInteger
+  getDifferenceWithCurrent,
+  convertToInteger,
 } from "src/utils/convertUtils";
 import AddRowButton from "src/components/add-button/AddRowButton";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
-import Head from 'next/head';
+import Head from "next/head";
 import DisplayRating from "src/components/rating-field/DisplayRating";
 
 type DataTableProps = {
@@ -264,7 +264,9 @@ const DataTable = ({
 
       return {
         accessorKey: `${getColumnKey(dataColumn)}`,
-        header: dataColumn.system ? t(dataColumn.viewFieldName) : dataColumn.viewFieldName,
+        header: dataColumn.system
+          ? t(dataColumn.viewFieldName)
+          : dataColumn.viewFieldName,
         Header: ({ column }: any) => (
           <Box sx={{ display: "flex" }} key={column.id}>
             {fieldIcon && (
@@ -331,7 +333,9 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? `${getLocalDateTimeFromString(cellValue)} (${getDifferneceWithCurrent(cellValue)})`
+                      ? `${getLocalDateTimeFromString(
+                          cellValue
+                        )} (${getDifferenceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -347,7 +351,9 @@ const DataTable = ({
                     }}
                   >
                     {cellValue && cellValue != null
-                      ? `${getLocalDateFromString(cellValue)} (${getDifferneceWithCurrent(cellValue)})`
+                      ? `${getLocalDateFromString(
+                          cellValue
+                        )} (${getDifferenceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -430,9 +436,9 @@ const DataTable = ({
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis",
-                      height:"32px",
-                      display:"flex",
-                      alignItems:"center"
+                      height: "32px",
+                      display: "flex",
+                      alignItems: "center",
                     }}
                   >
                     {/* {cellValue?.toString() === "true" ? "yes" : "no"} */}
@@ -534,8 +540,12 @@ const DataTable = ({
                   </Box>
                 );
               case FieldUiTypeEnum.Rating:
-                return(
-                  <Box key={row.id} sx={{"& span::before": {display:"none"}}}><DisplayRating rating={rating} />
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{ "& span::before": { display: "none" } }}
+                  >
+                    <DisplayRating rating={rating} />
                   </Box>
                 );
               case FieldUiTypeEnum.Lookup:
@@ -668,7 +678,11 @@ const DataTable = ({
   const handleBulkAction = async (action: string) => {
     switch (action) {
       case "edit":
-        const selectedRows = rows.filter((row: any) => Object.keys(rowSelection).map((key: any) => parseInt(key)).includes(row.id));
+        const selectedRows = rows.filter((row: any) =>
+          Object.keys(rowSelection)
+            .map((key: any) => parseInt(key))
+            .includes(row.id)
+        );
 
         setMode("update");
         setSelectedRowData(selectedRows);
@@ -882,21 +896,22 @@ const DataTable = ({
               sx: {
                 cursor: "pointer",
                 position: "relative",
-                overflowY:"hidden",
+                overflowY: "hidden",
                 "& :first-child::before": {
                   content: "''",
                   position: "absolute",
                   width: "4px",
                   // height: "calc(100% - 1px)",
-                  height:"32px",
+                  height: "32px",
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
-                  background: selectedContentId === row.id
-                    ? "rgb(84, 166, 251)" :
-                    !isReadContent(row.id)
-                    ? "rgb(84, 166, 251, 0.5)"
-                    : "none",
+                  background:
+                    selectedContentId === row.id
+                      ? "rgb(84, 166, 251)"
+                      : !isReadContent(row.id)
+                      ? "rgb(84, 166, 251, 0.5)"
+                      : "none",
                   // ml: "64px",
                 },
               },
@@ -936,11 +951,12 @@ const DataTable = ({
                 //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
-                background: selectedContentId === row.id
-                  ? "rgba(84, 166, 251, 0.2)" :
-                  !isReadContent(row.id)
-                  ? "rgba(84, 166, 251, 0.05)"
-                  : "none",
+                background:
+                  selectedContentId === row.id
+                    ? "rgba(84, 166, 251, 0.2)"
+                    : !isReadContent(row.id)
+                    ? "rgba(84, 166, 251, 0.05)"
+                    : "none",
               }),
             })}
             muiBottomToolbarProps={{
@@ -1114,7 +1130,8 @@ const DataTable = ({
               sx={{ display: { xs: "none", lg: "block" } }}
             >
               {pagination.pageIndex * pagination.pageSize + 1}-
-              {(pagination.pageIndex + 1) * pagination.pageSize} of {count}, {t("Per Page")}:
+              {(pagination.pageIndex + 1) * pagination.pageSize} of {count},{" "}
+              {t("Per Page")}:
             </Typography>
             <Select
               id="per_page"

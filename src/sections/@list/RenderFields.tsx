@@ -6,9 +6,9 @@ import {
   Link,
   Switch,
   FormGroup,
-  Rating
+  Rating,
 } from "@mui/material";
-import {useState} from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 import useResponsive from "../../hooks/useResponsive";
 import Select from "@mui/material/Select";
@@ -26,7 +26,14 @@ import InputLabel from "@mui/material/InputLabel";
 import { FormControl } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { getAmPm, getDateFromTimeString, getLocalDateTimeFromString, getLocalDateFromString, getDateFormatString, getDifferneceWithCurrent } from "src/utils/convertUtils";
+import {
+  getAmPm,
+  getDateFromTimeString,
+  getLocalDateTimeFromString,
+  getLocalDateFromString,
+  getDateFormatString,
+  getDifferenceWithCurrent,
+} from "src/utils/convertUtils";
 import { DatePicker, renderTimeViewClock } from "@mui/x-date-pickers";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import MarkdownEditor from "src/components/rowedit/MarkdownEditor";
@@ -67,13 +74,13 @@ const RenderField = ({
   translations,
   setValues,
   setDateValue,
-  setTimeValue
+  setTimeValue,
 }: RenderFieldProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
   const isDesktop = useResponsive("up", "md");
-  
+
   const [rating, setRating] = useState<number | null>(null);
 
   const handleRatingChange = (newValue: number | null) => {
@@ -190,7 +197,11 @@ const RenderField = ({
           value={values ? values[column.id] : ""}
           rows={4}
           required={column.required}
-          error={submit && column.required && (values[column.id]==null || values[column.id]==undefined) }
+          error={
+            submit &&
+            column.required &&
+            (values[column.id] == null || values[column.id] == undefined)
+          }
         />
       ) : (
         <div key={column.id}>
@@ -221,7 +232,7 @@ const RenderField = ({
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DateTimePicker
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
             value={
               values && values[column.id] && values[column.id] != null
                 ? dayjs(values[column.id])
@@ -232,12 +243,12 @@ const RenderField = ({
               setDateValue(column.id, x);
             }}
             className={
-              submit && column.required && !values[column.id]
-                ? "Mui-error"
-                : ""
+              submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
             ampm={getAmPm()}
-            format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+            format={`${getDateFormatString(window.navigator.language)} ${
+              getAmPm() ? "hh" : "HH"
+            }:mm:ss${getAmPm() ? " a" : ""}`}
             viewRenderers={{
               hours: renderTimeViewClock,
               minutes: renderTimeViewClock,
@@ -256,7 +267,11 @@ const RenderField = ({
             label={column.system ? t(column.name) : column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? `${getLocalDateTimeFromString(values[getDataColumnId(column.id, columns)])} (${getDifferneceWithCurrent(values[getDataColumnId(column.id, columns)])})`
+                ? `${getLocalDateTimeFromString(
+                    values[getDataColumnId(column.id, columns)]
+                  )} (${getDifferenceWithCurrent(
+                    values[getDataColumnId(column.id, columns)]
+                  )})`
                 : ""
             }
             sx={{
@@ -278,7 +293,7 @@ const RenderField = ({
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <DatePicker
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
             value={
               values && values[column.id] && values[column.id] != null
                 ? dayjs(values[column.id])
@@ -289,9 +304,7 @@ const RenderField = ({
               setDateValue(column.id, x);
             }}
             className={
-              submit && column.required && !values[column.id]
-                ? "Mui-error"
-                : ""
+              submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
             format={getDateFormatString(window.navigator.language)}
           />
@@ -307,7 +320,11 @@ const RenderField = ({
             label={column.name}
             value={
               values && values[getDataColumnId(column.id, columns)]
-                ? `${getLocalDateFromString(values[getDataColumnId(column.id, columns)])} (${getDifferneceWithCurrent(values[getDataColumnId(column.id, columns)])})`
+                ? `${getLocalDateFromString(
+                    values[getDataColumnId(column.id, columns)]
+                  )} (${getDifferenceWithCurrent(
+                    values[getDataColumnId(column.id, columns)]
+                  )})`
                 : ""
             }
             sx={{
@@ -329,7 +346,7 @@ const RenderField = ({
       return currentMode !== "view" && !isPrint ? (
         <LocalizationProvider dateAdapter={AdapterDayjs} key={column.id}>
           <TimePicker
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
             value={
               values && values[column.id]
                 ? dayjs(getDateFromTimeString(values[column.id]))
@@ -340,9 +357,7 @@ const RenderField = ({
               setTimeValue(column.id, x);
             }}
             className={
-              submit && column.required && !values[column.id]
-                ? "Mui-error"
-                : ""
+              submit && column.required && !values[column.id] ? "Mui-error" : ""
             }
             viewRenderers={{
               hours: renderTimeViewClock,
@@ -391,13 +406,16 @@ const RenderField = ({
               }}
             />
           </LocalizationProvider>
-
         </>
       );
     case FieldUiTypeEnum.Choice:
       if (currentMode !== "view" && !isPrint) {
         return (
-          <FormControl key={column.id} required={column.required} sx={{ width: '100%' }}>
+          <FormControl
+            key={column.id}
+            required={column.required}
+            sx={{ width: "100%" }}
+          >
             <InputLabel id={`${column.id}`} sx={{ top: "-5px" }}>
               {column.name}
             </InputLabel>
@@ -536,8 +554,7 @@ const RenderField = ({
               px: 2,
               position: "relative",
               borderRadius: "6px",
-              ".focusedNeed:focus &": {
-              },
+              ".focusedNeed:focus &": {},
               "&:hover": {
                 border: "1px solid rgba(158, 158, 158, 0.32)",
               },
@@ -555,7 +572,7 @@ const RenderField = ({
                 background: "#fff",
                 zIndex: 2,
                 px: 0.5,
-                color: "rgba(0, 0, 0, 0.6)"
+                color: "rgba(0, 0, 0, 0.6)",
               }}
             >
               {column.system ? t(column.name) : column.name}
@@ -644,7 +661,7 @@ const RenderField = ({
           <Box
             component="img"
             sx={{
-              mb: 2
+              mb: 2,
             }}
             alt=""
             src={
@@ -754,15 +771,7 @@ const RenderField = ({
             {column.name}
           </Typography>
           <UploadButton
-            fileAcceptTypes={[
-              "mp4",
-              "mov",
-              "wmv",
-              "flv",
-              "avi",
-              "mkv",
-              "webm",
-            ]}
+            fileAcceptTypes={["mp4", "mov", "wmv", "flv", "avi", "mkv", "webm"]}
             file={values ? values[column.id] : null}
             onUpload={(file) => {
               setValues({ ...values, [column.id]: file });
@@ -946,7 +955,7 @@ const RenderField = ({
           <Box
             key={column.id}
             sx={{
-              width: '100%',
+              width: "100%",
               border: "1px solid rgba(158, 158, 158, 0.32)",
               px: 2,
               display: "flex",
@@ -978,7 +987,9 @@ const RenderField = ({
               {column.name}
             </Typography>
             <ColorPicker
-              selectedColor={values && values[column.id] ? values[column.id] : "#000000"}
+              selectedColor={
+                values && values[column.id] ? values[column.id] : "#000000"
+              }
               onColorChange={(color) => {
                 setValues({ ...values, [column.id]: color });
               }}
@@ -995,7 +1006,8 @@ const RenderField = ({
                 style={{
                   width: "32px",
                   height: "32px",
-                  backgroundColor: values && values[column.id] ? values[column.id] : "#000000",
+                  backgroundColor:
+                    values && values[column.id] ? values[column.id] : "#000000",
                   display: "grid",
                   placeContent: "center",
                   borderRadius: "100px",
@@ -1005,7 +1017,8 @@ const RenderField = ({
               ></div>
               <span
                 style={{
-                  color: values && values[column.id] ? values[column.id] : "#000000",
+                  color:
+                    values && values[column.id] ? values[column.id] : "#000000",
                   backgroundColor: "#fff",
                   borderRadius: "8px",
                   paddingInline: 8,
@@ -1053,7 +1066,7 @@ const RenderField = ({
                 sx={{
                   // textAlign: "center",
                   // bgcolor: values[column.id],
-                  color: values[column.id]??"#000000",
+                  color: values[column.id] ?? "#000000",
                   // px: 10,
                   // maxWidth: 100,
                   display: "flex",
@@ -1065,7 +1078,7 @@ const RenderField = ({
                   style={{
                     width: "32px",
                     height: "32px",
-                    backgroundColor: values[column.id]??"#000000",
+                    backgroundColor: values[column.id] ?? "#000000",
                     // display: "grid",
                     // placeContent: "center",
                     borderRadius: "100px",
@@ -1073,7 +1086,7 @@ const RenderField = ({
                   }}
                   // onClick={handleColorPickerToggle}
                 ></div>
-                <span style={{ color: values[column.id]??"#000000" }}>
+                <span style={{ color: values[column.id] ?? "#000000" }}>
                   {values[column.id]}
                 </span>
 
@@ -1081,8 +1094,6 @@ const RenderField = ({
               </Box>
             </Box>
           </div>
-          
-
         );
       }
     case FieldUiTypeEnum.Rating:
@@ -1121,109 +1132,136 @@ const RenderField = ({
             >
               {column.name}
             </Typography>
-            <Box sx={{py: 1, width: "100%", display:"flex", justifyContent:"space-between", }}>
+            <Box
+              sx={{
+                py: 1,
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <RatingField onRatingChange={handleRatingChange} />
-              <CheckboxRating/>
-              <NumericRating/>
+              <CheckboxRating />
+              <NumericRating />
             </Box>
           </Box>
         );
       } else {
         return (
           <>
-          <div className="focusedNeed" tabIndex={8}>
-            <Box
-              key={column.id}
-              className="markdownBox"
-              sx={{
-                border: "1px solid rgba(158, 158, 158, 0.32)",
-                p: 2,
-                position: "relative",
-                borderRadius: "6px",
-              }}
-            >
-              <Typography
-                variant="body2"
-                component={"label"}
+            <div className="focusedNeed" tabIndex={8}>
+              <Box
+                key={column.id}
+                className="markdownBox"
                 sx={{
-                  textTransform: "capitalize",
-                  fontSize: 12,
-                  position: "absolute",
-                  top: "-10px",
-                  left: "10px",
-                  background: "#fff",
-                  zIndex: 2,
-                  px: 0.5,
-                  color: "rgba(0, 0, 0, 0.6)",
-                  ".focusedNeed:focus &": {},
+                  border: "1px solid rgba(158, 158, 158, 0.32)",
+                  p: 2,
+                  position: "relative",
+                  borderRadius: "6px",
                 }}
               >
-                {column.name}
-              </Typography>
-            </Box>
-          </div>
+                <Typography
+                  variant="body2"
+                  component={"label"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: 12,
+                    position: "absolute",
+                    top: "-10px",
+                    left: "10px",
+                    background: "#fff",
+                    zIndex: 2,
+                    px: 0.5,
+                    color: "rgba(0, 0, 0, 0.6)",
+                    ".focusedNeed:focus &": {},
+                  }}
+                >
+                  {column.name}
+                </Typography>
+              </Box>
+            </div>
 
-          <div className="focusedNeed" tabIndex={8}>
-          <Box
-            key={column.id}
-            className="markdownBox"
-            sx={{
-              border: "1px solid rgba(158, 158, 158, 0.32)",
-              p: 2,
-              position: "relative",
-              borderRadius: "6px",
-            }}
-          >
-            <Typography
-              variant="body2"
-              component={"label"}
-              sx={{
-                textTransform: "capitalize",
-                fontSize: 12,
-                position: "absolute",
-                top: "-10px",
-                left: "10px",
-                background: "#fff",
-                zIndex: 2,
-                px: 0.5,
-                color: "rgba(0, 0, 0, 0.6)",
-              }}
-            >
-              {column.name}
-            </Typography>
-            <Box>
-              <DisplayRating rating={rating} />
-            </Box>
-          </Box>
-        </div>
-        </>
+            <div className="focusedNeed" tabIndex={8}>
+              <Box
+                key={column.id}
+                className="markdownBox"
+                sx={{
+                  border: "1px solid rgba(158, 158, 158, 0.32)",
+                  p: 2,
+                  position: "relative",
+                  borderRadius: "6px",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  component={"label"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: 12,
+                    position: "absolute",
+                    top: "-10px",
+                    left: "10px",
+                    background: "#fff",
+                    zIndex: 2,
+                    px: 0.5,
+                    color: "rgba(0, 0, 0, 0.6)",
+                  }}
+                >
+                  {column.name}
+                </Typography>
+                <Box>
+                  <DisplayRating rating={rating} />
+                </Box>
+              </Box>
+            </div>
+          </>
         );
       }
     case FieldUiTypeEnum.Lookup:
       return (
-        <LookupField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
+        <LookupField
+          column={column}
+          isPrint={isPrint}
+          currentMode={currentMode}
+          values={values}
+          submit={submit}
+          setValues={setValues}
+        />
       );
     case FieldUiTypeEnum.Sublist:
       return (
-        <SublistField column={column} isPrint={isPrint} currentMode={currentMode} values={values} submit={submit} setValues={setValues} />
+        <SublistField
+          column={column}
+          isPrint={isPrint}
+          currentMode={currentMode}
+          values={values}
+          submit={submit}
+          setValues={setValues}
+        />
       );
     case FieldUiTypeEnum.Link:
-      return <LinkFieldInput 
-              isSubmit={submit} 
-              mode={(currentMode==='view'|| isPrint)?'view':currentMode} 
-              column={column}
-              selectedLink={values && values[column.id] ? values[column.id] : {linkValue:'',name:''}}
-              onLinkChange={(value: any) => {
-                setValues({ ...values, [column.id]: value });
-              }}
-              />
+      return (
+        <LinkFieldInput
+          isSubmit={submit}
+          mode={currentMode === "view" || isPrint ? "view" : currentMode}
+          column={column}
+          selectedLink={
+            values && values[column.id]
+              ? values[column.id]
+              : { linkValue: "", name: "" }
+          }
+          onLinkChange={(value: any) => {
+            setValues({ ...values, [column.id]: value });
+          }}
+        />
+      );
     default:
       return <div key={column.id}></div>;
-  };
+  }
 };
 
 const mapStateToProps = (state: any) => ({
-  columns: state.view.columns
+  columns: state.view.columns,
 });
 
 export default connect(mapStateToProps)(RenderField);

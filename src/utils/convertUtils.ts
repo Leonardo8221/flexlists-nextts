@@ -1,6 +1,9 @@
 import React from "react";
 
-export function convertToString(value: string | string[] | undefined, separator: string = ","): string {
+export function convertToString(
+  value: string | string[] | undefined,
+  separator: string = ","
+): string {
   if (typeof value === "string") {
     return value;
   } else if (Array.isArray(value)) {
@@ -9,7 +12,9 @@ export function convertToString(value: string | string[] | undefined, separator:
     return "";
   }
 }
-export function convertToBoolean(value: string | string[] | undefined): boolean {
+export function convertToBoolean(
+  value: string | string[] | undefined
+): boolean {
   if (typeof value === "string") {
     return Boolean(value);
   } else if (Array.isArray(value)) {
@@ -26,7 +31,7 @@ export function convertToInteger(value: string | string[] | undefined): number {
   // } else {
   //   return 0;
   // }
-  let x = 0
+  let x = 0;
   if (Array.isArray(value)) {
     x = parseInt(value.join(""));
   } else {
@@ -43,7 +48,9 @@ export function convertToNumber(value: string | string[] | undefined): number {
     return 0.0;
   }
 }
-export function convertToDatetime(value: string | string[] | undefined): Date | null {
+export function convertToDatetime(
+  value: string | string[] | undefined
+): Date | null {
   if (typeof value === "string") {
     const timestamp = Date.parse(value);
     if (!isNaN(timestamp)) {
@@ -66,7 +73,9 @@ export function convertToArray(value: string | string[] | undefined): string[] {
     return [];
   }
 }
-export function convertToObject(value: string | string[] | undefined): object | null {
+export function convertToObject(
+  value: string | string[] | undefined
+): object | null {
   if (typeof value === "string") {
     try {
       return JSON.parse(value);
@@ -84,7 +93,7 @@ export function convertToObject(value: string | string[] | undefined): object | 
   }
   return null;
 }
-export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
+export function b64toBlob(b64Data: string, contentType = "", sliceSize = 512) {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];
 
@@ -104,24 +113,35 @@ export function b64toBlob(b64Data: string, contentType = '', sliceSize = 512) {
   return blob;
 }
 
-export const renderHTML = (rawHTML?: string) => React.createElement("span", { dangerouslySetInnerHTML: { __html: rawHTML } });
+export const renderHTML = (rawHTML?: string) =>
+  React.createElement("span", { dangerouslySetInnerHTML: { __html: rawHTML } });
 
-const useBrowserLanguage = true
+const useBrowserLanguage = true;
 export function getLocalTime(date?: Date): string {
-  return (date ?? new Date()).toLocaleTimeString(useBrowserLanguage ? navigator.language : undefined);
+  return (date ?? new Date()).toLocaleTimeString(
+    useBrowserLanguage ? navigator.language : undefined
+  );
 }
 
 export function getLocalDate(date?: Date): string {
-  return (date ?? new Date()).toLocaleDateString(useBrowserLanguage ? navigator.language : undefined);
+  return (date ?? new Date()).toLocaleDateString(
+    useBrowserLanguage ? navigator.language : undefined
+  );
 }
 
 export function getLocalDateTime(date?: Date): string {
-  return (date ?? new Date()).toLocaleString(useBrowserLanguage ? navigator.language : undefined);
+  return (date ?? new Date()).toLocaleString(
+    useBrowserLanguage ? navigator.language : undefined
+  );
 }
 
 export function getAmPm(): boolean {
   const time = getLocalTime().toLowerCase();
-  const timeAmPm = time.includes('am')||time.includes('a.m') || time.includes('pm')|| time.includes('p.m');
+  const timeAmPm =
+    time.includes("am") ||
+    time.includes("a.m") ||
+    time.includes("pm") ||
+    time.includes("p.m");
   return timeAmPm;
 }
 
@@ -138,39 +158,40 @@ export function getLocalDateFromString(date: string): string {
 }
 
 export function getLocalDateTimeFromString(dateTime: string): string {
-  return getLocalDateTime(new Date(dateTime))
+  return getLocalDateTime(new Date(dateTime));
 }
 
-export function getDifferneceWithCurrent(dateTime: string): string {
-  const diff = Math.abs((new Date()).getTime() - (new Date(dateTime)).getTime());
+export function getDifferenceWithCurrent(dateTime: string): string {
+  const diff = new Date().getTime() - new Date(dateTime).getTime();
   let seconds = Math.floor(Math.abs(diff) / 1000);
   let minutes = Math.floor(seconds / 60);
   let hours = Math.floor(minutes / 60);
   let days = Math.floor(hours / 24);
 
-  hours = hours - (days * 24);
-  minutes = minutes - (days * 24 * 60) - (hours * 60);
-  seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60);
-
-  if ((new Date()).getTime() - (new Date(dateTime)).getTime() > 0) {
-    if (days > 365) return `2 years ago`;
-    else if (days > 30) return `5 months ago`;
-    else if (days > 7) return `3 weeks ago`;
-    else if (days > 0) return `4 days ago`;
-    else if (hours > 0) return `20 hours ago`;
-    else if (minutes > 0) return `30 minutes ago`;
-    else return `30 seconds ago`;
+  if (days > 365) {
+    const years = Math.floor(days / 365);
+    return diff > 0 ? `${years} years ago` : `in ${years} years`;
+  } else if (days > 30) {
+    const months = Math.floor(days / 30);
+    return diff > 0 ? `${months} months ago` : `in ${months} months`;
+  } else if (days > 7) {
+    const weeks = Math.floor(days / 7);
+    return diff > 0 ? `${weeks} weeks ago` : `in ${weeks} weeks`;
+  } else if (days > 0) {
+    return diff > 0 ? `${days} days ago` : `in ${days} days`;
+  } else if (hours > 0) {
+    return diff > 0 ? `${hours} hours ago` : `in ${hours} hours`;
+  } else if (minutes > 0) {
+    return diff > 0 ? `${minutes} minutes ago` : `in ${minutes} minutes`;
   } else {
-    const str = `${days > 365 ? days % 365 + ' year' + (days % 365 > 1 ? 's' : '') + '-' : ''}${days > 30 ? days % 30 + ' month' + (days % 30 > 1 ? 's' : '') + '-' : ''}${days > 0 ? days + ' day' + (days > 1 ? 's' : '') + '-' : ''}${hours > 0 ? hours + ' hour' + (hours > 1 ? 's' : '') + '-' : ''}${minutes > 0 ? minutes + ' minute' + (minutes > 1 ? 's' : '') + '-' : ''}${seconds > 0 ? seconds + ' seconds' : ''}`;
-
-    return `in ${str.split('-')[0]}`;
+    return diff > 0 ? `${seconds} seconds ago` : `in ${seconds} seconds`;
   }
 }
 
-export function getDateFormatString(locale = 'en-US') {
+export function getDateFormatString(locale = "en-US") {
   const formatObj = new Intl.DateTimeFormat(locale).formatToParts(new Date());
   return formatObj
-    .map(obj => {
+    .map((obj) => {
       switch (obj.type) {
         case "day":
           return "DD";
