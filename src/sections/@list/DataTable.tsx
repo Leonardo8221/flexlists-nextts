@@ -181,8 +181,6 @@ const DataTable = ({
         if (mode === "view") {
           setVisibleAddRowPanel(true);
         }
-
-        // setMode("view");
       }
     }
     if (
@@ -198,7 +196,6 @@ const DataTable = ({
   }, [router.isReady, router.query.contentId, rows]);
 
   useEffect(() => {
-    //editRow(row) => from rows
     if (router.query.rowId) {
       const row = rows.find(
         (row, i) => row.id === parseInt(router.query.rowId as string)
@@ -253,9 +250,11 @@ const DataTable = ({
     }
     return column.id;
   };
+
   const isReadContent = (contentId: number) => {
     return readContents.includes(contentId);
   };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getColumns = (dataColumns: any[]) => {
     return dataColumns.map((dataColumn: any) => {
@@ -509,9 +508,6 @@ const DataTable = ({
                     {cellValue?.fileName}
                   </Box>
                 );
-              // return cellValue? (
-              //   <Link href={downloadFileUrl(cellValue.fileId)}>{cellValue.fileName}</Link>
-              // ):(<></>)
               case FieldUiTypeEnum.Color:
                 return (
                   <Box
@@ -586,16 +582,7 @@ const DataTable = ({
                 return <></>;
             }
           }
-          return (
-            <Box
-              sx={{
-                fontWeight: isReadContent(row.id) ? "normal" : "bold",
-                // background: isReadContent(row.id) ? "none" : "skyblue",
-              }}
-            >
-              {renderFieldData(dataColumn, renderedCellValue)}
-            </Box>
-          );
+          return renderFieldData(dataColumn, renderedCellValue);
         },
         minSize: dataColumn.type === "id" ? 100 : 150,
         maxSize: dataColumn.type === "id" ? 100 : 400,
@@ -618,7 +605,7 @@ const DataTable = ({
       );
     };
     return getColumns(columns.filter((column: any) => shouldShowField(column)));
-  }, [columns, readContents]);
+  }, [columns]);
 
   useEffect(() => {
     setUpdatingTable(false);
@@ -666,12 +653,11 @@ const DataTable = ({
     setVisibleAddRowPanel(true);
     setSelectedContentId(rows[row.index].id);
   };
-  const handleOpenFieldManagementPanel = () => {
-    setVisibleFieldManagementPanel(true);
-  };
+
   const handleCloseFieldManagementPanel = () => {
     setVisibleFieldManagementPanel(false);
   };
+
   const rowVirtualizerInstanceRef =
     useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
 
@@ -769,6 +755,7 @@ const DataTable = ({
     }
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
   };
+
   const handleBulkDelete = async () => {
     let deleteResponse = await deleteBulkContents(
       currentView.id,
@@ -788,6 +775,7 @@ const DataTable = ({
 
     fetchRowsByPage(currentView.page, currentView.limit ?? 25);
   };
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -833,24 +821,6 @@ const DataTable = ({
             }}
           />
         )}
-        {/* <Box
-        sx={{
-          position: "absolute",
-          right: 0,
-          zIndex: 3,
-          textAlign: "center",
-          paddingTop: "10px",
-          height: "40px",
-          width: "40px",
-          backgroundColor:
-            theme.palette.palette_style.background.table_header_footer,
-          borderBottom: "1px solid",
-          borderColor: theme.palette.palette_style.border.default,
-          borderTop: "none",
-        }}
-      >
-        <AddColumnButton modalHandle={handleOpenFieldManagementPanel} />
-      </Box> */}
         {!updatingTable && (
           <MaterialReactTable
             tableInstanceRef={tableInstanceRef}
@@ -879,10 +849,6 @@ const DataTable = ({
             enableBottomToolbar={false}
             enablePagination={true}
             enableColumnResizing
-            // enableRowNumbers
-            //enableRowVirtualization
-            //enableColumnVirtualization
-            // enableMultiRowSelection={false}
             rowVirtualizerInstanceRef={rowVirtualizerInstanceRef}
             rowVirtualizerProps={{ overscan: 5 }}
             columnVirtualizerProps={{ overscan: 10 }}
@@ -901,18 +867,15 @@ const DataTable = ({
                   content: "''",
                   position: "absolute",
                   width: "4px",
-                  // height: "calc(100% - 1px)",
-                  height: "32px",
+                  height:"32px",
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
-                  background:
-                    selectedContentId === row.id
-                      ? "rgb(84, 166, 251)"
-                      : !isReadContent(row.id)
-                      ? "rgb(84, 166, 251, 0.5)"
-                      : "none",
-                  // ml: "64px",
+                  background: selectedContentId === row.id
+                    ? "rgb(84, 166, 251)" :
+                    !isReadContent(row.id)
+                    ? "rgb(84, 166, 251, 0.5)"
+                    : "none",
                 },
               },
             })}
@@ -947,16 +910,14 @@ const DataTable = ({
             muiTableBodyCellProps={({ row }: any) => ({
               sx: (theme: any) => ({
                 color: theme.palette.palette_style.text.primary,
-                // backgroundColor:
-                //   theme.palette.palette_style.background.table_body,
                 py: 0,
                 height: 32,
-                background:
-                  selectedContentId === row.id
-                    ? "rgba(84, 166, 251, 0.2)"
-                    : !isReadContent(row.id)
-                    ? "rgba(84, 166, 251, 0.05)"
-                    : "none",
+                fontWeight: isReadContent(row.id) ? "normal" : "bold",
+                background: selectedContentId === row.id
+                  ? "rgba(84, 166, 251, 0.2)" :
+                  !isReadContent(row.id)
+                  ? "rgba(84, 166, 251, 0.05)"
+                  : "none",
               }),
             })}
             muiBottomToolbarProps={{
@@ -1025,8 +986,6 @@ const DataTable = ({
                   },
                 }}
               >
-                {/* List actions */}
-                {/* <KeyboardArrowDownIcon /> */}
                 <EditIcon />
               </Button>
             )}
@@ -1034,20 +993,13 @@ const DataTable = ({
               sx={{
                 backgroundColor: theme.palette.palette_style.background.paper,
                 display: "flex",
-                // flexDirection: { xs: "column", md: "row" },
                 position: { xs: "absolute", md: "relative" },
                 bottom: { xs: 80, md: "unset" },
                 left: { xs: "50%", md: "unset" },
                 transform: { xs: "translateX(-50%)", md: "unset" },
                 width: { xs: "90%", md: "auto" },
-                // justifyContent: "space-between",
-                // alignItems: "center",
                 zIndex: 11,
                 flexWrap: { xs: "wrap", md: "nowrap" },
-                // px: { xs: 1, md: 3 },
-                // marginTop: 4,
-                // paddingBottom: 2,
-                // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
                 gap: { xs: 0, md: 2 },
                 boxShadow: { xs: "0 0 12px 0 rgba(0,0,0,.1)", md: "none" },
               }}
@@ -1091,8 +1043,6 @@ const DataTable = ({
                               color:
                                 action.color ||
                                 theme.palette.palette_style.text.primary,
-                              // mask: `url(/assets/icons/toolbar/${action.icon}.svg) no-repeat center / contain`,
-                              // WebkitMask: `url(/assets/icons/${action.icon}.svg) no-repeat center / contain`,
                               mr: { xs: 0.2, md: 0.5 },
                             }}
                           >
@@ -1115,7 +1065,6 @@ const DataTable = ({
             </Box>
           </Box>
 
-          {/* <AddRowButton modalHandle={handleNewRowPanel} /> */}
           <Box
             sx={{
               display: "flex",
@@ -1153,8 +1102,6 @@ const DataTable = ({
               <MenuItem value="25">25</MenuItem>
               <MenuItem value="50">50</MenuItem>
               <MenuItem value="100">100</MenuItem>
-              {/* <MenuItem value="500">500</MenuItem>
-              <MenuItem value="1000">1000</MenuItem> */}
             </Select>
             <Pagination
               count={Math.ceil(count / pagination.pageSize)}
@@ -1163,8 +1110,7 @@ const DataTable = ({
               sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "flex-end",
-                // flex: 1,
+                justifyContent: "flex-end"
               }}
             />
           </Box>
