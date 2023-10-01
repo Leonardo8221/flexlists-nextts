@@ -312,7 +312,7 @@ const GroupDetail = ({
           xs={2}
           sx={{ p: 2, height: "calc(100vh - 91px)", background: "#fafafa" }}
         >
-          <GroupMembers />
+          <GroupMembers translations={translations} />
         </Grid>
       </Grid>
       {currentGroup && (
@@ -411,6 +411,10 @@ const RenameGroup = ({
       setIsUpdate(false);
       onUpdate(currentGroup);
       handleClose();
+    }
+    else
+    {
+      setError((response as FlexlistsError).message)
     }
   };
   const handleFileChange = async (

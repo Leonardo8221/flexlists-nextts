@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Grid,
-  FormLabel,
   Button,
   TextField,
   Divider,
@@ -14,7 +13,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/router";
 import { groupService } from "src/services/group.service";
-import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { convertToInteger } from "src/utils/convertUtils";
 import { GetGroupUsersOutputDto, GetUserContactsOutputDto } from "src/models/ApiOutputModels";
 import { accountService } from "src/services/account.service";
@@ -22,16 +21,25 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { connect } from "react-redux";
 import { UserProfile } from "src/models/UserProfile";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
+import { getTranslation } from "src/utils/i18n";
+import { TranslationText } from "src/models/SharedModels";
 type GroupMembersProps = {
-  userProfile: UserProfile
+  userProfile: UserProfile,
+  translations: TranslationText[];
 }
-function GroupMembers({userProfile}:GroupMembersProps) {
+function GroupMembers({userProfile,translations}:GroupMembersProps) {
+  const t = (key: string): string => {
+    return getTranslation(key, translations);
+  };
   const router = useRouter()
   const [groupUsers,setGroupUsers] = useState<GetGroupUsersOutputDto[]>([]);
   const [userContacts,setUserContacts] = useState<GetUserContactsOutputDto[]>([])
   const [selectedUserName,setSelectedUserName] = useState<string>('')
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState<string>('');
+  const [isDeleteMemberOpenModal, setIsDeleteMemberOpenModal] = useState<boolean>(false);
+  const [deleteMemberId, setDeleteMemberId] = useState<number>(0);
   useEffect(()=>{
     async function fetchData()
     {
@@ -94,13 +102,28 @@ function GroupMembers({userProfile}:GroupMembersProps) {
   }
   const handleDeleteMember = async(userId:number) =>
   {
-      var response = await groupService.deleteUserFromGroup(convertToInteger(router.query.groupId),userId);
+      setDeleteMemberId(userId)
+      setIsDeleteMemberOpenModal(true)
+  }
+  const deleteMember = async() =>
+  {
+      if(deleteMemberId === 0)
+      {
+        setError("Invalid user")
+        return;
+      }
+      var response = await groupService.deleteUserFromGroup(convertToInteger(router.query.groupId),deleteMemberId);
       if(isSucc(response))
       {
-         setGroupUsers(groupUsers.filter((x)=>x.userId != userId))
+         setGroupUsers(groupUsers.filter((x)=>x.userId != deleteMemberId))
+      }
+      else
+      {
+        setError((response as FlexlistsError).message)
       }
   }
   return (
+    <>
     <Box>
       <Typography
         variant="subtitle1"
@@ -242,9 +265,22 @@ function GroupMembers({userProfile}:GroupMembersProps) {
       }
       
     </Box>
+     {
+        isDeleteMemberOpenModal && <YesNoDialog
+        title={t("Delete group member")}
+        submitText={t("Delete")}
+        message={t("Sure Delete Group Member")}
+        open={isDeleteMemberOpenModal}
+        translations={translations}
+        handleClose={() => setIsDeleteMemberOpenModal(false)}
+        onSubmit={() => {
+          deleteMember();
+        }}
+      />
+      }
+    </>
   );
 }
-
 const mapStateToProps = (state: any) => ({
   userProfile: state.user.userProfile,
 });
