@@ -83,7 +83,7 @@ const SearchBarMin = ({
       if (searchType === "CurrentView") {
         let newView: View = Object.assign({}, currentView);
         newView.query = search && search !== "" ? search : undefined;
-        newView.conditions = undefined;
+        // newView.conditions = undefined;
         setCurrentView(newView);
         fetchRowsByPage(0, 25);
       }

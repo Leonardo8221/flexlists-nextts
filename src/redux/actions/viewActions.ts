@@ -112,7 +112,7 @@ export const fetchRows = (): ThunkAction<
         state.view.currentView.page,
         state.view.currentView.limit,
         state.view.currentView.order,
-        state.view.currentView.conditions?undefined:state.view.currentView.query,
+        state.view.currentView.query,
         state.view.currentView.conditions,
         true,
         state.view.currentView.parentViewId,

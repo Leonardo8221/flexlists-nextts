@@ -509,7 +509,7 @@ const Filter = ({
   };
   const onsubmit = async () => {
     let newView: View = Object.assign({}, currentView);
-    newView.query = undefined;
+    // newView.query = undefined;
     setCurrentView(newView);
     fetchRows();
     handleClose();
