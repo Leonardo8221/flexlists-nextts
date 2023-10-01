@@ -16,21 +16,20 @@ import { fetchFields, setFields } from "src/redux/actions/listActions";
 import {
   Field,
   FieldUIType,
-  FlatWhere,
-  Query,
-  Sort,
   View,
 } from "src/models/SharedModels";
 import FieldFormPanel from "./FieldFormPanel";
-import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
+import { FieldType, FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { fieldService, reorderCoreFields } from "src/services/field.service";
 import { isErr } from "src/models/ApiResponse";
 import { ErrorConsts } from "src/constants/errorConstants";
-import { filter } from "lodash";
 import { fetchColumns, fetchRows } from "src/redux/actions/viewActions";
 import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import YesNoDialog from "src/components/dialog/YesNoDialog";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 interface ListFieldsProps {
   translations: TranslationText[];
@@ -43,6 +42,7 @@ interface ListFieldsProps {
   availableFieldUiTypes: FieldUIType[];
   open: boolean;
   onClose: () => void;
+  setFlashMessage: (message: FlashMessageModel) => void;
 }
 
 const ListFields = ({
@@ -56,6 +56,7 @@ const ListFields = ({
   fetchColumns,
   fetchRows,
   availableFieldUiTypes,
+  setFlashMessage
 }: ListFieldsProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -84,7 +85,8 @@ const ListFields = ({
   };
   const [selectedField, setSelectedField] = useState<Field>(newField);
   const [error, setError] = useState<string>("");
-
+  const [isDeleteFieldOpenModal,setIsDeleteFieldOpenModal]=useState<boolean>(false);
+  const [deleteFieldId,setDeleteFieldId]=useState<number>(0);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -148,25 +150,33 @@ const ListFields = ({
     reloadViewData();
   };
 
-  const handleDeleteField = async (fieldId: number) => {
-    var deleteFieldResponse = await fieldService.deleteField(
-      currentView.id,
-      fieldId
-    );
-    if (isErr(deleteFieldResponse)) {
-      setError(ErrorConsts.InternalServerError);
-      return;
-    }
-    setFields(fields.filter((field: any) => field.id !== fieldId));
-    reloadViewData();
+  const handleDeleteField = async (fieldId:number) => {
+     setDeleteFieldId(fieldId);
+     setIsDeleteFieldOpenModal(true)
   };
 
   const handleCloseModal = () => {
     setFieldManagementMode(true);
     onClose();
   };
-
+  const deleteField = async () => {
+    if(deleteFieldId === 0){
+      setFlashMessage({type:"error",message:"Field is not valid"});
+      return;
+    }
+    var deleteFieldResponse = await fieldService.deleteField(
+      currentView.id,
+      deleteFieldId
+    );
+    if (isErr(deleteFieldResponse)) {
+      setError(ErrorConsts.InternalServerError);
+      return;
+    }
+    setFields(fields.filter((field: any) => field.id !== deleteFieldId));
+    reloadViewData();
+  };
   return (
+    <>
     <Drawer
       anchor="right"
       open={open}
@@ -467,6 +477,21 @@ const ListFields = ({
         </>
       )}
     </Drawer>
+    {
+      isDeleteFieldOpenModal && <YesNoDialog
+      title={t("Delete Field")}
+      submitText={t("Delete")}
+      message={t("Sure Delete Field")}
+      open={isDeleteFieldOpenModal}
+      translations={translations}
+      handleClose={() => setIsDeleteFieldOpenModal(false)}
+      onSubmit={() => {
+        deleteField();
+      }}
+      />
+    }
+    </>
+    
   );
 };
 
@@ -481,6 +506,7 @@ const mapDispatchToProps = {
   fetchFields,
   fetchRows,
   fetchColumns,
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListFields);
