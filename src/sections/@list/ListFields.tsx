@@ -84,7 +84,6 @@ const ListFields = ({
     defaultValue: "",
   };
   const [selectedField, setSelectedField] = useState<Field>(newField);
-  const [error, setError] = useState<string>("");
   const [isDeleteFieldOpenModal,setIsDeleteFieldOpenModal]=useState<boolean>(false);
   const [deleteFieldId,setDeleteFieldId]=useState<number>(0);
   useEffect(() => {
@@ -96,7 +95,9 @@ const ListFields = ({
       fetchFields(currentView.id);
     }
   }, [open]);
-
+  const setError = (message:string)=>{
+    setFlashMessage({type:"error",message:message});
+  }
   const reorder = (list: any[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -169,7 +170,7 @@ const ListFields = ({
       deleteFieldId
     );
     if (isErr(deleteFieldResponse)) {
-      setError(ErrorConsts.InternalServerError);
+      setError(deleteFieldResponse.message);
       return;
     }
     setFields(fields.filter((field: any) => field.id !== deleteFieldId));

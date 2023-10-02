@@ -5,7 +5,6 @@ import {
   Typography,
   Grid,
   Button,
-  Alert,
   Drawer
 } from "@mui/material";
 import AddViewCard from "src/components/add-view/AddViewCard";
@@ -15,7 +14,6 @@ import { connect } from "react-redux";
 import { ViewType } from "src/enums/SharedEnums";
 import { listViewService } from "src/services/listView.service";
 import { isSucc } from "src/models/ApiResponse";
-import { ErrorConsts } from "src/constants/errorConstants";
 import { useRouter } from "next/router";
 import { PATH_MAIN } from "src/routes/paths";
 import KanbanViewConfig from "./KanbanViewConfig";
@@ -29,6 +27,8 @@ import { validateViewConfig } from "src/utils/flexlistHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { useTheme } from "@mui/material/styles";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 const ReactQuill = dynamic(
   () => {
@@ -43,6 +43,7 @@ type ListViewFormProps = {
   handleClose: () => void;
   availableFieldUiTypes: FieldUIType[];
   translations: TranslationText[];
+  setFlashMessage:(message:FlashMessageModel) => void;
 };
 
 const ListViewForm = ({
@@ -50,7 +51,8 @@ const ListViewForm = ({
   handleClose,
   currentView,
   availableFieldUiTypes,
-  translations
+  translations,
+  setFlashMessage
 }: ListViewFormProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -63,7 +65,7 @@ const ListViewForm = ({
   const [viewDescription, setViewDescription] = useState<string>("");
   const [config, setConfig] = useState<any>({});
   const [submit, setSubmit] = useState(false);
-  const [error, setError] = useState<string>("");
+  // const [error, setError] = useState<string>("");
 
   const AddViewCards = [
     {
@@ -117,7 +119,9 @@ const ListViewForm = ({
   const goNext = () => {
     setSteps(steps + 1);
   };
-
+  const setError = (message:string)=>{
+    setFlashMessage({type:"error",message:message});
+  }
   const handleSubmit = async () => {
     setSubmit(true);
     if (!viewName) {
@@ -145,7 +149,7 @@ const ListViewForm = ({
       // setViewType(ViewType.List);
       closeModal();
     } else {
-      setError(ErrorConsts.InternalServerError);
+      setError(createViewResponse.message);
     }
   };
 
@@ -234,7 +238,7 @@ const ListViewForm = ({
           <Box
             sx={{ p: 4, display: "flex", flexDirection: "column", gap: 4 }}
           >
-            <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
+            {/* <Box>{error && <Alert severity="error">{error}</Alert>}</Box> */}
             <Box>
               <TextField
                 label={t("View Name")}
@@ -370,5 +374,7 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   availableFieldUiTypes: state.view.availableFieldUiTypes,
 });
-
-export default connect(mapStateToProps)(ListViewForm);
+const mapDispatchToProps = {
+  setFlashMessage
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ListViewForm);

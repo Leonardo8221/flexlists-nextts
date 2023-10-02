@@ -12,7 +12,7 @@ import { ViewField } from "src/models/ViewField";
 import InputLabel from "@mui/material/InputLabel";
 
 type PresetType = {
-  viewID: number,
+  viewId: number,
   viewName: string,
   presetName: string
 };
@@ -68,9 +68,9 @@ const RelationConfig = ({
 
         response.data.map((view: any) => {
           if (currentView.listId !== view.listId) {
-            viewPresets.push({viewID: view.id, viewName: view.name, presetName: defaultPreset.name});
+            viewPresets.push({viewId: view.id, viewName: view.name, presetName: defaultPreset.name});
             view.presets.map((preset: any) => {
-              const newView = {viewID: view.id, viewName: view.name, presetName: preset.name};
+              const newView = {viewId: view.id, viewName: view.name, presetName: preset.name};
               viewPresets.push(newView);
               if (values && values.viewId && values.viewId === view.id) setView(newView);
             });
@@ -86,14 +86,14 @@ const RelationConfig = ({
 
   useEffect(() => {
     if (values && views.length) {
-      const oldView = views.filter((view: PresetType) => view.presetName === values.preset && view.viewID === values.viewId);
+      const oldView = views.filter((view: PresetType) => view.presetName === values.preset && view.viewId === values.viewId);
       if (oldView.length) setView(oldView[0]);
     }
   }, [values, views]);
 
   useEffect(() => {
     const fetchColumns = async (view: PresetType) => {
-      const response = await fieldService.getFields(view.viewID);
+      const response = await fieldService.getFields(view.viewId);
 
       if (isSucc(response)) {
         const allFields = response.data.filter((field: ViewField) => !field.system && field.viewFieldVisible);
@@ -113,7 +113,7 @@ const RelationConfig = ({
   }, [view]);
 
   useEffect(() => {
-    if (view && field) updateRelations({viewId: view.viewID, preset: view.presetName, rightFieldId: field});
+    if (view && field) updateRelations({viewId: view.viewId, preset: view.presetName, rightFieldId: field});
   }, [field]);
 
   const handleField = async (event: SelectChangeEvent) => {

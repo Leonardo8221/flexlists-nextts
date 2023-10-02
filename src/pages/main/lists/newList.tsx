@@ -128,6 +128,10 @@ function NewList({ message, translations, setMessage, viewTemplate }: NewListPro
         pathname: `${PATH_MAIN.lists}/${createListResponse.data.viewId}`,
       });
     }
+    else
+    {
+      setError((createListResponse as any).message)
+    }
   };
   return (
     <MainLayout removeFooter={true} translations={translations}>

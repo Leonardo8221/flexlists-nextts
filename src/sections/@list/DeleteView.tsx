@@ -12,12 +12,14 @@ import {
 import CentralModal from "src/components/modal/CentralModal";
 import { useRouter } from "next/router";
 import { listViewService } from "src/services/listView.service";
-import { isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
 import { TranslationText, View } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { connect } from "react-redux";
 import { setCurrentListViews } from "src/redux/actions/viewActions";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 type DeleteViewProps = {
   viewId: number;
@@ -25,9 +27,10 @@ type DeleteViewProps = {
   translations: TranslationText[];
   handleClose: () => void;
   currentListViews:View[];
+  setFlashMessage:(message:FlashMessageModel) => void;
 };
 
-const DeleteView = ({ viewId, open, translations, handleClose ,currentListViews}: DeleteViewProps) => {
+const DeleteView = ({ viewId, open, translations, handleClose ,currentListViews,setFlashMessage}: DeleteViewProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
@@ -45,6 +48,10 @@ const DeleteView = ({ viewId, open, translations, handleClose ,currentListViews}
         await router.push(PATH_MAIN.views)
       }
       
+    }
+    else
+    {
+      setFlashMessage({message:(response as FlexlistsError).message,type:"error"})
     }
   }
   return (
@@ -76,6 +83,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeleteView);

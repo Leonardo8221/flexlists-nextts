@@ -24,11 +24,14 @@ import { getAvatarUrl } from "src/utils/flexlistHelper";
 import YesNoDialog from "src/components/dialog/YesNoDialog";
 import { getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 type GroupMembersProps = {
   userProfile: UserProfile,
   translations: TranslationText[];
+  setFlashMessage:(message:FlashMessageModel)=>void
 }
-function GroupMembers({userProfile,translations}:GroupMembersProps) {
+function GroupMembers({userProfile,translations,setFlashMessage}:GroupMembersProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
@@ -37,7 +40,7 @@ function GroupMembers({userProfile,translations}:GroupMembersProps) {
   const [userContacts,setUserContacts] = useState<GetUserContactsOutputDto[]>([])
   const [selectedUserName,setSelectedUserName] = useState<string>('')
   const [submit, setSubmit] = useState(false);
-  const [error, setError] = useState<string>('');
+  // const [error, setError] = useState<string>('');
   const [isDeleteMemberOpenModal, setIsDeleteMemberOpenModal] = useState<boolean>(false);
   const [deleteMemberId, setDeleteMemberId] = useState<number>(0);
   useEffect(()=>{
@@ -63,7 +66,10 @@ function GroupMembers({userProfile,translations}:GroupMembersProps) {
       fetchData()
     }
   },[router.isReady])
-
+  const setError = (message:string) =>
+  {
+    setFlashMessage({message:message,type:"error"})
+  }
   const onSubmit = async()=>{
      setSubmit(true)
      if(!selectedUserName)
@@ -135,7 +141,7 @@ function GroupMembers({userProfile,translations}:GroupMembersProps) {
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Box>
-            {error && <Alert severity="error">{error}</Alert>}
+            {/* {error && <Alert severity="error">{error}</Alert>} */}
           </Box>
           <Autocomplete
             id="combo-box-user-contact"
@@ -286,6 +292,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  
+  setFlashMessage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(GroupMembers);
