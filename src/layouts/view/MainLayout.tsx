@@ -31,13 +31,16 @@ const Main = styled("div")(({ theme }) => ({
   paddingBottom: 0,
   display: "flex",
   overflow: "hidden",
+  height: "100%",
   [theme.breakpoints.up("md")]: {
     overflow: "hidden",
+    height: "100%",
   },
   [theme.breakpoints.up("lg")]: {
     paddingTop: APP_BAR_DESKTOP,
     paddingBottom: 0,
     overflow: "hidden",
+    height: "100%",
   },
 }));
 
@@ -95,13 +98,13 @@ const MainLayout = ({
     }
   }, [router.isReady]);
 
-  return apiResponseStatus === ApiResponseStatus.Success ?(
+  return apiResponseStatus === ApiResponseStatus.Success ? (
     <LoadingPage>
       <StyledRoot>
         <Header onOpenNav={() => setOpen(true)} translations={translations} />
 
         <Main sx={{ height: `${windowHeight - 40}px` }}>
-        <Nav openNav={open} onCloseNav={() => setOpen(false)} translations={translations} />
+          <Nav openNav={open} onCloseNav={() => setOpen(false)} translations={translations} />
           <Content theme={theme} disableOverflow={disableOverflow}>
             {children}
           </Content>
@@ -109,13 +112,13 @@ const MainLayout = ({
         {removeFooter == true && currentView && <Footer translations={translations} />}
       </StyledRoot>
     </LoadingPage>
-    
-  ):
-  (
-    <>
-    <Error errorStatus={apiResponseStatus} />
-    </>
-  )
+
+  ) :
+    (
+      <>
+        <Error errorStatus={apiResponseStatus} />
+      </>
+    )
 };
 
 const mapStateToProps = (state: any) => ({

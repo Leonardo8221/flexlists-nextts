@@ -333,8 +333,8 @@ const DataTable = ({
                   >
                     {cellValue && cellValue != null
                       ? `${getLocalDateTimeFromString(
-                          cellValue
-                        )} (${getDifferenceWithCurrent(cellValue)})`
+                        cellValue
+                      )} (${getDifferenceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -351,8 +351,8 @@ const DataTable = ({
                   >
                     {cellValue && cellValue != null
                       ? `${getLocalDateFromString(
-                          cellValue
-                        )} (${getDifferenceWithCurrent(cellValue)})`
+                        cellValue
+                      )} (${getDifferenceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -388,8 +388,8 @@ const DataTable = ({
                     {!cellValue
                       ? ""
                       : sanitizeHtml(cellValue.replace(/</g, " <"), {
-                          allowedTags: [],
-                        })}
+                        allowedTags: [],
+                      })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:
@@ -796,8 +796,9 @@ const DataTable = ({
           width: { xs: "100vw", lg: "100%" },
           overFlow: "scroll",
           height: {
-            xs: "calc(100vh - 234px)",
-            md: "inherit",
+            xs: "calc(100svh - 236px)",
+            md: "calc(100vh - 202px)",
+            lg: "calc(100vh - 188px)",
           },
         }}
         id="datatable_wrap"
@@ -827,15 +828,17 @@ const DataTable = ({
             columns={columnsTable}
             data={rows}
             enableStickyHeader={true}
+            muiTablePaperProps={{ sx: { height: "100%" } }}
             muiTableContainerProps={{
               sx: {
                 height: {
-                  xs: `${windowHeight - 236}px`,
-                  md: `${windowHeight - 200}px`,
-                  lg: `${windowHeight - 188}px`,
+                  // xs: `${windowHeight - 236}px`,
+                  // md: `${windowHeight - 200}px`,
+                  // lg: `${windowHeight - 188}px`,
+                  height: "100%",
                 },
                 width: { lg: "100vw" },
-                minHeight: "300px",
+                // minHeight: "300px",
                 "& .MuiTableHead-root": {
                   width: "100%",
                 },
@@ -867,15 +870,15 @@ const DataTable = ({
                   content: "''",
                   position: "absolute",
                   width: "4px",
-                  height:"32px",
+                  height: "32px",
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
                   background: selectedContentId === row.id
                     ? "rgb(84, 166, 251)" :
                     !isReadContent(row.id)
-                    ? "rgb(84, 166, 251, 0.5)"
-                    : "none",
+                      ? "rgb(84, 166, 251, 0.5)"
+                      : "none",
                 },
               },
             })}
@@ -916,8 +919,8 @@ const DataTable = ({
                 background: selectedContentId === row.id
                   ? "rgba(84, 166, 251, 0.2)" :
                   !isReadContent(row.id)
-                  ? "rgba(84, 166, 251, 0.05)"
-                  : "none",
+                    ? "rgba(84, 166, 251, 0.05)"
+                    : "none",
               }),
             })}
             muiBottomToolbarProps={{
