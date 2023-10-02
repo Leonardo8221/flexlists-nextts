@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
 
 const NAV_WIDTH = 64;
 const APP_BAR_DESKTOP = 80;
@@ -42,11 +43,6 @@ export default function Nav({ openNav, translations, onCloseNav }:NavProps) {
       icon: <AddIcon />,
       // icon: "Favourites_plus",
     },
-    // {
-    //   title: "Dashboard",
-    //   path: "/dashboard",
-    //   icon: "Home",
-    // },
     {
       title: t("My Lists"),
       path: PATH_MAIN.lists,
@@ -59,27 +55,18 @@ export default function Nav({ openNav, translations, onCloseNav }:NavProps) {
       // icon: "List",
       icon: <GridViewIcon />,
     },
-    // {
-    //   title: "Calendar",
-    //   path: "/main/calendar",
-    //   icon: "Projects",
-    // },
-    // {
-    //   title: "Apps",
-    //   path: "/",
-    //   icon: "Apps",
-    // },
     {
       title: t("Groups"),
       path: PATH_MAIN.groups,
       // icon: "Groups",
       icon: <Groups2OutlinedIcon />,
     },
-    // {
-    //   title: "Favorites",
-    //   path: "/",
-    //   icon: "Favourites",
-    // },
+    {
+      title: t("Integrations"),
+      path: PATH_MAIN.integrations,
+      icon: <ExtensionOutlinedIcon/>,
+      
+    },
     {
       title: t("Information"),
       path: "/",

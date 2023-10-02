@@ -22,10 +22,21 @@ import { GetServerSideProps } from "next";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { validateToken } from "src/utils/tokenUtils";
+import { Integration } from "src/models/SharedModels";
 import { isSucc } from "src/models/ApiResponse";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 import { integrationService } from "src/services/integration.service";
+import { isInteger } from "src/utils/validateUtils";
+
+const dummyIntegration = {
+  id: 1,
+  name: "Email on change",
+  description: "When a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyoneWhen a person do something notify everyone",
+  type: "email",
+  trigger: "create,update,read,delete",
+  email: "email@example.com"
+};
 
 type NewIntegrationProps = {
   translations: TranslationText[];
@@ -43,6 +54,7 @@ const NewIntegration = ({
   };
   const router = useRouter();
   const [flash, setFlash] = useState<{ message: string; type: string } | undefined>(undefined);
+  const [oldIntegration, setOldIntegration] = useState<Integration>();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState("");
@@ -51,6 +63,37 @@ const NewIntegration = ({
   const [readTrigger, setReadTrigger] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(false);
   const [deleteTrigger, setDeleteTrigger] = useState(false);
+
+  useEffect(() => {
+    async function fetchIntegration(integrationId: number) {
+      const response = await integrationService.getIntegration(integrationId);
+
+      if (isSucc(response) && response.data) {
+        // setOldIntegration(response.data);
+      } else {
+        setFlashMessage(response?.data?.message);
+      }
+    }
+
+    if (
+      router.isReady &&
+      router.query.integrationId &&
+      isInteger(router.query.integrationId)
+    ) {
+      // fetchIntegration(convertToNumber(router.query.integrationId));
+      const triggers = dummyIntegration.trigger.split(',');
+
+      setOldIntegration(dummyIntegration);
+      setName(dummyIntegration.name);
+      setDescription(dummyIntegration.description);
+      setType(dummyIntegration.type);
+      setEmail(dummyIntegration.email);
+      setCreateTrigger(triggers.includes('create'));
+      setReadTrigger(triggers.includes('read'));
+      setUpdateTrigger(triggers.includes('update'));
+      setDeleteTrigger(triggers.includes('delete'));
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     const checkMessage = () => {
@@ -72,8 +115,9 @@ const NewIntegration = ({
     setMessage({ message: message, type: type });
   };
 
-  const handleCreate = async () => {
+  const handleEdit = async () => {
     const triggerArray = [];
+
     if (createTrigger) triggerArray.push('create');
     if (readTrigger) triggerArray.push('read');
     if (updateTrigger) triggerArray.push('update');
@@ -86,18 +130,21 @@ const NewIntegration = ({
     };
 
     console.log(newIntegration, 'newIntegration')
-    const createIntegrationResponse = await integrationService.createIntegration(
-      name, description, type,
-      triggerArray.join(','),
-      email
-    );
-
-    if (isSucc(createIntegrationResponse) && createIntegrationResponse.data) {
-      console.log(createIntegrationResponse, 'createIntegrationResponse');
-      router.push(PATH_MAIN.integrations);
-    } else {
-      setFlashMessage(createIntegrationResponse.message);
-      return;
+    if (oldIntegration?.id) {
+      const updateIntegrationResponse = await integrationService.updateIntegration(
+        oldIntegration.id,
+        name, description, type,
+        triggerArray.join(','),
+        email
+      );
+  
+      if (isSucc(updateIntegrationResponse) && updateIntegrationResponse.data) {
+        console.log(updateIntegrationResponse, 'updateIntegrationResponse');
+        router.push(PATH_MAIN.integrations);
+      } else {
+        setFlashMessage(updateIntegrationResponse.message);
+        return;
+      }
     }
   };
 
@@ -111,7 +158,7 @@ const NewIntegration = ({
           p: { xs: 2, md: 4 },
         }}
       >
-        <Typography variant="h4">{t("New Integration")}</Typography>
+        <Typography variant="h4">{t("Edit Integration")}</Typography>
         <TextField
           fullWidth
           label={t("Name")}
@@ -189,7 +236,7 @@ const NewIntegration = ({
           }}>
             {t("Back To Integrations")}
           </Button>
-          <Button variant="contained" onClick={handleCreate}>{t("Save")}</Button>
+          <Button variant="contained" onClick={handleEdit}>{t("Edit")}</Button>
         </Box>
       </Box>
       <Snackbar

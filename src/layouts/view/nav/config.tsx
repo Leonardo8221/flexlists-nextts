@@ -4,7 +4,6 @@ import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import AddIcon from "@mui/icons-material/Add";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import ExtensionIcon from '@mui/icons-material/Extension';
 
 const navConfig = [
   {
@@ -51,12 +50,6 @@ const navConfig = [
   //   path: "/",
   //   icon: "Favourites",
   // },
-  {
-    title: "Integrations",
-    path: PATH_MAIN.integrations,
-    icon: <ExtensionIcon/>,
-    
-  },
   {
     title: "Information",
     path: "/",

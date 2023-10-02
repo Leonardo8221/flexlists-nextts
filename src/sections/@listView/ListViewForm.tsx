@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   TextField,
@@ -111,11 +111,19 @@ const ListViewForm = ({
     },
   ];
 
+  useEffect(() => {
+    clearView();
+    setSteps(0);
+    setViewType(ViewType.List);
+  }, [open]);
+
   const goPrevious = () => {
+    setViewType(ViewType.List);
     setSteps(steps - 1);
   };
 
   const goNext = () => {
+    clearView();
     setSteps(steps + 1);
   };
 
@@ -171,12 +179,18 @@ const ListViewForm = ({
   };
 
   const onTypeSelect = (type: ViewType) => {
+    clearView();
     setViewType(type);
     setSteps(1);
   };
 
   const updateConfig = (newConfig: any) => {
     setConfig(newConfig);
+  };
+
+  const clearView = () => {
+    setSubmit(false);
+    setViewName("");
   };
 
   return (
