@@ -24,10 +24,10 @@ const APP_BAR_DESKTOP = 80;
 type NavProps = {
   openNav: boolean;
   translations: TranslationText[];
-  onCloseNav: ()=>void;
+  onCloseNav: () => void;
 };
 
-export default function Nav({ openNav, translations, onCloseNav }:NavProps) {
+export default function Nav({ openNav, translations, onCloseNav }: NavProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
@@ -112,7 +112,7 @@ export default function Nav({ openNav, translations, onCloseNav }:NavProps) {
               width: NAV_WIDTH,
               position: 'relative',
               border: 'none',
-              height: `calc(100vh - ${APP_BAR_DESKTOP + 25}px)`,
+              height: `calc(100vh - ${APP_BAR_DESKTOP + 32}px)`,
               backgroundColor: theme.palette.palette_style.background.default,
             },
           }}
