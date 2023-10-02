@@ -1,4 +1,11 @@
-import { useMemo, useState, useEffect, useRef, useReducer } from "react";
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useReducer,
+  ReactNode,
+} from "react";
 import {
   Box,
   Stack,
@@ -129,13 +136,16 @@ const DataTable = ({
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
   const [selectedContentId, setSelectedContentId] = useState<number>();
 
-
   const [currentPage, setCurrentPage] = useState(1);
   const [page, setPage] = useState(currentPage);
-  const handleDropdownPageChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+
+  const handleDropdownPageChange = (
+    event: SelectChangeEvent<number>,
+    child: ReactNode
+  ) => {
     const newPage = event.target.value as number;
     setPage(newPage);
-    handleChange(undefined, newPage);
+    _handleChange(newPage);
   };
 
   const bulkActions = [
@@ -342,8 +352,8 @@ const DataTable = ({
                   >
                     {cellValue && cellValue != null
                       ? `${getLocalDateTimeFromString(
-                        cellValue
-                      )} (${getDifferenceWithCurrent(cellValue)})`
+                          cellValue
+                        )} (${getDifferenceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -360,8 +370,8 @@ const DataTable = ({
                   >
                     {cellValue && cellValue != null
                       ? `${getLocalDateFromString(
-                        cellValue
-                      )} (${getDifferenceWithCurrent(cellValue)})`
+                          cellValue
+                        )} (${getDifferenceWithCurrent(cellValue)})`
                       : ""}
                   </Box>
                 );
@@ -397,8 +407,8 @@ const DataTable = ({
                     {!cellValue
                       ? ""
                       : sanitizeHtml(cellValue.replace(/</g, " <"), {
-                        allowedTags: [],
-                      })}
+                          allowedTags: [],
+                        })}
                   </Box>
                 );
               case FieldUiTypeEnum.Markdown:
@@ -626,7 +636,7 @@ const DataTable = ({
     if (id) setSelectedContentId(id);
   };
 
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const _handleChange = (value: number) => {
     setPagination({
       ...pagination,
       pageIndex: value - 1,
@@ -635,6 +645,10 @@ const DataTable = ({
     newView.page = value - 1;
     setCurrentView(newView);
     fetchRowsByPage(newView.page, newView.limit ?? 25);
+  };
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    _handleChange(value);
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
@@ -883,9 +897,10 @@ const DataTable = ({
                   transform: "translate(-4px,-50%)",
                   left: "0",
                   top: "50%",
-                  background: selectedContentId === row.id
-                    ? "rgb(84, 166, 251)" :
-                    !isReadContent(row.id)
+                  background:
+                    selectedContentId === row.id
+                      ? "rgb(84, 166, 251)"
+                      : !isReadContent(row.id)
                       ? "rgb(84, 166, 251, 0.5)"
                       : "none",
                 },
@@ -925,9 +940,10 @@ const DataTable = ({
                 py: 0,
                 height: 32,
                 fontWeight: isReadContent(row.id) ? "normal" : "bold",
-                background: selectedContentId === row.id
-                  ? "rgba(84, 166, 251, 0.2)" :
-                  !isReadContent(row.id)
+                background:
+                  selectedContentId === row.id
+                    ? "rgba(84, 166, 251, 0.2)"
+                    : !isReadContent(row.id)
                     ? "rgba(84, 166, 251, 0.05)"
                     : "none",
               }),
@@ -1122,12 +1138,13 @@ const DataTable = ({
               sx={{
                 display: { xs: "none", md: "flex" },
                 alignItems: "center",
-                justifyContent: "flex-end"
-
+                justifyContent: "flex-end",
               }}
             />
-            <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center" }}>
-              <Typography variant="caption">Page: {" "}</Typography>
+            <Box
+              sx={{ display: { xs: "flex", md: "none" }, alignItems: "center" }}
+            >
+              <Typography variant="caption">Page: </Typography>
               <Select
                 value={(currentView.page || 0) + 1}
                 onChange={handleDropdownPageChange}
@@ -1143,11 +1160,14 @@ const DataTable = ({
                   },
                 }}
               >
-                {Array.from({ length: Math.ceil(count / pagination.pageSize) }, (_, index) => (
-                  <MenuItem key={index + 1} value={index + 1}>
-                    {index + 1}
-                  </MenuItem>
-                ))}
+                {Array.from(
+                  { length: Math.ceil(count / pagination.pageSize) },
+                  (_, index) => (
+                    <MenuItem key={index + 1} value={index + 1}>
+                      {index + 1}
+                    </MenuItem>
+                  )
+                )}
               </Select>
             </Box>
           </Box>
