@@ -107,6 +107,10 @@ function ManageKeys({
     if (isSucc(response)) {
       onUpdateViewKeys(viewKeys.filter((x) => x.keyId !== keyId));
     }
+    else
+    {
+      setFlashMessage({message:(response as FlashMessageModel).message,type:"error"})
+    }
   };
   const updateViewKeyUpdateList = (keyId: number, isEditing: boolean) => {
     let newViewKeyUpdateList: { keyId: number; isEditing: boolean }[] =

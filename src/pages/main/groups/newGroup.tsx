@@ -60,19 +60,23 @@ function NewGroup({ translations, setFlashMessage }: NewGroupProps) {
     } 
     let newGroupName = await frontendValidate(ModelValidatorEnum.Group,FieldValidatorEnum.name,currentGroup.name,_errors,_setErrors,true)
         if(isFrontendError(FieldValidatorEnum.name,_errors,setErrors,setError)) return
-    var createListResponse = await groupService.createUserGroup(
+    var createGroupResponse = await groupService.createUserGroup(
       newGroupName,
       currentGroup.description,
       currentGroup.avatarUrl
     );
     if (
-      isSucc(createListResponse) &&
-      createListResponse.data &&
-      createListResponse.data.groupId
+      isSucc(createGroupResponse) &&
+      createGroupResponse.data &&
+      createGroupResponse.data.groupId
     ) {
       await router.push({
-        pathname: `${PATH_MAIN.groups}/${createListResponse.data.groupId}`,
+        pathname: `${PATH_MAIN.groups}/${createGroupResponse.data.groupId}`,
       });
+    }
+    else
+    {
+      setError((createGroupResponse as FlexlistsError).message)
     }
   };
   const handleFileChange = async (

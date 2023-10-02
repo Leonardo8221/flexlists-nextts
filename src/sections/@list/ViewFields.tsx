@@ -22,6 +22,9 @@ import { getDefaultFieldIcon } from "src/utils/flexlistHelper";
 import { getFieldIcons } from "src/utils/flexlistHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { isErr } from "src/utils/responses";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
 
 type ViewFieldsProps = {
   translations: TranslationText[];
@@ -32,6 +35,7 @@ type ViewFieldsProps = {
   setColumns: (columns: any) => void;
   handleClose: () => void;
   fetchColumns: (viewId: number) => void;
+  setFlashMessage:(message:FlashMessageModel)=>void;
 };
 
 const ViewFields = ({
@@ -43,6 +47,7 @@ const ViewFields = ({
   setColumns,
   handleClose,
   fetchColumns,
+  setFlashMessage
 }: ViewFieldsProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -94,10 +99,14 @@ const ViewFields = ({
     let newColumns = Object.assign([], columns);
     const [removedColumns] = newColumns.splice(source.index, 1);
     newColumns.splice(destination.index, 0, removedColumns);
-    await reorderViewFields(
+    let reorderResult = await reorderViewFields(
       currentView.id,
       newColumns.map((x: any) => x.id)
     );
+    if(isErr(reorderResult)) {
+      setFlashMessage({type:'error', message: reorderResult.message});
+      return;
+    }
     fetchColumns(currentView.id);
   };
 
@@ -514,6 +523,7 @@ const mapDispatchToProps = {
   setColumns,
   setCurrentView,
   fetchColumns,
+  setFlashMessage
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewFields);

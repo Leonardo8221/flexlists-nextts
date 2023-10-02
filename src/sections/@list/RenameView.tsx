@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { setCurrentView } from "src/redux/actions/viewActions";
 import { View } from "src/models/SharedModels";
 import { listViewService } from "src/services/listView.service";
-import { isSucc } from "src/models/ApiResponse";
+import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendError } from "src/utils/validatorHelper";
 import { setFlashMessage } from "src/redux/actions/authAction";
@@ -75,6 +75,10 @@ const RenameView = ({
     if (isSucc(response)) {
       setCurrentView(view);
       handleClose();
+    }
+    else
+    {
+      setError((response as FlexlistsError).message)
     }
   };
   return (

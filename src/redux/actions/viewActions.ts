@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import store, { RootState } from '../store';
-import { isSucc } from 'src/models/ApiResponse';
+import { isErr, isSucc } from 'src/models/ApiResponse';
 import { listViewService } from 'src/services/listView.service';
 import { fieldService } from 'src/services/field.service';
 import { listContentService } from 'src/services/listContent.service'
@@ -10,6 +10,7 @@ import { adminService } from 'src/services/admin.service';
 import { hasPermission } from 'src/utils/permissionHelper';
 import { cloneDeep } from 'lodash';
 import { getViewReadContents, removeViewReadContent, setViewReadContent } from 'src/utils/localStorage';
+import { setFlashMessage } from './authAction';
 // Define the actions
 export const getAvailableFieldUiTypes = (): ThunkAction<
   void,
@@ -128,6 +129,10 @@ export const fetchRows = (): ThunkAction<
 
       }
       else {
+        if(isErr(response))
+        {
+          dispatch(setFlashMessage({message:response.message,type:'error'}));
+        }
         dispatch(setRows([]));
         dispatch(setCount(0));
 

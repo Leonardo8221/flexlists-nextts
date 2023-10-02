@@ -20,18 +20,22 @@ import {
   GetGroupViewsOutputDto,
   GetViewGroupsOutputDto,
 } from "src/models/ApiOutputModels";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 type GroupListAccessProps = {
   currentView: View;
   viewGroups: GetViewGroupsOutputDto[];
   roles: { name: string; label: string }[];
   setViewGroups: (groups: any[]) => void;
+  setFlashMessage:(message:FlashMessageModel)=>void
 };
 function GroupListAccess({
   currentView,
   viewGroups,
   roles,
   setViewGroups,
+  setFlashMessage
 }: GroupListAccessProps) {
   const [role, setRole] = useState("");
   const onRoleChange = async (groupId: number, event: SelectChangeEvent) => {
@@ -52,6 +56,10 @@ function GroupListAccess({
         })
       );
     }
+    else
+    {
+      setFlashMessage({message:(response as FlashMessageModel).message,type:"error"})
+    }
   };
   const onDeleteViewGroup = async (groupId: number) => {
     let response = await listViewService.deleteTableViewFromGroup(
@@ -65,6 +73,10 @@ function GroupListAccess({
           return x.groupId != groupId;
         })
       );
+    }
+    else
+    {
+      setFlashMessage({message:(response as FlashMessageModel).message,type:"error"})
     }
   };
   return (
@@ -170,5 +182,7 @@ const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setFlashMessage
+};
 export default connect(mapStateToProps, mapDispatchToProps)(GroupListAccess);

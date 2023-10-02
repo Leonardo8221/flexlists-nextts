@@ -20,6 +20,8 @@ import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { downloadFileUrl } from "src/utils/flexlistHelper";
 import { UserProfile } from "src/models/UserProfile";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
+import { setFlashMessage } from "src/redux/actions/authAction";
 
 type UserListAccessProps = {
   currentView: View;
@@ -28,6 +30,7 @@ type UserListAccessProps = {
   translations: TranslationText[];
   setViewUsers: (users: any[]) => void;
   userProfile:UserProfile
+  setFlashMessage:(message:FlashMessageModel)=>void
 };
 function UserListAccess({
   currentView,
@@ -35,7 +38,8 @@ function UserListAccess({
   roles,
   translations,
   setViewUsers,
-  userProfile
+  userProfile,
+  setFlashMessage
 }: UserListAccessProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -59,6 +63,10 @@ function UserListAccess({
         })
       );
     }
+    else
+    {
+      setFlashMessage({message:(response as FlashMessageModel).message,type:"error"})
+    }
   };
   const onDeleteViewUser = async (userId: number) => {
     let response = await listViewService.deleteUserFromView(
@@ -72,6 +80,10 @@ function UserListAccess({
           return x.userId != userId;
         })
       );
+    }
+    else
+    {
+      setFlashMessage({message:(response as FlashMessageModel).message,type:"error"})
     }
   };
   return (
@@ -202,5 +214,6 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   setViewUsers,
+  setFlashMessage
 };
 export default connect(mapStateToProps, mapDispatchToProps)(UserListAccess);

@@ -17,6 +17,8 @@ import { UserProfile } from "src/models/UserProfile";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
+import { setFlashMessage } from "src/redux/actions/authAction";
+import { FlashMessageModel } from "src/models/FlashMessageModel";
 
 type ChatFormProps = {
   chatType: ChatType;
@@ -24,6 +26,7 @@ type ChatFormProps = {
   currentView: View;
   userProfile: UserProfile;
   translations: TranslationText[];
+  setFlashMessage:(message:FlashMessageModel)=>void
 }
 
 const ChatForm = ({
@@ -31,7 +34,8 @@ const ChatForm = ({
   userProfile,
   chatType,
   id,
-  translations
+  translations,
+  setFlashMessage
 }: ChatFormProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -77,6 +81,9 @@ const ChatForm = ({
         //   }));
         setPage((prevPage) => prevPage + 1);
       }
+    }
+    else {
+      setFlashMessage({ message: chatResponse.message, type: 'error' })
     }
   };
 
@@ -362,9 +369,11 @@ const ChatForm = ({
 
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
-  userProfile: state.user.userProfile
+  userProfile: state.user.userProfile,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setFlashMessage
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatForm);
