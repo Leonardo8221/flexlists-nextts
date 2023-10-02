@@ -7,7 +7,8 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
-  Link
+  Link,
+  Rating,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -77,11 +78,11 @@ type DataTableProps = {
   columns: ViewField[];
   rows: any[];
   count: number;
-  users: any[];
-  readContents: number[];
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
+  users: any[];
+  readContents: number[];
 };
 
 const DataTable = ({
@@ -91,11 +92,11 @@ const DataTable = ({
   columns,
   rows,
   count,
-  users,
-  readContents,
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
+  users,
+  readContents,
 }: DataTableProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -107,7 +108,8 @@ const DataTable = ({
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] = useState(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
+    useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [selectedRowData, setSelectedRowData] = useState<any[]>([]);
   const [pagination, setPagination] = useState({
@@ -119,11 +121,22 @@ const DataTable = ({
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
+    "view"
+  );
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
   const [selectedContentId, setSelectedContentId] = useState<number>();
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(currentPage);
+  const handleDropdownPageChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const newPage = event.target.value as number;
+    setPage(newPage);
+    handleChange(undefined, newPage);
+  };
 
   const bulkActions = [
     {
@@ -654,7 +667,8 @@ const DataTable = ({
     setVisibleFieldManagementPanel(false);
   };
 
-  const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
+  const rowVirtualizerInstanceRef =
+    useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
 
   const handleBulkAction = async (action: string) => {
     switch (action) {
@@ -789,6 +803,7 @@ const DataTable = ({
       <Box
         sx={{
           width: { xs: "100vw", lg: "100%" },
+          overFlow: "scroll",
           height: {
             xs: "calc(100svh - 236px)",
             md: "calc(100vh - 202px)",
@@ -1073,7 +1088,7 @@ const DataTable = ({
           >
             <Typography
               variant="caption"
-              sx={{ display: { xs: "none", lg: "block" } }}
+              sx={{ display: { xs: "block", lg: "block" } }}
             >
               {pagination.pageIndex * pagination.pageSize + 1}-
               {(pagination.pageIndex + 1) * pagination.pageSize} of {count},{" "}
@@ -1105,11 +1120,36 @@ const DataTable = ({
               page={(currentView.page || 0) + 1}
               onChange={handleChange}
               sx={{
-                display: "flex",
+                display: { xs: "none", md: "flex" },
                 alignItems: "center",
                 justifyContent: "flex-end"
+
               }}
             />
+            <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center" }}>
+              <Typography variant="caption">Page: {" "}</Typography>
+              <Select
+                value={(currentView.page || 0) + 1}
+                onChange={handleDropdownPageChange}
+                size="small"
+                sx={{
+                  display: { xs: "block", md: "none" },
+                  // flex: 1,
+                  boxShadow: "none",
+                  ".MuiOutlinedInput-notchedOutline": { border: 0 },
+                  fontSize: "14px",
+                  "& .MuiSelect-select": {
+                    pr: 4,
+                  },
+                }}
+              >
+                {Array.from({ length: Math.ceil(count / pagination.pageSize) }, (_, index) => (
+                  <MenuItem key={index + 1} value={index + 1}>
+                    {index + 1}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
           </Box>
         </Stack>
         {visibleAddRowPanel && (
