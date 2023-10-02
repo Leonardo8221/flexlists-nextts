@@ -401,3 +401,9 @@ export function getFieldIcons(): string[] {
     "Plus",
   ];
 }
+
+export const enabledViewCards = (views: any[]) => {
+  const enabledViews = process.env.NEXT_PUBLIC_FLEXLIST_VIEWS ? process.env.NEXT_PUBLIC_FLEXLIST_VIEWS.split(',') : [];
+
+  return views.filter((view: any) => enabledViews.includes(view.type.toLowerCase()) || view.type === 'List');
+};

@@ -16,7 +16,6 @@ import { View } from "src/models/SharedModels";
 import {
   FlexlistsError,
   FlexlistsSuccess,
-  isErr,
   isSucc,
 } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
@@ -29,6 +28,7 @@ import { setCurrentView, setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { enabledViewCards } from "src/utils/flexlistHelper";
 
 type ViewsProps = {
   translations: TranslationText[];
@@ -117,10 +117,10 @@ const Views = ({
       if (isSucc(response) && response.data) {
         if (response.data.length > 0) {
           if (isDefaultViews) {
-            setViews(response.data);
+            setViews(enabledViewCards(response.data));
           } else
           {
-            setViews(response.data.filter((view:View) => !view.isDefaultView));
+            setViews(enabledViewCards(response.data).filter((view:View) => !view.isDefaultView));
           }
         } else {
           if (!isArchived) {

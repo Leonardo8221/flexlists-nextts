@@ -23,7 +23,7 @@ import TimelineViewConfig from "./TimelineViewConfig";
 import GanttViewConfig from "./GanttViewConfig";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
-import { validateViewConfig } from "src/utils/flexlistHelper";
+import { validateViewConfig, enabledViewCards } from "src/utils/flexlistHelper";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { useTheme } from "@mui/material/styles";
@@ -40,18 +40,18 @@ const ReactQuill = dynamic(
 type ListViewFormProps = {
   currentView: View;
   open: boolean;
-  handleClose: () => void;
   availableFieldUiTypes: FieldUIType[];
   translations: TranslationText[];
+  handleClose: () => void;
   setFlashMessage:(message:FlashMessageModel) => void;
 };
 
 const ListViewForm = ({
   open,
-  handleClose,
   currentView,
   availableFieldUiTypes,
   translations,
+  handleClose,
   setFlashMessage
 }: ListViewFormProps) => {
   const t = (key: string): string => {
@@ -65,7 +65,6 @@ const ListViewForm = ({
   const [viewDescription, setViewDescription] = useState<string>("");
   const [config, setConfig] = useState<any>({});
   const [submit, setSubmit] = useState(false);
-  // const [error, setError] = useState<string>("");
 
   const AddViewCards = [
     {
@@ -127,11 +126,14 @@ const ListViewForm = ({
     clearView();
     setSteps(steps + 1);
   };
+
   const setError = (message:string)=>{
     setFlashMessage({type:"error",message:message});
-  }
+  };
+
   const handleSubmit = async () => {
     setSubmit(true);
+
     if (!viewName) {
       setError("Name required");
       return;
@@ -140,12 +142,14 @@ const ListViewForm = ({
     if (!validateViewConfig(viewType, config,setError)) {
       return;
     }
-    var createViewResponse = await listViewService.createView(
+
+    const createViewResponse = await listViewService.createView(
       currentView.listId,
       viewName,
       viewType,
       config
     );
+
     if (
       isSucc(createViewResponse) &&
       createViewResponse.data &&
@@ -178,7 +182,6 @@ const ListViewForm = ({
     clearView();
     setViewType(type);
     setSteps(1);
-    //  reloadColumns(type)
   };
 
   const updateConfig = (newConfig: any) => {
@@ -228,7 +231,7 @@ const ListViewForm = ({
 
         {steps === 0 && (
           <Grid container spacing={3} sx={{ p: 4 }}>
-            {AddViewCards.map((card: any) => {
+            {enabledViewCards(AddViewCards).map((card: any) => {
               return (
                 <Grid
                   item
