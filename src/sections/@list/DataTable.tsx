@@ -7,8 +7,7 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
-  Link,
-  Rating,
+  Link
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MaterialReactTable, {
@@ -78,11 +77,11 @@ type DataTableProps = {
   columns: ViewField[];
   rows: any[];
   count: number;
+  users: any[];
+  readContents: number[];
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
-  users: any[];
-  readContents: number[];
 };
 
 const DataTable = ({
@@ -92,11 +91,11 @@ const DataTable = ({
   columns,
   rows,
   count,
+  users,
+  readContents,
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
-  users,
-  readContents,
 }: DataTableProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -108,8 +107,7 @@ const DataTable = ({
   const isDesktop = useResponsive("up", "lg");
   const isMobile = useResponsive("down", "md");
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
-  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] =
-    useState(false);
+  const [visibleFieldManagementPanel, setVisibleFieldManagementPanel] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const [selectedRowData, setSelectedRowData] = useState<any[]>([]);
   const [pagination, setPagination] = useState({
@@ -121,9 +119,7 @@ const DataTable = ({
   const tableInstanceRef = useRef<MRT_TableInstance<any>>(null);
   const rerender = useReducer(() => ({}), {})[1];
   const [windowHeight, setWindowHeight] = useState(0);
-  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">(
-    "view"
-  );
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
   const [openBulkDeleteDialog, setOpenBulkDeleteDialog] = useState(false);
   const [printRows, setPrintRows] = useState<any[]>([]);
   const [toggleBulkAction, setToggleBulkAction] = useState(false);
@@ -658,8 +654,7 @@ const DataTable = ({
     setVisibleFieldManagementPanel(false);
   };
 
-  const rowVirtualizerInstanceRef =
-    useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
+  const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
 
   const handleBulkAction = async (action: string) => {
     switch (action) {
@@ -794,7 +789,6 @@ const DataTable = ({
       <Box
         sx={{
           width: { xs: "100vw", lg: "100%" },
-          overFlow: "scroll",
           height: {
             xs: "calc(100vh - 234px)",
             md: "inherit",

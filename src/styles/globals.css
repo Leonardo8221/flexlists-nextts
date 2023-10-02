@@ -276,3 +276,7 @@ form {
     margin: 0;
   }
 }
+
+#datatable_wrap thead {
+  z-index: 2;
+}
