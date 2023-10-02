@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, TextField, Modal, Typography, Grid, Button } from "@mui/material";
+import { Box, TextField, Modal, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import ListViewForm from "../@listView/ListViewForm";
@@ -14,6 +14,7 @@ import { renderHTML, convertToNumber } from "src/utils/convertUtils";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { setCurrentListViews } from "src/redux/actions/viewActions";
+import { enabledViewCards } from "src/utils/flexlistHelper";
 
 type MenuBarProps = {
   search?: string;
@@ -31,14 +32,29 @@ function MenuBar({ search, currentView, translations,setCurrentListViews }: Menu
   const [viewsSearch, setViewsSearch] = useState("");
   const [views, setViews] = useState<View[]>([]);
   const [filterViews, setFilerViews] = useState<View[]>([]);
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
-
   const router = useRouter();
 
   useEffect(() => {
     if (router.query.viewId) setSelectedViewId(convertToNumber(router.query.viewId));
     if (router.query.defaultListViewId) setSelectedViewId(convertToNumber(router.query.defaultListViewId));
   }, [router.isReady]);
+
+  useEffect(() => {
+    async function fetchData() {
+      var response = await listViewService.getViews(currentView.id);
+      if (isSucc(response) && response.data && response.data.length > 0) {
+        setViews(response.data);
+        setCurrentListViews(response.data);
+        setFilerViews(enabledViewCards(response.data));
+      }
+    };
+
+    if (currentView) {
+      fetchData();
+    }
+  }, [currentView]);
 
   const handleMenu = async (view: View) => {
     setSelectedViewId(view.id);
@@ -49,19 +65,7 @@ function MenuBar({ search, currentView, translations,setCurrentListViews }: Menu
       router.reload();
     }
   };
-  useEffect(() => {
-    async function fetchData() {
-      var response = await listViewService.getViews(currentView.id);
-      if (isSucc(response) && response.data && response.data.length > 0) {
-        setViews(response.data);
-        setCurrentListViews(response.data)
-        setFilerViews(response.data);
-      }
-    }
-    if (currentView) {
-      fetchData();
-    }
-  }, [currentView]);
+
   const handleViewsSearch = (e: any) => {
     setViewsSearch(e.target.value);
     setFilerViews(
@@ -69,8 +73,8 @@ function MenuBar({ search, currentView, translations,setCurrentListViews }: Menu
     );
   };
 
-  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
+
   const handleClose = () => {
     setOpen(false);
   };
