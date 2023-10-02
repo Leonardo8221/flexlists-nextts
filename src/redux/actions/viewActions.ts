@@ -126,16 +126,15 @@ export const fetchRows = (): ThunkAction<
         }
         dispatch(setRows(contents));
         dispatch(setCount(response.data.count));
-
       }
       else {
         if(isErr(response))
         {
           dispatch(setFlashMessage({message:response.message,type:'error'}));
         }
-        dispatch(setRows([]));
-        dispatch(setCount(0));
-
+        // dispatch(setRows([]));
+        // dispatch(setCount(0));
+        dispatch(setFlashMessage({message: response.message, type:'error'}));
       }
     } catch (error) {
       console.log(error)
@@ -169,12 +168,11 @@ export const fetchRowsByPage = (page?: number, limit?: number, query?: string): 
         }
         dispatch(setRows(contents));
         dispatch(setCount(response.data.count));
-
       }
       else {
-        dispatch(setRows([]));
-        dispatch(setCount(0));
-
+        // dispatch(setRows([]));
+        // dispatch(setCount(0));
+        dispatch(setFlashMessage({message: response.message, type:'error'}));
       }
     } catch (error) {
       console.log(error)
