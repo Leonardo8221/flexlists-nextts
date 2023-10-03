@@ -133,11 +133,11 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
         <meta name="description" content={t("Meta Description")} />
         <meta name="keywords" content={t("Meta Keywords")} />
       </Head>
+      <ComingSoon
+        title="New Feature Coming Soon"
+        description="Stay tuned for exciting updates!"
+        link="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
       <Box sx={{ p: { xs: 2, md: 4 } }}>
-        <ComingSoon
-          title="New Feature Coming Soon"
-          description="Stay tuned for exciting updates!"
-          link="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
         <Typography variant="h4" gutterBottom>
           {t("Integrations")}
         </Typography>
