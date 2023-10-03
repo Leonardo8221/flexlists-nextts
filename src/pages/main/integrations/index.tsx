@@ -28,6 +28,7 @@ import { isSucc } from "src/models/ApiResponse";
 import { integrationService } from "src/services/integration.service";
 import { setMessage } from "src/redux/actions/viewActions";
 import { connect } from "react-redux";
+import ComingSoon from "src/pages/ComingSoon";
 
 type IntegrationsProps = {
   translations: TranslationText[];
@@ -90,7 +91,7 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
       } else {
         setMessage({
           message:
-          t("No Integrations"),
+            t("No Integrations"),
           type: "success",
         });
         await router.push(PATH_MAIN.newIntegration);
@@ -133,6 +134,10 @@ const Integrations = ({ translations, message, setMessage }: IntegrationsProps) 
         <meta name="keywords" content={t("Meta Keywords")} />
       </Head>
       <Box sx={{ p: { xs: 2, md: 4 } }}>
+        <ComingSoon
+          title="New Feature Coming Soon"
+          description="Stay tuned for exciting updates!"
+          link="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
         <Typography variant="h4" gutterBottom>
           {t("Integrations")}
         </Typography>
