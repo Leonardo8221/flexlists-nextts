@@ -26,7 +26,6 @@ import {
 } from "src/enums/ShareEnumLabels";
 import { FlatWhere, View } from "src/models/SharedModels";
 import {
-  FieldType,
   FieldUiTypeEnum,
   FilterOperator,
 } from "src/enums/SharedEnums";
@@ -48,10 +47,10 @@ type FilterProps = {
   currentView: View;
   columns: ViewField[];
   open: boolean;
+  users: any[];
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
-  users: any[];
 };
 
 const Filter = ({
@@ -59,10 +58,10 @@ const Filter = ({
   currentView,
   columns,
   open,
+  users,
   fetchRows,
   setCurrentView,
   handleClose,
-  users,
 }: FilterProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -70,6 +69,8 @@ const Filter = ({
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
+  const [newCurrentView, setNewCurrentView] = useState<View>();
+
   const stringFilterOperators: { key: string; value: string }[] = Array.from(
     StringFilterOperatorLabel,
     function (item) {
@@ -132,23 +133,13 @@ const Filter = ({
     setWindowHeight(window.innerHeight);
   }, []);
 
-  // const getColumn = (column_id: any) => {
-
-  //   const column = columns.find(
-  //     (item: any) =>
-  //       item.id === convertToInteger(column_id) ||
-  //       item.name === column_id
-  //     // (!item.system && item.id === convertToInteger(column_id)) ||
-  //     // (item.system &&
-  //     //   (item.name === "createdAt" || item.name === "updatedAt") &&
-  //     //   item.name === column_id)
-  //   );
-  //   return column;
-  // };
+  useEffect(() => {
+    if (open) setNewCurrentView(currentView);
+  }, [open]);
 
   const handleFilters = (index: number, key: string, value: any) => {
-    var newView: View = Object.assign({}, currentView);
-    newView.conditions = currentView.conditions?.map(
+    let newView: View = Object.assign({}, newCurrentView);
+    newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
         if (index === i) {
           if (key === "cmp") {
@@ -186,21 +177,25 @@ const Filter = ({
         return filter;
       }
     );
-    setCurrentView(newView);
+
+    setNewCurrentView(newView);
   };
+
   const handleConditionOperationFilters = (index: number, value: string) => {
-    var newView: View = Object.assign({}, currentView);
-    newView.conditions = currentView.conditions?.map(
+    let newView: View = Object.assign({}, newCurrentView);
+    newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
         if (index === i) filter = value;
         return filter;
       }
     );
-    setCurrentView(newView);
+    
+    setNewCurrentView(newView);
   };
+
   const removeFilter = (index: number) => {
-    var newView: View = Object.assign({}, currentView);
-    newView.conditions = currentView.conditions?.filter(
+    let newView: View = Object.assign({}, newCurrentView);
+    newView.conditions = newCurrentView?.conditions?.filter(
       (filter: any, i: number) => {
         if (index === 0) {
           return i !== index && i !== index + 1;
@@ -209,7 +204,8 @@ const Filter = ({
         }
       }
     );
-    setCurrentView(newView);
+    
+    setNewCurrentView(newView);
   };
 
   const getChoiceValues = (filter: any) => {
@@ -239,6 +235,7 @@ const Filter = ({
     let conditionOperators: { key: string; value: string }[] = [];
     let defaultValue: any = "";
     let render: any = <></>;
+
     switch (columnUiType) {
       case FieldUiTypeEnum.Integer:
       case FieldUiTypeEnum.Float:
@@ -422,76 +419,79 @@ const Filter = ({
               ))}
             </Select>
           )
-          break;
-        case FieldUiTypeEnum.User:
-          defaultConditionOperator = userFilterOperators[0].key;
-          conditionOperators = userFilterOperators;
-          defaultValue = users[0]?.userId
-          render =
-          (
-            <Select
-              value={filter.right}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              size="small"
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            >
-              {users.map((user: any) => (
-                <MenuItem key={user.userId} value={user.userId}>
-                  {user.name}
-                </MenuItem>
-              ))}
-            </Select>
-          )
-          break;
-        case FieldUiTypeEnum.Lookup:
-          defaultConditionOperator = lookupFilterOperators[0].key;
-          conditionOperators = lookupFilterOperators;
-          defaultValue = "";
-          render = (
-            <TextField
-              size="small"
-              type={"text"}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              value={filter.right}
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            />
-          );
-        case FieldUiTypeEnum.Link:
-          defaultConditionOperator = linkFilterOperators[0].key;
-          conditionOperators = linkFilterOperators;
-          defaultValue = "";
-          render = (
-            <TextField
-              size="small"
-              type={"text"}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              value={filter.right}
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            />
-          );
-          break;
+        break;
+      case FieldUiTypeEnum.User:
+        defaultConditionOperator = userFilterOperators[0].key;
+        conditionOperators = userFilterOperators;
+        defaultValue = users[0]?.userId
+        render =
+        (
+          <Select
+            value={filter.right}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            size="small"
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          >
+            {users.map((user: any) => (
+              <MenuItem key={user.userId} value={user.userId}>
+                {user.name}
+              </MenuItem>
+            ))}
+          </Select>
+        )
+        break;
+      case FieldUiTypeEnum.Lookup:
+        defaultConditionOperator = lookupFilterOperators[0].key;
+        conditionOperators = lookupFilterOperators;
+        defaultValue = "";
+        render = (
+          <TextField
+            size="small"
+            type={"text"}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            value={filter.right}
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          />
+        );
+        break;
+      case FieldUiTypeEnum.Link:
+        defaultConditionOperator = linkFilterOperators[0].key;
+        conditionOperators = linkFilterOperators;
+        defaultValue = "";
+        render = (
+          <TextField
+            size="small"
+            type={"text"}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            value={filter.right}
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          />
+        );
+        break;
       default:
         break;
     }
+
     return [defaultConditionOperator, conditionOperators, render, defaultValue];
   };
+
   const addFilter = () => {
-    let newView: View = Object.assign({}, currentView);
+    let newView: View = Object.assign({}, newCurrentView);
     let filter: FlatWhere = {
       left: columns[0].id,
       leftType: "Field",
@@ -499,21 +499,25 @@ const Filter = ({
       rightType: "SearchString",
       cmp: getFilter({ left: columns[0].id })[0],
     } as FlatWhere;
+
     if (newView.conditions && newView.conditions.length > 0) {
       newView.conditions.push("And");
       newView.conditions.push(filter);
     } else {
       newView.conditions = [filter];
     }
-    setCurrentView(newView);
+    
+    setNewCurrentView(newView);
   };
+
   const onsubmit = async () => {
-    let newView: View = Object.assign({}, currentView);
-    // newView.query = undefined;
+    let newView: View = Object.assign({}, newCurrentView);
+
     setCurrentView(newView);
     fetchRows();
     handleClose();
   };
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -527,6 +531,7 @@ const Filter = ({
     borderRadius: "5px",
     border: "none",
   };
+
   const filteredColumns = (columns: ViewField[]) => {
     return columns.filter((column: ViewField) => {
       return (
@@ -536,6 +541,7 @@ const Filter = ({
       );
     });
   };
+
   return (
     <Modal
       open={open}
@@ -568,7 +574,7 @@ const Filter = ({
             onClick={handleClose}
           />
         </Box>
-        {currentView.conditions && currentView.conditions.length > 0 && (
+        {newCurrentView?.conditions && newCurrentView?.conditions.length > 0 && (
           <Box
             sx={{
               borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
@@ -577,7 +583,7 @@ const Filter = ({
               overflow: "auto",
             }}
           >
-            {currentView.conditions.map((filter: any, index: number) => {
+            {newCurrentView?.conditions.map((filter: any, index: number) => {
               return isObject(filter) ? (
                 <Box key={index} sx={{ marginBottom: 1 }}>
                   <Box
@@ -716,7 +722,6 @@ const Filter = ({
                 mask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
                 WebkitMask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
                 cursor: "pointer",
-                // marginTop: 0.5,
                 marginRight: 1,
               }}
             />
