@@ -22,6 +22,8 @@ import MaterialReactTable, {
   MRT_ToggleFiltersButton,
   MRT_TableInstance,
   MRT_Virtualizer,
+  MRT_SortingState,
+  MRT_ColumnFiltersState
 } from "material-react-table";
 import Pagination from "@mui/material/Pagination";
 import RowFormPanel from "./RowFormPanel";
@@ -34,7 +36,7 @@ import {
   fetchRowsByPage,
   setCurrentView,
 } from "src/redux/actions/viewActions";
-import { View } from "src/models/SharedModels";
+import { View, FlatWhere } from "src/models/SharedModels";
 import { FieldUiTypeEnum } from "src/enums/SharedEnums";
 import { useRouter } from "next/router";
 import { ViewField } from "src/models/ViewField";
@@ -138,6 +140,8 @@ const DataTable = ({
 
   const [currentPage, setCurrentPage] = useState(1);
   const [page, setPage] = useState(currentPage);
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
 
   const handleDropdownPageChange = (
     event: SelectChangeEvent<number>,
@@ -249,6 +253,96 @@ const DataTable = ({
       );
     } else setToggleBulkAction(false);
   }, [rows, rowSelection]);
+
+  useEffect(() => {
+    let newCurrentView: View = Object.assign({}, currentView);
+    
+    sorting.map((sort: any) => {
+      if (newCurrentView.order) {
+        const oldOrder = newCurrentView.order.find((order: any) => order.fieldId === parseInt(sort.id));
+
+        if (oldOrder) {
+          newCurrentView.order = newCurrentView.order.map((order: any) => order.fieldId === parseInt(sort.id) ? { fieldId: parseInt(sort.id), direction: sort.desc ? "desc" : "asc" } : order);
+        } else {
+          newCurrentView.order.push({
+            fieldId: parseInt(sort.id),
+            direction: sort.desc ? "desc" : "asc",
+          });
+        }
+      } else {
+        newCurrentView.order = [
+          {
+            fieldId: parseInt(sort.id),
+            direction: sort.desc ? "desc" : "asc",
+          },
+        ];
+      }
+    });
+
+    if (newCurrentView.order) {
+      newCurrentView.order = newCurrentView.order.filter((order: any) => sorting.find((sort: any) => parseInt(sort.id) === order.fieldId) );
+    }
+    
+    setCurrentView(newCurrentView);
+    fetchRowsByPage(newCurrentView.page, newCurrentView.limit ?? 25);
+  }, [sorting]);
+
+  useEffect(() => {
+    let newCurrentView: View = Object.assign({}, currentView);
+
+    if (newCurrentView.conditions && newCurrentView.conditions.length) {
+      columnFilters.map((filter: any) => {
+        const oldFilter = newCurrentView?.conditions?.find((el: any) => el.left === parseInt(filter.id));
+        const newFilter: FlatWhere = {
+          left: parseInt(filter.id),
+          leftType: "Field",
+          right: filter.value,
+          rightType: "SearchString",
+          cmp: "like"
+        } as FlatWhere;
+
+        if (oldFilter) newCurrentView.conditions = newCurrentView.conditions?.map((el: any) => el.left === parseInt(filter.id) ? newFilter : el);
+        else {
+          newCurrentView.conditions?.push("And");
+          newCurrentView.conditions?.push(newFilter);
+        }
+      });
+
+      newCurrentView.conditions.map((condition: any, index: number) => {
+        if (!columnFilters.find((el: any) => parseInt(el.id) === condition.left) && condition !== "And" && condition !== "Or") newCurrentView.conditions = removeFilter(newCurrentView.conditions || [], index);
+      });
+    } else {
+      newCurrentView.conditions = [];
+
+      columnFilters.map((filter: any, index: number) => {
+        const newFilter: FlatWhere = {
+          left: parseInt(filter.id),
+          leftType: "Field",
+          right: filter.value,
+          rightType: "SearchString",
+          cmp: "like"
+        } as FlatWhere;
+
+        if (index) newCurrentView.conditions?.push("And");
+        newCurrentView.conditions?.push(newFilter);
+      });
+    }
+    
+    setCurrentView(newCurrentView);
+    fetchRowsByPage(newCurrentView.page, newCurrentView.limit ?? 25);
+  }, [columnFilters]);
+
+  const removeFilter = (conditions: any[], index: number) => {
+    return conditions.filter(
+      (filter: any, i: number) => {
+        if (index === 0) {
+          return i !== index && i !== index + 1;
+        } else {
+          return i !== index && i !== index - 1;
+        }
+      }
+    );
+  };
 
   const getUserName = (userId: any) => {
     let user = users.find((x) => x.userId === userId);
@@ -393,6 +487,19 @@ const DataTable = ({
                 );
               case FieldUiTypeEnum.Text:
               case FieldUiTypeEnum.LongText:
+                return (
+                  <Box
+                    key={row.id}
+                    sx={{
+                      minWidth: "100px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {cellValue}
+                  </Box>
+                );
               case FieldUiTypeEnum.HTML:
                 return (
                   <Box
@@ -406,7 +513,7 @@ const DataTable = ({
                   >
                     {!cellValue
                       ? ""
-                      : sanitizeHtml(cellValue.replace(/</g, " <"), {
+                      : sanitizeHtml(cellValue.toString().replace(/</g, " <"), {
                           allowedTags: [],
                         })}
                   </Box>
@@ -870,6 +977,8 @@ const DataTable = ({
                 },
               },
             }}
+            manualSorting={true}
+            manualFiltering={true}
             enableRowSelection={true}
             enableTopToolbar={false}
             enableBottomToolbar={false}
@@ -907,7 +1016,9 @@ const DataTable = ({
               },
             })}
             onPaginationChange={setPagination}
-            state={{ pagination, rowSelection, showColumnFilters }}
+            onSortingChange={setSorting}
+            onColumnFiltersChange={setColumnFilters}
+            state={{ pagination, rowSelection, showColumnFilters, sorting, columnFilters }}
             getRowId={(row) => row.id}
             onRowSelectionChange={setRowSelection}
             onShowColumnFiltersChange={(updater: any) => {
