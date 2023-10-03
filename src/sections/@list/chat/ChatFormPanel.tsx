@@ -11,14 +11,14 @@ import { ChatType } from 'src/enums/ChatType';
 import { TranslationText } from "src/models/SharedModels";
 
 type ChatFormPanelProps = {
-  chatType : ChatType;
-  id:number;
+  chatType: ChatType;
+  id: number;
   open: boolean;
   translations: TranslationText[];
   onClose: () => void;
 }
 
-const ChatFormPanel = ({chatType,id, open, translations, onClose } : ChatFormPanelProps) => {
+const ChatFormPanel = ({ chatType, id, open, translations, onClose }: ChatFormPanelProps) => {
   const theme = useTheme();
   const [windowHeight, setWindowHeight] = useState(0);
 
@@ -33,9 +33,10 @@ const ChatFormPanel = ({chatType,id, open, translations, onClose } : ChatFormPan
       onClose={onClose}
       PaperProps={{
         sx: {
-          width: {xs: '100%', lg: '500px'},
+          width: { xs: '100%', lg: '500px' },
           border: 'none',
-          height: `${windowHeight}px`,
+          // height: `${windowHeight}px`,
+          height: "100vh",
           backgroundColor: theme.palette.palette_style.background.default,
         },
       }}
@@ -57,8 +58,8 @@ const ChatFormPanel = ({chatType,id, open, translations, onClose } : ChatFormPan
           onClick={() => {  }}
         />
       </Box>  */}
-      <DialogContent>
-        <ChatForm chatType={chatType} id = {id} translations={translations} />
+      <DialogContent sx={{ p: 0 }}>
+        <ChatForm handleClose={onClose} chatType={chatType} id={id} translations={translations} />
       </DialogContent>
     </Drawer>
   );

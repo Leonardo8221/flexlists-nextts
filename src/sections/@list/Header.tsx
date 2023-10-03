@@ -36,6 +36,7 @@ import { listViewService } from 'src/services/listView.service';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { listService } from "src/services/list.service";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 type HeaderProps = {
   currentView: View;
@@ -85,7 +86,7 @@ const Header = ({
 
         ppids.map((ppid: string, index: number) => {
           const ppidArray = ppid.split('-');
-          
+
           allParents.push({ parentView: response.data.find((view: View) => view.id === convertToInteger(ppidArray[0])), contentId: ppidArray[2], param: getSubParams(ppids, index) });
         });
 
@@ -297,12 +298,12 @@ const Header = ({
                 {
                   currentView?.isDefaultView &&
                   <CDropdownItem
-                  href="#"
-                  key={"delete_list"}
-                  onClick={() => handleDeleteList()}
-                >
-                  {t("Delete List")}
-                </CDropdownItem>
+                    href="#"
+                    key={"delete_list"}
+                    onClick={() => handleDeleteList()}
+                  >
+                    {t("Delete List")}
+                  </CDropdownItem>
                 }
                 {!currentView?.isDefaultView && (
                   <>
@@ -351,6 +352,7 @@ const Header = ({
               </CDropdownMenu>
             </CDropdown>
           )}
+          <RefreshIcon sx={{ color: theme.palette.palette_style.text.primary, fontSize: 22, cursor: "pointer" }} />
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
           {isDesktop && <ToolBar translations={translations} />}
@@ -553,31 +555,31 @@ const Header = ({
           />
           {
             isArchiveOpenModal && <YesNoDialog
-            title={t("Archive View")}
-            submitText={t("Archive")}
-            message={t("Sure Archive")}
-            open={isArchiveOpenModal}
-            translations={translations}
-            handleClose={() => setIsArchiveOpenModal(false)}
-            onSubmit={() => {
-              handleArchive();
-            }}
-          />
+              title={t("Archive View")}
+              submitText={t("Archive")}
+              message={t("Sure Archive")}
+              open={isArchiveOpenModal}
+              translations={translations}
+              handleClose={() => setIsArchiveOpenModal(false)}
+              onSubmit={() => {
+                handleArchive();
+              }}
+            />
           }
           {
             isDeleteListOpenModal && <YesNoDialog
-            title={t("Delete List")}
-            submitText={t("Delete")}
-            message={t("Sure Delete List")}
-            open={isDeleteListOpenModal}
-            translations={translations}
-            handleClose={() => setIsDeleteListOpenModal(false)}
-            onSubmit={() => {
-              deleteList();
-            }}
-          />
+              title={t("Delete List")}
+              submitText={t("Delete")}
+              message={t("Sure Delete List")}
+              open={isDeleteListOpenModal}
+              translations={translations}
+              handleClose={() => setIsDeleteListOpenModal(false)}
+              onSubmit={() => {
+                deleteList();
+              }}
+            />
           }
-          
+
         </>
       )}
     </Box>

@@ -124,7 +124,7 @@ const Filter = ({
       return { key: item[0], value: item[1] };
     }
   );
-    
+
   const condtionOperators: string[] = [t("And"), t("Or")];
   const booleanValues: string[] = [t("True"), t("False")];
 
@@ -316,7 +316,7 @@ const Filter = ({
 
         render =
           filter.cmp !== FilterOperator.in &&
-          filter.cmp !== FilterOperator.nin ? (
+            filter.cmp !== FilterOperator.nin ? (
             <Select
               value={filter.right}
               onChange={(e) => {
@@ -414,20 +414,20 @@ const Filter = ({
                       borderRadius: "100px",
                     }}
                   ></div>
-                  <span style={{ color: color??"#000000" }}>
+                  <span style={{ color: color ?? "#000000" }}>
                     {color}
                   </span>
-                  </Box>
-                </MenuItem>
-              ))}
-            </Select>
-          )
-          break;
-        case FieldUiTypeEnum.User:
-          defaultConditionOperator = userFilterOperators[0].key;
-          conditionOperators = userFilterOperators;
-          defaultValue = users[0]?.userId
-          render =
+                </Box>
+              </MenuItem>
+            ))}
+          </Select>
+        )
+        break;
+      case FieldUiTypeEnum.User:
+        defaultConditionOperator = userFilterOperators[0].key;
+        conditionOperators = userFilterOperators;
+        defaultValue = users[0]?.userId
+        render =
           (
             <Select
               value={filter.right}
@@ -447,44 +447,44 @@ const Filter = ({
               ))}
             </Select>
           )
-          break;
-        case FieldUiTypeEnum.Lookup:
-          defaultConditionOperator = lookupFilterOperators[0].key;
-          conditionOperators = lookupFilterOperators;
-          defaultValue = "";
-          render = (
-            <TextField
-              size="small"
-              type={"text"}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              value={filter.right}
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            />
-          );
-        case FieldUiTypeEnum.Link:
-          defaultConditionOperator = linkFilterOperators[0].key;
-          conditionOperators = linkFilterOperators;
-          defaultValue = "";
-          render = (
-            <TextField
-              size="small"
-              type={"text"}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              value={filter.right}
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            />
-          );
-          break;
+        break;
+      case FieldUiTypeEnum.Lookup:
+        defaultConditionOperator = lookupFilterOperators[0].key;
+        conditionOperators = lookupFilterOperators;
+        defaultValue = "";
+        render = (
+          <TextField
+            size="small"
+            type={"text"}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            value={filter.right}
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          />
+        );
+      case FieldUiTypeEnum.Link:
+        defaultConditionOperator = linkFilterOperators[0].key;
+        conditionOperators = linkFilterOperators;
+        defaultValue = "";
+        render = (
+          <TextField
+            size="small"
+            type={"text"}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            value={filter.right}
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          />
+        );
+        break;
       default:
         break;
     }
@@ -571,8 +571,9 @@ const Filter = ({
         {currentView.conditions && currentView.conditions.length > 0 && (
           <Box
             sx={{
-              borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-              py: 2,
+              // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+              // py: 2,
+              pt: 2,
               maxHeight: `${windowHeight - 108}px`,
               overflow: "auto",
             }}
@@ -598,8 +599,8 @@ const Filter = ({
                       {filteredColumns(columns).map((column: any) => {
                         var columnValue =
                           column.system &&
-                          (column.name === "createdAt" ||
-                            column.name === "updatedAt")
+                            (column.name === "createdAt" ||
+                              column.name === "updatedAt")
                             ? column.name
                             : column.id;
                         let coloumIcon =
@@ -728,14 +729,17 @@ const Filter = ({
               {t("Add Condition")}
             </Typography>
           </Box>
+          <Box>
+            <Button variant="outlined" onClick={handleClose}>Close</Button>
+            <Button
+              sx={{ ml: 1 }}
+              variant="contained"
+              onClick={() => onsubmit()}
+            >
+              {t("Submit")}
+            </Button>
+          </Box>
 
-          <Button
-            sx={{ ml: 10 }}
-            variant="contained"
-            onClick={() => onsubmit()}
-          >
-            {t("Submit")}
-          </Button>
         </Box>
         {/* <Box>
           <Typography variant="subtitle2">Predefined & Saved filters:</Typography>
@@ -791,8 +795,10 @@ const Filter = ({
             </Box>
           </Box>
         </Box> */}
+
+
       </Box>
-    </Modal>
+    </Modal >
   );
 };
 

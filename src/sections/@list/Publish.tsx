@@ -274,9 +274,9 @@ const PublishList = ({
             sx={{ my: 1 }}
           />
           <Button
-            variant="contained"
+            variant="outlined"
             onClick={handleClose}
-            sx={{ my: 2, width: "25%" }}
+            sx={{ my: 2, width: "max-content" }}
           >
             {t("Close")}
           </Button>

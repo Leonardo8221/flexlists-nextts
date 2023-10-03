@@ -245,12 +245,13 @@ const ImportContent = ({
           <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
             <Box
               sx={{
-                borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
               }}
             >
               <Box
                 sx={{
-                  py: 2,
+                  // py: 2,
+                  pt: 2,
                   display: "grid",
                   gridTemplateColumns: {
                     xs: "repeat(1, 1fr)",
@@ -359,6 +360,7 @@ const ImportContent = ({
             </Box>
           </Box>
         )}
+        <Box sx={{ borderTop: `1px solid ${theme.palette.palette_style.border.default}`, mt: 2, pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
       </Box>
     </Modal>
   );

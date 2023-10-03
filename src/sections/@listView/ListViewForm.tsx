@@ -43,7 +43,7 @@ type ListViewFormProps = {
   availableFieldUiTypes: FieldUIType[];
   translations: TranslationText[];
   handleClose: () => void;
-  setFlashMessage:(message:FlashMessageModel) => void;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
 const ListViewForm = ({
@@ -127,8 +127,8 @@ const ListViewForm = ({
     setSteps(steps + 1);
   };
 
-  const setError = (message:string)=>{
-    setFlashMessage({type:"error",message:message});
+  const setError = (message: string) => {
+    setFlashMessage({ type: "error", message: message });
   };
 
   const handleSubmit = async () => {
@@ -139,7 +139,7 @@ const ListViewForm = ({
       return;
     }
 
-    if (!validateViewConfig(viewType, config,setError)) {
+    if (!validateViewConfig(viewType, config, setError)) {
       return;
     }
 
@@ -224,8 +224,8 @@ const ListViewForm = ({
             {steps === 0
               ? t("Choose View")
               : steps === 1
-              ? t("View Details")
-              : t("View Created")}
+                ? t("View Details")
+                : t("View Created")}
           </Typography>
         </Box>
 
@@ -355,35 +355,23 @@ const ListViewForm = ({
             bottom: "0",
           }}
         >
-          <Box>
-            {steps === 0 ? (
-              <Button
-                variant="outlined"
-                size="small"
-                sx={{ display: "none" }}
-              >
-                {t("Skip")}
-              </Button>
-            ) : (
-              <Button variant="contained" size="small" onClick={goPrevious}>
-                {t("Previous")}
-              </Button>
-            )}
-          </Box>
-          <Box>
+          <Box sx={{ width: "100%" }}>
             {steps === 1 ? (
-              <Button variant="outlined" size="small" onClick={handleSubmit}>
-                {t("Finish")}
-              </Button>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                <Button variant="outlined" onClick={goPrevious}>
+                  {t("Back")}
+                </Button>
+                <Button variant="contained" onClick={handleSubmit}>
+                  {t("Finish")}
+                </Button>
+              </Box>
             ) : (
-              <Button variant="contained" size="small" onClick={goNext}>
-                {t("Next")}
-              </Button>
+              <Button variant="outlined" onClick={handleClose}>Close</Button>
             )}
           </Box>
         </Box>
       </Box>
-    </Drawer>
+    </Drawer >
   );
 };
 
