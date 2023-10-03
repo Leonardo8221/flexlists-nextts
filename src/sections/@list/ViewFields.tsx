@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, TextField, Divider, Typography, Tooltip } from "@mui/material";
+import { Box, TextField, Divider, Typography, Tooltip, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
 import { connect } from "react-redux";
@@ -35,7 +35,7 @@ type ViewFieldsProps = {
   setColumns: (columns: any) => void;
   handleClose: () => void;
   fetchColumns: (viewId: number) => void;
-  setFlashMessage:(message:FlashMessageModel)=>void;
+  setFlashMessage: (message: FlashMessageModel) => void;
 };
 
 const ViewFields = ({
@@ -103,8 +103,8 @@ const ViewFields = ({
       currentView.id,
       newColumns.map((x: any) => x.id)
     );
-    if(isErr(reorderResult)) {
-      setFlashMessage({type:'error', message: reorderResult.message});
+    if (isErr(reorderResult)) {
+      setFlashMessage({ type: 'error', message: reorderResult.message });
       return;
     }
     fetchColumns(currentView.id);
@@ -204,7 +204,7 @@ const ViewFields = ({
     boxShadow: "0 0 10px 10px rgba(0, 0, 0, 0.05)",
     borderRadius: "5px",
     border: "none",
-    maxHeight: "95vh",
+    maxHeight: { xs: "100svh", md: "97vh" },
     overflow: "hidden",
   };
 
@@ -265,17 +265,11 @@ const ViewFields = ({
           {fieldListMode ? (
             <>
               <AddColumnButton modalHandle={handleOpenFieldManagementPanel} translations={translations} />
-              <Divider
-                light
-                sx={{
-                  my: 2,
-                }}
-              />
               <Box
                 sx={{
                   borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
                   paddingBottom: 1,
-                  paddingTop: 0,
+                  paddingTop: 2,
                   display: "flex",
                   justifyContent: "space-between",
                 }}
@@ -289,7 +283,7 @@ const ViewFields = ({
                   value={searchText}
                   sx={{ border: "none" }}
                 />
-                <Box
+                {/* <Box
                   component="span"
                   className="svg-color add_choice"
                   sx={{
@@ -303,7 +297,43 @@ const ViewFields = ({
                     marginTop: 1,
                   }}
                   onClick={handleClose}
-                />
+                /> */}
+              </Box>
+              <Box
+                sx={{
+                  paddingTop: 2,
+                  textAlign: "center",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, 1fr)",
+                  gap: "8px",
+                }}
+              >
+                <Box
+                  sx={{
+                    py: 1,
+                    border: `1px solid ${theme.palette.palette_style.border.default}`,
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleVisible(true);
+                  }}
+                >
+                  {t("Show All")}
+                </Box>
+                <Box
+                  sx={{
+                    py: 1,
+                    border: `1px solid ${theme.palette.palette_style.border.default}`,
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    handleVisible(false);
+                  }}
+                >
+                  {t("Hide All")}
+                </Box>
               </Box>
               <Box>
                 <Tooltip title={t("Field Is Visible")}>
@@ -454,41 +484,9 @@ const ViewFields = ({
                   )}
                 </Droppable>
               </DragDropContext>
-              <Box
-                sx={{
-                  paddingTop: 2,
-                  textAlign: "center",
-                  display: "grid",
-                  gridTemplateColumns: "repeat(2, 1fr)",
-                  gap: "8px",
-                }}
-              >
-                <Box
-                  sx={{
-                    py: 1,
-                    border: `1px solid ${theme.palette.palette_style.border.default}`,
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    handleVisible(true);
-                  }}
-                >
-                  {t("Show All")}
-                </Box>
-                <Box
-                  sx={{
-                    py: 1,
-                    border: `1px solid ${theme.palette.palette_style.border.default}`,
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    handleVisible(false);
-                  }}
-                >
-                  {t("Hide All")}
-                </Box>
+
+              <Box sx={{ width: "100%", py: 2, display: "flex", justifyContent: "flex-end" }}>
+                <Button onClick={handleClose} variant="outlined">Close</Button>
               </Box>
             </>
           ) : (

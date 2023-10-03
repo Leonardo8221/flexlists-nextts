@@ -163,8 +163,9 @@ const SortPage = ({
         {currentView.order && currentView.order.length > 0 && (
           <Box
             sx={{
-              borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-              py: 2,
+              // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+              // py: 2,
+              pt: 2,
               maxHeight: `${windowHeight - 100}px`,
               overflow: "auto",
             }}
@@ -186,29 +187,30 @@ const SortPage = ({
                   >
                     {columns.map((column: any) => {
                       let coloumIcon =
-                      column.icon ?? getDefaultFieldIcon(column.uiField);
+                        column.icon ?? getDefaultFieldIcon(column.uiField);
                       return (
-                      <MenuItem
-                        key={column.id}
-                        value={column.id}
-                        sx={{ display: "flex" }}
-                      >
-                        <Box
-                          component="span"
-                          className="svg-color"
-                          sx={{
-                            width: 14,
-                            height: 14,
-                            display: "inline-block",
-                            bgcolor: theme.palette.palette_style.text.primary,
-                            mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
-                            WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
-                            marginRight: 1,
-                          }}
-                        />
-                        <Box>{column.system ? t(column.name) : column.name}</Box>
-                      </MenuItem>
-                    )})}
+                        <MenuItem
+                          key={column.id}
+                          value={column.id}
+                          sx={{ display: "flex" }}
+                        >
+                          <Box
+                            component="span"
+                            className="svg-color"
+                            sx={{
+                              width: 14,
+                              height: 14,
+                              display: "inline-block",
+                              bgcolor: theme.palette.palette_style.text.primary,
+                              mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                              WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                              marginRight: 1,
+                            }}
+                          />
+                          <Box>{column.system ? t(column.name) : column.name}</Box>
+                        </MenuItem>
+                      )
+                    })}
                   </Select>
                   <Select
                     value={sort.direction}
@@ -280,13 +282,16 @@ const SortPage = ({
               {t("Add Another Sort")}
             </Box>
           </Box>
-          <Button
-            sx={{ ml: 10 }}
-            variant="contained"
-            onClick={() => onsubmit()}
-          >
-            {t("Submit")}
-          </Button>
+          <Box>
+            <Button variant="outlined" onClick={handleClose}>Close</Button>
+            <Button
+              sx={{ ml: 1 }}
+              variant="contained"
+              onClick={() => onsubmit()}
+            >
+              {t("Submit")}
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Modal>

@@ -212,12 +212,12 @@ function SaveViewPreset({
           {
             !currentView?.isDefaultView &&
             <FormControlLabel
-            value={t("View")}
-            control={<Radio />}
-            label={PresetType.View}
-          />
+              value={t("View")}
+              control={<Radio />}
+              label={PresetType.View}
+            />
           }
-          
+
           <FormControlLabel
             value={t("Yourself")}
             control={<Radio />}
@@ -247,17 +247,17 @@ function SaveViewPreset({
           }
         />
       )}
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button sx={{ mt: 2 }} variant="contained" onClick={() => onSubmit()}>
-          {t("Save")}
-        </Button>
+      <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end", gap: 1 }}>
         <Button
           onClick={handleClose}
-          sx={{ mt: 2, ml: 2, color: "#666" }}
-          variant="text"
+          variant="outlined"
         >
           {t("Cancel")}
         </Button>
+        <Button variant="contained" onClick={() => onSubmit()}>
+          {t("Save")}
+        </Button>
+
       </Box>
     </Box>
   );

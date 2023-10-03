@@ -171,7 +171,7 @@ const Export = ({
   const [exportMode, setExportMode] = useState<"all" | "currentView">("all");
   const [delimiter, setDelimiter] = useState<string>(";");
   const csvDelimiters: string[] = [";", ","];
-  
+
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
@@ -460,6 +460,7 @@ const Export = ({
             </Box>
           </Box>
         )}
+        <Box sx={{ borderTop: `1px solid ${theme.palette.palette_style.border.default}`, pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
       </Box>
     </Modal>
   );
