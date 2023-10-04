@@ -141,40 +141,48 @@ const Filter = ({
     let newView: View = Object.assign({}, newCurrentView);
     newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
+        const newFilter: any = {
+          cmp: filter.cmp,
+          left: filter.left,
+          leftType: filter.leftType,
+          right: filter.right,
+          rightType: filter.rightType
+        };
+        
         if (index === i) {
           if (key === "cmp") {
-            filter[key] = value;
+            newFilter[key] = value;
             if (value === FilterOperator.in || value === FilterOperator.nin) {
-              filter["right"] = [];
+              newFilter["right"] = [];
             }
           }
           //set right value for filter
           if (key === "right") {
             if (
-              filter["cmp"] === FilterOperator.in ||
-              filter["cmp"] === FilterOperator.nin
+              newFilter["cmp"] === FilterOperator.in ||
+              newFilter["cmp"] === FilterOperator.nin
             ) {
-              let column = getColumn(filter.left, columns);
+              let column = getColumn(newFilter.left, columns);
               if (column?.uiField !== FieldUiTypeEnum.Choice) {
-                filter[key] = value;
+                newFilter[key] = value;
               } else {
                 if (isArray(value)) {
-                  filter[key] = value.map((item: any) => item.id);
+                  newFilter[key] = value.map((item: any) => item.id);
                 }
               }
             } else {
-              filter[key] = value;
+              newFilter[key] = value;
             }
           }
 
           //if left field changed, reset right field
           if (key === "left") {
-            filter[key] = value;
-            filter["cmp"] = getFilter({ left: value })[0];
-            filter["right"] = getFilter({ left: value })[3];
+            newFilter[key] = value;
+            newFilter["cmp"] = getFilter({ left: value })[0];
+            newFilter["right"] = getFilter({ left: value })[3];
           }
         }
-        return filter;
+        return newFilter;
       }
     );
 
@@ -499,15 +507,17 @@ const Filter = ({
       rightType: "SearchString",
       cmp: getFilter({ left: columns[0].id })[0],
     } as FlatWhere;
+    let newConditions = [];
 
     if (newView.conditions && newView.conditions.length > 0) {
-      newView.conditions.push("And");
-      newView.conditions.push(filter);
+      newConditions = newView.conditions.map((condition: any) => condition);
+      newConditions.push("And");
+      newConditions.push(filter);
     } else {
-      newView.conditions = [filter];
+      newConditions = [filter];
     }
     
-    setNewCurrentView(newView);
+    setNewCurrentView({...newView, conditions: newConditions});
   };
 
   const onsubmit = async () => {
