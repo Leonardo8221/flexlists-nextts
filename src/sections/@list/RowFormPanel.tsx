@@ -663,7 +663,7 @@ const RowFormPanel = ({
           </form>
         )}
         {currentMode == "comment" && (
-          <ChatForm chatType={ChatType.RowData} id={rowData[0].id} translations={translations} />
+          <ChatForm chatType={ChatType.RowData} id={rowData[0].id} translations={translations} handleClose={handleCloseModal} />
         )}
       </DialogContent>
 
