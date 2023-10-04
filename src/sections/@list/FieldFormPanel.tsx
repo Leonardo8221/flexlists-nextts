@@ -43,7 +43,7 @@ type FieldFormPanelProps = {
   onClose: () => void;
   setFlashMessage: (message: FlashMessageModel) => void;
   fields: Field[];
-}
+};
 
 const GroupHeader = styled("div")(({ theme }) => ({
   position: "sticky",
@@ -70,7 +70,7 @@ const FieldFormPanel = ({
   onDelete,
   onClose,
   setFlashMessage,
-  fields
+  fields,
 }: FieldFormPanelProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -127,7 +127,8 @@ const FieldFormPanel = ({
       );
     }
     if (
-      currentField.name && !currentField.system &&
+      currentField.name &&
+      !currentField.system &&
       (currentField.name.toLowerCase() === "id" ||
         currentField.name.toLowerCase() === "createdat" ||
         currentField.name.toLowerCase() === "updatedat" ||
@@ -136,23 +137,31 @@ const FieldFormPanel = ({
       setError(`Field name cannot be ${currentField.name}`);
       return;
     }
-    if (currentField.uiField == FieldUiTypeEnum.Lookup || currentField.uiField == FieldUiTypeEnum.Sublist) {
+    if (
+      currentField.uiField == FieldUiTypeEnum.Lookup ||
+      currentField.uiField == FieldUiTypeEnum.Sublist
+    ) {
       if (!currentField.config.values) {
         setError(`Empty field config`);
         return;
       }
     }
     if (currentField.uiField == FieldUiTypeEnum.Choice) {
-      if (!currentField.config||!currentField.config.values||currentField.config.values.length==0) {
+      if (
+        !currentField.config ||
+        !currentField.config.values ||
+        currentField.config.values.length == 0
+      ) {
         setError(`Empty choice field config`);
         return;
       }
     }
     if (isCreating) {
-      
-      let existingField = fields.find(x=>x.name.trim().toLowerCase() == currentField.name.trim().toLowerCase());
-      if(existingField)
-      {
+      let existingField = fields.find(
+        (x) =>
+          x.name.trim().toLowerCase() == currentField.name.trim().toLowerCase()
+      );
+      if (existingField) {
         setError(`Field name ${currentField.name} already exists`);
         return;
       }
@@ -180,10 +189,16 @@ const FieldFormPanel = ({
         return;
       }
     } else {
-      let existingField = fields.find(x=>x.name.trim().toLowerCase() == currentField.name.trim().toLowerCase() && x.id != currentField.id);
-      if(existingField)
-      {
-        setError(`Field name ${currentField.name} already exists`);
+      console.log(fields, currentField);
+      let existingField = fields.find(
+        (x) =>
+          x.name.trim().toLowerCase() ==
+            currentField.name.trim().toLowerCase() && x.id != currentField.id
+      );
+      if (existingField) {
+        setError(
+          `Field name ${currentField.name} already exists, maybe this field is used twice in this list? If so, rename one.`
+        );
         return;
       }
       var updateFieldResponse = await fieldService.updateUiField(
@@ -259,7 +274,7 @@ const FieldFormPanel = ({
     newField.detailsOnly = event.target.checked;
     setCurrentField(newField);
   };
-  
+
   const updateConfig = (newConfig: any) => {
     var newField = Object.assign({}, currentField);
     if (!newField.config) {
@@ -486,7 +501,7 @@ const FieldFormPanel = ({
     //   </DialogActions>
     // </Drawer>
   );
-}
+};
 // const mapStateToProps = (state: any) => ({
 // });
 
@@ -495,7 +510,7 @@ const FieldFormPanel = ({
 // };
 
 const mapStateToProps = (state: any) => ({
-  fields: state.list.fields
+  fields: state.list.fields,
 });
 
 const mapDispatchToProps = {
