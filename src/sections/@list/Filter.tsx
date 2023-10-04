@@ -148,7 +148,7 @@ const Filter = ({
           right: filter.right,
           rightType: filter.rightType
         };
-        
+
         if (index === i) {
           if (key === "cmp") {
             newFilter[key] = value;
@@ -181,8 +181,9 @@ const Filter = ({
             newFilter["cmp"] = getFilter({ left: value })[0];
             newFilter["right"] = getFilter({ left: value })[3];
           }
-        }
-        return newFilter;
+
+          return newFilter;
+        } else return filter;
       }
     );
 
