@@ -25,11 +25,7 @@ import {
   UserFilterOperatorLabel,
 } from "src/enums/ShareEnumLabels";
 import { FlatWhere, View } from "src/models/SharedModels";
-import {
-  FieldType,
-  FieldUiTypeEnum,
-  FilterOperator,
-} from "src/enums/SharedEnums";
+import { FieldUiTypeEnum, FilterOperator } from "src/enums/SharedEnums";
 import { isObject } from "src/utils/validateUtils";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -48,10 +44,10 @@ type FilterProps = {
   currentView: View;
   columns: ViewField[];
   open: boolean;
+  users: any[];
   fetchRows: () => void;
   handleClose: () => void;
   setCurrentView: (view: View) => void;
-  users: any[];
 };
 
 const Filter = ({
@@ -59,10 +55,10 @@ const Filter = ({
   currentView,
   columns,
   open,
+  users,
   fetchRows,
   setCurrentView,
   handleClose,
-  users,
 }: FilterProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -70,6 +66,8 @@ const Filter = ({
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
+  const [newCurrentView, setNewCurrentView] = useState<View>();
+
   const stringFilterOperators: { key: string; value: string }[] = Array.from(
     StringFilterOperatorLabel,
     function (item) {
@@ -132,75 +130,80 @@ const Filter = ({
     setWindowHeight(window.innerHeight);
   }, []);
 
-  // const getColumn = (column_id: any) => {
-
-  //   const column = columns.find(
-  //     (item: any) =>
-  //       item.id === convertToInteger(column_id) ||
-  //       item.name === column_id
-  //     // (!item.system && item.id === convertToInteger(column_id)) ||
-  //     // (item.system &&
-  //     //   (item.name === "createdAt" || item.name === "updatedAt") &&
-  //     //   item.name === column_id)
-  //   );
-  //   return column;
-  // };
+  useEffect(() => {
+    if (open) setNewCurrentView(currentView);
+  }, [open]);
 
   const handleFilters = (index: number, key: string, value: any) => {
-    var newView: View = Object.assign({}, currentView);
-    newView.conditions = currentView.conditions?.map(
+    let newView: View = Object.assign({}, newCurrentView);
+
+    newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
+        let newFilter: any = {
+          cmp: filter.cmp,
+          left: filter.left,
+          leftType: filter.leftType,
+          right: filter.right,
+          rightType: filter.rightType,
+        };
+
         if (index === i) {
           if (key === "cmp") {
-            filter[key] = value;
+            newFilter[key] = value;
             if (value === FilterOperator.in || value === FilterOperator.nin) {
-              filter["right"] = [];
+              newFilter["right"] = [];
             }
           }
           //set right value for filter
           if (key === "right") {
             if (
-              filter["cmp"] === FilterOperator.in ||
-              filter["cmp"] === FilterOperator.nin
+              newFilter["cmp"] === FilterOperator.in ||
+              newFilter["cmp"] === FilterOperator.nin
             ) {
-              let column = getColumn(filter.left, columns);
+              let column = getColumn(newFilter.left, columns);
               if (column?.uiField !== FieldUiTypeEnum.Choice) {
-                filter[key] = value;
+                newFilter[key] = value;
               } else {
                 if (isArray(value)) {
-                  filter[key] = value.map((item: any) => item.id);
+                  newFilter[key] = value.map((item: any) => item.id);
                 }
               }
             } else {
-              filter[key] = value;
+              newFilter[key] = value;
             }
           }
-
           //if left field changed, reset right field
           if (key === "left") {
-            filter[key] = value;
-            filter["cmp"] = getFilter({ left: value })[0];
-            filter["right"] = getFilter({ left: value })[3];
+            newFilter[key] = value;
+            newFilter["cmp"] = getFilter({ left: value })[0];
+            newFilter["right"] = getFilter({ left: value })[3];
           }
-        }
-        return filter;
+
+          return newFilter;
+        } else return filter;
       }
     );
-    setCurrentView(newView);
+
+    setNewCurrentView(newView);
   };
+
   const handleConditionOperationFilters = (index: number, value: string) => {
-    var newView: View = Object.assign({}, currentView);
-    newView.conditions = currentView.conditions?.map(
+    let newView: View = Object.assign({}, newCurrentView);
+
+    newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
         if (index === i) filter = value;
         return filter;
       }
     );
-    setCurrentView(newView);
+
+    setNewCurrentView(newView);
   };
+
   const removeFilter = (index: number) => {
-    var newView: View = Object.assign({}, currentView);
-    newView.conditions = currentView.conditions?.filter(
+    let newView: View = Object.assign({}, newCurrentView);
+
+    newView.conditions = newCurrentView?.conditions?.filter(
       (filter: any, i: number) => {
         if (index === 0) {
           return i !== index && i !== index + 1;
@@ -209,12 +212,14 @@ const Filter = ({
         }
       }
     );
-    setCurrentView(newView);
+
+    setNewCurrentView(newView);
   };
 
   const getChoiceValues = (filter: any) => {
     const column = getColumn(filter.left, columns);
     let choices: any[] = [];
+
     if (
       filter.right &&
       filter.right.length > 0 &&
@@ -226,6 +231,7 @@ const Filter = ({
         filter.right?.includes(x.id)
       );
     }
+
     return choices;
   };
 
@@ -239,6 +245,7 @@ const Filter = ({
     let conditionOperators: { key: string; value: string }[] = [];
     let defaultValue: any = "";
     let render: any = <></>;
+
     switch (columnUiType) {
       case FieldUiTypeEnum.Integer:
       case FieldUiTypeEnum.Float:
@@ -284,7 +291,9 @@ const Filter = ({
                 marginLeft: { xs: "8px", md: "30px" },
               }}
               ampm={getAmPm()}
-              format={`${getDateFormatString(window.navigator.language)} ${getAmPm() ? 'hh' : 'HH'}:mm:ss${getAmPm() ? ' a' : ''}`}
+              format={`${getDateFormatString(window.navigator.language)} ${
+                getAmPm() ? "hh" : "HH"
+              }:mm:ss${getAmPm() ? " a" : ""}`}
             />
           </LocalizationProvider>
         );
@@ -316,7 +325,7 @@ const Filter = ({
 
         render =
           filter.cmp !== FilterOperator.in &&
-            filter.cmp !== FilterOperator.nin ? (
+          filter.cmp !== FilterOperator.nin ? (
             <Select
               value={filter.right}
               onChange={(e) => {
@@ -414,39 +423,36 @@ const Filter = ({
                       borderRadius: "100px",
                     }}
                   ></div>
-                  <span style={{ color: color ?? "#000000" }}>
-                    {color}
-                  </span>
+                  <span style={{ color: color ?? "#000000" }}>{color}</span>
                 </Box>
               </MenuItem>
             ))}
           </Select>
-        )
+        );
         break;
       case FieldUiTypeEnum.User:
         defaultConditionOperator = userFilterOperators[0].key;
         conditionOperators = userFilterOperators;
-        defaultValue = users[0]?.userId
-        render =
-          (
-            <Select
-              value={filter.right}
-              onChange={(e) => {
-                handleFilters(index ?? 0, "right", e.target.value);
-              }}
-              size="small"
-              sx={{
-                width: { md: "168px" },
-                marginLeft: { xs: "8px", md: "30px" },
-              }}
-            >
-              {users.map((user: any) => (
-                <MenuItem key={user.userId} value={user.userId}>
-                  {user.name}
-                </MenuItem>
-              ))}
-            </Select>
-          )
+        defaultValue = users[0]?.userId;
+        render = (
+          <Select
+            value={filter.right}
+            onChange={(e) => {
+              handleFilters(index ?? 0, "right", e.target.value);
+            }}
+            size="small"
+            sx={{
+              width: { md: "168px" },
+              marginLeft: { xs: "8px", md: "30px" },
+            }}
+          >
+            {users.map((user: any) => (
+              <MenuItem key={user.userId} value={user.userId}>
+                {user.name}
+              </MenuItem>
+            ))}
+          </Select>
+        );
         break;
       case FieldUiTypeEnum.Lookup:
         defaultConditionOperator = lookupFilterOperators[0].key;
@@ -466,6 +472,7 @@ const Filter = ({
             }}
           />
         );
+        break;
       case FieldUiTypeEnum.Link:
         defaultConditionOperator = linkFilterOperators[0].key;
         conditionOperators = linkFilterOperators;
@@ -488,32 +495,38 @@ const Filter = ({
       default:
         break;
     }
+
     return [defaultConditionOperator, conditionOperators, render, defaultValue];
   };
+
   const addFilter = () => {
-    let newView: View = Object.assign({}, currentView);
-    let filter: FlatWhere = {
+    let newView: View = Object.assign({}, newCurrentView);
+    const filter: FlatWhere = {
       left: columns[0].id,
       leftType: "Field",
       right: getFilter({ left: columns[0].id })[3],
       rightType: "SearchString",
       cmp: getFilter({ left: columns[0].id })[0],
     } as FlatWhere;
+    let newConditions = [];
+
     if (newView.conditions && newView.conditions.length > 0) {
-      newView.conditions.push("And");
-      newView.conditions.push(filter);
-    } else {
-      newView.conditions = [filter];
-    }
-    setCurrentView(newView);
+      newConditions = newView.conditions.map((condition: any) => condition);
+      newConditions.push("And");
+      newConditions.push(filter);
+    } else newConditions = [filter];
+
+    setNewCurrentView({ ...newView, conditions: newConditions });
   };
+
   const onsubmit = async () => {
-    let newView: View = Object.assign({}, currentView);
-    // newView.query = undefined;
+    const newView: View = Object.assign({}, newCurrentView);
+
     setCurrentView(newView);
     fetchRows();
     handleClose();
   };
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -527,6 +540,7 @@ const Filter = ({
     borderRadius: "5px",
     border: "none",
   };
+
   const filteredColumns = (columns: ViewField[]) => {
     return columns.filter((column: ViewField) => {
       return (
@@ -536,6 +550,7 @@ const Filter = ({
       );
     });
   };
+
   return (
     <Modal
       open={open}
@@ -568,133 +583,139 @@ const Filter = ({
             onClick={handleClose}
           />
         </Box>
-        {currentView.conditions && currentView.conditions.length > 0 && (
-          <Box
-            sx={{
-              // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-              // py: 2,
-              pt: 2,
-              maxHeight: `${windowHeight - 108}px`,
-              overflow: "auto",
-            }}
-          >
-            {currentView.conditions.map((filter: any, index: number) => {
-              return isObject(filter) ? (
-                <Box key={index} sx={{ marginBottom: 1 }}>
-                  <Box
-                    sx={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Select
-                      value={filter.left}
-                      onChange={(e) => {
-                        handleFilters(index, "left", e.target.value);
-                      }}
-                      size="small"
-                      sx={{
-                        width: { md: "168px" },
-                        textTransform: "capitalize",
-                      }}
-                      className="sort_column"
+        {newCurrentView?.conditions &&
+          newCurrentView?.conditions.length > 0 && (
+            <Box
+              sx={{
+                // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                // py: 2,
+                pt: 2,
+                maxHeight: `${windowHeight - 108}px`,
+                overflow: "auto",
+              }}
+            >
+              {newCurrentView?.conditions.map((filter: any, index: number) => {
+                return isObject(filter) ? (
+                  <Box key={index} sx={{ marginBottom: 1 }}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
                     >
-                      {filteredColumns(columns).map((column: any) => {
-                        var columnValue =
-                          column.system &&
+                      <Select
+                        value={filter.left}
+                        onChange={(e) => {
+                          handleFilters(index, "left", e.target.value);
+                        }}
+                        size="small"
+                        sx={{
+                          width: { md: "168px" },
+                          textTransform: "capitalize",
+                        }}
+                        className="sort_column"
+                      >
+                        {filteredColumns(columns).map((column: any) => {
+                          var columnValue =
+                            column.system &&
                             (column.name === "createdAt" ||
                               column.name === "updatedAt")
-                            ? column.name
-                            : column.id;
-                        let coloumIcon =
-                          column.icon ?? getDefaultFieldIcon(column.uiField);
-                        return (
-                          <MenuItem
-                            key={`${column.id}`}
-                            value={columnValue}
-                            sx={{ display: "flex" }}
-                          >
-                            <Box
-                              component="span"
-                              className="svg-color"
-                              sx={{
-                                width: 14,
-                                height: 14,
-                                display: "inline-block",
-                                bgcolor:
-                                  theme.palette.palette_style.text.primary,
-                                mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
-                                WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
-                                marginRight: { xs: 0.2, md: 1 },
-                              }}
-                            />
-                            <Box>{column.system ? t(column.name) : column.name}</Box>
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                    <Select
-                      value={filter.cmp}
-                      onChange={(e) => {
-                        handleFilters(index, "cmp", e.target.value);
-                      }}
-                      size="small"
-                      sx={{
-                        width: { md: "168px" },
-                        marginLeft: { xs: "8px", md: "30px" },
-                      }}
-                    >
-                      {getFilter(filter)[1].map((compare) => {
-                        return (
-                          <MenuItem key={`${compare.key}`} value={compare.key}>
-                            {compare.value}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                    {getFilter(filter, index)[2]}
-                    <Box
-                      component="span"
-                      className="svg-color add_choice"
-                      sx={{
-                        width: { xs: 50, md: 18 },
-                        height: 18,
-                        display: "inline-block",
-                        bgcolor: theme.palette.palette_style.text.primary,
-                        mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
-                        WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
-                        maskPosition: { xs: "right", md: "inherit" },
-                        cursor: "pointer",
-                        marginTop: 1.5,
-                        marginLeft: { xs: "8px", md: "30px" },
-                      }}
-                      onClick={() => {
-                        removeFilter(index);
-                      }}
-                    />
+                              ? column.name
+                              : column.id;
+                          let coloumIcon =
+                            column.icon ?? getDefaultFieldIcon(column.uiField);
+                          return (
+                            <MenuItem
+                              key={`${column.id}`}
+                              value={columnValue}
+                              sx={{ display: "flex" }}
+                            >
+                              <Box
+                                component="span"
+                                className="svg-color"
+                                sx={{
+                                  width: 14,
+                                  height: 14,
+                                  display: "inline-block",
+                                  bgcolor:
+                                    theme.palette.palette_style.text.primary,
+                                  mask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                                  WebkitMask: `url(/assets/icons/table/${coloumIcon}.svg) no-repeat center / contain`,
+                                  marginRight: { xs: 0.2, md: 1 },
+                                }}
+                              />
+                              <Box>
+                                {column.system ? t(column.name) : column.name}
+                              </Box>
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                      <Select
+                        value={filter.cmp}
+                        onChange={(e) => {
+                          handleFilters(index, "cmp", e.target.value);
+                        }}
+                        size="small"
+                        sx={{
+                          width: { md: "168px" },
+                          marginLeft: { xs: "8px", md: "30px" },
+                        }}
+                      >
+                        {getFilter(filter)[1].map((compare) => {
+                          return (
+                            <MenuItem
+                              key={`${compare.key}`}
+                              value={compare.key}
+                            >
+                              {compare.value}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                      {getFilter(filter, index)[2]}
+                      <Box
+                        component="span"
+                        className="svg-color add_choice"
+                        sx={{
+                          width: { xs: 50, md: 18 },
+                          height: 18,
+                          display: "inline-block",
+                          bgcolor: theme.palette.palette_style.text.primary,
+                          mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+                          WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+                          maskPosition: { xs: "right", md: "inherit" },
+                          cursor: "pointer",
+                          marginTop: 1.5,
+                          marginLeft: { xs: "8px", md: "30px" },
+                        }}
+                        onClick={() => {
+                          removeFilter(index);
+                        }}
+                      />
+                    </Box>
                   </Box>
-                </Box>
-              ) : index ? (
-                <Select
-                  key={index}
-                  value={filter}
-                  onChange={(e) => {
-                    handleConditionOperationFilters(index, e.target.value);
-                  }}
-                  size="small"
-                  sx={{ width: { md: "168px" }, marginBottom: 1 }}
-                >
-                  {condtionOperators.map((operator) => {
-                    return (
-                      <MenuItem key={operator} value={operator}>
-                        {operator}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              ) : (
-                <></>
-              );
-            })}
-          </Box>
-        )}
+                ) : index ? (
+                  <Select
+                    key={index}
+                    value={filter}
+                    onChange={(e) => {
+                      handleConditionOperationFilters(index, e.target.value);
+                    }}
+                    size="small"
+                    sx={{ width: { md: "168px" }, marginBottom: 1 }}
+                  >
+                    {condtionOperators.map((operator) => {
+                      return (
+                        <MenuItem key={operator} value={operator}>
+                          {operator}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                ) : (
+                  <></>
+                );
+              })}
+            </Box>
+          )}
 
         <Box
           sx={{
@@ -717,7 +738,6 @@ const Filter = ({
                 mask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
                 WebkitMask: `url(/assets/icons/table/plus.svg) no-repeat center / contain`,
                 cursor: "pointer",
-                // marginTop: 0.5,
                 marginRight: 1,
               }}
             />
@@ -730,7 +750,9 @@ const Filter = ({
             </Typography>
           </Box>
           <Box>
-            <Button variant="outlined" onClick={handleClose}>Close</Button>
+            <Button variant="outlined" onClick={handleClose}>
+              Close
+            </Button>
             <Button
               sx={{ ml: 1 }}
               variant="contained"
@@ -739,7 +761,6 @@ const Filter = ({
               {t("Submit")}
             </Button>
           </Box>
-
         </Box>
         {/* <Box>
           <Typography variant="subtitle2">Predefined & Saved filters:</Typography>
@@ -795,10 +816,8 @@ const Filter = ({
             </Box>
           </Box>
         </Box> */}
-
-
       </Box>
-    </Modal >
+    </Modal>
   );
 };
 

@@ -7,8 +7,8 @@ import useResponsive from "../../hooks/useResponsive";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
-import { FieldType, FieldUiTypeEnum, SearchType } from "src/enums/SharedEnums";
-import { FlatWhere, Query, Sort, View } from "src/models/SharedModels";
+import { FieldUiTypeEnum } from "src/enums/SharedEnums";
+import { View } from "src/models/SharedModels";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
@@ -16,9 +16,9 @@ import { getColumn, getDefaultFieldIcon } from "src/utils/flexlistHelper";
 type SortProps = {
   translations: TranslationText[];
   currentView: View;
-  setCurrentView: (view: View) => void;
   columns: any;
   open: boolean;
+  setCurrentView: (view: View) => void;
   handleClose: () => void;
   fetchRows: () => void;
 };
@@ -27,8 +27,8 @@ const SortPage = ({
   translations,
   columns,
   currentView,
-  setCurrentView,
   open,
+  setCurrentView,
   handleClose,
   fetchRows,
 }: SortProps) => {
@@ -38,31 +38,48 @@ const SortPage = ({
   const theme = useTheme();
   const isDesktop = useResponsive("up", "md");
   const [windowHeight, setWindowHeight] = useState(0);
+  const [newCurrentView, setNewCurrentView] = useState<View>();
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
 
+  useEffect(() => {
+    if (open) setNewCurrentView(currentView);
+  }, [open]);
+
   const handleSorts = (index: number, key: string, value: string) => {
-    let newCurrentView: View = Object.assign({}, currentView);
-    newCurrentView.order = currentView.order?.map((sort: any, i: number) => {
-      if (index === i) sort[key] = value;
-      return sort;
+    let newView: View = Object.assign({}, newCurrentView);
+
+    newView.order = newCurrentView?.order?.map((sort: any, i: number) => {
+      let newSort: any = {
+        fieldId: sort.fieldId,
+        direction: sort.direction
+      };
+
+      if (index === i) {
+        newSort[key] = value;
+
+        return newSort;
+      } else return sort;
     });
-    setCurrentView(newCurrentView);
+
+    setNewCurrentView(newView);
   };
 
   const removeSort = (index: number) => {
-    let newCurrentView: View = Object.assign({}, currentView);
-    newCurrentView.order = currentView.order?.filter(
+    let newView: View = Object.assign({}, newCurrentView);
+
+    newView.order = newCurrentView?.order?.filter(
       (sort: any, i: number) => i !== index
     );
-    setCurrentView(newCurrentView);
+
+    setNewCurrentView(newView);
   };
 
   const getSorDirections = (sort: any): { key: string; value: string }[] => {
-    var column = getColumn(sort.fieldId, columns);
-    var directions: { key: string; value: string }[] = [
+    const column = getColumn(sort.fieldId, columns);
+    let directions: { key: string; value: string }[] = [
       {
         key: "asc",
         value: t("First-Last"),
@@ -72,6 +89,7 @@ const SortPage = ({
         value: t("Last-First"),
       },
     ];
+
     switch (column?.uiField) {
       case FieldUiTypeEnum.Text:
         directions = [
@@ -85,35 +103,42 @@ const SortPage = ({
           },
         ];
         break;
+
       default:
         break;
     }
+
     return directions;
   };
+
   const addSort = () => {
+    let newView: View = Object.assign({}, newCurrentView);
+    const newSort: any = {
+      fieldId: columns[0].id,
+      direction: "asc"
+    };
+    let newOrder = [];
+    
     if (columns.length == 0) {
       return;
     }
-    let newCurrentView: View = Object.assign({}, currentView);
-    if (newCurrentView.order) {
-      newCurrentView.order.push({
-        fieldId: columns[0].id,
-        direction: "asc",
-      });
-    } else {
-      newCurrentView.order = [
-        {
-          fieldId: columns[0].id,
-          direction: "asc",
-        },
-      ];
-    }
-    setCurrentView(newCurrentView);
+
+    if (newView.order) {
+      newOrder = newView.order.map((el: any) => el);
+      newOrder.push(newSort);
+    } else newOrder = [newSort];
+
+    setNewCurrentView({...newView, order: newOrder});
   };
+
   const onsubmit = async () => {
+    const newView: View = Object.assign({}, newCurrentView);
+
+    setCurrentView(newView);
     fetchRows();
     handleClose();
   };
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -160,7 +185,7 @@ const SortPage = ({
             onClick={handleClose}
           />
         </Box>
-        {currentView.order && currentView.order.length > 0 && (
+        {newCurrentView?.order && newCurrentView.order.length > 0 && (
           <Box
             sx={{
               // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
@@ -170,8 +195,8 @@ const SortPage = ({
               overflow: "auto",
             }}
           >
-            {currentView.order.length &&
-              currentView.order.map((sort: any, index: number) => (
+            {newCurrentView.order.length &&
+              newCurrentView.order.map((sort: any, index: number) => (
                 <Box
                   key={sort.column}
                   sx={{ marginBottom: 1, display: "flex" }}
