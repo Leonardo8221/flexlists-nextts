@@ -3,7 +3,7 @@ import { Stack, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import { setColumns } from '../../redux/actions/viewActions';
-import {  setRows } from '../../redux/actions/viewActions';
+import { setRows } from '../../redux/actions/viewActions';
 import AddRowButton from "../../components/add-button/AddRowButton";
 import RowFormPanel from "src/sections/@list/RowFormPanel";
 import { TranslationText } from "src/models/SharedModels";
@@ -14,20 +14,23 @@ type Props = {
   rowData: any;
   visibleAddRowPanel: boolean;
   translations: TranslationText[];
+  children?: ReactNode;
+  mode: any;
   setColumns: (columns: any) => void;
   setRows: (columns: any) => void;
   setVisibleAddRowPanel: (visibleAddRowPanel: boolean) => void;
   setRowData: (rowData: any) => void;
-  children?: ReactNode;
+  setMode: (mode: any) => void;
 };
 
 const ViewFooter = (props: Props) => {
-  const { columns, rows, visibleAddRowPanel, rowData, translations, setRows, setVisibleAddRowPanel, setRowData, children } = props;
+  const { columns, rows, visibleAddRowPanel, rowData, translations, children, mode, setRows, setVisibleAddRowPanel, setRowData, setMode } = props;
   const theme = useTheme();
 
-  const handleNewRowPanel = (values:any) => {
+  const handleNewRowPanel = (values: any) => {
     setRowData(values);
     setVisibleAddRowPanel(true);
+    setMode("create");
   };
 
   const handleNewRow = (values: any, action: string) => {
@@ -67,7 +70,7 @@ const ViewFooter = (props: Props) => {
         onSubmit={handleNewRow}
         open={visibleAddRowPanel}
         onClose={() => setVisibleAddRowPanel(false)}
-        mode={'create'}
+        mode={mode}
         translations={translations}
       />
     </Box>

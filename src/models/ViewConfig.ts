@@ -15,10 +15,8 @@ export type KanbanConfig = {
 }
 
 export type GalleryConfig = {
-    avatarId: number
-    nameId: number
-    importanceId: number
-    descriptionId: number
+    imageId: number
+    titleId: number
 }
 
 export type TimelineConfig = {

@@ -21,74 +21,46 @@ import { getTranslation } from "src/utils/i18n";
 type GalleryViewConfigProps = {
   translations: TranslationText[];
   submit: boolean;
-  updateConfig: (config: GalleryConfig) => void;
   columns: ViewField[];
   availableFieldUiTypes: FieldUIType[];
+  config?: GalleryConfig;
+  updateConfig: (config: GalleryConfig) => void;
 };
 
 function GalleryViewConfig({
   translations,
   submit,
-  updateConfig,
   columns,
   availableFieldUiTypes,
+  config,
+  updateConfig,
 }: GalleryViewConfigProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  const [avatarFieldId, setAvatarFieldId] = useState<number>(0);
-  const [nameFieldId, setNameFieldId] = useState<number>(0);
-  const [importanceFieldId, setImportanceFieldId] = useState<number>(0);
-  const [descriptionFieldId, setDescriptionFieldId] = useState<number>(0);
-  const [isOpenAvatarFieldModal, setIsOpenAvatarFieldModal] =
-    useState<boolean>(false);
-  const [isOpenNameFieldModal, setIsOpenNameFieldModal] =
-    useState<boolean>(false);
-  const [isOpenImportanceFieldModal, setIsOpenImportanceFieldModal] =
-    useState<boolean>(false);
-  const [isOpenDescriptionFieldModal, setIsOpenDescriptionFieldModal] =
-    useState<boolean>(false);
-  const avatarFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
+  const [imageFieldId, setImageFieldId] = useState<number>(config && config.imageId? config.imageId: 0);
+  const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId: -2);
+  const [isOpenImageFieldModal, setIsOpenImageFieldModal] = useState<boolean>(false);
+  const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] = useState<boolean>(false);
+  const imageFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
     (uiType) => uiType.name === FieldUiTypeEnum.Image
   );
-  const nameFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
+  const titleFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
     (uiType) => uiType.name === FieldUiTypeEnum.Text
   );
-  const importanceFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
-    (uiType) => uiType.name === FieldUiTypeEnum.Choice
-  );
-  const descriptionFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
-    (uiType) => uiType.name === FieldUiTypeEnum.LongText
-  );
 
-  const getAvatarFields = (): ViewField[] => {
+  const getImageFields = (): ViewField[] => {
     return columns.filter((x) => x.uiField === FieldUiTypeEnum.Image);
   };
 
-  const getNameFields = (): ViewField[] => {
+  const getTitleFields = (): ViewField[] => {
     return columns.filter((x) => x.uiField === FieldUiTypeEnum.Text);
   };
 
-  const getImportanceFields = (): ViewField[] => {
-    return columns.filter((x) => x.uiField === FieldUiTypeEnum.Choice);
-  };
+  const [imageFields, setImageFields] = useState<ViewField[]>(getImageFields());
+  const [titleFields, setTitleFields] = useState<ViewField[]>(getTitleFields());
 
-  const getDescriptionFields = (): ViewField[] => {
-    return columns.filter((x) => x.uiField === FieldUiTypeEnum.LongText);
-  };
-
-  const [avatarFields, setAvatarFields] = useState<ViewField[]>(
-    getAvatarFields()
-  );
-  const [nameFields, setNameFields] = useState<ViewField[]>(getNameFields());
-  const [importanceFields, setImportanceFields] = useState<ViewField[]>(
-    getImportanceFields()
-  );
-  const [descriptionFields, setDescriptionFields] = useState<ViewField[]>(
-    getDescriptionFields()
-  );
-
-  const newAvatarField: any = {
+  const newImageField: any = {
     name: "",
     required: true,
     uiField: FieldUiTypeEnum.Image,
@@ -98,68 +70,45 @@ function GalleryViewConfig({
     config: {},
     defaultValue: "",
   };
-  // const newNameField : any  = {
-  //   name: "",
-  //   required: true,
-  //   uiField: FieldUiTypeEnum.Text,
-  //   description: "",
-  //   detailsOnly: false,
-  //   icon: "",
-  //   config: {},
-  //   defaultValue: ""
-  // };
-  // const newImportanceField : any  = {
-  //   name: "",
-  //   required: true,
-  //   uiField: FieldUiTypeEnum.Choice,
-  //   description: "",
-  //   detailsOnly: false,
-  //   icon: "",
-  //   config: {},
-  //   defaultValue: ""
-  // };
-  // const newDescriptionField : any  = {
-  //   name: "",
-  //   required: true,
-  //   uiField: FieldUiTypeEnum.LongText,
-  //   description: "",
-  //   detailsOnly: false,
-  //   icon: "",
-  //   config: {},
-  //   defaultValue: ""
-  // };
+  const newTitleField : any  = {
+    name: "",
+    required: true,
+    uiField: FieldUiTypeEnum.Text,
+    description: "",
+    detailsOnly: false,
+    icon: "",
+    config: {},
+    defaultValue: ""
+  };
 
   const reloadColumns = () => {
-    const newAvatarFields: ViewField[] = getAvatarFields();
-    const newNameFields: ViewField[] = getNameFields();
-    const newImportanceFields: ViewField[] = getImportanceFields();
-    const newDescriptionFields: ViewField[] = getDescriptionFields();
+    const newImageFields: ViewField[] = getImageFields();
+    const newTitleFields: ViewField[] = getTitleFields();
+    const defaultImageFieldId =
+      imageFieldId && !isOpenImageFieldModal
+        ? imageFieldId
+        : newImageFields.length > 0
+        ? newImageFields[0].id
+        : 0;
+    const defaultTitleFieldId =
+      titleFieldId && !isOpenTitleFieldModal
+        ? titleFieldId
+        : 0;
 
-    if (newAvatarFields.length > 0) {
-      setAvatarFieldId(newAvatarFields[0].id);
+    if (newImageFields.length > 0) {
+      setImageFieldId(defaultImageFieldId);
     }
 
-    if (newNameFields.length > 0) {
-      setNameFieldId(newNameFields[0].id);
+    if (newTitleFields.length > 0) {
+      setTitleFieldId(defaultTitleFieldId);
     }
 
-    if (newImportanceFields.length > 0) {
-      setImportanceFieldId(newImportanceFields[0].id);
-    }
-
-    if (newDescriptionFields.length > 0) {
-      setDescriptionFieldId(newDescriptionFields[0].id);
-    }
-
-    setAvatarFields(newAvatarFields);
-    setNameFields(newNameFields);
-    setImportanceFields(newImportanceFields);
-    setDescriptionFields(newDescriptionFields);
+    setImageFields(newImageFields);
+    setTitleFields(newTitleFields);
+    
     updateGalleryConfig(
-      newAvatarFields.length > 0 ? newAvatarFields[0].id : 0,
-      newNameFields.length > 0 ? newNameFields[0].id : 0,
-      newImportanceFields.length > 0 ? newImportanceFields[0].id : 0,
-      newDescriptionFields.length > 0 ? newDescriptionFields[0].id : 0
+      defaultImageFieldId,
+      defaultTitleFieldId
     );
   };
 
@@ -167,108 +116,62 @@ function GalleryViewConfig({
     reloadColumns();
   }, [columns]);
 
-  const onAvatarFieldChange = (event: SelectChangeEvent) => {
+  const onImageFieldChange = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
 
     if (value === "-1") {
-      setIsOpenAvatarFieldModal(true);
+      setIsOpenImageFieldModal(true);
       return;
     }
 
-    setAvatarFieldId(convertToInteger(value));
+    setImageFieldId(convertToInteger(value));
     updateGalleryConfig(
       convertToInteger(value),
-      nameFieldId,
-      importanceFieldId,
-      descriptionFieldId
+      titleFieldId
     );
   };
 
-  const onNameFieldChange = (event: SelectChangeEvent) => {
+  const onTitleFieldChange = (event: SelectChangeEvent) => {
     const value = event.target.value as string;
 
     if (value === "-1") {
-      setIsOpenNameFieldModal(true);
+      setIsOpenTitleFieldModal(true);
       return;
     }
 
-    setNameFieldId(convertToInteger(value));
+    setTitleFieldId(convertToInteger(value));
     updateGalleryConfig(
-      avatarFieldId,
-      convertToInteger(value),
-      importanceFieldId,
-      descriptionFieldId
-    );
-  };
-
-  const onImportanceFieldChange = (event: SelectChangeEvent) => {
-    const value = event.target.value as string;
-
-    if (value === "-1") {
-      setIsOpenImportanceFieldModal(true);
-      return;
-    }
-
-    setImportanceFieldId(convertToInteger(value));
-    updateGalleryConfig(
-      avatarFieldId,
-      nameFieldId,
-      convertToInteger(value),
-      descriptionFieldId
-    );
-  };
-
-  const onDescriptionFieldChange = (event: SelectChangeEvent) => {
-    const value = event.target.value as string;
-
-    if (value === "-1") {
-      setIsOpenDescriptionFieldModal(true);
-      return;
-    }
-
-    setDescriptionFieldId(convertToInteger(value));
-    updateGalleryConfig(
-      avatarFieldId,
-      nameFieldId,
-      importanceFieldId,
+      titleFieldId,
       convertToInteger(value)
     );
   };
 
   const updateGalleryConfig = (
-    newDateFieldId: number,
-    newNameId: number,
-    newImportanceId: number,
-    newDescriptionId: number
+    newImageFieldId: number,
+    newTitleFieldId: number
   ) => {
     updateConfig({
-      avatarId: newDateFieldId,
-      nameId: newNameId,
-      importanceId: newImportanceId,
-      descriptionId: newDescriptionId,
+      imageId: newImageFieldId,
+      titleId: newTitleFieldId === -2 ? 0 : newTitleFieldId
     });
   };
 
   return (
-    <Box sx={{ pt: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <FormControl fullWidth>
-        {/* <Typography variant="subtitle2" gutterBottom>
-          Avatar
-        </Typography> */}
         <InputLabel required id="select-image-label">
           {t("Image")}
         </InputLabel>
         <Select
           label={t("Image")}
           labelId="select-image-label"
-          value={`${avatarFieldId}`}
-          onChange={onAvatarFieldChange}
+          value={`${imageFieldId}`}
+          onChange={onImageFieldChange}
           required
-          error={submit && (!avatarFieldId || avatarFieldId === 0)}
+          error={submit && (!imageFieldId || imageFieldId === 0)}
           fullWidth
-          // sx={{ width: { md: "168px" }, marginLeft: { xs: "8px", md: "30px" } }}
         >
-          {avatarFields.map((viewColumn: ViewField) => (
+          {imageFields.map((viewColumn: ViewField) => (
             <MenuItem key={`${viewColumn.id}`} value={`${viewColumn.id}`}>
               {viewColumn.name}
             </MenuItem>
@@ -278,114 +181,48 @@ function GalleryViewConfig({
           </MenuItem>
         </Select>
       </FormControl>
-      {/* <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          Task Name
-        </Typography>
+      <FormControl fullWidth>
+        <InputLabel id="select-title-label">
+          {t("Title")}
+        </InputLabel>
         <Select
-          value={`${nameFieldId}`}
-          required
-          error={submit && (!nameFieldId || nameFieldId === 0)}
-          onChange={onNameFieldChange}
+          label={t("Title")}
+          labelId="select-title-label"
+          value={`${titleFieldId}`}
+          onChange={onTitleFieldChange}
           fullWidth
-          sx={{ width: { md: "168px" }, marginLeft: { xs: "8px", md: "30px" } }}
         >
-          {nameFields.map((nameColumn: ViewField) => (
-            <MenuItem key={`${nameColumn.id}`} value={`${nameColumn.id}`}>
-              {nameColumn.name}
+          <MenuItem key={"-2"} value={"-2"}>
+            {t("Leave Empty")}
+          </MenuItem>
+          {titleFields.map((titleColumn: ViewField) => (
+            <MenuItem key={`${titleColumn.id}`} value={`${titleColumn.id}`}>
+              {titleColumn.name}
             </MenuItem>
           ))}
           <MenuItem key={"-1"} value={"-1"}>
-            create a new field
+            {t("Create New Field")}
           </MenuItem>
         </Select>
-      </Box>
-      <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          Importance
-        </Typography>
-        <Select
-          value={`${importanceFieldId}`}
-          required
-          error={submit && (!importanceFieldId || importanceFieldId === 0)}
-          onChange={onImportanceFieldChange}
-          fullWidth
-          sx={{ width: { md: "168px" }, marginLeft: { xs: "8px", md: "30px" } }}
-        >
-          {importanceFields.map((importanceColumn: ViewField) => (
-            <MenuItem
-              key={`${importanceColumn.id}`}
-              value={`${importanceColumn.id}`}
-            >
-              {importanceColumn.name}
-            </MenuItem>
-          ))}
-          <MenuItem key={"-1"} value={"-1"}>
-            create a new field
-          </MenuItem>
-        </Select>
-      </Box>
-      <Box sx={{ pt: 2 }}>
-        <Typography variant="subtitle2" gutterBottom>
-          Task Description
-        </Typography>
-        <Select
-          value={`${descriptionFieldId}`}
-          required
-          error={submit && (!descriptionFieldId || descriptionFieldId === 0)}
-          onChange={onDescriptionFieldChange}
-          fullWidth
-          sx={{ width: { md: "168px" }, marginLeft: { xs: "8px", md: "30px" } }}
-        >
-          {descriptionFields.map((descriptionColumn: ViewField) => (
-            <MenuItem
-              key={`${descriptionColumn.id}`}
-              value={`${descriptionColumn.id}`}
-            >
-              {descriptionColumn.name}
-            </MenuItem>
-          ))}
-          <MenuItem key={"-1"} value={"-1"}>
-            create a new field
-          </MenuItem>
-        </Select>
-      </Box> */}
-      {isOpenAvatarFieldModal && (
+      </FormControl>
+      {isOpenImageFieldModal && (
         <CreateFieldModal
           translations={translations}
-          field={newAvatarField}
-          fieldUiTypes={avatarFieldUiTypes}
-          open={isOpenAvatarFieldModal}
-          handleClose={() => setIsOpenAvatarFieldModal(false)}
+          field={newImageField}
+          fieldUiTypes={imageFieldUiTypes}
+          open={isOpenImageFieldModal}
+          handleClose={() => setIsOpenImageFieldModal(false)}
         />
       )}
-      {/* {isOpenNameFieldModal && (
+      {isOpenTitleFieldModal && (
         <CreateFieldModal
           translations={translations}
-          field={newNameField}
-          fieldUiTypes={nameFieldUiTypes}
-          open={isOpenNameFieldModal}
-          handleClose={() => setIsOpenNameFieldModal(false)}
+          field={newTitleField}
+          fieldUiTypes={titleFieldUiTypes}
+          open={isOpenTitleFieldModal}
+          handleClose={() => setIsOpenTitleFieldModal(false)}
         />
       )}
-      {isOpenImportanceFieldModal && (
-        <CreateFieldModal
-          translations={translations}
-          field={newImportanceField}
-          fieldUiTypes={importanceFieldUiTypes}
-          open={isOpenImportanceFieldModal}
-          handleClose={() => setIsOpenImportanceFieldModal(false)}
-        />
-      )}
-      {isOpenDescriptionFieldModal && (
-        <CreateFieldModal
-          translations={translations}
-          field={newDescriptionField}
-          fieldUiTypes={descriptionFieldUiTypes}
-          open={isOpenDescriptionFieldModal}
-          handleClose={() => setIsOpenDescriptionFieldModal(false)}
-        />
-      )} */}
     </Box>
   );
 }

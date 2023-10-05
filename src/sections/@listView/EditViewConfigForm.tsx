@@ -114,6 +114,7 @@ const EditViewConfigForm = ({
                     submit={submit}
                     availableFieldUiTypes={availableFieldUiTypes}
                     updateConfig={(newConfig) => updateConfig(newConfig)}
+                    config={currentView?.config}
                   />
                 )}
                 {currentView && currentView.type === ViewType.KanBan && (

@@ -48,6 +48,7 @@ const BlankPage = (props: Props) => {
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [rowData, setRowData] = useState(null);
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
 
   const options = {
     responsive: true,
@@ -151,7 +152,7 @@ const BlankPage = (props: Props) => {
         <Scatter options={options_scatter} data={data_scatter} />
       </Box> */}
 
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} translations={[]} />
+      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} translations={[]} mode={mode} setMode={setMode} />
     </Box>
   );
 };

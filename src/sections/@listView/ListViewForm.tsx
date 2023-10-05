@@ -157,8 +157,6 @@ const ListViewForm = ({
     ) {
       await router.push(`${PATH_MAIN.views}/${createViewResponse.data.viewId}`);
       router.reload();
-      // setSteps(0);
-      // setViewType(ViewType.List);
       closeModal();
     } else {
       setError(createViewResponse.message);
@@ -191,6 +189,7 @@ const ListViewForm = ({
   const clearView = () => {
     setSubmit(false);
     setViewName("");
+    setViewDescription("");
   };
 
   return (

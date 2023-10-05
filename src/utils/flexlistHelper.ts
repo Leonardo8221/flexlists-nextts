@@ -70,12 +70,13 @@ export const isValidFieldValue = async(fieldType: FieldUiTypeEnum,value:any,requ
   return isValid;
 }
 export const getDataColumnId = (fieldId: number, columns: ViewField[]): string => {
-    var field = columns.find((x) => x.id === fieldId);
-    if (field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt')) {
-        return field.name;
-    }
-    return `${fieldId}`;
+  const field = columns.find((x) => x.id === fieldId);
 
+  if (field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt')) {
+    return field.name;
+  }
+
+  return `${fieldId}`;
 }
 export const getColumn = (column_id: any,columns:any[]) : ViewField|undefined => {
 
@@ -196,20 +197,8 @@ export const validateViewConfig = (
         setError("Config invalid");
         isValidConfig = false;
       }
-      if (!config.avatarId || config.avatarId === 0) {
-        setError("Avatar field required");
-        isValidConfig = false;
-      }
-      if (!config.nameId || config.nameId === 0) {
-        setError("Task Name field required");
-        isValidConfig = false;
-      }
-      if (!config.importanceId || config.importanceId === 0) {
-        setError("Importance field required");
-        isValidConfig = false;
-      }
-      if (!config.descriptionId || config.descriptionId === 0) {
-        setError("Task Description field required");
+      if (!config.imageId || config.imageId === 0) {
+        setError("Image field required");
         isValidConfig = false;
       }
       break;
