@@ -56,26 +56,14 @@ const GalleryView = (props: Props) => {
     setVisibleAddRowPanel(true);
   };
 
-  const getAvatar = (data: any):string =>{
-    const columnData = data[getDataColumnId(currentView.config.avatarId, columns)];
+  const getImage = (data: any):string =>{
+    const columnData = data[getDataColumnId(currentView.config.imageId, columns)];
     
     return columnData ? downloadFileUrl(columnData.fileId) : `/assets/images/users/undefined.jpg`;
   }
 
-  const getTaskName = (data: any):string =>{
-    return data[getDataColumnId(currentView.config.nameId, columns)]
-  }
-
-  const getImportance = (data: any):string =>{
-    const importanceColumn = columns.find((column: any) => column.id === currentView.config.importanceId);
-    const columnData = data[getDataColumnId(currentView.config.importanceId, columns)];
-    const importanceColor = getChoiceField(columnData, importanceColumn);
-
-    return importanceColor.color.bg;
-  }
-
-  const getTaskDescription = (data: any):string =>{
-    return data[getDataColumnId(currentView.config.descriptionId, columns)]
+  const getTitle = (data: any):string =>{
+    return data[getDataColumnId(currentView.config.titleId, columns)]
   }
 
   return (
@@ -96,20 +84,12 @@ const GalleryView = (props: Props) => {
                             objectFit: 'cover'
                         }}
                         alt="User image"
-                        src={getAvatar(row)}
+                        src={getImage(row)}
                     />
                     <Box sx={{ px: 1.5, py: 2, marginTop: 1 }}>
                         <Box sx={{ marginBottom: 1.5 }}>
-                            <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>Task Name</Box>
-                            <Box sx={{ fontWeight: 'bold' }}>{getTaskName(row)}</Box>
-                        </Box>
-                        <Box sx={{ marginBottom: 1.5 }}>
-                            <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>Importance</Box>
-                            <Box sx={{ fontSize: '14px', backgroundColor: getImportance(row), borderRadius: '5px', px: 1, py: 0.2, marginTop: 0.5, marginLeft: 0.5, width: '70%' }}>{row.importance}</Box>
-                        </Box>
-                        <Box sx={{ marginBottom: 1.5, maxHeight: {sm: '64px'}, overflow: 'hidden' }}>
-                            <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>Task Description</Box>
-                            <Box sx={{ fontSize: '14px' }}>{getTaskDescription(row)}</Box>
+                            <Box sx={{ fontSize: '12px', textTransform: 'uppercase' }}>{t("Title")}</Box>
+                            <Box sx={{ fontWeight: 'bold' }}>{getTitle(row)}</Box>
                         </Box>
                     </Box>
                 </Box>

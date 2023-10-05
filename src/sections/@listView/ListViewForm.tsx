@@ -191,6 +191,7 @@ const ListViewForm = ({
   const clearView = () => {
     setSubmit(false);
     setViewName("");
+    setViewDescription("");
   };
 
   return (

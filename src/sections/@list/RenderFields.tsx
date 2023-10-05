@@ -658,7 +658,7 @@ const RenderField = ({
           >
             {column.name}
           </Typography>
-          <a href={downloadFileUrl(values[column.id].fileId)} target="_blank">
+          <a href={downloadFileUrl(values ? values[column.id].fileId : '')} target="_blank">
             <Box
               component="img"
               sx={{

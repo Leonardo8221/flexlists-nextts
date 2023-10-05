@@ -196,20 +196,12 @@ export const validateViewConfig = (
         setError("Config invalid");
         isValidConfig = false;
       }
-      if (!config.avatarId || config.avatarId === 0) {
-        setError("Avatar field required");
+      if (!config.imageId || config.imageId === 0) {
+        setError("Image field required");
         isValidConfig = false;
       }
-      if (!config.nameId || config.nameId === 0) {
-        setError("Task Name field required");
-        isValidConfig = false;
-      }
-      if (!config.importanceId || config.importanceId === 0) {
-        setError("Importance field required");
-        isValidConfig = false;
-      }
-      if (!config.descriptionId || config.descriptionId === 0) {
-        setError("Task Description field required");
+      if (!config.titleId || config.titleId === 0) {
+        setError("Title field required");
         isValidConfig = false;
       }
       break;
