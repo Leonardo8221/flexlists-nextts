@@ -79,6 +79,7 @@ import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import Head from "next/head";
 import DisplayRating from "src/components/rating-field/DisplayRating";
+import { fieldColors } from "src/constants/fieldColors";
 
 type DataTableProps = {
   translations: TranslationText[];
@@ -142,6 +143,7 @@ const DataTable = ({
   const [page, setPage] = useState(currentPage);
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  const booleanList = ["Yes", "No"];
 
   const handleDropdownPageChange = (
     event: SelectChangeEvent<number>,
@@ -296,9 +298,9 @@ const DataTable = ({
         const newFilter: FlatWhere = {
           left: parseInt(filter.id),
           leftType: "Field",
-          right: filter.value,
+          right: getCondition(filter).right,
           rightType: "SearchString",
-          cmp: "like"
+          cmp: getCondition(filter).cmp
         } as FlatWhere;
 
         if (oldFilter) newCurrentView.conditions = newCurrentView.conditions?.map((el: any) => el.left === parseInt(filter.id) ? newFilter : el);
@@ -318,9 +320,9 @@ const DataTable = ({
         const newFilter: FlatWhere = {
           left: parseInt(filter.id),
           leftType: "Field",
-          right: filter.value,
+          right: getCondition(filter).right,
           rightType: "SearchString",
-          cmp: "like"
+          cmp: getCondition(filter).cmp
         } as FlatWhere;
 
         if (index) newCurrentView.conditions?.push("And");
@@ -331,6 +333,20 @@ const DataTable = ({
     setCurrentView(newCurrentView);
     fetchRowsByPage(newCurrentView.page, newCurrentView.limit ?? 25);
   }, [columnFilters]);
+
+  const getCondition = (filter: any) => {
+    const columnType = columns.find((column: any) => column.id === parseInt(filter.id))?.uiField;
+    let cmp = "like";
+    let right = filter.value;
+    if (columnType !== FieldUiTypeEnum.Text && columnType !== FieldUiTypeEnum.LongText && columnType !== FieldUiTypeEnum.Markdown && columnType !== FieldUiTypeEnum.HTML && columnType !== FieldUiTypeEnum.Link) {
+      cmp = "eq";
+      if (columnType === FieldUiTypeEnum.Boolean) {
+        right = filter.value === "Yes" ? true : false;
+      }
+    }
+
+    return { cmp: cmp, right: right };
+  };
 
   const removeFilter = (conditions: any[], index: number) => {
     return conditions.filter(
@@ -366,6 +382,11 @@ const DataTable = ({
 
   const isReadContent = (contentId: number) => {
     return readContents.includes(contentId);
+  };
+
+  const getChoiceList = (id: number) => {
+    const choiceColumn = columns.find((column: any) => column.id === id);
+    return choiceColumn?.config?.values.map((choice: any) => choice.label);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -715,6 +736,9 @@ const DataTable = ({
         size: dataColumn.type === "id" ? 100 : 200,
         filterFn: (row: any, id: number, filterValue: string) =>
           row.getValue(id).toLowerCase().includes(filterValue.toLowerCase()),
+        filterVariant: dataColumn.uiField === FieldUiTypeEnum.Choice || dataColumn.uiField === FieldUiTypeEnum.Boolean || dataColumn.uiField === FieldUiTypeEnum.Color ? 'select' : 'text',
+        filterSelectOptions: dataColumn.uiField === FieldUiTypeEnum.Choice ? getChoiceList(dataColumn.id) : dataColumn.uiField === FieldUiTypeEnum.Boolean ? booleanList : fieldColors,
+        enableColumnFilter: dataColumn.uiField === FieldUiTypeEnum.Date || dataColumn.uiField === FieldUiTypeEnum.DateTime || dataColumn.uiField === FieldUiTypeEnum.Time ? false : true
       };
     });
   };
