@@ -17,7 +17,7 @@ import { UserProfile } from "src/models/UserProfile";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { setUserProfile } from "src/redux/actions/userActions";
 import { getProfile, updateProfile } from "src/services/account.service";
-import { uploadFile } from "src/services/admin/contentManagement.service";
+import { uploadFile } from "src/services/file.service";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
 import {
   FieldValidatorEnum,

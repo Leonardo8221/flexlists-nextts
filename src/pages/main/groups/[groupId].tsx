@@ -38,11 +38,11 @@ import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendErr
 import { setFlashMessage } from "src/redux/actions/authAction";
 import WysiwygView from "src/components/wysiwyg/wysiwygView";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
-import { uploadFile } from "src/services/admin/contentManagement.service";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { GetServerSideProps } from "next";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import { uploadFile } from "src/services/file.service";
 
 const AvatarImg = styled("img")(({ theme }) => ({
   width: "100%",

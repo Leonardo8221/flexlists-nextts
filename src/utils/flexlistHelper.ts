@@ -108,7 +108,7 @@ export const downloadFileUrl = (id: string) => {
   if (!id || id === ""||id === null) {
     return "";
   }
-  return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/contentManagement/downloadFile?id=${id}`;
+  return `${process.env.NEXT_PUBLIC_FLEXLIST_API_URL}/api/file/downloadFile?id=${id}`;
 };
 export const getAvatarUrl = (avartarUrl?: string): string => {
   if (!avartarUrl || avartarUrl === ""||avartarUrl === null) {

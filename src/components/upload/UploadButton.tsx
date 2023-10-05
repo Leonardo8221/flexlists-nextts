@@ -1,6 +1,4 @@
 import { Box, Button, Tooltip } from "@mui/material";
-import { fi } from "date-fns/locale";
-import { uploadFile } from "src/services/admin/contentManagement.service";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
@@ -8,6 +6,7 @@ import { connect } from "react-redux";
 import { isFileExtensionAllowed } from "src/utils/fileUtils";
 import { isSucc } from "src/models/ApiResponse";
 import { useTheme } from "@mui/material/styles";
+import { uploadFile } from "src/services/file.service";
 type UploadButtonProps = {
   fileAcceptTypes: string[];
   file?: { fileId: string; fileName: string };
