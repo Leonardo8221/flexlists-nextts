@@ -139,9 +139,10 @@ const Filter = ({
 
   const handleFilters = (index: number, key: string, value: any) => {
     let newView: View = Object.assign({}, newCurrentView);
+
     newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
-        const newFilter: any = {
+        let newFilter: any = {
           cmp: filter.cmp,
           left: filter.left,
           leftType: filter.leftType,
@@ -174,7 +175,6 @@ const Filter = ({
               newFilter[key] = value;
             }
           }
-
           //if left field changed, reset right field
           if (key === "left") {
             newFilter[key] = value;
@@ -192,6 +192,7 @@ const Filter = ({
 
   const handleConditionOperationFilters = (index: number, value: string) => {
     let newView: View = Object.assign({}, newCurrentView);
+
     newView.conditions = newCurrentView?.conditions?.map(
       (filter: any, i: number) => {
         if (index === i) filter = value;
@@ -204,6 +205,7 @@ const Filter = ({
 
   const removeFilter = (index: number) => {
     let newView: View = Object.assign({}, newCurrentView);
+
     newView.conditions = newCurrentView?.conditions?.filter(
       (filter: any, i: number) => {
         if (index === 0) {
@@ -220,6 +222,7 @@ const Filter = ({
   const getChoiceValues = (filter: any) => {
     const column = getColumn(filter.left, columns);
     let choices: any[] = [];
+
     if (
       filter.right &&
       filter.right.length > 0 &&
@@ -231,6 +234,7 @@ const Filter = ({
         filter.right?.includes(x.id)
       );
     }
+
     return choices;
   };
 
@@ -501,7 +505,7 @@ const Filter = ({
 
   const addFilter = () => {
     let newView: View = Object.assign({}, newCurrentView);
-    let filter: FlatWhere = {
+    const filter: FlatWhere = {
       left: columns[0].id,
       leftType: "Field",
       right: getFilter({ left: columns[0].id })[3],
@@ -514,15 +518,13 @@ const Filter = ({
       newConditions = newView.conditions.map((condition: any) => condition);
       newConditions.push("And");
       newConditions.push(filter);
-    } else {
-      newConditions = [filter];
-    }
+    } else newConditions = [filter];
     
     setNewCurrentView({...newView, conditions: newConditions});
   };
 
   const onsubmit = async () => {
-    let newView: View = Object.assign({}, newCurrentView);
+    const newView: View = Object.assign({}, newCurrentView);
 
     setCurrentView(newView);
     fetchRows();
