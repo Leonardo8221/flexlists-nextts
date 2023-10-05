@@ -37,6 +37,8 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
   const [windowHeight, setWindowHeight] = useState(0);
   const [boardColumns, setBoardColumns] = useState<ChoiceModel[]>(columns.find((x)=>x.id === currentView.config?.boardColumnId)?.config?.values as ChoiceModel[]);
   const [kanbanConfig,setKanbanConfig] = useState<KanbanConfig>(currentView.config as KanbanConfig);
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
+
   const Container = styled('div')(({ theme }) => ({
     display: 'flex',
     padding: '16px',
@@ -116,6 +118,7 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
 
   const handleRowData = (row: any) => {
     setRowData(row);
+    setMode("view");
   };
 
   return (
@@ -139,7 +142,7 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
         )}
       </Droppable>
       
-      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} translations={translations} />
+      <ViewFooter visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} translations={translations} mode={mode} setMode={setMode} />
     </DragDropContext>
   );
 };

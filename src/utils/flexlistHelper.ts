@@ -70,12 +70,13 @@ export const isValidFieldValue = async(fieldType: FieldUiTypeEnum,value:any,requ
   return isValid;
 }
 export const getDataColumnId = (fieldId: number, columns: ViewField[]): string => {
-    var field = columns.find((x) => x.id === fieldId);
-    if (field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt')) {
-        return field.name;
-    }
-    return `${fieldId}`;
+  const field = columns.find((x) => x.id === fieldId);
 
+  if (field && field.system && (field.name === 'id' || field.name === 'createdAt' || field.name === 'updatedAt')) {
+    return field.name;
+  }
+
+  return `${fieldId}`;
 }
 export const getColumn = (column_id: any,columns:any[]) : ViewField|undefined => {
 
@@ -198,10 +199,6 @@ export const validateViewConfig = (
       }
       if (!config.imageId || config.imageId === 0) {
         setError("Image field required");
-        isValidConfig = false;
-      }
-      if (!config.titleId || config.titleId === 0) {
-        setError("Title field required");
         isValidConfig = false;
       }
       break;

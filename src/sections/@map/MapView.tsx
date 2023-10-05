@@ -39,6 +39,7 @@ const MapView = (props: Props) => {
   const [rowData, setRowData] = useState(null);
   const [center, setCenter] = useState(CENTER);
   const [windowHeight, setWindowHeight] = useState(0);
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -73,7 +74,7 @@ const MapView = (props: Props) => {
         </GoogleMapReact>
       </Box>
 
-      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} mode={mode} setMode={setMode} />
     </Box>
   );
 };

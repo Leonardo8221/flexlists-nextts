@@ -6,7 +6,7 @@ import ViewFooter from '../../components/view-footer/ViewFooter';
 import Pagination from '@mui/material/Pagination';
 import { View } from "src/models/SharedModels";
 import { fetchRowsByPage, setCurrentView } from "src/redux/actions/viewActions";
-import { getDataColumnId, downloadFileUrl, getChoiceField } from 'src/utils/flexlistHelper';
+import { getDataColumnId, downloadFileUrl } from 'src/utils/flexlistHelper';
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import Head from 'next/head';
@@ -34,6 +34,7 @@ const GalleryView = (props: Props) => {
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [windowHeight, setWindowHeight] = useState(0);
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
 
   const PAGE_SIZE = isXL ? 12 : isLG ? 10 : isMD ? 8 : 6;
 
@@ -54,6 +55,7 @@ const GalleryView = (props: Props) => {
   const handleData = (data: any) => {
     setSelectedRowData(data);
     setVisibleAddRowPanel(true);
+    setMode("view");
   };
 
   const getImage = (data: any):string =>{
@@ -63,7 +65,7 @@ const GalleryView = (props: Props) => {
   }
 
   const getTitle = (data: any):string =>{
-    return data[getDataColumnId(currentView.config.titleId, columns)]
+    return data[getDataColumnId(currentView.config.titleId, columns)];
   }
 
   return (
@@ -96,7 +98,7 @@ const GalleryView = (props: Props) => {
             ))}
         </Box>
         
-        <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={selectedRowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setSelectedRowData}>
+        <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={selectedRowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setSelectedRowData} mode={mode} setMode={setMode}>
           <Pagination count={Math.ceil(count / PAGE_SIZE)} page={currentPage} onChange={handlePage} />
         </ViewFooter>
     </Box>

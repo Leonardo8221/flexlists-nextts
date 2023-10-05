@@ -23,6 +23,7 @@ type GalleryViewConfigProps = {
   submit: boolean;
   columns: ViewField[];
   availableFieldUiTypes: FieldUIType[];
+  config?: GalleryConfig;
   updateConfig: (config: GalleryConfig) => void;
 };
 
@@ -31,13 +32,14 @@ function GalleryViewConfig({
   submit,
   columns,
   availableFieldUiTypes,
+  config,
   updateConfig,
 }: GalleryViewConfigProps) {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  const [imageFieldId, setImageFieldId] = useState<number>(0);
-  const [titleFieldId, setTitleFieldId] = useState<number>(0);
+  const [imageFieldId, setImageFieldId] = useState<number>(config && config.imageId? config.imageId: 0);
+  const [titleFieldId, setTitleFieldId] = useState<number>(config && config.titleId? config.titleId: -2);
   const [isOpenImageFieldModal, setIsOpenImageFieldModal] = useState<boolean>(false);
   const [isOpenTitleFieldModal, setIsOpenTitleFieldModal] = useState<boolean>(false);
   const imageFieldUiTypes: FieldUIType[] = availableFieldUiTypes.filter(
@@ -82,21 +84,31 @@ function GalleryViewConfig({
   const reloadColumns = () => {
     const newImageFields: ViewField[] = getImageFields();
     const newTitleFields: ViewField[] = getTitleFields();
+    const defaultImageFieldId =
+      imageFieldId && !isOpenImageFieldModal
+        ? imageFieldId
+        : newImageFields.length > 0
+        ? newImageFields[0].id
+        : 0;
+    const defaultTitleFieldId =
+      titleFieldId && !isOpenTitleFieldModal
+        ? titleFieldId
+        : 0;
 
     if (newImageFields.length > 0) {
-      setImageFieldId(newImageFields[0].id);
+      setImageFieldId(defaultImageFieldId);
     }
 
     if (newTitleFields.length > 0) {
-      setTitleFieldId(newTitleFields[0].id);
+      setTitleFieldId(defaultTitleFieldId);
     }
 
     setImageFields(newImageFields);
     setTitleFields(newTitleFields);
     
     updateGalleryConfig(
-      newImageFields.length > 0 ? newImageFields[0].id : 0,
-      newTitleFields.length > 0 ? newTitleFields[0].id : 0
+      defaultImageFieldId,
+      defaultTitleFieldId
     );
   };
 
@@ -136,16 +148,16 @@ function GalleryViewConfig({
 
   const updateGalleryConfig = (
     newImageFieldId: number,
-    newTitleId: number
+    newTitleFieldId: number
   ) => {
     updateConfig({
       imageId: newImageFieldId,
-      titleId: newTitleId
+      titleId: newTitleFieldId === -2 ? 0 : newTitleFieldId
     });
   };
 
   return (
-    <Box sx={{ pt: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <FormControl fullWidth>
         <InputLabel required id="select-image-label">
           {t("Image")}
@@ -169,28 +181,30 @@ function GalleryViewConfig({
           </MenuItem>
         </Select>
       </FormControl>
-      <Box sx={{ pt: 2, width: '100%' }}>
-        <Typography variant="subtitle2" gutterBottom>
+      <FormControl fullWidth>
+        <InputLabel id="select-title-label">
           {t("Title")}
-        </Typography>
+        </InputLabel>
         <Select
+          label={t("Title")}
+          labelId="select-title-label"
           value={`${titleFieldId}`}
-          required
-          error={submit && (!titleFieldId || titleFieldId === 0)}
           onChange={onTitleFieldChange}
           fullWidth
-          sx={{ marginLeft: 0 }}
         >
-          {titleFields.map((nameColumn: ViewField) => (
-            <MenuItem key={`${nameColumn.id}`} value={`${nameColumn.id}`}>
-              {nameColumn.name}
+          <MenuItem key={"-2"} value={"-2"}>
+            {t("Leave Empty")}
+          </MenuItem>
+          {titleFields.map((titleColumn: ViewField) => (
+            <MenuItem key={`${titleColumn.id}`} value={`${titleColumn.id}`}>
+              {titleColumn.name}
             </MenuItem>
           ))}
           <MenuItem key={"-1"} value={"-1"}>
             {t("Create New Field")}
           </MenuItem>
         </Select>
-      </Box>
+      </FormControl>
       {isOpenImageFieldModal && (
         <CreateFieldModal
           translations={translations}

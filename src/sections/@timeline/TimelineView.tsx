@@ -32,6 +32,7 @@ const TimelineView = (props: Props) => {
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [rowData, setRowData] = useState(null);
   const [windowHeight, setWindowHeight] = useState(0);
+  const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
 
   const ROWS = 10;
   const currentMonth = startOfMonth(new Date());
@@ -161,7 +162,7 @@ const TimelineView = (props: Props) => {
         {rows.length ? showRows() : <></>}
       </Box>
 
-      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} />
+      <ViewFooter translations={translations} visibleAddRowPanel={visibleAddRowPanel} rowData={rowData} setVisibleAddRowPanel={setVisibleAddRowPanel} setRowData={setRowData} mode={mode} setMode={setMode} />
     </Box>
   );
 };
