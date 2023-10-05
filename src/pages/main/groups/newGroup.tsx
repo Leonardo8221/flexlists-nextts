@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import MainLayout from "src/layouts/view/MainLayout";
 import WysiwygEditor from "src/components/wysiwyg/wysiwygEditor";
 import { Box, Typography, TextField, Button, Divider, Avatar, styled } from "@mui/material";
-import IconUploadButton from "src/sections/groups/UploadButton";
 import { useRouter } from "next/router";
 import { FlexlistsError, isSucc } from "src/models/ApiResponse";
 import { PATH_MAIN } from "src/routes/paths";
@@ -12,10 +11,10 @@ import { FieldValidatorEnum, ModelValidatorEnum, frontendValidate, isFrontendErr
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { connect } from "react-redux";
 import { getAvatarUrl } from "src/utils/flexlistHelper";
-import { uploadFile } from "src/services/admin/contentManagement.service";
 import { GetServerSideProps } from "next";
 import { getTranslations, getTranslation } from "src/utils/i18n";
 import { TranslationText } from "src/models/SharedModels";
+import { uploadFile } from "src/services/file.service";
 
 type NewGroupProps = {
   translations: TranslationText[];

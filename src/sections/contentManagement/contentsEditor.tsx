@@ -20,7 +20,7 @@ import { useTheme } from "@mui/material";
 import Scrollbar from "src/components/scrollbar";
 import { connect } from "react-redux";
 import { ContentManagementDto } from "src/models/ContentManagementDto";
-import { contentManagementService } from "src/services/admin/contentManagement.service";
+import { contentManagementService, uploadFile } from "src/services/admin/contentManagement.service";
 import { FlexlistsError, isErr, isSucc } from "src/models/ApiResponse";
 import { useRouter } from "next/router";
 import { filter } from "lodash";
@@ -214,14 +214,14 @@ const ContentEditor = ({ languages }: ContentEditorProps) => {
     setSuccessMessage("");
     setError("");
     if (event.target.files && event.target.files.length > 0) {
-      await uploadFile(event.target.files[0], translationText);
+      await uploadContentFile(event.target.files[0], translationText);
     }
   };
 
-  const uploadFile = async (file: File, translationText: TranslationText) => {
+  const uploadContentFile = async (file: File, translationText: TranslationText) => {
     const formData = new FormData();
     formData.append("file", file);
-    let response = await contentManagementService.uploadFile(formData);
+    let response = await uploadFile(formData);
     if (isSucc(response)&&response.data && response.data.fileId) {
       let newTranslationTexts = translationTexts.map((x) => {
         if (x.translationKeyId === translationText.translationKeyId) {
