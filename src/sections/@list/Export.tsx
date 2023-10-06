@@ -460,9 +460,9 @@ const Export = ({
             </Box>
           </Box>
         )}
-        <Box sx={{ borderTop: `1px solid ${theme.palette.palette_style.border.default}`, pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
+        <Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
       </Box>
-    </Modal>
+    </Modal >
   );
 };
 
