@@ -42,12 +42,14 @@ type HeaderProps = {
   currentView: View;
   translations: TranslationText[];
   setFlashMessage: (message: FlashMessageModel) => void;
+  handleRefresh: () => void;
 };
 
 const Header = ({
   currentView,
   translations,
   setFlashMessage,
+  handleRefresh
 }: HeaderProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -352,7 +354,7 @@ const Header = ({
               </CDropdownMenu>
             </CDropdown>
           )}
-          <RefreshIcon sx={{ color: theme.palette.palette_style.text.primary, fontSize: 22, cursor: "pointer" }} />
+          <RefreshIcon sx={{ color: theme.palette.palette_style.text.primary, fontSize: 22, cursor: "pointer" }} onClick={handleRefresh} />
         </Box>
         <Box sx={{ display: { xs: "none", md: "block", width: "100%" } }}>
           {isDesktop && <ToolBar translations={translations} />}

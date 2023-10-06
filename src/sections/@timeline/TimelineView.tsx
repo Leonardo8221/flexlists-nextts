@@ -18,15 +18,17 @@ type Props = {
   open: boolean;
   currentView: View,
   translations: TranslationText[];
+  refresh: Boolean;
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
+  clearRefresh: () => void;
 };
 
 const TimelineView = (props: Props) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  const { columns, rows, open, currentView, translations, fetchRows, setCurrentView } = props;
+  const { columns, rows, open, currentView, translations, refresh, fetchRows, setCurrentView, clearRefresh } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -37,6 +39,14 @@ const TimelineView = (props: Props) => {
   const currentMonth = startOfMonth(new Date());
   const endDate = endOfMonth(new Date());
   const daysInMonth = getDaysInMonth(new Date());
+
+  useEffect(() => {
+    if (refresh) fetchRows();
+  }, [refresh]);
+
+  useEffect(() => {
+    clearRefresh();
+  }, [rows]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);

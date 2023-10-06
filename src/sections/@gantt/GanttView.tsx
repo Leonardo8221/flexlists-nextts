@@ -18,15 +18,17 @@ type Props = {
   open: boolean;
   currentView: View;
   translations: TranslationText[];
+  refresh: Boolean;
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
+  clearRefresh: () => void;
 };
 
 const GanttView = (props: Props) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  const { columns, rows, currentView, open, translations, fetchRows, setCurrentView } = props;
+  const { columns, rows, currentView, open, translations, refresh, fetchRows, setCurrentView, clearRefresh } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -37,6 +39,14 @@ const GanttView = (props: Props) => {
   const startMonth = startOfMonth(new Date());
   const endMonth = endOfMonth(new Date());
   const currentDateUnit = Math.floor((new Date()).getDate() / 10);
+
+  useEffect(() => {
+    if (refresh) fetchRows();
+  }, [refresh]);
+
+  useEffect(() => {
+    clearRefresh();
+  }, [rows]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);

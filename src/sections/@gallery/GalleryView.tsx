@@ -18,15 +18,17 @@ type Props = {
   currentView: View;
   count: number;
   translations: TranslationText[];
+  refresh: Boolean;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
+  clearRefresh: () => void;
 };
 
 const GalleryView = (props: Props) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  const { rows, columns, open, currentView, count, translations, fetchRowsByPage, setCurrentView } = props;
+  const { rows, columns, open, currentView, count, translations, refresh, fetchRowsByPage, setCurrentView, clearRefresh } = props;
   const isXL = useResponsive('up', 'xl');
   const isLG = useResponsive('up', 'lg');
   const isMD = useResponsive('up', 'md');
@@ -36,6 +38,14 @@ const GalleryView = (props: Props) => {
   const [windowHeight, setWindowHeight] = useState(0);
 
   const PAGE_SIZE = isXL ? 12 : isLG ? 10 : isMD ? 8 : 6;
+
+  useEffect(() => {
+    if (refresh) fetchRowsByPage(currentView.page, PAGE_SIZE);
+  }, [refresh]);
+
+  useEffect(() => {
+    clearRefresh();
+  }, [rows]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
