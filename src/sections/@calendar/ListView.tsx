@@ -33,7 +33,7 @@ const ListView = ({ days, currentDate, getData, handleData, getFieldData, getDat
             <Box>
               {getData(new Date(format(day, 'MM/dd/yyyy')), 'day').map((data: any) => (
                 <Box key={`${data.id}-week`} className="edit_row" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: {xs: '200px', lg: '250px'}, display: 'flex', cursor: 'pointer', '&:hover': { color: theme.palette.palette_style.text.selected }, borderRadius: '20px', marginBottom: {xs: '2px', md: '5px'}, fontSize: '12px' }} onClick={() => handleData(data, currentDate)}>
-                  <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderRadius: 1.5, textTransform: 'capitalize', backgroundColor: theme.palette.palette_style.background.selected }} className="edit_row">
+                  <Box sx={{ display: 'flex', width: '100%', px: 1, py: 0.2, borderRadius: 1.5, textTransform: 'capitalize', backgroundColor: theme.palette.palette_style.background.calendarItem, color: theme.palette.palette_style.text.white }} className="edit_row">
                     <Box sx={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: getFieldData(data, 'color') || '#FFB7B7', marginTop: 0.5, marginRight: 0.5 }} className="edit_row"></Box>
                     <Box className="edit_row">{getFieldData(data, 'begin')}</Box>
                     <Box sx={{ marginLeft: 0.5 }} className="edit_row">{getFieldData(data, 'title')}</Box>
