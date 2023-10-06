@@ -141,7 +141,7 @@ function GalleryViewConfig({
 
     setTitleFieldId(convertToInteger(value));
     updateGalleryConfig(
-      titleFieldId,
+      imageFieldId,
       convertToInteger(value)
     );
   };
