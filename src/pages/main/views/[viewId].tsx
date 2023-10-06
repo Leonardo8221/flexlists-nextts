@@ -1,5 +1,4 @@
 import { useTheme } from "@mui/material/styles";
-import useResponsive from "src/hooks/useResponsive";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import MainLayout from "src/layouts/view/MainLayout";
@@ -11,7 +10,6 @@ import { View } from "src/models/SharedModels";
 import { connect } from "react-redux";
 import {
   fetchColumns,
-  fetchRowsByPage,
   getCurrentView,
   getViewUsers,
   setCurrentView
@@ -33,29 +31,28 @@ import { TranslationText } from "src/models/SharedModels";
 type ListProps = {
   translations: TranslationText[];
   currentView: View;
-  getCurrentView: (viewId: number) => void;
   columns: ViewField[];
-  fetchColumns: (viewId: number) => void;
-  fetchRowsByPage: (page?: number, limit?: number) => void;
   users:any[],
+  getCurrentView: (viewId: number) => void;
+  fetchColumns: (viewId: number) => void;
   getViewUsers: (viewId: number) => void;
   setCurrentView: (view: View) => void;
 };
 
 export const ViewDetail = ({
   currentView,
-  getCurrentView,
   columns,
-  fetchColumns,
-  fetchRowsByPage,
   translations,
   users,
   getViewUsers,
+  fetchColumns,
+  getCurrentView,
   setCurrentView
 }: ListProps) => {
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     if (
@@ -64,7 +61,6 @@ export const ViewDetail = ({
       getCurrentView &&
       isInteger(router.query.viewId)
     ) {
-      //console.log(translations, 'flap', test)
       getCurrentView(convertToNumber(router.query.viewId));
       if(users.length===0)
       {
@@ -94,21 +90,15 @@ export const ViewDetail = ({
       }
     }
   }, [router.isReady, currentView?.id]);
-  // useEffect(() => {
-  //   if(router.query.viewId)
-  //   {
-  //     const handleRouteChange = (url:string) => {
-  //       router.reload();
-  //     };
 
-  //     router.events.on('routeChangeComplete', handleRouteChange);
+  const handleRefresh = () => {
+    setRefresh(true);
+  };
 
-  //     return () => {
-  //       router.events.off('routeChangeComplete', handleRouteChange);
-  //     };
-  //   }
+  const clearRefresh = () => {
+    setRefresh(false);
+  };
 
-  // }, [router.query.viewId]);
   return (
     <MainLayout translations={translations}>
       {
@@ -123,17 +113,17 @@ export const ViewDetail = ({
           overflow: "hidden",
         }}
       >
-        <Header translations={translations} />
+        <Header translations={translations} handleRefresh={handleRefresh} />
         <MenuBar search="" translations={translations} />
 
         {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
-        {currentView.type === ViewType.List && <DataTable tab={open} translations={translations} />}
-        {currentView.type === ViewType.Calendar && <CalendarView open={open} translations={translations} />}
-        {currentView.type === ViewType.KanBan && <KanbanView open={open} translations={translations} />}
-        {currentView.type === ViewType.Gallery && <GalleryView open={open} translations={translations} />}
-        {currentView.type === ViewType.TimeLine && <TimelineView open={open} translations={translations} />}
-        {currentView.type === ViewType.Gantt && <GanttView open={open} translations={translations} />}
-        {currentView.type === ViewType.Map && <MapView open={open} translations={translations} />}
+        {currentView.type === ViewType.List && <DataTable tab={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+        {currentView.type === ViewType.Calendar && <CalendarView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+        {currentView.type === ViewType.KanBan && <KanbanView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+        {currentView.type === ViewType.Gallery && <GalleryView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+        {currentView.type === ViewType.TimeLine && <TimelineView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+        {currentView.type === ViewType.Gantt && <GanttView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+        {currentView.type === ViewType.Map && <MapView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
       </Box>
         ):
         (<></>)
@@ -142,6 +132,7 @@ export const ViewDetail = ({
       
     </MainLayout>)
 }
+
 const mapStateToProps = (state: any) => ({
   currentView: state.view.currentView,
   columns: state.view.columns,
@@ -151,7 +142,6 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   getCurrentView,
   fetchColumns,
-  fetchRowsByPage,
   getViewUsers,
   setCurrentView
 };

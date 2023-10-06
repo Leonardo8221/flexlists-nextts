@@ -88,11 +88,13 @@ type DataTableProps = {
   columns: ViewField[];
   rows: any[];
   count: number;
+  users: any[];
+  readContents: number[];
+  refresh: Boolean;
   fetchRowsByPage: (page?: number, limit?: number) => void;
   setCurrentView: (view: View) => void;
   setFlashMessage: (message: FlashMessageModel) => void;
-  users: any[];
-  readContents: number[];
+  clearRefresh: () => void;
 };
 
 const DataTable = ({
@@ -102,11 +104,13 @@ const DataTable = ({
   columns,
   rows,
   count,
+  users,
+  readContents,
+  refresh,
   fetchRowsByPage,
   setCurrentView,
   setFlashMessage,
-  users,
-  readContents,
+  clearRefresh
 }: DataTableProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
@@ -195,6 +199,10 @@ const DataTable = ({
   ];
 
   useEffect(() => {
+    if (refresh) fetchRowsByPage(currentView.page, currentView.limit ?? 25);
+  }, [refresh]);
+
+  useEffect(() => {
     fetchRowsByPage(0, currentView.limit ?? 25);
   }, []);
 
@@ -254,6 +262,8 @@ const DataTable = ({
         })
       );
     } else setToggleBulkAction(false);
+
+    clearRefresh();
   }, [rows, rowSelection]);
 
   useEffect(() => {

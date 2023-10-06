@@ -1,5 +1,4 @@
 import { useTheme } from "@mui/material/styles";
-import useResponsive from "src/hooks/useResponsive";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import MainLayout from "src/layouts/view/MainLayout";
@@ -11,7 +10,6 @@ import { View } from "src/models/SharedModels";
 import { connect } from "react-redux";
 import {
   fetchColumns,
-  fetchRowsByPage,
   getCurrentView,
   getViewUsers,
 } from "src/redux/actions/viewActions";
@@ -32,27 +30,26 @@ import { TranslationText } from "src/models/SharedModels";
 type ListProps = {
   translations: TranslationText[];
   currentView: View;
-  getCurrentView: (viewId: number) => void;
   columns: ViewField[];
-  fetchColumns: (viewId: number) => void;
-  fetchRowsByPage: (page?: number, limit?: number) => void;
   users:any[],
+  getCurrentView: (viewId: number) => void;
+  fetchColumns: (viewId: number) => void;
   getViewUsers: (viewId: number) => void;
 };
 
 export const DefaultListViewDetail = ({
   currentView,
-  getCurrentView,
   columns,
-  fetchColumns,
-  fetchRowsByPage,
   translations,
   users,
+  getCurrentView,
+  fetchColumns,
   getViewUsers
 }: ListProps) => {
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     if (
@@ -81,6 +78,14 @@ export const DefaultListViewDetail = ({
     }
   }, [router.isReady, currentView?.id]);
 
+  const handleRefresh = () => {
+    setRefresh(true);
+  };
+
+  const clearRefresh = () => {
+    setRefresh(false);
+  };
+
   return  (
     <MainLayout translations={translations}>
       {
@@ -94,17 +99,17 @@ export const DefaultListViewDetail = ({
             overflow: "hidden",
           }}
         >
-          <Header translations={translations} />
+          <Header translations={translations} handleRefresh={handleRefresh} />
           <MenuBar search="" translations={translations} />
   
           {/* {!isDesktop && <ToolBar open={open} onOpen={setOpen} />} */}
-          {currentView.type === ViewType.List && <DataTable tab={open} translations={translations} />}
-          {currentView.type === ViewType.Calendar && <CalendarView open={open} translations={translations} />}
-          {currentView.type === ViewType.KanBan && <KanbanView open={open} translations={translations} />}
-          {currentView.type === ViewType.Gallery && <GalleryView open={open} translations={translations} />}
-          {currentView.type === ViewType.TimeLine && <TimelineView open={open} translations={translations} />}
-          {currentView.type === ViewType.Gantt && <GanttView open={open} translations={translations} />}
-          {currentView.type === ViewType.Map && <MapView open={open} translations={translations} />}
+          {currentView.type === ViewType.List && <DataTable tab={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+          {currentView.type === ViewType.Calendar && <CalendarView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+          {currentView.type === ViewType.KanBan && <KanbanView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+          {currentView.type === ViewType.Gallery && <GalleryView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+          {currentView.type === ViewType.TimeLine && <TimelineView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+          {currentView.type === ViewType.Gantt && <GanttView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
+          {currentView.type === ViewType.Map && <MapView open={open} translations={translations} refresh={refresh} clearRefresh={clearRefresh} />}
         </Box>):
         (
           <></>
@@ -123,7 +128,6 @@ const mapStateToProps = (state: any) => ({
 const mapDispatchToProps = {
   getCurrentView,
   fetchColumns,
-  fetchRowsByPage,
   getViewUsers
 };
 

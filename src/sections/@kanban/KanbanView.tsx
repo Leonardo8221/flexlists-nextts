@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { connect } from 'react-redux';
-import { setRows, fetchRows, setCurrentView } from '../../redux/actions/viewActions';
+import { fetchRows, setCurrentView } from '../../redux/actions/viewActions';
 import KanbanColumn from './KanbanColumn';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { styled } from '@mui/material/styles';
@@ -22,16 +22,16 @@ type KanbanViewProps = {
   rows: any[];
   open: boolean;
   translations: TranslationText[];
-  setRows: (columns: any) => void;
+  refresh: Boolean;
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
+  clearRefresh: () => void;
 };
 
-const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fetchRows, setCurrentView }: KanbanViewProps) => {
+const KanbanView = ({ translations, currentView,columns, rows, open, refresh, fetchRows, setCurrentView, clearRefresh }: KanbanViewProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  // const [testData, setTestData] = useState<any>();
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
   const [rowData, setRowData] = useState(null);
   const [windowHeight, setWindowHeight] = useState(0);
@@ -48,6 +48,14 @@ const KanbanView = ({ translations, currentView,columns, rows, open, setRows, fe
       height: `${windowHeight - 193}px`,
     }
   }));
+
+  useEffect(() => {
+    if (refresh) fetchRows();
+  }, [refresh]);
+
+  useEffect(() => {
+    clearRefresh();
+  }, [rows]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -154,7 +162,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setRows,
   fetchRows,
   setCurrentView
 };

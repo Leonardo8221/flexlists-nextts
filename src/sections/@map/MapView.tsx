@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
-import { setColumns } from '../../redux/actions/viewActions';
-import { setRows } from '../../redux/actions/viewActions';
+import { fetchRows } from '../../redux/actions/viewActions';
 import useResponsive from '../../hooks/useResponsive';
 import ViewFooter from '../../components/view-footer/ViewFooter';
 import GoogleMapReact from 'google-map-react';
@@ -23,16 +22,17 @@ type Props = {
   columns: any;
   rows: any;
   translations: TranslationText[];
-  setColumns: (columns: any) => void;
-  setRows: (columns: any) => void;
   open: boolean;
+  refresh: Boolean;
+  fetchRows: () => void;
+  clearRefresh: () => void;
 };
 
 const MapView = (props: Props) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
-  const { columns, rows, translations, setRows, open } = props;
+  const { columns, rows, translations, open, refresh, fetchRows, clearRefresh } = props;
   const theme = useTheme();
   const isDesktop = useResponsive('up', 'md');
   const [visibleAddRowPanel, setVisibleAddRowPanel] = useState(false);
@@ -40,6 +40,14 @@ const MapView = (props: Props) => {
   const [center, setCenter] = useState(CENTER);
   const [windowHeight, setWindowHeight] = useState(0);
   const [mode, setMode] = useState<"view" | "create" | "update" | "comment">("view");
+
+  useEffect(() => {
+    if (refresh) fetchRows();
+  }, [refresh]);
+
+  useEffect(() => {
+    clearRefresh();
+  }, [rows]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -85,8 +93,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  setColumns,
-  setRows
+  fetchRows
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapView);

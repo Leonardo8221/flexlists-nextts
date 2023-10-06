@@ -27,12 +27,14 @@ type CalendarViewProps = {
   columns: any;
   rows: any;
   open: boolean;
+  refresh: Boolean;
   setRows: (columns: any) => void;
   fetchRows: () => void;
   setCurrentView: (view: View) => void;
+  clearRefresh: () => void;
 };
 
-const CalendarView = ({ translations, currentView, columns, rows, open, setRows, fetchRows, setCurrentView }: CalendarViewProps) => {
+const CalendarView = ({ translations, currentView, columns, rows, open, refresh, setRows, fetchRows, setCurrentView, clearRefresh }: CalendarViewProps) => {
   const t = (key: string): string => {
     return getTranslation(key, translations);
   };
@@ -52,6 +54,10 @@ const CalendarView = ({ translations, currentView, columns, rows, open, setRows,
   );
 
   const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+
+  useEffect(() => {
+    if (refresh) fetchRows();
+  }, [refresh]);
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -75,7 +81,9 @@ const CalendarView = ({ translations, currentView, columns, rows, open, setRows,
       fetchContent()
       setIsLoadedCurrentContent(true)
     }
-  }, [router.isReady, router.query.contentId,rows]);
+
+    clearRefresh();
+  }, [router.isReady, router.query.contentId, rows]);
 
   useEffect(() => {
     const displayDays = [];
