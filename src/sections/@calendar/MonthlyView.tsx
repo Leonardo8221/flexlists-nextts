@@ -124,7 +124,7 @@ const MonthlyView = ({
                           ? "10px"
                           : "",
                       borderTopRightRadius:
-                        getFieldData(data, "end") === "" ||
+                        //getFieldData(data, "end") === "" ||
                         getDataStatus(
                           data,
                           new Date(format(day, "MM/dd/yyyy")),
@@ -133,7 +133,7 @@ const MonthlyView = ({
                           ? "10px"
                           : "",
                       borderBottomRightRadius:
-                        getFieldData(data, "end") === "" ||
+                        //getFieldData(data, "end") === "" ||
                         getDataStatus(
                           data,
                           new Date(format(day, "MM/dd/yyyy")),
@@ -143,7 +143,7 @@ const MonthlyView = ({
                           : "",
                       textTransform: "capitalize",
                       backgroundColor:
-                        getFieldData(data, "end") === ""
+                        getFieldData(data, "end") === "" && false
                           ? theme.palette.palette_style.background.calendarItem
                           : getFieldData(data, "color") === ""
                           ? theme.palette.palette_style.background.calendarItem
@@ -158,7 +158,7 @@ const MonthlyView = ({
                       "day"
                     ) === "begin" && (
                       <>
-                        {getFieldData(data, "end") === "" && (
+                        {getFieldData(data, "end") === "" && false && (
                           <Box
                             sx={{
                               width: "10px",
@@ -173,7 +173,7 @@ const MonthlyView = ({
                           ></Box>
                         )}
                         {getFieldData(data, "end") === "" && (
-                          <Box className="edit_row">
+                          <Box className="edit_row" sx={{ marginLeft: 0.5 }}>
                             {getFieldData(data, "begin").split(" ")[1]}
                           </Box>
                         )}
