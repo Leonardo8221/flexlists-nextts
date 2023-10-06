@@ -144,9 +144,9 @@ const MonthlyView = ({
                       textTransform: "capitalize",
                       backgroundColor:
                         getFieldData(data, "end") === ""
-                          ? theme.palette.palette_style.background.selected
+                          ? theme.palette.palette_style.background.calendarItem
                           : getFieldData(data, "color") === ""
-                          ? theme.palette.palette_style.background.selected
+                          ? theme.palette.palette_style.background.calendarItem
                           : getFieldData(data, "color"),
                       height: "23px",
                     }}

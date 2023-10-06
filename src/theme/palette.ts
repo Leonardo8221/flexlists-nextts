@@ -95,6 +95,7 @@ export const palette_dark = {
     table_header_footer: "#0A121C",
     table_body: "#112233",
     selected: "#EEF7FF",
+    calendarItem: "#54A6FB"
   },
   border: {
     default: "rgba(255, 255, 255, 0.05)",
@@ -136,6 +137,7 @@ export const palette_light = {
     table_header_footer: "#EDF2F5",
     table_body: "#fff",
     selected: "#EEF7FF",
+    calendarItem: "#54A6FB"
   },
   border: {
     default: "rgba(0, 0, 0, 0.05)",
