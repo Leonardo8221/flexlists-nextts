@@ -306,12 +306,14 @@ const ImportContent = ({
                     ))}
                   </Box>
                 </Box>
+                < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
+
               </Box>
             ) : (
               <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
                 <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
                 <Box sx={{ display: "flex", alignItems: "center", my: 2, gap: 1 }}>
-                  <Button component="label" variant="text" sx={{ display: progress > 1 && progress < 100 ? "none" : "block" }}>
+                  <Button component="label" variant="text" sx={{ display: "block" }}>
                     {t("Choose File")}
                     <input
                       type="file"
@@ -325,7 +327,7 @@ const ImportContent = ({
                 {importType === ImportType.CSV && (
                   <Box sx={{ my: 2 }}>
                     <Select
-                      sx={{ display: progress > 1 && progress < 100 ? "none" : "flex" }}
+                      sx={{ display: "flex" }}
                       fullWidth
                       displayEmpty
                       value={delimiter}
@@ -340,7 +342,7 @@ const ImportContent = ({
                   </Box>
                 )}
 
-                <Box sx={{ display: progress > 1 && progress < 100 ? "none" : "block" }}>
+                <Box sx={{ display: "block" }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -353,7 +355,7 @@ const ImportContent = ({
                     label={t("Add Missing Fields")}
                   />
                 </Box>
-                <Box sx={{ display: progress > 1 && progress < 100 ? "none" : "block" }}>
+                <Box sx={{ display: "block" }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -366,7 +368,7 @@ const ImportContent = ({
                     label={t("Truncate")}
                   />
                 </Box>
-                <Box sx={{ display: progress > 1 && progress < 100 ? "none" : "flex", alignItems: "center", gap: 2, mt: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
                   <Button
                     type="submit"
                     variant="contained"
@@ -376,7 +378,10 @@ const ImportContent = ({
                   </Button>
                   <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
                 </Box>
+                < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
+
               </Box>
+
             )}
           </>
         )}
