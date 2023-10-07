@@ -76,7 +76,15 @@ axiosInstance.interceptors.response.use(
       // window.location.href = PATH_AUTH.login//'/auth/login';
       return await Promise.reject(error)
     }
-
+    if (!onServer &&error.response && error.response.status !== 500 &&
+         error.response.status !== 401 && error.response.status !== 200) {
+       new FlexlistsError(`Unknown Error${error.response.status}, please try again.`, Errors.UnknownError, error.response?.data)
+      return await Promise.resolve({ data: {
+        isSuccess: false,
+        code : error.response.data?.code??error.response.status,
+        message : error.response.data?.message??`Unknown Error(${error.response.status}), please try again.`,
+       } })
+    }
     return await Promise.resolve(error.response)
     //return Promise.reject((error.response && error.response.data) || 'Something went wrong')
   }
