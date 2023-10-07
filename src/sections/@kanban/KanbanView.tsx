@@ -112,7 +112,7 @@ const KanbanView = ({ translations, currentView,columns, rows, open, refresh, fe
         message: "Reordered successfully",
         type: "success",
       });
-
+      fetchRows();
       return;
     } else {
       setFlashMessage({
