@@ -15,6 +15,7 @@ import { setFlashMessage } from "src/redux/actions/authAction";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
 import Head from "next/head";
+import { listViewService } from "src/services/listView.service";
 
 type KanbanViewProps = {
   columns: ViewField[];
@@ -46,8 +47,19 @@ const KanbanView = ({
   const [rowData, setRowData] = useState(null);
   const [windowHeight, setWindowHeight] = useState(0);
   const [boardColumns, setBoardColumns] = useState<ChoiceModel[]>(
-    columns.find((x) => x.id === currentView.config?.boardColumnId)?.config
-      ?.values as ChoiceModel[]
+    currentView.config?.boardOrder
+      ? // order the columsn by boardOrder;
+        (
+          columns.find((x) => x.id === currentView.config?.boardColumnId)
+            ?.config?.values as ChoiceModel[]
+        ).sort((a, b) => {
+          return (
+            currentView.config?.boardOrder?.indexOf(a.id) -
+            currentView.config?.boardOrder?.indexOf(b.id)
+          );
+        })
+      : (columns.find((x) => x.id === currentView.config?.boardColumnId)?.config
+          ?.values as ChoiceModel[])
   );
   const [kanbanConfig, setKanbanConfig] = useState<KanbanConfig>(
     currentView.config as KanbanConfig
@@ -98,6 +110,27 @@ const KanbanView = ({
   }, []);
 
   const onDragEnd = async (result: any) => {
+    //console.log("dragresult", result);
+    if (result.type === "column") {
+      //console.log(columns, currentView.config?.boardColumnId);
+      const sourceIndex = result.source.index;
+      const destinationIndex = result.destination.index;
+      const newColumns = [...boardColumns];
+      const [removed] = newColumns.splice(sourceIndex, 1);
+      newColumns.splice(destinationIndex, 0, removed);
+      setBoardColumns(newColumns);
+      currentView.config.boardOrder = newColumns.map((x) => x.id);
+      //console.log(boardColumns, currentView.config);
+      await listViewService.updateView(
+        currentView.id,
+        currentView.name,
+        currentView.type,
+        currentView.config
+      );
+      // write the config
+
+      return;
+    }
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
     if (
