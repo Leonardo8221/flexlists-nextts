@@ -347,13 +347,17 @@ const ToolbBar = ({
                 setVisibleImport(!visibleImport);
               }}
             />
-            <Import
+            {
+              visibleImport &&
+              <Import
               translations={translations}
               open={visibleImport}
               handleClose={() => {
                 setVisibleImport(false);
               }}
             />
+            }
+            
           </Box>
         )}
         {hasPermission(currentView?.role, "Read") && (
@@ -366,13 +370,17 @@ const ToolbBar = ({
                 setVisibleExport(!visibleExport);
               }}
             />
-            <Export
+            {
+              visibleExport &&
+              <Export
               translations={translations}
               open={visibleExport}
               handleClose={() => {
                 setVisibleExport(false);
               }}
             />
+            }
+            
           </Box>
         )}
         {hasPermission(currentView?.role, "All") && (

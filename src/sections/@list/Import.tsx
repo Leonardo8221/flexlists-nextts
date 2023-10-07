@@ -96,7 +96,7 @@ const ImportContent = ({
   const [file, setFile] = useState<File>();
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState(0);
-
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const style = {
     position: "absolute",
     top: "50%",
@@ -136,11 +136,14 @@ const ImportContent = ({
         setError(`Please select ${importType} file`);
         return;
       }
-
-      for (let i = 0; i <= 100; i += 20) {
-        setProgress(i);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+      setIsProcessing(true);
+      // for (let i = 0; i <= 100; i += 5) {
+      //   if(i !== 100){
+      //     setProgress(i);
+      //   }
+        
+      //   await new Promise((resolve) => setTimeout(resolve, 1000));
+      // }
 
       const formData = new FormData();
       formData.append("file", file);
@@ -158,19 +161,23 @@ const ImportContent = ({
           },
         }
       );
+      // updateProgress(100);
       if (response && isSucc(response.data) && response.data.data) {
-        updateProgress(100);
         setFlashMessage({ type: "success", message: "Import successfully" });
         fetchColumns(currentView.id);
         fetchRowsByPage(0, 25);
+        setIsProcessing(false);
         onClose();
       } else {
+        setIsProcessing(false);
         setFlashMessage({
           type: "error",
           message: (response?.data as FlexlistsError)?.message,
         });
       }
     } catch (error) {
+      setIsProcessing(false);
+      // updateProgress(100);
       setFlashMessage({ type: "error", message: "unknown error" });
     }
   };
@@ -180,6 +187,7 @@ const ImportContent = ({
     setDelimiter(event.target.value);
   };
   const onClose = () => {
+    if(isProcessing) return;
     resetImportScreen();
     handleClose();
   };
@@ -227,7 +235,7 @@ const ImportContent = ({
   return (
     <Modal
       open={open}
-      onClose={progress > 1 && onClose}
+      onClose={ onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -256,7 +264,7 @@ const ImportContent = ({
             onClick={onClose}
           />
         </Box>
-        {progress > 1 && progress < 100 ? (<Box sx={{ py: 2 }}><Typography gutterBottom variant="body1">Importing:{" "}{file?.name}</Typography><LinearProgress variant="determinate" value={progress} /></Box>) : (
+        {isProcessing? (<Box sx={{ py: 2 }}><Typography gutterBottom variant="body1">Importing:{" "}{file?.name}</Typography><LinearProgress color="success" /></Box>) : (
           <>
             {screenMode === "main" ? (
               <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
@@ -378,7 +386,7 @@ const ImportContent = ({
                   </Button>
                   <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
                 </Box>
-                < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
+                {/* < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box> */}
 
               </Box>
 
