@@ -3,12 +3,8 @@ import {
   Box,
   Button,
   Divider,
-  Checkbox,
-  FormGroup,
   TextField,
   Typography,
-  FormControlLabel,
-  Alert,
 } from "@mui/material";
 import CentralModal from "src/components/modal/CentralModal";
 import { connect } from "react-redux";

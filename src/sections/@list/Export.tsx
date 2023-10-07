@@ -24,8 +24,6 @@ import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
-import { set } from "lodash";
-import { on } from "events";
 
 const exports_all = [
   {
