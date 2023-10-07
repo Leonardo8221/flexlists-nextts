@@ -86,10 +86,10 @@ const RenameView = ({
     setUpdating(false);
   };
   return (
-    <CentralModal open={open} handleClose={handleClose}>
+    <CentralModal open={open} handleClose={handleClose} zIndex={1200}>
       <Typography variant="h6">{t("Rename View")}</Typography>
       <Divider sx={{ my: 2 }}></Divider>
-      {updating ? (<CircularProgress />) : (
+      
         <>
           <Box>
             <Typography variant="subtitle2">{t("Name")}</Typography>
@@ -127,7 +127,7 @@ const RenameView = ({
               {t("Cancel")}
             </Button>
           </Box>
-        </>)}
+        </>
 
     </CentralModal>
   );

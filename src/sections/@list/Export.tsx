@@ -24,6 +24,8 @@ import { FlashMessageModel } from "src/models/FlashMessageModel";
 import { setFlashMessage } from "src/redux/actions/authAction";
 import { TranslationText } from "src/models/SharedModels";
 import { getTranslation } from "src/utils/i18n";
+import { set } from "lodash";
+import { on } from "events";
 
 const exports_all = [
   {
@@ -173,7 +175,7 @@ const Export = ({
   const [delimiter, setDelimiter] = useState<string>(";");
   const csvDelimiters: string[] = [";", ","];
   const [progress, setProgress] = useState(0);
-
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const updateProgress = (percentage: number) => {
     setProgress(percentage);
   };
@@ -212,6 +214,7 @@ const Export = ({
     delimiter: string = ";"
   ) => {
     try {
+      setIsProcessing(true);
       const response = await exportViewData(
         exportType,
         currentView.id,
@@ -223,6 +226,7 @@ const Export = ({
         delimiter
       );
       if (isSucc(response) && response.data) {
+        setIsProcessing(false);
         // Create a Blob object from the JSON data
         let blob: Blob;
         if (exportType !== ExportType.XLSX) {
@@ -237,17 +241,20 @@ const Export = ({
           blob,
           `${currentView.name}.${getExportFileExtension(exportType)}`
         );
+        onClose();
       } else {
+        setIsProcessing(false);
         setFlashMessage({ type: "error", message: response.message });
       }
     } catch (error) {
+      setIsProcessing(false);
       setFlashMessage({ type: "error", message: "unknown error" });
     }
 
-    for (let i = 0; i <= 100; i += 20) {
-      setProgress(i);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
+    // for (let i = 0; i <= 100; i += 20) {
+    //   setProgress(i);
+    //   await new Promise((resolve) => setTimeout(resolve, 1000));
+    // }
   };
   const toggleExportAllShowMore = () => {
     let newExportAll = exportAll.map((x) => {
@@ -274,6 +281,7 @@ const Export = ({
     setDelimiter(event.target.value);
   };
   const onClose = () => {
+    if(isProcessing) return;
     resetExportScreen();
     handleClose();
   };
@@ -321,7 +329,7 @@ const Export = ({
             onClick={onClose}
           />
         </Box>
-        {progress > 1 && progress < 100 ? (<Box sx={{ py: 2 }}><Typography gutterBottom variant="body1">Exporting...</Typography><LinearProgress variant="determinate" value={progress} /></Box>) :
+        {isProcessing? (<Box sx={{ py: 2 }}><Typography gutterBottom variant="body1">Exporting...</Typography><LinearProgress variant="determinate" color="success" /></Box>) :
           (
             <>
               {screenMode === "main" ? (
@@ -473,7 +481,7 @@ const Export = ({
                     </Button>
                     <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
                   </Box>
-                  < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
+                  {/* < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box> */}
                 </Box>
               )}
 

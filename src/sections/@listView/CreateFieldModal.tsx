@@ -47,7 +47,7 @@ const ViewFieldsConfig = ({
     fetchRows()
   }
   return (
-    <CentralModal open={open} handleClose={handleClose}>
+    <CentralModal open={open} handleClose={handleClose} zIndex={1200}>
       {
         <FieldFormPanel
           fieldUiTypes={fieldUiTypes}
