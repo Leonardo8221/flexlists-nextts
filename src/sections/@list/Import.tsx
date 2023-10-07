@@ -9,6 +9,7 @@ import {
   Checkbox,
   Alert,
   Typography,
+  LinearProgress
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useResponsive from "../../hooks/useResponsive";
@@ -58,19 +59,7 @@ const imports = [
     icon: "toolbar/yaml",
   },
 ];
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: { xs: "100%", md: "480px" },
-  backgroundColor: "white",
-  py: 2,
-  px: { xs: 0.5, md: 2 },
-  boxShadow: "0 0 10px 10px rgba(0, 0, 0, 0.05)",
-  borderRadius: "5px",
-  border: "none",
-};
+
 type ImportProps = {
   translations: TranslationText[];
   open: boolean;
@@ -106,6 +95,25 @@ const ImportContent = ({
   const [truncate, setTruncate] = useState<boolean>(false);
   const [file, setFile] = useState<File>();
   const [error, setError] = useState<string>("");
+  const [progress, setProgress] = useState(0);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: { xs: "100%", md: "480px" },
+    backgroundColor: "white",
+    py: 2,
+    px: { xs: 0.5, md: 2 },
+    boxShadow: "0 0 10px 10px rgba(0, 0, 0, 0.05)",
+    borderRadius: "5px",
+    border: "none",
+  };
+
+  const updateProgress = (percentage: number) => {
+    setProgress(percentage);
+  };
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
@@ -128,6 +136,15 @@ const ImportContent = ({
         setError(`Please select ${importType} file`);
         return;
       }
+      setIsProcessing(true);
+      // for (let i = 0; i <= 100; i += 5) {
+      //   if(i !== 100){
+      //     setProgress(i);
+      //   }
+        
+      //   await new Promise((resolve) => setTimeout(resolve, 1000));
+      // }
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("viewId", currentView.id.toString());
@@ -144,18 +161,23 @@ const ImportContent = ({
           },
         }
       );
+      // updateProgress(100);
       if (response && isSucc(response.data) && response.data.data) {
         setFlashMessage({ type: "success", message: "Import successfully" });
         fetchColumns(currentView.id);
         fetchRowsByPage(0, 25);
+        setIsProcessing(false);
         onClose();
       } else {
+        setIsProcessing(false);
         setFlashMessage({
           type: "error",
           message: (response?.data as FlexlistsError)?.message,
         });
       }
     } catch (error) {
+      setIsProcessing(false);
+      // updateProgress(100);
       setFlashMessage({ type: "error", message: "unknown error" });
     }
   };
@@ -165,6 +187,7 @@ const ImportContent = ({
     setDelimiter(event.target.value);
   };
   const onClose = () => {
+    if(isProcessing) return;
     resetImportScreen();
     handleClose();
   };
@@ -212,7 +235,7 @@ const ImportContent = ({
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={ onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -232,137 +255,147 @@ const ImportContent = ({
             sx={{
               width: 18,
               height: 18,
-              display: "inline-block",
+              display: progress > 1 && progress < 100 ? "none" : "inline-block",
               bgcolor: theme.palette.palette_style.text.primary,
-              mask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
-              WebkitMask: `url(/assets/icons/table/close.svg) no-repeat center / contain`,
+              mask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
+              WebkitMask: `url(/assets/icons/table/Close.svg) no-repeat center / contain`,
               cursor: "pointer",
             }}
             onClick={onClose}
           />
         </Box>
-        {screenMode === "main" ? (
-          <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
-            <Box
-              sx={{
-                // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
-              }}
-            >
-              <Box
-                sx={{
-                  // py: 2,
-                  pt: 2,
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "repeat(1, 1fr)",
-                    md: "repeat(2, 1fr)",
-                  },
-                  gap: "30px",
-                  rowGap: "12px",
-                }}
-              >
-                {imports.map((item: any, index) => (
+        {isProcessing? (<Box sx={{ py: 2 }}><Typography gutterBottom variant="body1">Importing:{" "}{file?.name}</Typography><LinearProgress color="success" /></Box>) : (
+          <>
+            {screenMode === "main" ? (
+              <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
+                <Box
+                  sx={{
+                    // borderBottom: `1px solid ${theme.palette.palette_style.border.default}`,
+                  }}
+                >
                   <Box
-                    key={index}
-                    onClick={() => handleImport(item.name)}
                     sx={{
-                      display: "flex",
-                      border: `1px solid ${theme.palette.palette_style.border.default}`,
-                      borderRadius: "5px",
-                      px: 2,
-                      py: 1,
-                      cursor: "pointer",
+                      // py: 2,
+                      pt: 2,
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "repeat(1, 1fr)",
+                        md: "repeat(2, 1fr)",
+                      },
+                      gap: "30px",
+                      rowGap: "12px",
                     }}
                   >
-                    <Box
-                      component="img"
-                      src={`/assets/icons/${item.icon}.svg`}
-                      sx={{
-                        width: 18,
-                        height: 18,
-                        marginRight: 1,
-                        marginTop: 0.3,
-                      }}
-                    />
-                    <Box>{item.label}</Box>
+                    {imports.map((item: any, index) => (
+                      <Box
+                        key={index}
+                        onClick={() => handleImport(item.name)}
+                        sx={{
+                          display: "flex",
+                          border: `1px solid ${theme.palette.palette_style.border.default}`,
+                          borderRadius: "5px",
+                          px: 2,
+                          py: 1,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <Box
+                          component="img"
+                          src={`/assets/icons/${item.icon}.svg`}
+                          sx={{
+                            width: 18,
+                            height: 18,
+                            marginRight: 1,
+                            marginTop: 0.3,
+                          }}
+                        />
+                        <Box>{item.label}</Box>
+                      </Box>
+                    ))}
                   </Box>
-                ))}
-              </Box>
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
-            <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
-            <Box sx={{ display: "flex", alignItems: "center", my: 2, gap: 1 }}>
-              <Button component="label" variant="text">
-                {t("Choose File")}
-                <input
-                  type="file"
-                  accept={`.${getImportFileExtension(importType)}`}
-                  hidden
-                  onChange={handleFileChange}
-                />
-              </Button>
-              <span>{file?.name}</span>
-            </Box>
-            {importType === ImportType.CSV && (
-              <Box sx={{ my: 2 }}>
-                <Select
-                  fullWidth
-                  displayEmpty
-                  value={delimiter}
-                  onChange={onDelimiterChange}
-                >
-                  {csvDelimiters.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Box>
-            )}
+                </Box>
+                < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
 
-            <Box>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    sx={styles?.checkbox}
-                    checked={addMissingFields}
-                    onChange={onAddMissingFieldsChange}
-                    name="required"
+              </Box>
+            ) : (
+              <Box sx={{ maxHeight: `${windowHeight - 100}px`, overflow: "auto" }}>
+                <Box>{error && <Alert severity="error">{error}</Alert>}</Box>
+                <Box sx={{ display: "flex", alignItems: "center", my: 2, gap: 1 }}>
+                  <Button component="label" variant="text" sx={{ display: "block" }}>
+                    {t("Choose File")}
+                    <input
+                      type="file"
+                      accept={`.${getImportFileExtension(importType)}`}
+                      hidden
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  <span>{file?.name}</span>
+                </Box>
+                {importType === ImportType.CSV && (
+                  <Box sx={{ my: 2 }}>
+                    <Select
+                      sx={{ display: "flex" }}
+                      fullWidth
+                      displayEmpty
+                      value={delimiter}
+                      onChange={onDelimiterChange}
+                    >
+                      {csvDelimiters.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Box>
+                )}
+
+                <Box sx={{ display: "block" }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={styles?.checkbox}
+                        checked={addMissingFields}
+                        onChange={onAddMissingFieldsChange}
+                        name="required"
+                      />
+                    }
+                    label={t("Add Missing Fields")}
                   />
-                }
-                label={t("Add Missing Fields")}
-              />
-            </Box>
-            <Box>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    sx={styles?.checkbox}
-                    checked={truncate}
-                    onChange={onTruncateChange}
-                    name="required"
+                </Box>
+                <Box sx={{ display: "block" }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        sx={styles?.checkbox}
+                        checked={truncate}
+                        onChange={onTruncateChange}
+                        name="required"
+                      />
+                    }
+                    label={t("Truncate")}
                   />
-                }
-                label={t("Truncate")}
-              />
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
-              <Button
-                type="submit"
-                variant="contained"
-                onClick={() => importContent()}
-              >
-                {t("Import")}
-              </Button>
-              <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
-            </Box>
-          </Box>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    onClick={() => importContent()}
+                  >
+                    {t("Import")}
+                  </Button>
+                  <Button onClick={() => backMainScreen()}>{t("Cancel")}</Button>
+                </Box>
+                {/* < Box sx={{ pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box> */}
+
+              </Box>
+
+            )}
+          </>
         )}
-        <Box sx={{ borderTop: `1px solid ${theme.palette.palette_style.border.default}`, mt: 2, pt: 2 }}><Button sx={{ float: "right" }} variant="outlined" onClick={handleClose}>Close</Button></Box>
       </Box>
     </Modal>
+
   );
 };
 

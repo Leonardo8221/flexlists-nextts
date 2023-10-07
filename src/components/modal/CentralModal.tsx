@@ -5,6 +5,7 @@ type CentralModalProps = {
     open: boolean;
     handleClose: () => void;
     children?: any,
+    zIndex?: number
 };
 const style = {
     position: 'absolute',
@@ -19,13 +20,14 @@ const style = {
     borderRadius: '5px',
     border: 'none'
   };
-export default function CentralModal({open,handleClose, children }: CentralModalProps) {
+export default function CentralModal({open,handleClose, children ,zIndex}: CentralModalProps) {
   return (
      <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        sx={{zIndex: (theme) => zIndex?zIndex:theme.zIndex.drawer}}
         >
         <Box sx={style}>
             {children}            

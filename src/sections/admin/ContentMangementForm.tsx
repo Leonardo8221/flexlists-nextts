@@ -72,7 +72,7 @@ const ContentManagementForm = ({
     }
   };
   return (
-    <CentralModal open={open} handleClose={handleClose}>
+    <CentralModal open={open} handleClose={handleClose} zIndex={1200}>
       {
         contentManagement &&
         <>

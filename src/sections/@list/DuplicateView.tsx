@@ -3,12 +3,8 @@ import {
   Box,
   Button,
   Divider,
-  Checkbox,
-  FormGroup,
   TextField,
   Typography,
-  FormControlLabel,
-  Alert,
 } from "@mui/material";
 import CentralModal from "src/components/modal/CentralModal";
 import { connect } from "react-redux";
@@ -73,7 +69,7 @@ const DuplicateView = ({ open, translations, handleClose, currentView,setFlashMe
 
   }
   return (
-    <CentralModal open={open} handleClose={handleClose}>
+    <CentralModal open={open} handleClose={handleClose} zIndex={1200}>
       <Typography variant="h6">{t("Duplicate View")}</Typography>
       <Divider sx={{ my: 2 }}></Divider>
       <Box>

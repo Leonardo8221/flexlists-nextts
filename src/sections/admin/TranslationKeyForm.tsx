@@ -120,7 +120,7 @@ const TranslationKeyForm = ({
     setTranslationKey(newTranslationKey);
   }
   return (
-    <CentralModal open={open} handleClose={handleClose}>
+    <CentralModal open={open} handleClose={handleClose} zIndex={1200}>
       {
         translationKey &&
         <>
